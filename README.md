@@ -10,6 +10,8 @@
     <br>
     <br>
     <a href="https://github.com/MattRighetti/ing-sw-2018-righetti-trivilino-terracciano">Project</a>
+    .
+    <a href="https://www.youtube.com/watch?v=0JLpaGHL8MQ">How to play</a>
   </p>
 </p>
 
