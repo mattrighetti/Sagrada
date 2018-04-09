@@ -1,4 +1,6 @@
 package ingsw.cards.privateoc;
 
-public abstract class PrivateObjectiveCard {
+import ingsw.cards.Card;
+
+public abstract class PrivateObjectiveCard extends Card{
 }
