@@ -1,7 +1,6 @@
-package ingsw.Dice;
+package ingsw.dice;
 
 public abstract class Dice {
-    protected enum Color { RED, YELLOW, PURPLE, GREEN, BLUE }
     protected int faceUpValue;
 
     public int roll() {

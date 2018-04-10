@@ -1,4 +1,6 @@
-package ingsw.Dice;
+package ingsw.dice;
+
+import ingsw.Color;
 
 public class RedDice extends Dice {
     Color color = Color.RED;
