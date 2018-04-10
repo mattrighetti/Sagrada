@@ -3,18 +3,18 @@ package ingsw;
 import java.util.List;
 
 public class Player {
-    String name;
+    String username;
     int noOfWins;
     int noOfLose;
     int noOfDraws;
     List<String> matchesPlayed;
 
-    public Player(String name) {
-        this.name = name;
+    public Player(String username) {
+        this.username = username;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public int getNoOfWins() {
