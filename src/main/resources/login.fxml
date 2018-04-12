@@ -3,8 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -12,7 +13,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="643.0" prefWidth="642.0" styleClass="loginGridPane" stylesheets="@loginStyle.css" xmlns="http://javafx.com/javafx/9.0.4" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.FXMLogin">
+<GridPane alignment="CENTER"
+          maxHeight="-Infinity"
+          maxWidth="-Infinity"
+          minHeight="-Infinity"
+          minWidth="-Infinity"
+          prefHeight="643.0"
+          prefWidth="642.0"
+          styleClass="loginGridPane"
+          stylesheets="@loginStyle.css"
+          xmlns="http://javafx.com/javafx/9.0.4"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="ingsw.view.FXMLogin">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -27,7 +39,11 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+      <VBox alignment="CENTER"
+            prefHeight="200.0"
+            prefWidth="100.0"
+            GridPane.columnIndex="1"
+            GridPane.rowIndex="3">
          <children>
             <Label text="LOGIN">
                <VBox.margin>
@@ -40,7 +56,9 @@
                   <Insets bottom="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="usernameTextField" promptText="Username" stylesheets="@loginStyle.css">
+            <TextField fx:id="usernameTextField"
+                       promptText="Username"
+                       stylesheets="@loginStyle.css">
                <padding>
                   <Insets bottom="5.0" left="10.0" top="5.0" />
                </padding>
@@ -48,41 +66,64 @@
                   <Insets />
                </opaqueInsets>
                <VBox.margin>
-                  <Insets bottom="5.0" />
+                  <Insets bottom="25.0" />
                </VBox.margin>
                <font>
                   <Font size="20.0" />
                </font>
             </TextField>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="radio-group" stylesheets="@loginStyle.css">
+            <HBox id="toggle-button-container"
+                  alignment="CENTER"
+                  stylesheets="@loginStyle.css">
                <children>
-                  <RadioButton fx:id="rmiRadioButton" mnemonicParsing="false" stylesheets="@loginStyle.css" text="RMI">
-                     <padding>
-                        <Insets right="20.0" />
-                     </padding>
+                  <ToggleButton id="rmi-toggle-button"
+                                fx:id="RMIToggleButton"
+                                mnemonicParsing="false"
+                                onAction="#selectedRMI"
+                                stylesheets="@loginStyle.css"
+                                text="RMI">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="SocketRMIToggleGroup" />
+                     </toggleGroup>
                      <font>
-                        <Font size="20.0" />
+                        <Font size="14.0" />
                      </font>
-                  </RadioButton>
-                  <RadioButton fx:id="socketRadioButton" mnemonicParsing="false" stylesheets="@loginStyle.css" text="Socket">
-                     <padding>
-                        <Insets left="50.0" />
-                     </padding>
+                  </ToggleButton>
+                  <ToggleButton id="socket-toggle-button"
+                                fx:id="SocketToggleButton"
+                                onAction="#selectedSocket"
+                                mnemonicParsing="false"
+                                stylesheets="@loginStyle.css"
+                                text="Socket"
+                                toggleGroup="$SocketRMIToggleGroup">
                      <font>
-                        <Font name="System Font" size="18.0" />
+                        <Font size="14.0" />
                      </font>
-                  </RadioButton>
+                  </ToggleButton>
                </children>
-               <VBox.margin>
-                  <Insets top="20.0" />
-               </VBox.margin>
+               <padding>
+                  <Insets bottom="20.0" />
+               </padding>
             </HBox>
          </children>
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
       </VBox>
-      <Button fx:id="loginButton" alignment="CENTER" mnemonicParsing="false" onAction="#onLoginPressed" prefHeight="43.0" prefWidth="126.0" styleClass="login-button-red" stylesheets="@loginStyle.css" text="Login" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+      <Button fx:id="loginButton"
+              alignment="CENTER"
+              disable="${usernameTextField.text.empty}"
+              mnemonicParsing="false"
+              onAction="#onLoginPressed"
+              prefHeight="43.0"
+              prefWidth="126.0"
+              styleClass="login-button-red"
+              stylesheets="@loginStyle.css"
+              text="Login"
+              GridPane.columnIndex="2"
+              GridPane.halignment="CENTER"
+              GridPane.rowIndex="3"
+              GridPane.valignment="CENTER">
          <font>
             <Font size="20.0" />
          </font>

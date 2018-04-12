@@ -25,8 +25,8 @@ public class FXMLogin extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
 
         Parent rootComponent = loader.load();
-        FXMLogin loginGui = loader.getController();
 
+        primaryStage.setResizable(false);
         primaryStage.setTitle("Sagrada Game");
         primaryStage.setScene(new Scene(rootComponent));
         primaryStage.show();
@@ -34,7 +34,14 @@ public class FXMLogin extends Application {
 
 
     public void onLoginPressed(ActionEvent actionEvent) {
-        String username = usernameTextField.getText();
-        System.out.println(username);
+        System.out.println(usernameTextField.getText());
+    }
+
+    public void selectedRMI(ActionEvent actionEvent) {
+        System.out.println("RMI");
+    }
+
+    public void selectedSocket(ActionEvent actionEvent) {
+        System.out.println("Socket");
     }
 }
