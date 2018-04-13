@@ -28,18 +28,18 @@ public class GameManager {
 
     private static GameManager instance;
 
-    private GameManager() {
+    private GameManager(Board board) {
         setUpGameManager();
         Set<PublicObjectiveCard> choosenPublicObjectiveCards = choosePublicObjectiveCards();
         Set<ToolCard> choosenToolCards = chooseToolCards();
-        this.board = new Board(choosenPublicObjectiveCards, choosenToolCards);
+        this.board = board;
         //TODO:Find a way to pass the players and the selected cards to the board;
 
     }
 
-    public static synchronized GameManager get() {
+    public static synchronized GameManager get(Board board) {
         if (instance == null) {
-            instance = new GameManager();
+            instance = new GameManager(board);
         }
 
         return instance;
