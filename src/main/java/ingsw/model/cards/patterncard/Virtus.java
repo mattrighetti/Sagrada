@@ -2,6 +2,6 @@ package ingsw.model.cards.patterncard;
 
 public class Virtus extends PatternCard {
     public Virtus() {
-        setDifficulty(5);
+        super("Virtus", 5);
     }
 }

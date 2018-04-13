@@ -6,12 +6,16 @@ public abstract class PatternCard extends Card {
     private int difficulty;
     private Box grid[][];
 
-    /**
-     * TODO:This method will probably be reimplementated because the single card will probably be saved in a file
-     * @param difficulty
-     */
-    protected void setDifficulty(int difficulty) {
+    public PatternCard(String name, int difficulty) {
+        super(name);
         this.difficulty = difficulty;
+    }
+
+    @Override
+    public String toString() {
+        return "PatternCard{" +
+                "name='" + getName() + '\'' +
+                '}';
     }
 
     public Box[][] getGrid() {
@@ -21,4 +25,5 @@ public abstract class PatternCard extends Card {
     public void setGrid(Box[][] grid) {
         this.grid = grid;
     }
+    //TODO will this be used?
 }

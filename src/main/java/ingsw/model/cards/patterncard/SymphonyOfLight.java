@@ -2,6 +2,6 @@ package ingsw.model.cards.patterncard;
 
 public class SymphonyOfLight extends PatternCard {
     public SymphonyOfLight() {
-        setDifficulty(6);
+        super("SymphonyOfLight", 6);
     }
 }

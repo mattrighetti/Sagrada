@@ -4,7 +4,14 @@ import ingsw.model.cards.Card;
 
 public abstract class PrivateObjectiveCard extends Card {
 
-    enum Color {
-        RED, YELLOW, BLUE, PURPLE, GREEN
-    };
+    @Override
+    public String toString() {
+        return "PrivateObjCard{" +
+                "name='" + getName() + '\'' +
+                '}';
+    }
+
+    public PrivateObjectiveCard(String name) {
+        super(name);
+    }
 }
