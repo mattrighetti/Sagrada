@@ -1,35 +1,20 @@
 package ingsw.model;
 
-import java.util.List;
+import ingsw.model.cards.privateoc.PrivateObjectiveCard;
+import java.util.Set;
 
 public class Player {
-    String username;
-    int noOfWins;
-    int noOfLose;
-    int noOfDraws;
-    List<String> matchesPlayed;
+    //TODO decide which collection to use for cards sets and add the others methods and the favor tokens(int or class)
 
-    public Player(String username) {
-        this.username = username;
-    }
+    private User user;
+    private Set<PrivateObjectiveCard> privateObjectiveCards;
 
-    public String getUsername() {
-        return username;
-    }
+    //-----METHODS----
 
-    public int getNoOfWins() {
-        return noOfWins;
-    }
+    //Get the User instance of this player
+    public User getUser(){ return user}
 
-    public int getNoOfLose() {
-        return noOfLose;
-    }
+    //Get a Private Card of this player
+    //public PrivateObjectiveCard getPrivateObjectiveCard(){ return }
 
-    public int getNoOfDraws() {
-        return noOfDraws;
-    }
-
-    public List<String> getMatchesPlayed() {
-        return matchesPlayed;
-    }
 }
