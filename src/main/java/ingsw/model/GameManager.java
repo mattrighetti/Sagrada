@@ -1,4 +1,4 @@
-/**
+/*
  *
  * Un GameManager per ogni partita
  * Board passata da SagradaGame al momento della scelta o creazione della nuova partita o preesistente
@@ -16,46 +16,25 @@ import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 
-import java.util.Set;
+import java.util.*;
 
 public class GameManager {
-    Board board;
-    Set<PrivateObjectiveCard> privateObjectiveCards;
-    Set<PublicObjectiveCard> publicObjectiveCards;
-    Set<ToolCard> toolCards;
-    Set<PatternCard> patternCards;
-    //TODO decidere come gestire i FavorToken, se con un semplice int o con una nuova classe, in tal caso aggiungere un nuovo set di tokens
+    private Board board;
+    private List<Player> playerList;
+    private List<PrivateObjectiveCard> privateObjectiveCards;
+    private List<PublicObjectiveCard> publicObjectiveCards;
+    private List<ToolCard> toolCards;
+    private List<PatternCard> patternCards;
 
     private static GameManager instance;
 
     private GameManager() {
-        setUpGameManager(); //Choose the cards of the match to insert in the board.
+        setUpGameManager();
         Set<PublicObjectiveCard> choosenPublicObjectiveCards = choosePublicObjectiveCards();
-//      Set<PrivateObjectiveCard> choosenPrivateObjectiveCards = choosePrivateObjectiveCards(); //TODO:Check if this kind of cards has to be choosen now.
         Set<ToolCard> choosenToolCards = chooseToolCards();
-        this.board = new Board(); //TODO:Find a way to pass the players and the selected cards to the board;
-                                  //TODO Re-edit:Find a way to pass the players. The choosen cards will be selected with the methods called above.The Board constructor must be reimplemented once the implementation of the set is choosen.
-    }
+        this.board = new Board(choosenPublicObjectiveCards, choosenToolCards);
+        //TODO:Find a way to pass the players and the selected cards to the board;
 
-    private Set<ToolCard> chooseToolCards() {
-        /**
-         * Pick 3 ToolCards in a random way and store them in a set to return;
-         */
-        return null;
-    }
-
-    private Set<PrivateObjectiveCard> choosePrivateObjectiveCards() {
-        /**
-         * ??????
-         */
-        return null;
-    }
-
-    private Set<PublicObjectiveCard> choosePublicObjectiveCards() {
-        /**
-         * Pick 3 Public Objective Cards in a random way and store them in a set to return;
-         */
-        return null;
     }
 
     public static synchronized GameManager get() {
@@ -71,10 +50,10 @@ public class GameManager {
         setUpPublicObjectiveCards();
         setUpToolCards();
         setUpPatternCards();
-        //TODO (check if there's a quicker way to do this)
     }
 
     private void setUpPatternCards() {
+        this.patternCards = new LinkedList<>();
         this.patternCards.add(new AuroraeMagnificus());
         this.patternCards.add(new AuroraSagradis());
         this.patternCards.add(new Batllo());
@@ -103,6 +82,7 @@ public class GameManager {
     }
 
     private void setUpToolCards() {
+        toolCards = new LinkedList<>();
         this.toolCards.add(new CopperFoilBurnisher());
         this.toolCards.add(new CorkBarckedStraightEdge());
         this.toolCards.add(new EglomiseBrush());
@@ -119,6 +99,7 @@ public class GameManager {
     }
 
     private void setUpPublicObjectiveCards() {
+        publicObjectiveCards = new LinkedList<>();
         this.publicObjectiveCards.add(new ColorDiagonals());
         this.publicObjectiveCards.add(new ColorVariety());
         this.publicObjectiveCards.add(new ColumnShadeVariety());
@@ -133,6 +114,7 @@ public class GameManager {
     }
 
     private void setUpPrivateObjectiveCards() {
+        privateObjectiveCards = new LinkedList<>();
         this.privateObjectiveCards.add(new BluePrivateObjectiveCard());
         this.privateObjectiveCards.add(new GreenPrivateObjectiveCard());
         this.privateObjectiveCards.add(new RedPrivateObjectiveCard());
@@ -141,5 +123,19 @@ public class GameManager {
 
     }
 
+    private Set<ToolCard> chooseToolCards() {
+        Collections.shuffle(toolCards);
+        return new HashSet<>(toolCards.subList(0, 3));
+    }
+
+    private Set<PublicObjectiveCard> choosePublicObjectiveCards() {
+        Collections.shuffle(publicObjectiveCards);
+        return new HashSet<>(publicObjectiveCards.subList(0, 3));
+    }
+
+    private Set<PatternCard> choosePatternCards() {
+        Collections.shuffle(patternCards);
+        return new HashSet<>(patternCards.subList(0,4));
+    }
 
 }

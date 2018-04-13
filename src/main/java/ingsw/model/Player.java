@@ -12,7 +12,7 @@ public class Player {
     //-----METHODS----
 
     //Get the User instance of this player
-    public User getUser(){ return user}
+    public User getUser(){ return user; }
 
     //Get a Private Card of this player
     //public PrivateObjectiveCard getPrivateObjectiveCard(){ return }
