@@ -17,32 +17,57 @@ import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class GameManager {
+public class GameManager extends Thread{
     private Board board;
-    private List<Player> playerList;
+    private ArrayList<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
 
-    private static GameManager instance;
-
-    private GameManager(Board board) {
+    private GameManager(ArrayList<User> users) {
         setUpGameManager();
         Set<PublicObjectiveCard> choosenPublicObjectiveCards = choosePublicObjectiveCards();
         Set<ToolCard> choosenToolCards = chooseToolCards();
-        this.board = board;
+        this.playerList = createPlayers(users, privateObjectiveCards);
+        this.board = new Board(choosenPublicObjectiveCards, choosenToolCards, playerList);
         //TODO:Find a way to pass the players and the selected cards to the board;
+    }
+
+    public void run(){
+        //The match starts
+
+        //TODO: Choose Pattern card for each player
+
+        //TODO: Set Favor Tokens for each player
+
+        for( int i = 0; i < 10; i++){
+            playRound(); //TODO: Create Round class or implement it in the GameManager??
+        }
+
+        //TODO: count the points
+
+        //TODO: choose the winner
+
+        //TODO: end of the match
 
     }
 
-    public static synchronized GameManager get(Board board) {
-        if (instance == null) {
-            instance = new GameManager(board);
-        }
+    private ArrayList<Player> createPlayers(ArrayList<User> users, List<PrivateObjectiveCard> privateObjectiveCards) {
+        //TODO: java funzionale
+        // List<String> result = users.stream().map( x -> x.getUsername() )
+        //                                          .collect(Collectors.toList());
 
-        return instance;
+        ArrayList<Player> players = new ArrayList<Player>();
+        for (User user: users) {
+            Collections.shuffle(privateObjectiveCards);
+            players.add(new Player(user, privateObjectiveCards.get(0) ));
+            privateObjectiveCards.remove(0);
+            //TODO: check if the list indexes are up to date after the remove()
+        }
+        return null;
     }
 
     private synchronized void setUpGameManager() {

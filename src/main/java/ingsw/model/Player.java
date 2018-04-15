@@ -7,7 +7,13 @@ public class Player {
     //TODO decide which collection to use for cards sets and add the others methods and the favor tokens(int or class)
 
     private User user;
-    private Set<PrivateObjectiveCard> privateObjectiveCards;
+    private PrivateObjectiveCard privateObjectiveCard;
+
+    public Player(User user, PrivateObjectiveCard privateObjectiveCard) {
+        this.user = user;
+        this.privateObjectiveCard = privateObjectiveCard;
+
+    }
 
     //-----METHODS----
 
