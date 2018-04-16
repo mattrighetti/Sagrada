@@ -3,7 +3,10 @@ package ingsw.controller;
 import ingsw.model.GameManager;
 
 public class Controller implements RemoteController {
+    public final transient GameManager gameManager;
 
-    public final transient GameManager gameManager = GameManager.get();
+    public Controller(String matchName) {
+        this.gameManager = new GameManager(matchName);
+    }
 
 }

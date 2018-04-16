@@ -17,23 +17,19 @@ import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class GameManager extends Thread{
+public class GameManager extends Thread {
     private Board board;
-    private ArrayList<Player> playerList;
+    private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
 
-    private GameManager(ArrayList<User> users) {
+    public GameManager(ArrayList<User> users) throws Exception {
         setUpGameManager();
-        Set<PublicObjectiveCard> choosenPublicObjectiveCards = choosePublicObjectiveCards();
-        Set<ToolCard> choosenToolCards = chooseToolCards();
-        this.playerList = createPlayers(users, privateObjectiveCards);
-        this.board = new Board(choosenPublicObjectiveCards, choosenToolCards, playerList);
-        //TODO:Find a way to pass the players and the selected cards to the board;
+        createPlayers(users, privateObjectiveCards);
+        this.board = new Board(choosePublicObjectiveCards(), chooseToolCards(), playerList);
     }
 
     public void run(){
@@ -44,7 +40,8 @@ public class GameManager extends Thread{
         //TODO: Set Favor Tokens for each player
 
         for( int i = 0; i < 10; i++){
-            playRound(); //TODO: Create Round class or implement it in the GameManager??
+            //playRound();
+            //TODO: Create Round class or implement it in the GameManager??
         }
 
         //TODO: count the points
@@ -55,19 +52,16 @@ public class GameManager extends Thread{
 
     }
 
-    private ArrayList<Player> createPlayers(ArrayList<User> users, List<PrivateObjectiveCard> privateObjectiveCards) {
-        //TODO: java funzionale
-        // List<String> result = users.stream().map( x -> x.getUsername() )
-        //                                          .collect(Collectors.toList());
-
-        ArrayList<Player> players = new ArrayList<Player>();
-        for (User user: users) {
-            Collections.shuffle(privateObjectiveCards);
-            players.add(new Player(user, privateObjectiveCards.get(0) ));
+    private void createPlayers(ArrayList<User> users, List<PrivateObjectiveCard> privateObjectiveCards) throws Exception {
+        this.playerList = new ArrayList<>();
+        Collections.shuffle(privateObjectiveCards);
+        for (User user : users) {
+            playerList.add(new Player(user, privateObjectiveCards.get(0)));
             privateObjectiveCards.remove(0);
-            //TODO: check if the list indexes are up to date after the remove()
         }
-        return null;
+
+        if (playerList.size() != users.size())
+            throw new Exception("Player list not initialized correctly");
     }
 
     private synchronized void setUpGameManager() {
@@ -161,6 +155,10 @@ public class GameManager extends Thread{
     private Set<PatternCard> choosePatternCards() {
         Collections.shuffle(patternCards);
         return new HashSet<>(patternCards.subList(0,4));
+    }
+
+    public synchronized void loginUser() {
+        /* Single login per user, or wait for all user and the pass the array? */
     }
 
 }
