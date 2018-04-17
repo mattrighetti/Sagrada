@@ -18,18 +18,16 @@ import ingsw.model.cards.toolcards.*;
 
 import java.util.*;
 
-public class GameManager extends Thread {
+public class GameManager {
     private Board board;
-    private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
 
-    public GameManager(ArrayList<User> users) throws Exception {
+    public GameManager(List<User> users) {
         setUpGameManager();
-        createPlayers(users, privateObjectiveCards);
-        this.board = new Board(choosePublicObjectiveCards(), chooseToolCards(), playerList);
+        this.board = new Board(choosePublicObjectiveCards(), chooseToolCards(), createPlayers(users));
     }
 
     public void run(){
@@ -52,16 +50,15 @@ public class GameManager extends Thread {
 
     }
 
-    private void createPlayers(ArrayList<User> users, List<PrivateObjectiveCard> privateObjectiveCards) throws Exception {
-        this.playerList = new ArrayList<>();
+    private List<Player> createPlayers(List<User> users) {
+        List<Player> playerList = new ArrayList<>();
         Collections.shuffle(privateObjectiveCards);
         for (User user : users) {
             playerList.add(new Player(user, privateObjectiveCards.get(0)));
             privateObjectiveCards.remove(0);
         }
 
-        if (playerList.size() != users.size())
-            throw new Exception("Player list not initialized correctly");
+        return playerList;
     }
 
     private synchronized void setUpGameManager() {

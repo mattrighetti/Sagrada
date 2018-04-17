@@ -1,5 +1,6 @@
 package ingsw.view;
 
+import ingsw.model.SagradaGame;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,7 +12,12 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+
 public class FXMLogin extends Application {
+    SagradaGame sagradaGame;
 
     @FXML
     private TextField usernameTextField;
@@ -26,15 +32,24 @@ public class FXMLogin extends Application {
 
         Parent rootComponent = loader.load();
 
+
+
         primaryStage.setResizable(false);
         primaryStage.setTitle("Sagrada Game");
         primaryStage.setScene(new Scene(rootComponent));
         primaryStage.show();
+
+
     }
 
+    public void retrieveSagradaGame() throws RemoteException, NotBoundException {
+        sagradaGame = (SagradaGame) LocateRegistry.getRegistry().lookup("sagrada");
+    }
 
     public void onLoginPressed(ActionEvent actionEvent) {
-        System.out.println(usernameTextField.getText());
+        sagradaGame.joinSagradaGame(usernameTextField.getText());
+        System.out.println("@" + usernameTextField.getText() + " logged in.");
+
     }
 
     public void selectedRMI(ActionEvent actionEvent) {

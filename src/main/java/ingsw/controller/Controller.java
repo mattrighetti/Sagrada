@@ -1,12 +1,20 @@
 package ingsw.controller;
 
+import ingsw.model.Board;
 import ingsw.model.GameManager;
+import ingsw.model.User;
+
+import java.util.List;
 
 public class Controller implements RemoteController {
-    public final transient GameManager gameManager;
+    private final GameManager gameManager;
 
-    public Controller(String matchName) {
-        this.gameManager = new GameManager(matchName);
+    public Controller(List<User> users) {
+        gameManager = new GameManager(users);
     }
 
+    @Override
+    public Board createNewMatch(List<User> users) {
+        return null;
+    }
 }

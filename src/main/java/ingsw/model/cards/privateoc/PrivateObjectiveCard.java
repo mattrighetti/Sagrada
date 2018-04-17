@@ -14,4 +14,6 @@ public abstract class PrivateObjectiveCard extends Card {
     public PrivateObjectiveCard(String name) {
         super(name);
     }
+
+    public abstract void check();
 }
