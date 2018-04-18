@@ -1,7 +1,7 @@
 package ingsw.controller;
 
-public class ControllerSocket implements ViewController {
-
+public class SocketNetwork implements NetworkTransmitter {
     private RemoteController controller;
+
 
 }

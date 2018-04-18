@@ -1,7 +1,7 @@
 package ingsw.controller;
 
-public class ControllerRMI implements ViewController {
-
+public class RMINetwork implements NetworkTransmitter {
     private RemoteController controller;
+
 
 }
