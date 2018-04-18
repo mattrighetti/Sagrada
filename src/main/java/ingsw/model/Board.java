@@ -15,6 +15,7 @@ public class Board {
     private Set<ToolCard> toolCards;
     private static Set<Dice> diceBag;
     private List<Dice> draftedDice;
+    private RoundTrack roundTrack;
 
     public Board(Set<PublicObjectiveCard> publicObjectiveCards, Set<ToolCard> toolCards, List<Player> playerList) {
         this.publicObjectiveCards = publicObjectiveCards;
