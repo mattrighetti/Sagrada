@@ -19,12 +19,13 @@ public class Board {
         this.publicObjectiveCards = publicObjectiveCards;
         this.toolCards = toolCards;
         this.players = playerList;
+        setupDiceBag();
     }
 
     /**
      * Sets up the dice bag with 18 dice per color
      */
-    public static void setupDiceBag() {
+    private void setupDiceBag() {
         diceBag = new HashSet<>();
         EnumSet.allOf(Color.class).stream().filter(x -> x != Color.BLANK).forEach(x -> {
             for (int i = 0; i < 18; i++) {

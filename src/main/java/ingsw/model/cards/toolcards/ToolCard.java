@@ -3,6 +3,7 @@ package ingsw.model.cards.toolcards;
 import ingsw.model.cards.Card;
 
 public abstract class ToolCard extends Card {
+    private int price = 1;
 
     public ToolCard(String name) {
         super(name);
@@ -13,6 +14,14 @@ public abstract class ToolCard extends Card {
         return "ToolCard{" +
                 "name='" + getName() + '\'' +
                 '}';
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void increasePrice() {
+        price = 2;
     }
 
     public abstract void action();
