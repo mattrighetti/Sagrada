@@ -12,4 +12,9 @@ public class YellowPrivateObjectiveCard extends PrivateObjectiveCard {
     public Color getCardColor() {
         return cardColor;
     }
+
+    @Override
+    public void check() {
+        //TODO
+    }
 }

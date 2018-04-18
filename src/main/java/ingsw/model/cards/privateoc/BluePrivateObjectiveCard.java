@@ -12,4 +12,9 @@ public class BluePrivateObjectiveCard extends PrivateObjectiveCard {
     public Color getColor() {
         return color;
     }
+
+    @Override
+    public void check() {
+        //TODO
+    }
 }
