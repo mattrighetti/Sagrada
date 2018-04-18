@@ -28,6 +28,7 @@ public class GameManager {
     public GameManager(List<User> users) {
         setUpGameManager();
         this.board = new Board(choosePublicObjectiveCards(), chooseToolCards(), createPlayers(users));
+        run();
     }
 
     public void run(){
