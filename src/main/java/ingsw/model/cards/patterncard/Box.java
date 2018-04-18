@@ -1,7 +1,7 @@
 package ingsw.model.cards.patterncard;
 
 import ingsw.model.Color;
-import ingsw.model.dice.Dice;
+import ingsw.model.Dice;
 
 public class Box {
     private Color color;
