@@ -8,10 +8,10 @@ public class Round {
     private static int noRound;
     private Set<Dice> unusedDice;
 
-    public Round(Set<Dice> unesuedDice) {
+    public Round(Set<Dice> unusedDice) {
         currentRound++;
         noRound = currentRound;
-        this.unusedDice = unesuedDice;
+        this.unusedDice = unusedDice;
 
     }
 

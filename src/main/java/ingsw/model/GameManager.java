@@ -132,11 +132,11 @@ public class GameManager {
 
     private void setUpPrivateObjectiveCards() {
         privateObjectiveCards = new LinkedList<>();
-        this.privateObjectiveCards.add(new BluePrivateObjectiveCard());
-        this.privateObjectiveCards.add(new GreenPrivateObjectiveCard());
-        this.privateObjectiveCards.add(new RedPrivateObjectiveCard());
-        this.privateObjectiveCards.add(new PurplePrivateObjectiveCard());
-        this.privateObjectiveCards.add(new YellowPrivateObjectiveCard());
+        this.privateObjectiveCards.add(new PrivateObjectiveCard("Blue",Color.BLUE));
+        this.privateObjectiveCards.add(new PrivateObjectiveCard("Green",Color.GREEN));
+        this.privateObjectiveCards.add(new PrivateObjectiveCard("Red", Color.RED));
+        this.privateObjectiveCards.add(new PrivateObjectiveCard("Purple", Color.PURPLE));
+        this.privateObjectiveCards.add(new PrivateObjectiveCard("Yellow",Color.YELLOW));
 
     }
 
