@@ -1,6 +1,6 @@
 package ingsw.model;
 
-import ingsw.model.cards.Exception.InvalidDiceColorException;
+import ingsw.model.cards.exceptions.InvalidDiceColorException;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 
@@ -35,7 +35,7 @@ public class Board {
                 try {
                     diceBag.add(new Dice(x));
                 } catch (InvalidDiceColorException e) {
-                    //TODO: Handle Exception
+                    e.printStackTrace();
                 }
             }
         });

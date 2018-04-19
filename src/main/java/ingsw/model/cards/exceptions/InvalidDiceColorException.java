@@ -1,4 +1,4 @@
-package ingsw.model.cards.Exception;
+package ingsw.model.cards.exceptions;
 
 public class InvalidDiceColorException extends Exception {
     public InvalidDiceColorException() {

@@ -1,7 +1,7 @@
 package ingsw.model;
 
-import ingsw.model.cards.Exception.InvalidDiceColorException;
-import ingsw.model.cards.Exception.InvalidDiceValueException;
+import ingsw.model.cards.exceptions.InvalidDiceColorException;
+import ingsw.model.cards.exceptions.InvalidDiceValueException;
 
 import java.util.Random;
 
@@ -9,17 +9,17 @@ public class Dice {
     private int faceUpValue;
     private final Color diceColor;
 
-    public Dice(Color diceColor) throws InvalidDiceColorException {
+    Dice(Color diceColor) throws InvalidDiceColorException {
         if (diceColor.equals(Color.BLANK))
             throw new InvalidDiceColorException();
         else
             this.diceColor = diceColor;
     }
 
-    public int roll() throws InvalidDiceValueException {
+    int roll() throws InvalidDiceValueException {
         int value = (new Random()).nextInt(6) + 1;
         setFaceUpValue(value);
-        return getFaceUpValue();
+        return value;
     }
 
     public int getFaceUpValue() {
