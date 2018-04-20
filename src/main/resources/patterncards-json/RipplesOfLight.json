@@ -1,0 +1,34 @@
+{
+  "difficulty": 5,
+  "grid": [
+    [
+      { "value": 0 },
+      { "value": 0 },
+      { "value": 0 },
+      { "color": "RED" },
+      { "value": 5 }
+    ],
+    [
+      { "value": 0 },
+      { "value": 0 },
+      { "color": "PURPLE" },
+      { "value": 4 },
+      { "color": "BLUE" }
+    ],
+    [
+      { "value": 0 },
+      { "color": "BLUE" },
+      { "value": 3 },
+      { "color": "YELLOW" },
+      { "value": 6 }
+    ],
+    [
+      { "color": "YELLOW" },
+      { "value": 2 },
+      { "color": "GREEN" },
+      { "value": 1 },
+      { "color": "RED" }
+    ]
+  ],
+  "name": "RipplesOfLight"
+}

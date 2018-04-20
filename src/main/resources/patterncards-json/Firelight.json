@@ -1,0 +1,34 @@
+{
+  "difficulty": 5,
+  "grid": [
+    [
+      { "value": 3 },
+      { "value": 4 },
+      { "value": 1 },
+      { "value": 5 },
+      { "value": 0 }
+    ],
+    [
+      { "value": 0 },
+      { "value": 6 },
+      { "value": 2 },
+      { "value": 0 },
+      { "color": "YELLOW" }
+    ],
+    [
+      { "value": 0 },
+      { "value": 0 },
+      { "value": 0 },
+      { "color": "YELLOW" },
+      { "color": "RED" }
+    ],
+    [
+      { "value": 5 },
+      { "value": 0 },
+      { "color": "YELLOW" },
+      { "color": "RED" },
+      { "value": 6 }
+    ]
+  ],
+  "name": "Firelight"
+}

@@ -1,0 +1,34 @@
+{
+  "difficulty": 3,
+  "grid": [
+    [
+      { "value": 0 },
+      { "value": 4 },
+      { "value": 0 },
+      { "color": "YELLOW" },
+      { "value": 6 }
+    ],
+    [
+      { "color": "RED" },
+      { "value": 0 },
+      { "value": 2 },
+      { "value": 0 },
+      { "value": 0 }
+    ],
+    [
+      { "value": 0 },
+      { "value": 0 },
+      { "color": "RED" },
+      { "color": "PURPLE" },
+      { "value": 1 }
+    ],
+    [
+      { "color": "BLUE" },
+      { "color": "YELLOW" },
+      { "value": 0 },
+      { "value": 0 },
+      { "value": 0 }
+    ]
+  ],
+  "name": "FractalDrops"
+}

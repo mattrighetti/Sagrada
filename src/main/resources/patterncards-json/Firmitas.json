@@ -1,0 +1,34 @@
+{
+  "difficulty": 5,
+  "grid": [
+    [
+      { "color": "PURPLE" },
+      { "value": 6 },
+      { "value": 0 },
+      { "value": 0 },
+      { "value": 3 }
+    ],
+    [
+      { "value": 5 },
+      { "color": "PURPLE" },
+      { "value": 3 },
+      { "value": 0 },
+      { "value": 0 }
+    ],
+    [
+      { "value": 0 },
+      { "value": 2 },
+      { "color": "PURPLE" },
+      { "value": 1 },
+      { "value": 0 }
+    ],
+    [
+      { "value": 0 },
+      { "value": 1 },
+      { "value": 5 },
+      { "color": "PURPLE" },
+      { "value": 4 }
+    ]
+  ],
+  "name": "Firmitas"
+}

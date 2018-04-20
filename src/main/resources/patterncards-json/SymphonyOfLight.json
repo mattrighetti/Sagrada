@@ -1,0 +1,34 @@
+{
+  "difficulty": 6,
+  "grid": [
+    [
+      { "value": 2 },
+      { "value": 0 },
+      { "value": 5 },
+      { "value": 0 },
+      { "value": 1 }
+    ],
+    [
+      { "color": "YELLOW" },
+      { "value": 6 },
+      { "color": "PURPLE" },
+      { "value": 2 },
+      { "color": "RED" }
+    ],
+    [
+      { "value": 0 },
+      { "color": "BLUE" },
+      { "value": 4 },
+      { "color": "GREEN" },
+      { "value": 0 }
+    ],
+    [
+      { "value": 0 },
+      { "value": 3 },
+      { "value": 0 },
+      { "value": 5 },
+      { "value": 0 }
+    ]
+  ],
+  "name": "SymphonyOfLight"
+}

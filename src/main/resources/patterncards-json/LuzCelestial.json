@@ -1,0 +1,34 @@
+{
+  "difficulty": 3,
+  "grid": [
+    [
+      { "value": 0 },
+      { "value": 0 },
+      { "color": "RED" },
+      { "value": 5 },
+      { "value": 0 }
+    ],
+    [
+      { "color": "PURPLE" },
+      { "value": 4 },
+      { "value": 0 },
+      { "color": "GREEN" },
+      { "value": 3 }
+    ],
+    [
+      { "value": 6 },
+      { "value": 0 },
+      { "value": 0 },
+      { "color": "BLUE" },
+      { "value": 0 }
+    ],
+    [
+      { "value": 0 },
+      { "color": "YELLOW" },
+      { "value": 2 },
+      { "value": 0 },
+      { "value": 0 }
+    ]
+  ],
+  "name": "LuzCelestial"
+}

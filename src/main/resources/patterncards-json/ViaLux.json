@@ -1,0 +1,34 @@
+{
+  "difficulty": 4,
+  "grid": [
+    [
+      { "color": "YELLOW" },
+      { "value": 0 },
+      { "value": 6 },
+      { "value": 0 },
+      { "value": 0 }
+    ],
+    [
+      { "value": 0 },
+      { "value": 1 },
+      { "value": 5 },
+      { "value": 0 },
+      { "value": 2 }
+    ],
+    [
+      { "value": 3 },
+      { "color": "YELLOW" },
+      { "color": "RED" },
+      { "color": "PURPLE" },
+      { "value": 0 }
+    ],
+    [
+      { "value": 0 },
+      { "value": 0 },
+      { "value": 4 },
+      { "value": 3 },
+      { "color": "RED" }
+    ]
+  ],
+  "name": "ChromaticSplendor"
+}
