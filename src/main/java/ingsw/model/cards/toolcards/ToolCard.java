@@ -12,7 +12,7 @@ public abstract class ToolCard extends Card {
     @Override
     public String toString() {
         return "ToolCard{" +
-                "name='" + getName() + '\'' +
+                "'" + getName() + "'" +
                 '}';
     }
 

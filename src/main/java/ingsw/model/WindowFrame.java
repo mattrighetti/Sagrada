@@ -9,5 +9,7 @@ public class WindowFrame {
         this.patternCard = patternCard;
     }
 
-    // ??private final color
+    public PatternCard getPatternCard() {
+        return patternCard;
+    }
 }

@@ -13,7 +13,7 @@ public abstract class PublicObjectiveCard extends Card {
     @Override
     public String toString() {
         return "PublicObjCard{" +
-                "name='" + getName() + '\'' +
+                "'" + getName() + "'" +
                 '}';
     }
 

@@ -22,7 +22,9 @@ public class FXMLogin extends Application {
     @FXML
     private TextField usernameTextField;
     @FXML
-    private RadioButton rmiRadioButton, socketRadioButton;
+    private RadioButton rmiRadioButton;
+    @FXML
+    private RadioButton socketRadioButton;
     @FXML
     private Button loginButton;
 
@@ -32,14 +34,10 @@ public class FXMLogin extends Application {
 
         Parent rootComponent = loader.load();
 
-
-
         primaryStage.setResizable(false);
         primaryStage.setTitle("Sagrada Game");
         primaryStage.setScene(new Scene(rootComponent));
         primaryStage.show();
-
-
     }
 
     public void retrieveSagradaGame() throws RemoteException, NotBoundException {
@@ -49,7 +47,6 @@ public class FXMLogin extends Application {
     public void onLoginPressed(ActionEvent actionEvent) {
         sagradaGame.joinSagradaGame(usernameTextField.getText());
         System.out.println("@" + usernameTextField.getText() + " logged in.");
-
     }
 
     public void selectedRMI(ActionEvent actionEvent) {

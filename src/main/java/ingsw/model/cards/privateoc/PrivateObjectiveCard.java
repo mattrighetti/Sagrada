@@ -15,8 +15,8 @@ public class PrivateObjectiveCard extends Card {
                 '}';
     }
 
-    public PrivateObjectiveCard(String name, Color color) {
-        super(name);
+    public PrivateObjectiveCard(Color color) {
+        super(color.toString());
         this.color = color;
     }
 

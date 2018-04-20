@@ -1,5 +1,6 @@
 package ingsw.model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class User {
@@ -11,6 +12,7 @@ public class User {
 
     public User(String username) {
         this.username = username;
+        matchesPlayed = new LinkedList<>();
     }
 
     public String getUsername() {

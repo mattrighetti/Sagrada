@@ -1,6 +1,5 @@
 package ingsw.model;
 
-import ingsw.model.cards.exceptions.InvalidDiceColorException;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 
@@ -32,11 +31,7 @@ public class Board {
         diceBag = new HashSet<>();
         EnumSet.allOf(Color.class).stream().filter(x -> x != Color.BLANK).forEach(x -> {
             for (int i = 0; i < 18; i++) {
-                try {
-                    diceBag.add(new Dice(x));
-                } catch (InvalidDiceColorException e) {
-                    e.printStackTrace();
-                }
+                diceBag.add(new Dice(x));
             }
         });
     }

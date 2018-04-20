@@ -42,4 +42,12 @@ public class Box {
         if (dice != null) dice = null;
         //TODO dice must be re-added?
     }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 }
