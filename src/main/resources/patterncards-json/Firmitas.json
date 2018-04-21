@@ -1,6 +1,4 @@
-{
-  "difficulty": 5,
-  "grid": [
+[
     [
       { "color": "PURPLE" },
       { "value": 6 },
@@ -29,6 +27,4 @@
       { "color": "PURPLE" },
       { "value": 4 }
     ]
-  ],
-  "name": "Firmitas"
-}
+]

@@ -1,6 +1,4 @@
-{
-  "difficulty": 6,
-  "grid": [
+[
     [
       { "value": 0 },
       { "value": 0 },
@@ -29,6 +27,4 @@
       { "color": "GREEN" },
       { "value": 0 }
     ]
-  ],
-  "name": "LuxMundi"
-}
+]

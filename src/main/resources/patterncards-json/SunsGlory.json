@@ -1,6 +1,4 @@
-{
-  "difficulty": 6,
-  "grid": [
+[
     [
       { "value": 1 },
       { "color": "PURPLE" },
@@ -29,6 +27,4 @@
       { "value": 2 },
       { "value": 1 }
     ]
-  ],
-  "name": "SunsGlory"
-}
+]

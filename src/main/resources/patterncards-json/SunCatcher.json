@@ -1,6 +1,4 @@
-{
-  "difficulty": 3,
-  "grid": [
+[
     [
       { "value": 0 },
       { "color": "BLUE" },
@@ -29,6 +27,4 @@
       { "value": 0 },
       { "color": "PURPLE" }
     ]
-  ],
-  "name": "SunCatcher"
-}
+]

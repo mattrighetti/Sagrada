@@ -1,6 +1,4 @@
-{
-  "difficulty": 6,
-  "grid": [
+[
     [
       { "value": 2 },
       { "value": 0 },
@@ -29,6 +27,4 @@
       { "value": 5 },
       { "value": 0 }
     ]
-  ],
-  "name": "SymphonyOfLight"
-}
+]

@@ -1,6 +1,4 @@
-{
-  "difficulty": 5,
-  "grid": [
+[
     [
       { "value": 0 },
       { "value": 0 },
@@ -29,6 +27,4 @@
       { "value": 1 },
       { "color": "RED" }
     ]
-  ],
-  "name": "RipplesOfLight"
-}
+]

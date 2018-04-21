@@ -1,6 +1,5 @@
 package ingsw.model.cards.patterncard;
 
-import ingsw.model.Color;
 import ingsw.model.cards.Card;
 
 public abstract class PatternCard extends Card {
@@ -10,6 +9,7 @@ public abstract class PatternCard extends Card {
     public PatternCard(String name, int difficulty) {
         super(name);
         this.difficulty = difficulty;
+        this.grid = new Box[4][5];
     }
 
     @Override
@@ -19,21 +19,15 @@ public abstract class PatternCard extends Card {
                 '}';
     }
 
-    public abstract void initPatternCard();
+    public int getDifficulty() {
+        return difficulty;
+    }
 
     public Box[][] getGrid() {
         return grid;
     }
 
-    public void setGrid(Box[][] grid) {
+    protected void setGrid(Box[][] grid) {
         this.grid = grid;
-    }
-
-    public void setBoxValue(int line, int column, int value) {
-        (grid[line][column]).setValue(value);
-    }
-
-    public void setBoxColor(int line, int column, Color color) {
-        (grid[line][column]).setColor(color);
     }
 }

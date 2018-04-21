@@ -1,6 +1,4 @@
-{
-  "difficulty": 5,
-  "grid": [
+[
     [
       { "value": 6 },
       { "color": "PURPLE" },
@@ -29,6 +27,4 @@
       { "value": 4 },
       { "value": 3 }
     ]
-  ],
-  "name": "ShadowThief"
-}
+]

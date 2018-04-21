@@ -1,6 +1,4 @@
-{
-  "difficulty": 5,
-  "grid": [
+[
     [
       { "value": 0 },
       { "color": "BLUE" },
@@ -29,6 +27,4 @@
       { "value": 1 },
       { "value": 0 }
     ]
-  ],
-  "name": "FulgorDelCielo"
-}
+]

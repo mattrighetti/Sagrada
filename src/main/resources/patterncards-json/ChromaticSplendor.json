@@ -1,6 +1,4 @@
-{
-  "difficulty": 4,
-  "grid": [
+[
     [
       { "value": 0 },
       { "value": 0 },
@@ -29,6 +27,4 @@
       { "value": 0 },
       { "value": 4 }
     ]
-  ],
-  "name": "ChromaticSplendor"
-}
+]

@@ -1,6 +1,4 @@
-{
-  "difficulty": 3,
-  "grid": [
+[
     [
       { "color": "BLUE" },
       { "value": 6 },
@@ -29,6 +27,4 @@
       { "value": 1 },
       { "color": "GREEN" }
     ]
-  ],
-  "name": "Bellesguard"
-}
+]

@@ -1,6 +1,4 @@
-{
-  "difficulty": 5,
-  "grid": [
+[
     [
       { "value": 3 },
       { "value": 4 },
@@ -29,6 +27,4 @@
       { "color": "RED" },
       { "value": 6 }
     ]
-  ],
-  "name": "Firelight"
-}
+]

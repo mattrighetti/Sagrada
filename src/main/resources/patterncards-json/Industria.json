@@ -1,6 +1,4 @@
-{
-  "difficulty": 5,
-  "grid": [
+[
     [
       { "value": 1 },
       { "color": "RED" },
@@ -29,6 +27,4 @@
       { "value": 3 },
       { "color": "RED" }
     ]
-  ],
-  "name": "Industria"
-}
+]

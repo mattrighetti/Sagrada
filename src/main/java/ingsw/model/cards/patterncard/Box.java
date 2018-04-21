@@ -5,19 +5,14 @@ import ingsw.model.Dice;
 
 public class Box {
     private Color color;
-    private int value;
+    private Integer value;
     Dice dice;
 
     public Box(Color color) {
         this.color = color;
     }
 
-    public Box(int value) {
-        this.value = value;
-    }
-
-    public Box(Color color, int value) {
-        this.color = color;
+    public Box(Integer value) {
         this.value = value;
     }
 
@@ -25,12 +20,12 @@ public class Box {
         return color;
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
     public boolean isValueSet() {
-        return value != -1;
+        return value != null;
     }
 
     public void insertDice(Dice dice) {
@@ -41,13 +36,5 @@ public class Box {
     public void removeDice() {
         if (dice != null) dice = null;
         //TODO dice must be re-added?
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 }

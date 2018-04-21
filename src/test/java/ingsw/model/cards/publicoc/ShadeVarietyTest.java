@@ -15,8 +15,8 @@ class ShadeVarietyTest {
 
     @Test
     void toStringTest() {
-        assertEquals("ShadeShadeVariety", shadeVariety.getName());
-        assertEquals("PublicObjCard{'ShadeShadeVariety'}", shadeVariety.toString());
+        assertEquals("ShadeVariety", shadeVariety.getName());
+        assertEquals("PublicObjCard{'ShadeVariety'}", shadeVariety.toString());
     }
 
     @Test
