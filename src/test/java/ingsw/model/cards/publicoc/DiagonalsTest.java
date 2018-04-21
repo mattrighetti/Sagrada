@@ -5,23 +5,23 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ColorDiagonalsTest {
-    ColorDiagonals colorDiagonals;
+class DiagonalsTest {
+    Diagonals diagonals;
 
     @BeforeEach
     void setUp() {
-        colorDiagonals = new ColorDiagonals();
+        diagonals = new Diagonals();
     }
 
     @Test
     void toStringTest() {
-        assertEquals("ColorDiagonals", colorDiagonals.getName());
-        assertEquals("PublicObjCard{'ColorDiagonals'}", colorDiagonals.toString());
+        assertEquals("Diagonals", diagonals.getName());
+        assertEquals("PublicObjCard{'Diagonals'}", diagonals.toString());
     }
 
     @Test
     void checkTest() {
-        colorDiagonals.check();
+        diagonals.check();
         //TODO test
     }
 
