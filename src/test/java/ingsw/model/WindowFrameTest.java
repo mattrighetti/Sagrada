@@ -20,6 +20,11 @@ class WindowFrameTest {
     void getPatternCard() {
         Gravitas gravitasPatternCard = new Gravitas();
         assertEquals(gravitasPatternCard.getName(), windowFrame.getPatternCard().getName());
-        assertEquals(gravitasPatternCard.getGrid(), windowFrame.getPatternCard().getGrid());
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                assertEquals(gravitasPatternCard.getGrid()[i][j].getColor(), windowFrame.getPatternCard().getGrid()[i][j].getColor());
+                assertEquals(gravitasPatternCard.getGrid()[i][j].getValue(), windowFrame.getPatternCard().getGrid()[i][j].getValue());
+            }
+        }
     }
 }

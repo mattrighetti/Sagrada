@@ -95,7 +95,6 @@ public class GameManager {
         this.patternCards.add(new ViaLux());
         this.patternCards.add(new Virtus());
         this.patternCards.add(new WaterOfLife());
-
     }
 
     private void setUpToolCards() {
