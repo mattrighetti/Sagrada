@@ -2,14 +2,17 @@ package ingsw.model.cards.patterncard;
 
 import ingsw.model.cards.Card;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class PatternCard extends Card {
     private int difficulty;
-    private Box[][] grid;
+    protected List<List<Box>> grid;
 
     public PatternCard(String name, int difficulty) {
         super(name);
+        fillGrid();
         this.difficulty = difficulty;
-        this.grid = new Box[4][5];
     }
 
     @Override
@@ -23,11 +26,20 @@ public abstract class PatternCard extends Card {
         return difficulty;
     }
 
-    public Box[][] getGrid() {
+    public void setGrid(List<List<Box>> grid) {
+        this.grid = grid;
+    }
+
+    public List<List<Box>> getGrid() {
         return grid;
     }
 
-    protected void setGrid(Box[][] grid) {
-        this.grid = grid;
+    private void fillGrid() {
+        this.grid = new ArrayList<List<Box>>(4);
+        this.grid.add(new ArrayList<>(5));
+        this.grid.add(new ArrayList<>(5));
+        this.grid.add(new ArrayList<>(5));
+        this.grid.add(new ArrayList<>(5));
     }
+
 }

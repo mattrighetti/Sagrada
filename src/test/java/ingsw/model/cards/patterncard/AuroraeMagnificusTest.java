@@ -12,7 +12,7 @@ class AuroraeMagnificusTest {
     Box[][] expectedGrid = new Box[4][5];
 
     @BeforeEach
-    void setUp() {
+    void setUp() { //TODO rifare
         auroraeMagnificus = new AuroraeMagnificus();
         expectedGridJSON = "[\n" +
                 "    [\n" +
@@ -51,15 +51,5 @@ class AuroraeMagnificusTest {
     void toStringTest() {
         assertEquals("AuroraeMagnificus", auroraeMagnificus.getName());
         assertEquals("PatternCard{'AuroraeMagnificus'}", auroraeMagnificus.toString());
-    }
-
-    @Test
-    void patterCardTest() {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
-                assertEquals(expectedGrid[i][j].getValue(), auroraeMagnificus.getGrid()[i][j].getValue());
-                assertEquals(expectedGrid[i][j].getColor(), auroraeMagnificus.getGrid()[i][j].getColor());
-            }
-        }
     }
 }

@@ -37,4 +37,8 @@ public class Box {
         if (dice != null) dice = null;
         //TODO dice must be re-added?
     }
+
+    public Dice getDice() {
+        return dice;
+    }
 }

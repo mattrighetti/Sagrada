@@ -21,11 +21,7 @@ public class PrivateObjectiveCard extends Card {
     }
 
     //Count how many dice of the same color of the PrivateCard there are in the pattern and \return the value
-    public int check(PatternCard patternCard){
-        int noDices = 0;
-        for (int i = 0; i < 4; i++ ){
-            for (int j = 0; j< 5; j++ ) if (patternCard.getGrid()[i][j].getColor().equals(color)) noDices++;
-        }
-        return noDices;
+    public int check(PatternCard patternCard) {
+        return 0; //TODO
     }
 }
