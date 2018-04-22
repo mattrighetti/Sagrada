@@ -1,8 +1,12 @@
 package ingsw.model.cards.publicoc;
 
 import ingsw.model.cards.Card;
+import ingsw.model.cards.patterncard.Box;
+
+import java.util.List;
 
 public abstract class PublicObjectiveCard extends Card {
+
     private int points;
 
     public PublicObjectiveCard(String name) {
@@ -17,5 +21,9 @@ public abstract class PublicObjectiveCard extends Card {
                 '}';
     }
 
-    public abstract void check();
+    public int getPoints() {
+        return points;
+    }
+
+    public abstract int check(List<List<Box>> grid);
 }

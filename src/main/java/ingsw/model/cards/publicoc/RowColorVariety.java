@@ -1,5 +1,9 @@
 package ingsw.model.cards.publicoc;
 
+import ingsw.model.cards.patterncard.Box;
+
+import java.util.List;
+
 public class RowColorVariety extends PublicObjectiveCard {
 
     public RowColorVariety() {
@@ -7,7 +11,7 @@ public class RowColorVariety extends PublicObjectiveCard {
     }
 
     @Override
-    public void check() {
+    public int check(List<List<Box>> grid) {
 
     }
 }
