@@ -9,7 +9,7 @@ import java.util.List;
 public class RowShadeVariety extends PublicObjectiveCard {
 
     public RowShadeVariety() {
-        super("RowShadeVariety");
+        super("RowShadeVariety", 5);
     }
 
     @Override

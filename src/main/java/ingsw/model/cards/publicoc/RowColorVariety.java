@@ -3,13 +3,12 @@ package ingsw.model.cards.publicoc;
 import ingsw.model.Color;
 import ingsw.model.cards.patterncard.Box;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RowColorVariety extends PublicObjectiveCard {
 
     public RowColorVariety() {
-        super("RowColorVariety");
+        super("RowColorVariety", 6);
     }
 
     //test if distinct() function used on enum works

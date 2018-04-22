@@ -9,9 +9,9 @@ public abstract class PublicObjectiveCard extends Card {
 
     private int points;
 
-    public PublicObjectiveCard(String name) {
+    public PublicObjectiveCard(String name, int points) {
         super(name);
-        //TODO points
+        this.points = points;
     }
 
     @Override

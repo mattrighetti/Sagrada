@@ -7,7 +7,7 @@ import java.util.List;
 public class ColumnShadeVariety extends PublicObjectiveCard {
 
     public ColumnShadeVariety() {
-        super("ColumnShadeVariety");
+        super("ColumnShadeVariety", 4);
     }
 
     @Override

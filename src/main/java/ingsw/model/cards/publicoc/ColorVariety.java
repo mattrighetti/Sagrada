@@ -7,7 +7,7 @@ import java.util.List;
 public class ColorVariety extends PublicObjectiveCard {
 
     public ColorVariety() {
-        super("ColorVariety");
+        super("ColorVariety", 4);
     }
 
     @Override
