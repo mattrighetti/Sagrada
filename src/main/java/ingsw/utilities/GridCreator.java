@@ -14,6 +14,8 @@ import java.util.List;
 public final class GridCreator {
     static Gson gson;
     static JsonReader jsonReader;
+    public static Type GRID_TYPE = new TypeToken<ArrayList<ArrayList<Box>>>(){}.getType();
+
 
     private GridCreator() {}
 
@@ -24,7 +26,6 @@ public final class GridCreator {
         } catch (FileNotFoundException e) {
             System.err.println("It's ok");
         }
-        Type typeOfGrid = new TypeToken<ArrayList<ArrayList<Box>>>(){}.getType();
-        return gson.fromJson(jsonReader, typeOfGrid);
+        return gson.fromJson(jsonReader, GRID_TYPE);
     }
 }
