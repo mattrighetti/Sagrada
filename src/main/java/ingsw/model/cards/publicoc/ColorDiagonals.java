@@ -7,11 +7,12 @@ import java.util.List;
 public class ColorDiagonals extends PublicObjectiveCard {
 
     public ColorDiagonals() {
-        super("ColorDiagonals", 1);
+        super("ColorDiagonals", 5);
     }
 
     @Override
     public int check(List<List<Box>> grid) {
+
 
     }
 }
