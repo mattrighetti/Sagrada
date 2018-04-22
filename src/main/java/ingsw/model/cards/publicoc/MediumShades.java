@@ -6,34 +6,35 @@ import java.util.List;
 
 public class MediumShades extends PublicObjectiveCard {
 
-    private final int shade1 = 1;
-    private final int shade2 = 2;
+    private final int firstShade = 3;
+    private final int secondShade = 4;
 
     public MediumShades() {
         super("MediumShades");
     }
 
-    public int getShade1() {
-        return shade1;
+    public int getFirstShade() {
+        return firstShade;
     }
 
-    public int getShade2() {
-        return shade2;
+    public int getSecondShade() {
+        return secondShade;
     }
 
     @Override
     public int check(List<List<Box>> grid) {
-        int noShades1 = 0;
-        int noShades2 = 0;
-        noShades1 = grid.stream().mapToInt(x ->
+        int numOfFirstShades = 0;
+        int numOfSecondShades = 0;
+
+        numOfFirstShades = grid.stream().mapToInt(x ->
                 (int) x.stream().mapToInt( y ->
                         y.getDice().getFaceUpValue()).filter(y ->
-                        y == getShade1()).count()).reduce(0, (sum,x) -> sum + x );
-        noShades2 = grid.stream().mapToInt(x ->
+                        y == getFirstShade()).count()).reduce(0, (sum,x) -> sum + x );
+        numOfSecondShades = grid.stream().mapToInt(x ->
                 (int) x.stream().mapToInt( y ->
                         y.getDice().getFaceUpValue()).filter(y ->
-                        y == getShade2()).count()).reduce(0, (sum,x) -> sum + x );
-        return (int) Math.min(shade1,shade2) * getPoints();
+                        y == getSecondShade()).count()).reduce(0, (sum,x) -> sum + x );
+        return (int) Math.min(numOfFirstShades,numOfSecondShades) * getPoints();
 
     }
 }
