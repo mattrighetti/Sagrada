@@ -27,7 +27,7 @@ public class ColumnShadeVariety extends PublicObjectiveCard {
             if(colorList.size() == 4){
                 minValue++;
             }
-            colorList.clear();git
+            colorList.clear();
         }
         return minValue;
     }

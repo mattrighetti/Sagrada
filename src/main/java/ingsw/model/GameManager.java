@@ -120,7 +120,7 @@ public class GameManager {
         this.publicObjectiveCards.add(new ColorVariety());
         this.publicObjectiveCards.add(new ColumnShadeVariety());
         this.publicObjectiveCards.add(new DeepShades());
-        this.publicObjectiveCards.add(new Diagonals());
+        this.publicObjectiveCards.add(new ColumnColorVariety());
         this.publicObjectiveCards.add(new LightShades());
         this.publicObjectiveCards.add(new MediumShades());
         this.publicObjectiveCards.add(new RowColorVariety());

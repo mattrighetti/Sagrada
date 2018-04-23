@@ -6,7 +6,7 @@ public class Dice {
     private int faceUpValue;
     private final Color diceColor;
 
-    Dice(Color diceColor) {
+    public Dice(Color diceColor) {
         this.diceColor = diceColor;
     }
 

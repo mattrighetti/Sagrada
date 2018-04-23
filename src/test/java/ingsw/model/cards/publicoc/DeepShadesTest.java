@@ -21,7 +21,7 @@ class DeepShadesTest {
 
     @Test
     void checkTest() {
-        deepShades.check();
+        //deepShades.check();
         //TODO test
     }
 }
