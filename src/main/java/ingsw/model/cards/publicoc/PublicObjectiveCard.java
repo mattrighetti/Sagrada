@@ -26,4 +26,6 @@ public abstract class PublicObjectiveCard extends Card {
     }
 
     public abstract int check(List<List<Box>> grid);
+
+    public abstract int getScore(List<List<Box>> grid);
 }

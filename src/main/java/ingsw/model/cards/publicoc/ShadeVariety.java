@@ -16,6 +16,12 @@ public class ShadeVariety extends ShadeCard {
         for (int i = 2; i < 7; i++) {
             minValue = Math.min(minValue, count(grid, i));
         }
-        return minValue * getPoints();
+        return minValue;
     }
+
+    @Override
+    public int getScore(List<List<Box>> grid) {
+        return getPoints() * check(grid);
+    }
+
 }

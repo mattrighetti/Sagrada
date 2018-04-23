@@ -67,4 +67,10 @@ public class ColorDiagonals extends PublicObjectiveCard {
             return false;
         }
     }
+
+    @Override
+    public int getScore(List<List<Box>> grid) {
+        return getPoints() * check(grid);
+    }
+
 }

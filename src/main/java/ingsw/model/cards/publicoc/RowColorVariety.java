@@ -14,7 +14,17 @@ public class RowColorVariety extends PublicObjectiveCard {
     //test if distinct() function used on enum works
     @Override
     public int check(List<List<Box>> grid) {
-        return getPoints() * (int) grid.stream().filter(x ->
-                x.stream().map(y -> y.getDice().getDiceColor()).filter(y -> !y.equals(Color.BLANK)).distinct().count() == 5 ).count();
+        return getPoints() * (int) grid.stream()
+                .filter(x -> x.stream()
+                        .filter(box -> box.getDice() != null)
+                        .map(y -> y.getDice().getDiceColor())
+                        .filter(y -> !y.equals(Color.BLANK))
+                        .distinct().count() == 5)
+                .count();
+    }
+
+    @Override
+    public int getScore(List<List<Box>> grid) {
+        return getPoints() * check(grid);
     }
 }

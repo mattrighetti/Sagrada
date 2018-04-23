@@ -57,6 +57,8 @@ class ColorDiagonalsTest {
 
 
         assertEquals(4,colorDiagonals.check(grid));
+        //colorDiagonals.check();
+        //TODO test
     }
 
 }

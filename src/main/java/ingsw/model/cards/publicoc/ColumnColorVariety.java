@@ -15,20 +15,24 @@ public class ColumnColorVariety extends PublicObjectiveCard {
     @Override
     public int check(List<List<Box>> grid) {
         int minValue = 0;
-
         List<Color> colorList = new LinkedList<>();
 
-        for (int i = 0; i < 5; i++){
-            for (int j = 0; j < 4; j++){
-                if( !colorList.contains(grid.get(j).get(i).getDice().getDiceColor())) {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (grid.get(j).get(i).getDice() != null && !colorList.contains(grid.get(j).get(i).getDice().getDiceColor())) {
                     colorList.add(grid.get(j).get(i).getDice().getDiceColor());
                 }
             }
-            if(colorList.size() == 4){
+            if (colorList.size() == 4) {
                 minValue++;
             }
             colorList.clear();
         }
         return minValue;
+    }
+
+    @Override
+    public int getScore(List<List<Box>> grid) {
+        return getPoints() * check(grid);
     }
 }

@@ -23,6 +23,11 @@ public class MediumShades extends ShadeCard {
 
     @Override
     public int check(List<List<Box>> grid) {
-        return Math.min(count(grid, getFirstShade()), count(grid, getSecondShade())) * getPoints();
+        return Math.min(count(grid, getFirstShade()), count(grid, getSecondShade()));
+    }
+
+    @Override
+    public int getScore(List<List<Box>> grid) {
+        return getPoints() * check(grid);
     }
 }
