@@ -11,6 +11,10 @@ public class PrivateObjectiveCard extends Card {
 
     private Color color;
 
+    public Color getColor() {
+        return color;
+    }
+
     @Override
     public String toString() {
         return "PrivateObjCard{" +
