@@ -16,20 +16,57 @@ public class ColorDiagonals extends PublicObjectiveCard {
 
     @Override
     public int check(List<List<Box>> grid) {
-        HashMap<int,Color> flags = new HashMap();
+        HashMap<Integer, Color> flags = new HashMap<>();
         for (int i = 0; i < 5; i++) {
-            checkChild(grid, flags, 0, k);
+            checkChilds(grid, flags, 0, i, null);
         }
         return flags.size();
     }
 
-    private void checkChild(List<List<Box>> grid, HashMap<int,Color> flags, int row, int column){
+    private boolean checkChilds(List<List<Box>> grid, HashMap<Integer, Color> flags, int row, int column, Color parentColor) {
+
+        Color currentColor = grid.get(row).get(column).getDice().getDiceColor();
+
         int rowChild = row + 1;
         int columnLeftChild = column - 1;
         int columnRightChild = column + 1;
-        boolean isSameColorAsChild = false;
 
+        boolean isSameColorAsChildRight = false;
+        boolean isSameColorAsChildLeft = false;
 
+        if (rowChild < 4) {
 
+            if (columnRightChild < 5) {
+                if (!flags.containsKey((rowChild * 10) + columnRightChild))
+                    isSameColorAsChildRight = checkChilds(grid, flags, rowChild, columnRightChild, currentColor);
+                else
+                    return flags.get((rowChild * 10) + columnRightChild).equals(currentColor);
+            }
+
+            if (columnLeftChild > 0) {
+                if (!flags.containsKey((rowChild * 10) + columnLeftChild))
+                    isSameColorAsChildLeft = checkChilds(grid, flags, rowChild, columnLeftChild, currentColor);
+                else
+                    return flags.get((rowChild * 10) + columnLeftChild).equals(currentColor);
+            }
+
+            if (parentColor != null && parentColor.equals(currentColor)) {
+                flags.put((row * 10) + column, currentColor);
+                return true;
+            }
+
+            if (isSameColorAsChildRight || isSameColorAsChildLeft) {
+                flags.put((row * 10) + column, currentColor);
+                return false;
+            } else
+                return false;
+
+        } else {
+            if (parentColor.equals(currentColor)) {
+                flags.put((row * 10) + column, currentColor);
+                return true;
+            }
+            return false;
+        }
     }
 }
