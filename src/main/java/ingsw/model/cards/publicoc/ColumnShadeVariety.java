@@ -1,7 +1,9 @@
 package ingsw.model.cards.publicoc;
 
+import ingsw.model.Color;
 import ingsw.model.cards.patterncard.Box;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class ColumnShadeVariety extends PublicObjectiveCard {
@@ -12,6 +14,21 @@ public class ColumnShadeVariety extends PublicObjectiveCard {
 
     @Override
     public int check(List<List<Box>> grid) {
+        int minValue = 0;
 
+        List<Integer> colorList = new LinkedList<>();
+
+        for (int i = 0; i < 5; i++){
+            for (int j = 0; j < 4; j++){
+                if( !colorList.contains(grid.get(j).get(i).getDice().getFaceUpValue())) {
+                    colorList.add(grid.get(j).get(i).getDice().getFaceUpValue());
+                }
+            }
+            if(colorList.size() == 4){
+                minValue++;
+            }
+            colorList.clear();git
+        }
+        return minValue;
     }
 }

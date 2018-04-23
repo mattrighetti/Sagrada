@@ -20,14 +20,14 @@ public class ColumnColorVariety extends PublicObjectiveCard {
 
         for (int i = 0; i < 5; i++){
             for (int j = 0; j < 4; j++){
-                if( !colorList.contains(grid.get(j).get(i).getColor())) {
-                    colorList.add(grid.get(j).get(i).getColor());
+                if( !colorList.contains(grid.get(j).get(i).getDice().getDiceColor())) {
+                    colorList.add(grid.get(j).get(i).getDice().getDiceColor());
                 }
             }
             if(colorList.size() == 4){
                 minValue++;
             }
-            colorList.removeAll(colorList);
+            colorList.clear();
         }
         return minValue;
     }
