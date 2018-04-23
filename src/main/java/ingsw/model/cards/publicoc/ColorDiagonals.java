@@ -8,8 +8,6 @@ import java.util.List;
 
 public class ColorDiagonals extends PublicObjectiveCard {
 
-    private
-
     public ColorDiagonals() {
         super("ColorDiagonals", 5);
     }
