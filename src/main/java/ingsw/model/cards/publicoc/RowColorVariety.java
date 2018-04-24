@@ -11,7 +11,11 @@ public class RowColorVariety extends PublicObjectiveCard {
         super("RowColorVariety", 6);
     }
 
-    //test if distinct() function used on enum works
+    /**
+     * Check in every row if every dices has different color in the row
+     * @param grid
+     * @return the number of columns that respect the condition
+     */
     @Override
     public int check(List<List<Box>> grid) {
         return (int) grid.stream()
@@ -23,6 +27,10 @@ public class RowColorVariety extends PublicObjectiveCard {
                 .count();
     }
 
+    /**
+     * @param grid
+     * @return the points gained with this card
+     */
     @Override
     public int getScore(List<List<Box>> grid) {
         return getPoints() * check(grid);

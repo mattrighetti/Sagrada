@@ -10,6 +10,11 @@ public class ShadeVariety extends ShadeCard {
         super("ShadeVariety", 5);
     }
 
+    /**
+     * Count how many dices sets with all the value are in the grid
+     * @param grid
+     * @return the number of sets found
+     */
     @Override
     public int check(List<List<Box>> grid) {
         int minValue = count(grid, 1);
@@ -19,6 +24,10 @@ public class ShadeVariety extends ShadeCard {
         return minValue;
     }
 
+    /**
+     * @param grid
+     * @return the points gained with this card
+     */
     @Override
     public int getScore(List<List<Box>> grid) {
         return getPoints() * check(grid);

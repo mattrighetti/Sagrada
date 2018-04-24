@@ -11,6 +11,11 @@ public class ColumnShadeVariety extends PublicObjectiveCard {
         super("ColumnShadeVariety", 4);
     }
 
+    /**
+     * Check in every column if every dices has different value in the column
+     * @param grid
+     * @return the number of columns that respect the condition
+     */
     @Override
     public int check(List<List<Box>> grid) {
         int minValue = 0;
@@ -34,6 +39,10 @@ public class ColumnShadeVariety extends PublicObjectiveCard {
         return minValue;
     }
 
+    /**
+     * @param grid
+     * @return the points gained with this card
+     */
     @Override
     public int getScore(List<List<Box>> grid) {
         return getPoints() * check(grid);

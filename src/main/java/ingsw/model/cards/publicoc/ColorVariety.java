@@ -11,6 +11,11 @@ public class ColorVariety extends PublicObjectiveCard {
         super("ColorVariety", 4);
     }
 
+    /**
+     * Count how many dices sets with all the colors are in the grid
+     * @param grid
+     * @return
+     */
     @Override
     public int check(List<List<Box>> grid) {
         int minValue = 5;
@@ -21,6 +26,12 @@ public class ColorVariety extends PublicObjectiveCard {
         return minValue;
     }
 
+    /**
+     * Count how many dices of the color passed to the method are in the grid
+     * @param grid
+     * @param color
+     * @return the number of dices found
+     */
     private int countColor(List<List<Box>> grid, Color color) {
         return grid.stream()
                 .mapToInt(boxes -> (int) boxes.stream()
@@ -30,6 +41,10 @@ public class ColorVariety extends PublicObjectiveCard {
                 .reduce(0, (sum, x) -> sum + x);
     }
 
+    /**
+     * @param grid
+     * @return the points gained with this card
+     */
     @Override
     public int getScore(List<List<Box>> grid) {
         return getPoints() * check(grid);

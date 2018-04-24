@@ -26,7 +26,11 @@ public class PrivateObjectiveCard extends Card {
         this.color = color;
     }
 
-    //Count how many dice of the same color of the PrivateCard there are in the pattern and \return the value
+    /**
+     * Count how many dice of the same color relatedto this PrivateCard are in the grid
+     * @param grid
+     * @return the number of occurrences
+     */
     public int check(List<List<Box>> grid) {
         return grid.stream().
                 mapToInt(row -> (int) row.stream().filter(box -> box.getDice() != null).map( box -> box.getDice().getDiceColor()).filter(box -> box.equals(color)).count()).reduce(0, (sum,x) -> sum + x );

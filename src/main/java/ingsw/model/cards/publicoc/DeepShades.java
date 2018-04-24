@@ -13,10 +13,18 @@ public class DeepShades extends ShadeCard {
         this.secondShade = 6;
     }
 
+    /**
+     * Count how many dices with firstShade (value) are in the grid
+     * @return the number of occurences
+     */
     public int getFirstShade() {
         return firstShade;
     }
 
+    /**
+     * Count how many dices with SecondShade (value) are in the grid
+     * @return the number of occurences
+     */
     public int getSecondShade() {
         return secondShade;
     }
@@ -26,6 +34,10 @@ public class DeepShades extends ShadeCard {
         return Math.min(count(grid, getFirstShade()), count(grid, getSecondShade()));
     }
 
+    /**
+     * @param grid
+     * @return the points gained with this card
+     */
     @Override
     public int getScore(List<List<Box>> grid) {
         return getPoints() * check(grid);
