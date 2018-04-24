@@ -23,7 +23,7 @@ public class ColorDiagonals extends PublicObjectiveCard {
 
     private boolean checkChilds(List<List<Box>> grid, HashMap<Integer, Color> flags, int row, int column, Color parentColor) {
 
-        Color currentColor = grid.get(row).get(column).getDice().getDiceColor();
+        Color currentColor;
 
         int rowChild = row + 1;
         int columnLeftChild = column - 1;
@@ -32,35 +32,49 @@ public class ColorDiagonals extends PublicObjectiveCard {
         boolean isSameColorAsChildRight = false;
         boolean isSameColorAsChildLeft = false;
 
-        if (rowChild < 4) {
+        if (parentColor == null)
+            parentColor = Color.BLANK;
+
+        if (!(grid.get(row).get(column).getDice() == null))
+            currentColor = grid.get(row).get(column).getDice().getDiceColor();
+        else
+            currentColor = Color.BLANK;
+
+        if (rowChild != 4) {
 
             if (columnRightChild < 5) {
-                if (!flags.containsKey((rowChild * 10) + columnRightChild))
+                if (!flags.containsKey((rowChild * 10) + columnRightChild)) {
                     isSameColorAsChildRight = checkChilds(grid, flags, rowChild, columnRightChild, currentColor);
-                else
-                    return flags.get((rowChild * 10) + columnRightChild).equals(currentColor);
+                } else {
+                    if (flags.get((rowChild * 10) + columnRightChild).equals(currentColor)) {
+                        flags.put((row * 10) + column, currentColor);
+                    }
+                }
             }
 
-            if (columnLeftChild > 0) {
-                if (!flags.containsKey((rowChild * 10) + columnLeftChild))
+            if (columnLeftChild > -1) {
+                if (!flags.containsKey((rowChild * 10) + columnLeftChild)) {
                     isSameColorAsChildLeft = checkChilds(grid, flags, rowChild, columnLeftChild, currentColor);
-                else
-                    return flags.get((rowChild * 10) + columnLeftChild).equals(currentColor);
+                } else {
+                    if (flags.get((rowChild * 10) + columnLeftChild).equals(currentColor)) {
+                        flags.put((row * 10) + column, currentColor);
+                    }
+                }
             }
 
-            if (parentColor != null && parentColor.equals(currentColor)) {
+            if ((parentColor.equals(currentColor)) && !currentColor.equals(Color.BLANK)) {
                 flags.put((row * 10) + column, currentColor);
                 return true;
+            } else {
+                if ((isSameColorAsChildRight || isSameColorAsChildLeft) && !currentColor.equals(Color.BLANK)) {
+                    flags.put((row * 10) + column, currentColor);
+                    return true;
+                } else
+                    return false;
             }
 
-            if (isSameColorAsChildRight || isSameColorAsChildLeft) {
-                flags.put((row * 10) + column, currentColor);
-                return false;
-            } else
-                return false;
-
         } else {
-            if (parentColor.equals(currentColor)) {
+            if (parentColor.equals(currentColor) && !parentColor.equals(Color.BLANK)) {
                 flags.put((row * 10) + column, currentColor);
                 return true;
             }
