@@ -11,8 +11,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RowShadeVarietyTest {
-    RowShadeVariety rowShadeVariety;
-    List<List<Box>> grid;
+    private RowShadeVariety rowShadeVariety;
+    private List<List<Box>> grid;
 
     @BeforeEach
 

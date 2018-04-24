@@ -13,7 +13,7 @@ class PlayerTest {
     @BeforeEach
     void setUp() {
         User user = new User("Matt");
-        player = new Player(user, new PrivateObjectiveCard(Color.PURPLE));
+        // player = new Player(user, new PrivateObjectiveCard(Color.PURPLE));
     }
 
     @Test

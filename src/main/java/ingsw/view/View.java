@@ -1,6 +1,8 @@
 package ingsw.view;
 
+import ingsw.controller.NetworkTransmitter;
 import ingsw.model.SagradaGame;
+import ingsw.model.cards.patterncard.PatternCard;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,14 +12,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.util.Set;
 
-public class FXMLogin extends Application {
+public class View extends Application implements RemoteView {
     SagradaGame sagradaGame;
+    private String username;
+    private NetworkTransmitter RMITransmitter;
+    private NetworkTransmitter SocketTransmitter;
+    private NetworkTransmitter currentTransmitter;
 
     @FXML
     private TextField usernameTextField;
@@ -28,11 +36,13 @@ public class FXMLogin extends Application {
     @FXML
     private Button loginButton;
 
+    Scene scene;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
-
         Parent rootComponent = loader.load();
+        scene = new Scene(new GridPane(), 500, 500);
 
         primaryStage.setResizable(false);
         primaryStage.setTitle("Sagrada Game");
@@ -45,8 +55,9 @@ public class FXMLogin extends Application {
     }
 
     public void onLoginPressed(ActionEvent actionEvent) {
-        sagradaGame.joinSagradaGame(usernameTextField.getText());
-        System.out.println("@" + usernameTextField.getText() + " logged in.");
+        username = usernameTextField.getText();
+//        sagradaGame.joinSagradaGame(username);
+        ((Stage)((Button)actionEvent.getSource()).getScene().getWindow()).setScene(scene);
     }
 
     public void selectedRMI(ActionEvent actionEvent) {
@@ -55,5 +66,10 @@ public class FXMLogin extends Application {
 
     public void selectedSocket(ActionEvent actionEvent) {
         System.out.println("Socket");
+    }
+
+    @Override
+    public void displayPatternCardsToChoose(Set<PatternCard> patternCards) {
+        //TODO mostra pattern cards da scegliere
     }
 }

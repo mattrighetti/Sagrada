@@ -20,53 +20,34 @@ import java.util.*;
 
 public class GameManager {
     private Board board;
+    private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
 
-    public GameManager(List<User> users) {
+    public GameManager(List<Player> players) {
+        playerList = players;
         setUpGameManager();
-        this.board = new Board(choosePublicObjectiveCards(), chooseToolCards(), createPlayers(users));
-        run();
-    }
-
-    public void run(){
-        //The match starts
-
-        //TODO: Choose Pattern card for each player
-
-        //TODO: Set Favor Tokens for each player
-
-        for( int i = 0; i < 10; i++){
-            //playRound();
-            //TODO: Create Round class or implement it in the GameManager??
-        }
-
-        //TODO: count the points
-
-        //TODO: choose the winner
-
-        //TODO: end of the match
-
-    }
-
-    private List<Player> createPlayers(List<User> users) {
-        List<Player> playerList = new ArrayList<>();
-        Collections.shuffle(privateObjectiveCards);
-        for (User user : users) {
-            playerList.add(new Player(user, privateObjectiveCards.get(0)));
-            privateObjectiveCards.remove(0);
-        }
-
-        return playerList;
+        this.board = new Board(choosePublicObjectiveCards(), chooseToolCards(), players);
     }
 
     private synchronized void setUpGameManager() {
         setUpPrivateObjectiveCards();
+
+        for (Player player : playerList) {
+            player.setPrivateObjectiveCard(privateObjectiveCards.get(0));
+            privateObjectiveCards.remove(0);
+        }
+
         setUpPublicObjectiveCards();
         setUpToolCards();
         setUpPatternCards();
+
+        for (Player player : playerList) {
+            player.showAvailablePatterCard(pickPatternCards());
+        }
+
     }
 
     private void setUpPatternCards() {
@@ -95,6 +76,7 @@ public class GameManager {
         this.patternCards.add(new ViaLux());
         this.patternCards.add(new Virtus());
         this.patternCards.add(new WaterOfLife());
+        Collections.shuffle(patternCards);
     }
 
     private void setUpToolCards() {
@@ -136,7 +118,7 @@ public class GameManager {
         this.privateObjectiveCards.add(new PrivateObjectiveCard(Color.RED));
         this.privateObjectiveCards.add(new PrivateObjectiveCard(Color.PURPLE));
         this.privateObjectiveCards.add(new PrivateObjectiveCard(Color.YELLOW));
-
+        Collections.shuffle(privateObjectiveCards);
     }
 
     private Set<ToolCard> chooseToolCards() {
@@ -149,13 +131,13 @@ public class GameManager {
         return new HashSet<>(publicObjectiveCards.subList(0, 3));
     }
 
-    private Set<PatternCard> choosePatternCards() {
-        Collections.shuffle(patternCards);
-        return new HashSet<>(patternCards.subList(0,4));
-    }
+    private Set<PatternCard> pickPatternCards() {
+        Set<PatternCard> pickedPatternCards = new HashSet<>(patternCards.subList(0,4));
+        for (int i = 0; i < 4; i++) {
+            patternCards.remove(0);
+        }
 
-    public synchronized void loginUser() {
-        /* Single login per user, or wait for all user and the pass the array? */
+        return pickedPatternCards;
     }
 
 }
