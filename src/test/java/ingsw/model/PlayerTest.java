@@ -1,25 +1,26 @@
 package ingsw.model;
 
-import ingsw.model.cards.privateoc.PrivateObjectiveCard;
+import ingsw.view.RemoteView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
 
     Player player;
+    RemoteView remoteView;
 
     @BeforeEach
     void setUp() {
         User user = new User("Matt");
-        // player = new Player(user, new PrivateObjectiveCard(Color.PURPLE));
+        player = new Player(user, remoteView);
     }
 
     @Test
     void getUser() throws NoSuchFieldException {
         assertNotNull(player.getUser());
-        assertNotNull(player.getClass().getDeclaredField("privateObjectiveCard"));
         assertEquals("Matt", player.getUser().getUsername());
     }
 }
