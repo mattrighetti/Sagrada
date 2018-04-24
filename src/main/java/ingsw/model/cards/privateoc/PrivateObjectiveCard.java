@@ -17,9 +17,8 @@ public class PrivateObjectiveCard extends Card {
 
     @Override
     public String toString() {
-        return "PrivateObjCard{" +
-                "name='" + getName() + '\'' +
-                '}';
+        return "PrivateObjCard{'" + getName() +
+                "'}";
     }
 
     public PrivateObjectiveCard(Color color) {
@@ -30,6 +29,6 @@ public class PrivateObjectiveCard extends Card {
     //Count how many dice of the same color of the PrivateCard there are in the pattern and \return the value
     public int check(List<List<Box>> grid) {
         return grid.stream().
-                mapToInt(x -> (int) x.stream().map( y -> y.getColor()).filter(y -> y.equals(color)).count()).reduce(0, (sum,x) -> sum + x );
+                mapToInt(row -> (int) row.stream().filter(box -> box.getDice() != null).map( box -> box.getDice().getDiceColor()).filter(box -> box.equals(color)).count()).reduce(0, (sum,x) -> sum + x );
     }
 }
