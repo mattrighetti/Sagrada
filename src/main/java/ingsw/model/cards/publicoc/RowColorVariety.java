@@ -5,15 +5,22 @@ import ingsw.model.cards.patterncard.Box;
 
 import java.util.List;
 
+/**
+ * Public Objective Card that counts the columns with non-repeated colors
+ */
 public class RowColorVariety extends PublicObjectiveCard {
 
+    /**
+     * Create a Row Color Variety instance. Calls <code>super()</code> with parameters the card name "RowColorVariety" and
+     * 6 that represents its points.
+     */
     public RowColorVariety() {
         super("RowColorVariety", 6);
     }
 
     /**
      * Check in every row if every dices has different color in the row
-     * @param grid
+     * @param grid Grid to check
      * @return the number of columns that respect the condition
      */
     @Override
@@ -25,14 +32,5 @@ public class RowColorVariety extends PublicObjectiveCard {
                         .filter(y -> !y.equals(Color.BLANK))
                         .distinct().count() == 5)
                 .count();
-    }
-
-    /**
-     * @param grid
-     * @return the points gained with this card
-     */
-    @Override
-    public int getScore(List<List<Box>> grid) {
-        return getPoints() * check(grid);
     }
 }

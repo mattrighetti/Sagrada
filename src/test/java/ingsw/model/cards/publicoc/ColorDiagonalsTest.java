@@ -18,6 +18,7 @@ class ColorDiagonalsTest {
     ArrayList<List<Box>> gridThree;
     ArrayList<List<Box>> gridFour;
     ArrayList<List<Box>> gridFive;
+    ArrayList<List<Box>> gridSix;
 
 
     @BeforeEach
@@ -55,39 +56,23 @@ class ColorDiagonalsTest {
         gridFive.add(new ArrayList<>(5));
         gridFive.add(new ArrayList<>(5));
 
+        gridSix = new ArrayList<List<Box>>(4);
+        gridSix.add(new ArrayList<>(5));
+        gridSix.add(new ArrayList<>(5));
+        gridSix.add(new ArrayList<>(5));
+        gridSix.add(new ArrayList<>(5));
 
         for(int i = 0; i < 4; i++){
             for(int j = 0; j <5; j++){
                 gridOne.get(i).add(j, new Box(Color.BLANK));
-            }
-        }
-
-
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j <5; j++){
                 gridTwo.get(i).add(j, new Box(Color.BLANK));
-            }
-        }
-
-
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j <5; j++){
                 gridThree.get(i).add(j, new Box(Color.BLANK));
-            }
-        }
-
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j <5; j++){
                 gridFour.get(i).add(j, new Box(Color.BLANK));
-            }
-        }
-
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j <5; j++){
                 gridFive.get(i).add(j, new Box(Color.BLANK));
+                gridSix.get(i).add(j, new Box(Color.BLANK));
+
             }
         }
-        //place 4 dice in diagonals
 
         gridOne.get(0).get(3).insertDice(new Dice(Color.BLUE));
         gridOne.get(1).get(2).insertDice(new Dice(Color.BLUE));
@@ -134,7 +119,15 @@ class ColorDiagonalsTest {
         gridFive.get(3).get(3).insertDice(new Dice(Color.BLUE));
         gridFive.get(3).get(4).insertDice(new Dice(Color.BLUE));
 
-
+        gridSix.get(0).get(2).insertDice(new Dice(Color.BLUE));
+        gridSix.get(1).get(3).insertDice(new Dice(Color.BLUE));
+        gridSix.get(2).get(4).insertDice(new Dice(Color.BLUE));
+        gridSix.get(3).get(0).insertDice(new Dice(Color.RED));
+        gridSix.get(2).get(1).insertDice(new Dice(Color.RED));
+        gridSix.get(0).get(0).insertDice(new Dice(Color.RED));
+        gridSix.get(0).get(1).insertDice(new Dice(Color.BLUE));
+        gridSix.get(0).get(2).insertDice(new Dice(Color.BLUE));
+        gridSix.get(0).get(3).insertDice(new Dice(Color.BLUE));
     }
 
     @Test
@@ -150,6 +143,17 @@ class ColorDiagonalsTest {
         assertEquals(9,colorDiagonals.check(gridThree));
         assertEquals(0, colorDiagonals.check(gridFour));
         assertEquals(20, colorDiagonals.check(gridFive));
+        assertEquals(5,colorDiagonals.check(gridSix));
+    }
+
+    @Test
+    void getScoreTest() {
+        assertEquals(40,colorDiagonals.getScore(gridOne));
+        assertEquals(20,colorDiagonals.getScore(gridTwo));
+        assertEquals(45,colorDiagonals.getScore(gridThree));
+        assertEquals(0, colorDiagonals.getScore(gridFour));
+        assertEquals(100, colorDiagonals.getScore(gridFive));
+        assertEquals(25,colorDiagonals.getScore(gridSix));
     }
 
 }

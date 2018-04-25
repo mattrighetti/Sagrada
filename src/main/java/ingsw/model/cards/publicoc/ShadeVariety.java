@@ -4,15 +4,22 @@ import ingsw.model.cards.patterncard.Box;
 
 import java.util.List;
 
+/**
+ * Public Objective Card that counts the complete sets of shades
+ */
 public class ShadeVariety extends ShadeCard {
 
+    /**
+     * Create a Shade Variety instance. Calls <code>super()</code> with parameters the card name "ShadeVariety" and
+     * 5 that represents its points.
+     */
     public ShadeVariety() {
         super("ShadeVariety", 5);
     }
 
     /**
      * Count how many dices sets with all the value are in the grid
-     * @param grid
+     * @param grid Grid to check
      * @return the number of sets found
      */
     @Override
@@ -23,14 +30,4 @@ public class ShadeVariety extends ShadeCard {
         }
         return minValue;
     }
-
-    /**
-     * @param grid
-     * @return the points gained with this card
-     */
-    @Override
-    public int getScore(List<List<Box>> grid) {
-        return getPoints() * check(grid);
-    }
-
 }

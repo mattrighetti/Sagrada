@@ -4,9 +4,16 @@ import ingsw.model.cards.patterncard.Box;
 
 import java.util.List;
 
+/**
+ * Public Objective Card that counts how many sets of 1 and 2 are in the grid
+ */
 public class LightShades extends ShadeCard {
     final int firstShade, secondShade;
 
+    /**
+     * Create a Light Shades instance. Calls <code>super()</code> with parameters the card name "LightShades" and
+     * 2 that represents its points. Set firstShade = 1 and secondShade = 2
+     */
     public LightShades() {
         super("LightShades", 2);
         this.firstShade = 1;
@@ -29,18 +36,13 @@ public class LightShades extends ShadeCard {
         return secondShade;
     }
 
+    /**
+     * Count the number of sets of 5 and 6 in the grid
+     * @param grid Grid to check
+     * @return The number of sets of 5 and 6 in the grid
+     */
     @Override
     public int check(List<List<Box>> grid) {
         return Math.min(count(grid, getFirstShade()), count(grid, getSecondShade()));
     }
-
-    /**
-     * @param grid
-     * @return the points gained with this card
-     */
-    @Override
-    public int getScore(List<List<Box>> grid) {
-        return getPoints() * check(grid);
-    }
-
 }

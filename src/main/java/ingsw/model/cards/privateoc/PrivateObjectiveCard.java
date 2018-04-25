@@ -11,6 +11,11 @@ public class PrivateObjectiveCard extends Card {
 
     private Color color;
 
+    public PrivateObjectiveCard(Color color) {
+        super(color.toString());
+        this.color = color;
+    }
+
     public Color getColor() {
         return color;
     }
@@ -21,14 +26,9 @@ public class PrivateObjectiveCard extends Card {
                 "'}";
     }
 
-    public PrivateObjectiveCard(Color color) {
-        super(color.toString());
-        this.color = color;
-    }
-
     /**
      * Count how many dice of the same color relatedto this PrivateCard are in the grid
-     * @param grid
+     * @param grid Grid to check
      * @return the number of occurrences
      */
     public int check(List<List<Box>> grid) {
