@@ -1,5 +1,8 @@
 package ingsw.utilities;
 
+/**
+ * Enumeration that stores every path of every possible grid defined in the Sagrada game
+ */
 public enum GridJSONPath {
     AURORAE_MAGNIFICUS("AuroraeMagnificus.json"),
     AURORA_SAGRADIS("AuroraSagradis.json"),
@@ -28,6 +31,10 @@ public enum GridJSONPath {
 
     private String filePath;
 
+    /**
+     * Constructor that creates the JSON grid's file path String
+     * @param fileName
+     */
     GridJSONPath(String fileName) {
         filePath = "src/main/resources/patterncards-json/" + fileName;
     }

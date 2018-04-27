@@ -3,7 +3,6 @@ package ingsw.model.cards.privateoc;
 import ingsw.model.Color;
 import ingsw.model.cards.Card;
 import ingsw.model.cards.patterncard.Box;
-import ingsw.model.cards.patterncard.PatternCard;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class PrivateObjectiveCard extends Card {
     }
 
     /**
-     * Count how many dice of the same color relatedto this PrivateCard are in the grid
+     * Count how many dice of the same color related to this PrivateCard are in the grid
      * @param grid Grid to check
      * @return the number of occurrences
      */
