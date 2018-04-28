@@ -15,15 +15,15 @@ class LuxMundiTest {
     List<List<Box>> expectedGrid;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         luxMundi = new LuxMundi();
         expectedGridJSON = "[\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 1 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"value\": 1 },\n" +
@@ -40,14 +40,14 @@ class LuxMundiTest {
                 "      { \"color\": \"GREEN\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
                 "      { \"value\": 5 },\n" +
                 "      { \"color\": \"GREEN\" },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ]\n" +
                 "]";
-                expectedGrid = (new Gson()).fromJson(expectedGridJSON, GridCreator.GRID_TYPE);
+        expectedGrid = (new Gson()).fromJson(expectedGridJSON, GridCreator.GRID_TYPE);
     }
 
     @Test
@@ -57,9 +57,9 @@ class LuxMundiTest {
     }
 
     @Test
-    void testGrid(){
-        for( int i = 0; i < 4; i++){
-            for( int j = 0; j < 5; j++){
+    void testGrid() {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
                 assertEquals(expectedGrid.get(i).get(j).getColor(), luxMundi.getGrid().get(i).get(j).getColor());
                 assertEquals(expectedGrid.get(i).get(j).getValue(), luxMundi.getGrid().get(i).get(j).getValue());
             }

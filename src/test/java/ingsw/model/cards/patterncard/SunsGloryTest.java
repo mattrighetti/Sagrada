@@ -22,25 +22,25 @@ class SunsGloryTest {
                 "      { \"value\": 1 },\n" +
                 "      { \"color\": \"PURPLE\" },\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 4 }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"color\": \"PURPLE\" },\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 6 }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 5 },\n" +
                 "      { \"value\": 3 }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 5 },\n" +
                 "      { \"value\": 4 },\n" +
                 "      { \"value\": 2 },\n" +

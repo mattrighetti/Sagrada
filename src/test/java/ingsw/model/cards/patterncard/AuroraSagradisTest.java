@@ -20,9 +20,9 @@ class AuroraSagradisTest {
         expectedGridJSON = "[\n" +
                 "    [\n" +
                 "      { \"color\": \"RED\" },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"YELLOW\" }\n" +
                 "    ],\n" +
                 "    [\n" +
@@ -33,18 +33,18 @@ class AuroraSagradisTest {
                 "      { \"value\": 2 }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 1 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 5 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 6 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ]\n" +
                 "]";
         expectedGrid = (new Gson()).fromJson(expectedGridJSON, GridCreator.GRID_TYPE);

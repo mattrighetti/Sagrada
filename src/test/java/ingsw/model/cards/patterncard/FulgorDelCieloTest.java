@@ -19,23 +19,23 @@ class FulgorDelCieloTest {
         fulgorDelCielo = new FulgorDelCielo();
         expectedGridJSON = "[\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
                 "      { \"color\": \"RED\" },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 4 },\n" +
                 "      { \"value\": 5 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"BLUE\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"color\": \"BLUE\" },\n" +
                 "      { \"value\": 2 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"RED\" },\n" +
                 "      { \"value\": 5 }\n" +
                 "    ],\n" +
@@ -44,7 +44,7 @@ class FulgorDelCieloTest {
                 "      { \"color\": \"RED\" },\n" +
                 "      { \"value\": 3 },\n" +
                 "      { \"value\": 1 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ]\n" +
                 "]" ;
         expectedGrid = (new Gson()).fromJson(expectedGridJSON, GridCreator.GRID_TYPE);

@@ -21,22 +21,22 @@ class ComitasTest {
         expectedGridJSON = "[\n" +
                 "    [\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 2 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 6 }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 4 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 5 },\n" +
                 "      { \"color\": \"YELLOW\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
                 "      { \"value\": 5 }\n" +
                 "    ],\n" +
@@ -45,7 +45,7 @@ class ComitasTest {
                 "      { \"value\": 2 },\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
                 "      { \"value\": 3 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ]\n" +
                 "]" ;
         expectedGrid = (new Gson()).fromJson(expectedGridJSON, GridCreator.GRID_TYPE);

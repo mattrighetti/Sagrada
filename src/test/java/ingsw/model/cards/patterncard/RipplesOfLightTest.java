@@ -20,21 +20,21 @@ class RipplesOfLightTest {
         ripplesOfLight = new RipplesOfLight();
         expectedGridJSON = "[\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"RED\" },\n" +
                 "      { \"value\": 5 }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"PURPLE\" },\n" +
                 "      { \"value\": 4 },\n" +
                 "      { \"color\": \"BLUE\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
                 "      { \"value\": 3 },\n" +
                 "      { \"color\": \"YELLOW\" },\n" +

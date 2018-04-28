@@ -19,31 +19,31 @@ class SunCatcherTest {
         sunCatcher = new SunCatcher();
         expectedGridJSON = "[\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
                 "      { \"value\": 2 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"YELLOW\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 4 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"RED\" },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 5 },\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"color\": \"GREEN\" },\n" +
                 "      { \"value\": 3 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"PURPLE\" }\n" +
                 "    ]\n" +
                 "]" ;

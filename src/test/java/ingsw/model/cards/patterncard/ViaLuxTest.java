@@ -20,16 +20,16 @@ class ViaLuxTest {
         expectedGridJSON = "[\n" +
                 "    [\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 6 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 1 },\n" +
                 "      { \"value\": 5 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 2 }\n" +
                 "    ],\n" +
                 "    [\n" +
@@ -37,11 +37,11 @@ class ViaLuxTest {
                 "      { \"color\": \"YELLOW\" },\n" +
                 "      { \"color\": \"RED\" },\n" +
                 "      { \"color\": \"PURPLE\" },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 4 },\n" +
                 "      { \"value\": 3 },\n" +
                 "      { \"color\": \"RED\" }\n" +

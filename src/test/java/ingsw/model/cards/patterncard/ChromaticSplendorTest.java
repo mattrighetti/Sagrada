@@ -20,11 +20,11 @@ class ChromaticSplendorTest {
         chromaticSplendor = new ChromaticSplendor();
         expectedGridJSON = "[\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"GREEN\" },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"value\": 2 },\n" +
@@ -34,17 +34,17 @@ class ChromaticSplendorTest {
                 "      { \"value\": 1 }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"RED\" },\n" +
                 "      { \"value\": 3 },\n" +
                 "      { \"color\": \"PURPLE\" },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"value\": 1 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 6 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 4 }\n" +
                 "    ]\n" +
                 "]";

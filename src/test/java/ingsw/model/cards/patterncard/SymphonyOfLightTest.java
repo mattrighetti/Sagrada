@@ -20,9 +20,9 @@ class SymphonyOfLightTest {
         expectedGridJSON = "[\n" +
                 "    [\n" +
                 "      { \"value\": 2 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 5 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 1 }\n" +
                 "    ],\n" +
                 "    [\n" +
@@ -33,18 +33,18 @@ class SymphonyOfLightTest {
                 "      { \"color\": \"RED\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
                 "      { \"value\": 4 },\n" +
                 "      { \"color\": \"GREEN\" },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 3 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 5 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ]\n" +
                 "]" ;
         expectedGrid = (new Gson()).fromJson(expectedGridJSON, GridCreator.GRID_TYPE);

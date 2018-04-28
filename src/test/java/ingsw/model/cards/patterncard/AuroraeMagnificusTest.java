@@ -27,22 +27,22 @@ class AuroraeMagnificusTest {
                 "    ],\n" +
                 "    [\n" +
                 "      { \"color\": \"PURPLE\" },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"YELLOW\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 6 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"PURPLE\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"value\": 1 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"GREEN\" },\n" +
                 "      { \"value\": 4 }\n" +
                 "    ]\n" +

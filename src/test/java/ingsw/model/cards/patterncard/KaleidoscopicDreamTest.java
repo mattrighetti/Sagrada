@@ -21,28 +21,28 @@ class KaleidoscopicDreamTest {
                 "    [\n" +
                 "      { \"color\": \"YELLOW\" },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 1 }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"color\": \"GREEN\" },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 5 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 4 }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"value\": 3 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"RED\" },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"GREEN\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"value\": 2 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
                 "      { \"color\": \"YELLOW\" }\n" +
                 "    ]\n" +

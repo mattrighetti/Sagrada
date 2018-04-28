@@ -20,30 +20,30 @@ class GravitasTest {
         expectedGridJSON = "[\n" +
                 "    [\n" +
                 "      { \"value\": 1 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 3 },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 2 },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"value\": 6 },\n" +
                 "      { \"color\": \"BLUE\" },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 4 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
                 "      { \"color\": \"BLUE\" },\n" +
                 "      { \"value\": 5 },\n" +
                 "      { \"value\": 2 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 1 }\n" +
                 "    ]\n" +
                 "]" ;

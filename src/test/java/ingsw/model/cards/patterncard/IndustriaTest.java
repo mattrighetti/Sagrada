@@ -22,7 +22,7 @@ class IndustriaTest {
                 "      { \"value\": 1 },\n" +
                 "      { \"color\": \"RED\" },\n" +
                 "      { \"value\": 3 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 6 }\n" +
                 "    ],\n" +
                 "    [\n" +
@@ -30,19 +30,19 @@ class IndustriaTest {
                 "      { \"value\": 4 },\n" +
                 "      { \"color\": \"RED\" },\n" +
                 "      { \"value\": 2 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 5 },\n" +
                 "      { \"color\": \"RED\" },\n" +
                 "      { \"value\": 1 }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 3 },\n" +
                 "      { \"color\": \"RED\" }\n" +
                 "    ]\n" +

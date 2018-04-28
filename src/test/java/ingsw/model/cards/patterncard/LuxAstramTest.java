@@ -19,7 +19,7 @@ class LuxAstramTest {
         luxAstram = new LuxAstram();
         expectedGridJSON = "[\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
                 "      { \"value\": 1 },\n" +
                 "      { \"color\": \"GREEN\" },\n" +
                 "      { \"color\": \"PURPLE\" },\n" +
@@ -40,11 +40,11 @@ class LuxAstramTest {
                 "      { \"color\": \"PURPLE\" }\n" +
                 "    ],\n" +
                 "    [\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 },\n" +
-                "      { \"value\": 0 }\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" },\n" +
+                "      { \"color\": \"BLANK\" }\n" +
                 "    ]\n" +
                 "]" ;
         expectedGrid =  (new Gson()).fromJson(expectedGridJSON, GridCreator.GRID_TYPE);
