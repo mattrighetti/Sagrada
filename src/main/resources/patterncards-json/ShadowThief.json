@@ -8,7 +8,7 @@
     ],
     [
       { "value": 5 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "color": "PURPLE" },
       { "color": "BLANK" },
       { "color": "BLANK" }

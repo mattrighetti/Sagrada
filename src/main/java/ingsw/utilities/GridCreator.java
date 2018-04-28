@@ -15,8 +15,8 @@ import java.util.List;
  * GridCreator is a class that uses the Gson class to read and create grids for pattern cards from JSON files.
  */
 public final class GridCreator {
-    static Gson gson;
-    static JsonReader jsonReader;
+    private static Gson gson;
+    private static JsonReader jsonReader;
     public static Type GRID_TYPE = new TypeToken<ArrayList<ArrayList<Box>>>(){}.getType();
 
 
@@ -32,7 +32,7 @@ public final class GridCreator {
         try {
             jsonReader = new JsonReader(new FileReader(path.toString()));
         } catch (FileNotFoundException e) {
-            System.err.println("It's ok");
+            System.err.println("Couldn't find file");
         }
         return gson.fromJson(jsonReader, GRID_TYPE);
     }

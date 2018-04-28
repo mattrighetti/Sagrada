@@ -18,6 +18,9 @@ import ingsw.model.cards.toolcards.*;
 
 import java.util.*;
 
+/**
+ * Class that handles the entire game process and modifies the model itself
+ */
 public class GameManager {
     private Board board;
     private List<Player> playerList;
@@ -26,6 +29,11 @@ public class GameManager {
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
 
+    /**
+     * Creates an instance of GameManager with every object needed by the game itself and initializes its players
+     * assigning to each of them a PrivateObjectiveCard and asking them to choose a PatternCard.
+     * @param players
+     */
     public GameManager(List<Player> players) {
         playerList = players;
         setUpGameManager();

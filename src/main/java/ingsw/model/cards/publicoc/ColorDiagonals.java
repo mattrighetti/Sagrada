@@ -71,7 +71,7 @@ public class ColorDiagonals extends PublicObjectiveCard {
 
         //If a Dice is not placed in the box set current color to blank, else set it to the current Dice color
 
-        if (!(grid.get(row).get(column).getDice() == null))
+        if (grid.get(row).get(column).getDice() != null)
             currentColor = grid.get(row).get(column).getDice().getDiceColor();
         else
             currentColor = Color.BLANK;

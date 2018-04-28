@@ -12,13 +12,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ColorDiagonalsTest {
-    ColorDiagonals colorDiagonals;
-    ArrayList<List<Box>> gridOne;
-    ArrayList<List<Box>> gridTwo;
-    ArrayList<List<Box>> gridThree;
-    ArrayList<List<Box>> gridFour;
-    ArrayList<List<Box>> gridFive;
-    ArrayList<List<Box>> gridSix;
+    private ColorDiagonals colorDiagonals;
+    private List<List<Box>> gridOne;
+    private List<List<Box>> gridTwo;
+    private List<List<Box>> gridThree;
+    private List<List<Box>> gridFour;
+    private List<List<Box>> gridFive;
+    private List<List<Box>> gridSix;
 
 
     @BeforeEach
@@ -26,37 +26,37 @@ class ColorDiagonalsTest {
 
         colorDiagonals = new ColorDiagonals();
 
-        gridOne = new ArrayList<List<Box>>(4);
+        gridOne = new ArrayList<>(4);
         gridOne.add(new ArrayList<>(5));
         gridOne.add(new ArrayList<>(5));
         gridOne.add(new ArrayList<>(5));
         gridOne.add(new ArrayList<>(5));
 
-        gridTwo = new ArrayList<List<Box>>(4);
+        gridTwo = new ArrayList<>(4);
         gridTwo.add(new ArrayList<>(5));
         gridTwo.add(new ArrayList<>(5));
         gridTwo.add(new ArrayList<>(5));
         gridTwo.add(new ArrayList<>(5));
 
-        gridThree = new ArrayList<List<Box>>(4);
+        gridThree = new ArrayList<>(4);
         gridThree.add(new ArrayList<>(5));
         gridThree.add(new ArrayList<>(5));
         gridThree.add(new ArrayList<>(5));
         gridThree.add(new ArrayList<>(5));
 
-        gridFour = new ArrayList<List<Box>>(4);
+        gridFour = new ArrayList<>(4);
         gridFour.add(new ArrayList<>(5));
         gridFour.add(new ArrayList<>(5));
         gridFour.add(new ArrayList<>(5));
         gridFour.add(new ArrayList<>(5));
 
-        gridFive = new ArrayList<List<Box>>(4);
+        gridFive = new ArrayList<>(4);
         gridFive.add(new ArrayList<>(5));
         gridFive.add(new ArrayList<>(5));
         gridFive.add(new ArrayList<>(5));
         gridFive.add(new ArrayList<>(5));
 
-        gridSix = new ArrayList<List<Box>>(4);
+        gridSix = new ArrayList<>(4);
         gridSix.add(new ArrayList<>(5));
         gridSix.add(new ArrayList<>(5));
         gridSix.add(new ArrayList<>(5));
