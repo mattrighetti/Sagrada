@@ -2,23 +2,23 @@
     [
       { "value": 6 },
       { "color": "BLUE" },
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "value": 1 }
     ],
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 5 },
       { "color": "BLUE" },
-      { "value": 0 },
-      { "value": 0 }
+      { "color": "BLANK" },
+      { "color": "BLANK" }
     ],
     [
       { "value": 4 },
       { "color": "RED" },
       { "value": 2 },
       { "color": "BLUE" },
-      { "value": 0 }
+      { "color": "BLANK" }
     ],
     [
       { "color": "GREEN" },

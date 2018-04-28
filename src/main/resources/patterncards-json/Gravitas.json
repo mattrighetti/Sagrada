@@ -1,30 +1,30 @@
 [
     [
       { "value": 1 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 3 },
       { "color": "BLUE" },
-      { "value": 0 }
+      { "color": "BLANK" }
     ],
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 2 },
       { "color": "BLUE" },
-      { "value": 0 },
-      { "value": 0 }
+      { "color": "BLANK" },
+      { "color": "BLANK" }
     ],
     [
       { "value": 6 },
       { "color": "BLUE" },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 4 },
-      { "value": 0 }
+      { "color": "BLANK" }
     ],
     [
       { "color": "BLUE" },
       { "value": 5 },
       { "value": 2 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 1 }
     ]
 ]

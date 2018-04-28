@@ -1,10 +1,10 @@
 [
     [
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "value": 1 },
-      { "value": 0 },
-      { "value": 0 }
+      { "color": "BLANK" },
+      { "color": "BLANK" }
     ],
     [
       { "value": 1 },
@@ -21,10 +21,10 @@
       { "color": "GREEN" }
     ],
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "color": "BLUE" },
       { "value": 5 },
       { "color": "GREEN" },
-      { "value": 0 }
+      { "color": "BLANK" }
     ]
 ]

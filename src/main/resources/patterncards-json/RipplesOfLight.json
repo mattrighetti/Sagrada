@@ -1,20 +1,20 @@
 [
     [
-      { "value": 0 },
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "color": "RED" },
       { "value": 5 }
     ],
     [
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "color": "PURPLE" },
       { "value": 4 },
       { "color": "BLUE" }
     ],
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "color": "BLUE" },
       { "value": 3 },
       { "color": "YELLOW" },

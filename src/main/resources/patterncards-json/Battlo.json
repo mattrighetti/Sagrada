@@ -1,17 +1,17 @@
 [
     [
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "value": 6 },
-      { "value": 0 },
-      { "value": 0 }
+      { "color": "BLANK" },
+      { "color": "BLANK" }
     ],
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 5 },
       { "color": "BLUE" },
       { "value": 4 },
-      { "value": 0 }
+      { "color": "BLANK" }
     ],
     [
       { "value": 3 },

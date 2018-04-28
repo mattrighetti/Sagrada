@@ -1,9 +1,9 @@
 [
     [
       { "value": 2 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 5 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 1 }
     ],
     [
@@ -14,17 +14,17 @@
       { "color": "RED" }
     ],
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "color": "BLUE" },
       { "value": 4 },
       { "color": "GREEN" },
-      { "value": 0 }
+      { "color": "BLANK" }
     ],
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 3 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 5 },
-      { "value": 0 }
+      { "color": "BLANK" }
     ]
 ]

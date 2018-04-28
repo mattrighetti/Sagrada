@@ -8,22 +8,22 @@
     ],
     [
       { "color": "PURPLE" },
-      { "value": 0 },
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "color": "YELLOW" }
     ],
     [
       { "color": "YELLOW" },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 6 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "color": "PURPLE" }
     ],
     [
       { "value": 1 },
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "color": "GREEN" },
       { "value": 4 }
     ]

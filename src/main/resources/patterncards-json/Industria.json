@@ -3,7 +3,7 @@
       { "value": 1 },
       { "color": "RED" },
       { "value": 3 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 6 }
     ],
     [
@@ -11,19 +11,19 @@
       { "value": 4 },
       { "color": "RED" },
       { "value": 2 },
-      { "value": 0 }
+      { "color": "BLANK" }
     ],
     [
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "value": 5 },
       { "color": "RED" },
       { "value": 1 }
     ],
     [
-      { "value": 0 },
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "value": 3 },
       { "color": "RED" }
     ]

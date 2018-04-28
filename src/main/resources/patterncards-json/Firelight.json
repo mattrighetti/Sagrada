@@ -4,25 +4,25 @@
       { "value": 4 },
       { "value": 1 },
       { "value": 5 },
-      { "value": 0 }
+      { "color": "BLANK" }
     ],
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 6 },
       { "value": 2 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "color": "YELLOW" }
     ],
     [
-      { "value": 0 },
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "color": "YELLOW" },
       { "color": "RED" }
     ],
     [
       { "value": 5 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "color": "YELLOW" },
       { "color": "RED" },
       { "value": 6 }

@@ -1,21 +1,21 @@
 [
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 4 },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "color": "YELLOW" },
       { "value": 6 }
     ],
     [
       { "color": "RED" },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 2 },
-      { "value": 0 },
-      { "value": 0 }
+      { "color": "BLANK" },
+      { "color": "BLANK" }
     ],
     [
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "color": "RED" },
       { "color": "PURPLE" },
       { "value": 1 }
@@ -23,8 +23,8 @@
     [
       { "color": "BLUE" },
       { "color": "YELLOW" },
-      { "value": 0 },
-      { "value": 0 },
-      { "value": 0 }
+      { "color": "BLANK" },
+      { "color": "BLANK" },
+      { "color": "BLANK" }
     ]
 ]

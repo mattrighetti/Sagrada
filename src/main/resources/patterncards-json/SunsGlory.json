@@ -3,25 +3,25 @@
       { "value": 1 },
       { "color": "PURPLE" },
       { "color": "YELLOW" },
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 4 }
     ],
     [
       { "color": "PURPLE" },
       { "color": "YELLOW" },
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "value": 6 }
     ],
     [
       { "color": "YELLOW" },
-      { "value": 0 },
-      { "value": 0 },
+      { "color": "BLANK" },
+      { "color": "BLANK" },
       { "value": 5 },
       { "value": 3 }
     ],
     [
-      { "value": 0 },
+      { "color": "BLANK" },
       { "value": 5 },
       { "value": 4 },
       { "value": 2 },
