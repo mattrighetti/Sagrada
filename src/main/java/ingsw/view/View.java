@@ -1,7 +1,8 @@
 package ingsw.view;
 
 import ingsw.controller.NetworkTransmitter;
-import ingsw.model.SagradaGame;
+import ingsw.controller.network.socket.Client;
+import ingsw.controller.network.socket.ClientController;
 import ingsw.model.cards.patterncard.PatternCard;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -15,17 +16,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
+import java.io.IOException;
+import java.util.Scanner;
 import java.util.Set;
 
 public class View extends Application implements RemoteView {
-    SagradaGame sagradaGame;
     private String username;
     private NetworkTransmitter RMITransmitter;
     private NetworkTransmitter SocketTransmitter;
     private NetworkTransmitter currentTransmitter;
+
+    private ClientController clientController;
 
     @FXML
     private TextField usernameTextField;
@@ -40,6 +41,10 @@ public class View extends Application implements RemoteView {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        /* DEPLOYS CLIENT */
+        deployClient();
+
+        /* CREATES VIEW */
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
         Parent rootComponent = loader.load();
         scene = new Scene(new GridPane(), 500, 500);
@@ -50,23 +55,30 @@ public class View extends Application implements RemoteView {
         primaryStage.show();
     }
 
-    public void retrieveSagradaGame() throws RemoteException, NotBoundException {
-        sagradaGame = (SagradaGame) LocateRegistry.getRegistry().lookup("sagrada");
-    }
-
     public void onLoginPressed(ActionEvent actionEvent) {
         username = usernameTextField.getText();
-//        sagradaGame.joinSagradaGame(username);
-        ((Stage)((Button)actionEvent.getSource()).getScene().getWindow()).setScene(scene);
     }
 
     public void selectedRMI(ActionEvent actionEvent) {
-        System.out.println("RMI");
+        System.out.println("rmi");
     }
 
     public void selectedSocket(ActionEvent actionEvent) {
-        System.out.println("Socket");
+        System.out.println("socket");
     }
+
+    public void deployClient() throws IOException {
+        Scanner fromKeyboard = new Scanner(System.in);
+        System.out.println("Type host: ");
+        String host = fromKeyboard.nextLine();
+        System.out.println("Type port: ");
+        int port = fromKeyboard.nextInt();
+        Client client = new Client(host, port);
+        client.connect();
+        this.clientController = new ClientController(client, this);
+    }
+
+
 
     @Override
     public void displayPatternCardsToChoose(Set<PatternCard> patternCards) {
