@@ -1,6 +1,6 @@
 package ingsw.view;
 
-import ingsw.controller.NetworkTransmitter;
+import ingsw.controller.network.commands.ResponseHandler;
 import ingsw.controller.network.rmi.RMINetwork;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
@@ -23,9 +23,9 @@ import java.util.Set;
 
 public class View extends Application implements RemoteView {
     private String username;
-    private NetworkTransmitter RMITransmitter;
-    private NetworkTransmitter SocketTransmitter;
-    private NetworkTransmitter currentTransmitter;
+    private ResponseHandler RMITransmitter;
+    private ResponseHandler SocketTransmitter;
+    private ResponseHandler currentTransmitter;
 
     private ClientController clientController;
 
@@ -46,7 +46,7 @@ public class View extends Application implements RemoteView {
         deployClient();
 
         /* RMI Section */
-        RMITransmitter = new RMINetwork();
+        //RMITransmitter = new RMINetwork();
 
         /* CREATES VIEW */
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
@@ -61,6 +61,8 @@ public class View extends Application implements RemoteView {
 
     public void onLoginPressed(ActionEvent actionEvent) {
         username = usernameTextField.getText();
+        clientController.loginUser(username);
+        ((Stage)((Button)actionEvent.getSource()).getScene().getWindow()).setScene(scene);
     }
 
     public void selectedRMI(ActionEvent actionEvent) {
@@ -81,7 +83,6 @@ public class View extends Application implements RemoteView {
         client.connect();
         this.clientController = new ClientController(client, this);
     }
-
 
 
     @Override

@@ -1,5 +1,6 @@
 package ingsw.controller;
 
+import ingsw.controller.network.commands.RequestHandler;
 import ingsw.model.GameManager;
 import ingsw.model.Player;
 import ingsw.model.User;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Controller extends UnicastRemoteObject implements RemoteController {
-    Map<String, NetworkTransmitter> networkTransmitterMap;
+    Map<String, RequestHandler> networkTransmitterMap;
     private GameManager gameManager;
     private List<Player> playerList;
     private int joinedUsers;

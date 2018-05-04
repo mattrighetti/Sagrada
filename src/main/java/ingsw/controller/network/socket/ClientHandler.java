@@ -1,5 +1,8 @@
 package ingsw.controller.network.socket;
 
+import ingsw.controller.network.commands.Request;
+import ingsw.controller.network.commands.Response;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -25,10 +28,21 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             do {
-                // TODO Responses ?
+                Response response = ((Request) objectInputStream.readObject()).handle(serverController);
+                if (response != null) {
+                    respond(response);
+                }
             } while (!stop);
         } catch (Exception e) {
             // TODO Handle Excpetions
+        }
+    }
+
+    private void respond(Response response) {
+        try {
+            objectOutputStream.writeObject(response);
+        } catch (IOException e) {
+            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
         }
     }
 

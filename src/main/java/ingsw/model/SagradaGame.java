@@ -23,16 +23,11 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         return sagradaGameSingleton;
     }
 
-    public void createMatch(String matchName, int noOfPlayers) {
-
+    @Override
+    public User loginUser(String username) {
+        if (!connectedUsers.containsKey(username)) {
+            connectedUsers.put(username, new User(username));
+            return connectedUsers.get(username);
+        } else return null;
     }
-
-    public void joinMatch(String matchName, int noOfPlayers) {
-
-    }
-
-    public void joinSagradaGame(String username) {
-        connectedUsers.put(username, new User(username));
-    }
-
 }
