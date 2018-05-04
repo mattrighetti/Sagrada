@@ -2,18 +2,20 @@ package ingsw.model;
 
 import ingsw.controller.Controller;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 
-public class SagradaGame implements BoardUpdater, PlayerObserver {
+public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGame {
     private static SagradaGame sagradaGameSingleton;
     Map<String, Controller> matchesByName; // List of all open matches
     Map<String, User> connectedUsers; // List of connected users
 
-    private SagradaGame() {
-
+    private SagradaGame() throws RemoteException {
+        super();
     }
 
-    public static SagradaGame get() {
+    public static SagradaGame get() throws RemoteException {
         if (sagradaGameSingleton == null) {
             sagradaGameSingleton = new SagradaGame();
         }
@@ -26,7 +28,7 @@ public class SagradaGame implements BoardUpdater, PlayerObserver {
     }
 
     public void joinMatch(String matchName, int noOfPlayers) {
-        // Mostra solo le partite con matchesByName.joinedUser < 4
+
     }
 
     public void joinSagradaGame(String username) {

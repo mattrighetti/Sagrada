@@ -1,6 +1,7 @@
 package ingsw.view;
 
 import ingsw.controller.NetworkTransmitter;
+import ingsw.controller.network.rmi.RMINetwork;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
 import ingsw.model.cards.patterncard.PatternCard;
@@ -41,8 +42,11 @@ public class View extends Application implements RemoteView {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        /* DEPLOYS CLIENT */
+        /* Socket section */
         deployClient();
+
+        /* RMI Section */
+        RMITransmitter = new RMINetwork();
 
         /* CREATES VIEW */
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));

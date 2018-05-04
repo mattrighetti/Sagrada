@@ -5,17 +5,20 @@ import ingsw.model.Player;
 import ingsw.model.User;
 import ingsw.view.RemoteView;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Controller implements RemoteController {
+public class Controller extends UnicastRemoteObject implements RemoteController {
     Map<String, NetworkTransmitter> networkTransmitterMap;
     private GameManager gameManager;
     private List<Player> playerList;
     private int joinedUsers;
 
-    public Controller() {
+    public Controller() throws RemoteException {
+        super();
         playerList = new ArrayList<>();
     }
 
