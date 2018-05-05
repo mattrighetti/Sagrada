@@ -2,6 +2,6 @@ package ingsw.controller.network.commands;
 
 public interface ResponseHandler {
 
-    void handle(LoginUserRequest loginUserRequest);
+    void handle(LoginUserResponse loginUserResponse);
 
 }

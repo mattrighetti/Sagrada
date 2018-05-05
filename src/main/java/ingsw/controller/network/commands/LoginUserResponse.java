@@ -11,6 +11,6 @@ public class LoginUserResponse implements Response {
 
     @Override
     public void handle(ResponseHandler responseHandler) {
-
+        responseHandler.handle(this);
     }
 }

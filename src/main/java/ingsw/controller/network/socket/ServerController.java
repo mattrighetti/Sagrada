@@ -5,7 +5,6 @@ import ingsw.controller.network.commands.LoginUserRequest;
 import ingsw.controller.network.commands.LoginUserResponse;
 import ingsw.controller.network.commands.RequestHandler;
 import ingsw.controller.network.commands.Response;
-import ingsw.exceptions.InvalidUsernameException;
 import ingsw.model.SagradaGame;
 import ingsw.model.User;
 

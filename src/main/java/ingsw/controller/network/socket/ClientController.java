@@ -1,6 +1,7 @@
 package ingsw.controller.network.socket;
 
 import ingsw.controller.network.commands.LoginUserRequest;
+import ingsw.controller.network.commands.LoginUserResponse;
 import ingsw.controller.network.commands.ResponseHandler;
 import ingsw.view.View;
 
@@ -23,7 +24,7 @@ public class ClientController implements ResponseHandler {
     }
 
     @Override
-    public void handle(LoginUserRequest loginUserRequest) {
+    public void handle(LoginUserResponse loginUserResponse) {
         System.out.println("User logged successfully!");
     }
 

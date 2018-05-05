@@ -27,6 +27,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     public User loginUser(String username) {
         if (!connectedUsers.containsKey(username)) {
             connectedUsers.put(username, new User(username));
+            System.out.println("New user --> " + username);
             return connectedUsers.get(username);
         } else return null;
     }
