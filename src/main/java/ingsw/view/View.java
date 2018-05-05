@@ -10,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class View extends Application {
     private String username;
@@ -41,12 +40,7 @@ public class View extends Application {
     }
 
     public void deployClient() throws IOException {
-        Scanner fromKeyboard = new Scanner(System.in);
-        System.out.println("Type host: ");
-        String host = fromKeyboard.nextLine();
-        System.out.println("Type port: ");
-        int port = fromKeyboard.nextInt();
-        Client client = new Client(host, port);
+        Client client = new Client("localhost",8000);
         client.connect();
         this.clientController = new ClientController(client, this);
     }

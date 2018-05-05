@@ -6,6 +6,7 @@ import ingsw.controller.network.socket.ServerController;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,8 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
 
     private SagradaGame() throws RemoteException {
         super();
+        connectedUsers = new HashMap<>();
+        matchesByName = new HashMap<>();
     }
 
     public static SagradaGame get() throws RemoteException {
@@ -27,15 +30,14 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
-    public User loginUser(String username) {
+    public synchronized User loginUser(String username) {
         User currentUser = new User(username);
         if (!connectedUsers.containsKey(username)) {
-            connectedUsers.put(username, currentUser);
-
-            for (User user: connectedUsers.values()) {
-                if (!user.getUsername().equals(username))
+            if (connectedUsers.size() > 0)
+                for (User user : connectedUsers.values())
                     user.updateUserConnected(currentUser);
-            }
+
+            connectedUsers.put(username, currentUser);
 
             return connectedUsers.get(username);
         } else return null;

@@ -1,6 +1,5 @@
 package ingsw.controller.network.socket;
 
-import ingsw.controller.network.commands.LoginUserRequest;
 import ingsw.controller.network.commands.Request;
 import ingsw.controller.network.commands.Response;
 
