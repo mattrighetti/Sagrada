@@ -1,14 +1,16 @@
 package ingsw.controller.network.socket;
 
+import ingsw.controller.network.commands.LoginUserResponse;
 import ingsw.controller.network.commands.Request;
 import ingsw.controller.network.commands.Response;
+import ingsw.model.User;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ClientHandler implements Runnable {
+public class ClientHandler implements Runnable, JoinedUserObserver {
     private Socket clientSocket;
     private final ObjectInputStream objectInputStream;
     private final ObjectOutputStream objectOutputStream;
@@ -75,4 +77,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+
+    @Override
+    public void onJoin(User user) {
+        respond(new LoginUserResponse(user));
+    }
 }

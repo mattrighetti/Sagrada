@@ -46,6 +46,7 @@ public class LoginController {
     public void onLoginPressed(ActionEvent actionEvent) {
         String username = usernameTextField.getText();
         clientController.loginUser(username);
+        clientController.listenForNewUsers();
         //primaryStage.setScene(new Scene(new GridPane(), 500, 500));
     }
 }

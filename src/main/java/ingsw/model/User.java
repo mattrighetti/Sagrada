@@ -1,10 +1,15 @@
 package ingsw.model;
 
+import ingsw.controller.network.commands.LoginUserResponse;
+import ingsw.controller.network.socket.ClientHandler;
+import ingsw.controller.network.socket.JoinedUserObserver;
+
 import java.util.LinkedList;
 import java.util.List;
 
 public class User {
     String username;
+    JoinedUserObserver joinedUserObserver;
     int noOfWins;
     int noOfLose;
     int noOfDraws;
@@ -33,5 +38,13 @@ public class User {
 
     public List<String> getMatchesPlayed() {
         return matchesPlayed;
+    }
+
+    public void addListener(JoinedUserObserver joinedUserObserver) {
+        joinedUserObserver = joinedUserObserver;
+    }
+
+    public void updateUserConnected(User user) {
+        joinedUserObserver.onJoin(user);
     }
 }

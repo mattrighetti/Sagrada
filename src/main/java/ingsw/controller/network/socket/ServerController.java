@@ -30,6 +30,7 @@ public class ServerController implements RequestHandler {
             System.err.println();
         }
 
+        user.addListener(clientHandler);
         return new LoginUserResponse(user);
     }
 }
