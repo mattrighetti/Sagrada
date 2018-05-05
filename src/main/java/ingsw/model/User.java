@@ -43,7 +43,7 @@ public class User implements Serializable {
         this.joinedUserObserver = joinedUserObserver;
     }
 
-    public void updateUserConnected(User user) {
-        joinedUserObserver.onJoin(user);
+    public void updateUserConnected(int numberOfConnectedUsers) {
+        joinedUserObserver.onJoin(numberOfConnectedUsers);
     }
 }

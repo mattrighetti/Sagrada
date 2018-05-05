@@ -1,13 +1,10 @@
 package ingsw.model;
 
 import ingsw.controller.Controller;
-import ingsw.controller.network.commands.RequestHandler;
-import ingsw.controller.network.socket.ServerController;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGame {
@@ -35,7 +32,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         if (!connectedUsers.containsKey(username)) {
             if (connectedUsers.size() > 0)
                 for (User user : connectedUsers.values())
-                    user.updateUserConnected(currentUser);
+                    user.updateUserConnected(connectedUsers.size() + 1);
 
             connectedUsers.put(username, currentUser);
 

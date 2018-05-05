@@ -1,9 +1,6 @@
 package ingsw.controller.network.socket;
 
-import ingsw.controller.network.commands.LoginUserRequest;
-import ingsw.controller.network.commands.LoginUserResponse;
-import ingsw.controller.network.commands.Response;
-import ingsw.controller.network.commands.ResponseHandler;
+import ingsw.controller.network.commands.*;
 import ingsw.view.View;
 
 /**
@@ -44,4 +41,8 @@ public class ClientController implements ResponseHandler {
         System.out.println(loginUserResponse.user.getUsername());
     }
 
+    @Override
+    public void handle(IntegerResponse integerResponse) {
+        System.out.println("Connected Users: " + integerResponse.number);
+    }
 }

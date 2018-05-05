@@ -1,5 +1,6 @@
 package ingsw.controller.network.socket;
 
+import ingsw.controller.network.commands.IntegerResponse;
 import ingsw.controller.network.commands.LoginUserResponse;
 import ingsw.controller.network.commands.Request;
 import ingsw.controller.network.commands.Response;
@@ -81,5 +82,10 @@ public class ClientHandler implements Runnable, JoinedUserObserver {
     @Override
     public void onJoin(User user) {
         respond(new LoginUserResponse(user));
+    }
+
+    @Override
+    public void onJoin(int numberOfConnectedUsers) {
+        respond(new IntegerResponse(numberOfConnectedUsers));
     }
 }
