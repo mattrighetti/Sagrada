@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -11,18 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER"
-          maxHeight="-Infinity"
-          maxWidth="-Infinity"
-          minHeight="-Infinity"
-          minWidth="-Infinity"
-          prefHeight="643.0"
-          prefWidth="642.0"
-          styleClass="loginGridPane"
-          stylesheets="@loginStyle.css"
-          xmlns="http://javafx.com/javafx/9.0.4"
-          xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="ingsw.view.LoginController">
+<GridPane fx:id="loginPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="643.0" prefWidth="642.0" styleClass="loginGridPane" stylesheets="@loginStyle.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.LoginController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -37,11 +28,7 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <VBox alignment="CENTER"
-            prefHeight="200.0"
-            prefWidth="100.0"
-            GridPane.columnIndex="1"
-            GridPane.rowIndex="3">
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <children>
             <Label text="LOGIN">
                <VBox.margin>
@@ -54,9 +41,7 @@
                   <Insets bottom="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="usernameTextField"
-                       promptText="Username"
-                       stylesheets="@loginStyle.css">
+            <TextField fx:id="usernameTextField" promptText="Username" stylesheets="@loginStyle.css">
                <padding>
                   <Insets bottom="5.0" left="10.0" top="5.0" />
                </padding>
@@ -70,16 +55,9 @@
                   <Font size="20.0" />
                </font>
             </TextField>
-            <HBox id="toggle-button-container"
-                  alignment="CENTER"
-                  stylesheets="@loginStyle.css">
+            <HBox id="toggle-button-container" alignment="CENTER" stylesheets="@loginStyle.css">
                <children>
-                  <ToggleButton id="rmi-toggle-button"
-                                fx:id="RMIToggleButton"
-                                mnemonicParsing="false"
-                                onAction="#selectedRMI"
-                                stylesheets="@loginStyle.css"
-                                text="RMI">
+                  <ToggleButton id="rmi-toggle-button" fx:id="RMIToggleButton" mnemonicParsing="false" onAction="#selectedRMI" stylesheets="@loginStyle.css" text="RMI">
                      <toggleGroup>
                         <ToggleGroup fx:id="SocketRMIToggleGroup" />
                      </toggleGroup>
@@ -87,13 +65,7 @@
                         <Font size="14.0" />
                      </font>
                   </ToggleButton>
-                  <ToggleButton id="socket-toggle-button"
-                                fx:id="SocketToggleButton"
-                                onAction="#selectedSocket"
-                                mnemonicParsing="false"
-                                stylesheets="@loginStyle.css"
-                                text="Socket"
-                                toggleGroup="$SocketRMIToggleGroup">
+                  <ToggleButton id="socket-toggle-button" fx:id="SocketToggleButton" mnemonicParsing="false" onAction="#selectedSocket" stylesheets="@loginStyle.css" text="Socket" toggleGroup="$SocketRMIToggleGroup">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -108,20 +80,7 @@
             <Insets />
          </opaqueInsets>
       </VBox>
-      <Button fx:id="loginButton"
-              alignment="CENTER"
-              disable="${usernameTextField.text.empty}"
-              mnemonicParsing="false"
-              onAction="#onLoginPressed"
-              prefHeight="43.0"
-              prefWidth="126.0"
-              styleClass="login-button-red"
-              stylesheets="@loginStyle.css"
-              text="Login"
-              GridPane.columnIndex="2"
-              GridPane.halignment="CENTER"
-              GridPane.rowIndex="3"
-              GridPane.valignment="CENTER">
+      <Button fx:id="loginButton" alignment="CENTER" disable="${usernameTextField.text.empty}" mnemonicParsing="false" onAction="#onLoginPressed" prefHeight="43.0" prefWidth="126.0" styleClass="login-button-red" stylesheets="@loginStyle.css" text="Login" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
          <font>
             <Font size="20.0" />
          </font>
