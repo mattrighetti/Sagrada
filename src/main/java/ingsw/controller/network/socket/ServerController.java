@@ -1,12 +1,10 @@
 package ingsw.controller.network.socket;
 
 import ingsw.controller.Controller;
-import ingsw.controller.network.commands.LoginUserRequest;
-import ingsw.controller.network.commands.LoginUserResponse;
-import ingsw.controller.network.commands.RequestHandler;
-import ingsw.controller.network.commands.Response;
+import ingsw.controller.network.commands.*;
 import ingsw.model.SagradaGame;
 import ingsw.model.User;
+import ingsw.model.cards.patterncard.PatternCard;
 
 import java.rmi.RemoteException;
 
@@ -32,5 +30,14 @@ public class ServerController implements RequestHandler {
 
         user.addListener(clientHandler);
         return new LoginUserResponse(user);
+    }
+
+    @Override
+    public Response handle(ChosenPatternCardRequest chosenPatternCard) {
+        PatternCard patternCard = controller.assignPatternCard(chosenPatternCard.patternCard, user.getUsername());
+        if (patternCard != null) {
+            return new ChosenPatternCardResponse(user.getUsername(), patternCard);
+        } else
+            return null; //TODO ritorna un comando negativo generale
     }
 }

@@ -1,9 +1,7 @@
 package ingsw.controller.network.socket;
 
-import ingsw.controller.network.commands.IntegerResponse;
-import ingsw.controller.network.commands.LoginUserResponse;
-import ingsw.controller.network.commands.Request;
-import ingsw.controller.network.commands.Response;
+import ingsw.controller.network.Message;
+import ingsw.controller.network.commands.*;
 import ingsw.model.User;
 
 import java.io.IOException;
@@ -11,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ClientHandler implements Runnable, JoinedUserObserver {
+public class ClientHandler implements Runnable, UserObserver {
     private Socket clientSocket;
     private final ObjectInputStream objectInputStream;
     private final ObjectOutputStream objectOutputStream;
@@ -78,7 +76,6 @@ public class ClientHandler implements Runnable, JoinedUserObserver {
         }
     }
 
-
     @Override
     public void onJoin(User user) {
         respond(new LoginUserResponse(user));
@@ -87,5 +84,10 @@ public class ClientHandler implements Runnable, JoinedUserObserver {
     @Override
     public void onJoin(int numberOfConnectedUsers) {
         respond(new IntegerResponse(numberOfConnectedUsers));
+    }
+
+    @Override
+    public void sendMessage(Message message) {
+        respond(new MessageResponse(message));
     }
 }

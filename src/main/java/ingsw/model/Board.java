@@ -3,17 +3,14 @@ package ingsw.model;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Board {
     private String name;
     private List<Player> players;
     private Set<PublicObjectiveCard> publicObjectiveCards;
     private Set<ToolCard> toolCards;
-    private Set<Dice> diceBag;
+    private List<Dice> diceBag;
     private List<Dice> draftedDice;
     private RoundTrack roundTrack;
 
@@ -28,12 +25,22 @@ public class Board {
      * Sets up the dice bag with 18 dice per color
      */
     private void setupDiceBag() {
-        diceBag = new HashSet<>();
-        EnumSet.allOf(Color.class).stream().filter(x -> x != Color.BLANK).forEach(x -> {
+        diceBag = new ArrayList<>();
+        EnumSet.allOf(Color.class).stream().filter(color -> color != Color.BLANK).forEach(x -> {
             for (int i = 0; i < 18; i++) {
                 diceBag.add(new Dice(x));
             }
         });
+    }
+
+    protected List<Dice> draftDice() {
+        Collections.shuffle(diceBag);
+        for (int i = 0; i < 5; i++) {
+            diceBag.get(i).roll();
+            draftedDice.add(diceBag.get(i));
+            diceBag.remove(i);
+        }
+        return draftedDice;
     }
 
 

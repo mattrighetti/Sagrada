@@ -15,10 +15,9 @@ public class Dice {
      * get a random number between 1 and 6 and set the faceUpValue
      * @return the value of the launch
      */
-    int roll() {
+    void roll() {
         int value = (new Random()).nextInt(6) + 1;
         setFaceUpValue(value);
-        return value;
     }
 
     public int getFaceUpValue() {

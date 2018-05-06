@@ -23,6 +23,7 @@ import java.util.*;
  */
 public class GameManager {
     private Board board;
+
     private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
@@ -51,11 +52,6 @@ public class GameManager {
         setUpPublicObjectiveCards();
         setUpToolCards();
         setUpPatternCards();
-
-        for (Player player : playerList) {
-            player.showAvailablePatterCard(pickPatternCards());
-        }
-
     }
 
     private void setUpPatternCards() {
@@ -148,4 +144,11 @@ public class GameManager {
         return pickedPatternCards;
     }
 
+    public List<Player> getPlayerList() {
+        return playerList;
+    }
+
+    public List<Dice> draftDiceFromBoard() {
+        return board.draftDice();
+    }
 }

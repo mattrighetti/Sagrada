@@ -1,6 +1,6 @@
 package ingsw.model;
 
-import ingsw.controller.network.socket.JoinedUserObserver;
+import ingsw.controller.network.socket.UserObserver;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class User implements Serializable {
     private String username;
-    private transient JoinedUserObserver joinedUserObserver;
+    private transient UserObserver userObserver;
     private int noOfWins;
     private int noOfLose;
     private int noOfDraws;
@@ -39,11 +39,15 @@ public class User implements Serializable {
         return matchesPlayed;
     }
 
-    public void addListener(JoinedUserObserver joinedUserObserver) {
-        this.joinedUserObserver = joinedUserObserver;
+    public void addListener(UserObserver userObserver) {
+        this.userObserver = userObserver;
+    }
+
+    public UserObserver getUserObserver() {
+        return userObserver;
     }
 
     public void updateUserConnected(int numberOfConnectedUsers) {
-        joinedUserObserver.onJoin(numberOfConnectedUsers);
+        userObserver.onJoin(numberOfConnectedUsers);
     }
 }

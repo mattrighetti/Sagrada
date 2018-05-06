@@ -6,4 +6,7 @@ public interface ResponseHandler {
 
     void handle(IntegerResponse integerResponse);
 
+    void handle(ChosenPatternCardResponse chosenPatternCardResponse);
+
+    void handle(MessageResponse messageResponse);
 }

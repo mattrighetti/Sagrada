@@ -2,11 +2,11 @@ package ingsw.controller.network.commands;
 
 import ingsw.model.User;
 
-public class LoginUserResponse implements Response {
+public class LoginUserResponse extends CommandResponse implements Response {
     public User user;
 
     public LoginUserResponse(User user) {
-        this.user = user;
+        super(user.getUsername());
     }
 
     @Override

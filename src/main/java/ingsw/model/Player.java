@@ -10,7 +10,8 @@ public class Player {
     private final RemoteView remoteView;
     private User user;
     private PrivateObjectiveCard privateObjectiveCard;
-    private WindowFrame windowFrame;
+    private PatternCard patternCard;
+    private Color pedina;
 
     //TODO decide which collection to use for cards sets and add the others methods and the favor tokens(int or class)
 
@@ -19,22 +20,24 @@ public class Player {
         this.remoteView = remoteView;
     }
 
-    public PrivateObjectiveCard getPrivateObjectiveCard() {
-        return privateObjectiveCard;
+    public void setPatternCard(PatternCard patternCard) {
+        this.patternCard = patternCard;
+    }
+
+    public PatternCard getPatternCard() {
+        return patternCard;
     }
 
     public void setPrivateObjectiveCard(PrivateObjectiveCard privateObjectiveCard) {
         this.privateObjectiveCard = privateObjectiveCard;
     }
 
-    //-----METHODS----
-
     //Get the User instance of this player
     public User getUser() {
         return user;
     }
 
-    public void showAvailablePatterCard(Set<PatternCard> patternCards) {
+    public void showAvailablePatternCard(Set<PatternCard> patternCards) {
         remoteView.displayPatternCardsToChoose(patternCards);
     }
 

@@ -1,10 +1,9 @@
 package ingsw.controller.network.commands;
 
-public class LoginUserRequest implements Request {
-    public final String username;
+public class LoginUserRequest extends CommandRequest implements Request {
 
     public LoginUserRequest(String username) {
-        this.username = username;
+        super(username);
     }
 
     @Override
