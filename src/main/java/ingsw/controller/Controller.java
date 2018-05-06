@@ -60,7 +60,6 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
                     broadcastMessage(new Message(username,
                             "Tutti gli utenti hanno scelto la PatternCard. Utente "
                             + playerList.get(0).getUser().getUsername() + " deve pescare i dadi"));
-                    // TODO gestisci invio a tutti tranne che all'ultimo player che ha scelto
                 }
                 return player.getPatternCard();
             }
@@ -75,6 +74,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     public void broadcastMessage(Message message) {
         for (UserObserver userObserver : playerToBroadcast(message.sender)) {
             userObserver.sendMessage(message);
+            //TODO send messages directly from player (?)
         }
     }
 }
