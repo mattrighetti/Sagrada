@@ -1,8 +1,7 @@
 package ingsw.controller.network.socket;
 
-import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.*;
-import ingsw.view.View;
+import ingsw.view.SceneUpdater;
 
 /**
  * Class that defines the socket connection of the game
@@ -10,21 +9,26 @@ import ingsw.view.View;
 public class ClientController implements ResponseHandler {
     private BroadcastReceiver broadcastReceiver;
     private Client client;
-    private final View view;
+    private boolean isUserLogged = false;
+    private SceneUpdater sceneUpdater;
 
-    public ClientController(Client client, View view) {
+    public ClientController(Client client) {
         this.client = client;
-        this.view = view;
         this.broadcastReceiver = new BroadcastReceiver(this);
+    }
+
+    public void setSceneUpdater(SceneUpdater sceneUpdater) {
+        this.sceneUpdater = sceneUpdater;
     }
 
     public Client getClient() {
         return client;
     }
 
-    public void loginUser(String username) {
+    public boolean loginUser(String username) {
         client.request(new LoginUserRequest(username));
         client.nextResponse().handle(this);
+        return isUserLogged;
     }
 
     /**
@@ -50,12 +54,20 @@ public class ClientController implements ResponseHandler {
 
     @Override
     public void handle(LoginUserResponse loginUserResponse) {
-        System.out.println(loginUserResponse.user.getUsername());
+        if (loginUserResponse.user != null) {
+            System.out.println("New connection >>> " + loginUserResponse.user);
+            isUserLogged = true;
+            //listenForNewUsers();
+        } else {
+            isUserLogged = false;
+            System.out.println("False");
+        }
     }
 
     @Override
     public void handle(IntegerResponse integerResponse) {
         System.out.println("Connected Users: " + integerResponse.number);
+        sceneUpdater.updateConnectedUsers(integerResponse.number);
     }
 
     @Override
@@ -67,4 +79,5 @@ public class ClientController implements ResponseHandler {
     public void handle(MessageResponse messageResponse) {
         System.out.println(messageResponse.message);
     }
+
 }

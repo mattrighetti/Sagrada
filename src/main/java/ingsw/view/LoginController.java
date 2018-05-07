@@ -3,67 +3,69 @@ package ingsw.view;
 import ingsw.controller.network.socket.ClientController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
-
 
 import java.io.IOException;
 
-public class LoginController {
+public class LoginController implements SceneUpdater {
+
+    @FXML
+    private GridPane loginPane;
 
     @FXML
     private TextField usernameTextField;
+
     @FXML
-    private RadioButton rmiButton;
+    private ToggleButton RMIToggleButton;
+
     @FXML
-    private RadioButton socketButton;
+    private ToggleGroup SocketRMIToggleGroup;
+
+    @FXML
+    private ToggleButton SocketToggleButton;
+
     @FXML
     private Button loginButton;
 
     ClientController clientController;
-    Stage primaryStage;
-    GridPane lobbyPane;
+    GUIUpdater application;
 
     public LoginController() {
 
-    }
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
     }
 
     public void setClientController(ClientController clientController) {
         this.clientController = clientController;
     }
 
-    public void selectedRMI() {
-        System.out.println("rmi");
+    public void setApplication(GUIUpdater application) {
+        this.application = application;
     }
 
-
-    public void selectedSocket() {
-        System.out.println("socket");
-    }
-
-    public void onLoginPressed(ActionEvent actionEvent) throws IOException {
+    @FXML
+    void onLoginPressed(ActionEvent event) throws IOException {
         String username = usernameTextField.getText();
         clientController.loginUser(username);
+        application.launchSecondGUI();
+    }
 
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
-            Parent secondRoot = (Parent) fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Lobby");
-            stage.setScene(new Scene(secondRoot));
-            stage.show();
-        } catch (Exception e) {
-            System.err.println("Error");
-        }
+    @FXML
+    void selectedRMI(ActionEvent event) {
+
+    }
+
+    @FXML
+    void selectedSocket(ActionEvent event) {
+
+    }
+
+    @Override
+    public void updateConnectedUsers(int connectedUsers) {
+        application.updateConnectedUsers(connectedUsers);
     }
 }
+

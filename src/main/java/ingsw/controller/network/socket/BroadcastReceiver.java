@@ -16,7 +16,7 @@ public class BroadcastReceiver implements Runnable {
     public void start() {
         receiver = new Thread(this);
         running.set(true);
-        receiver.start();
+        receiver.run();
     }
 
     public boolean isRunning() {

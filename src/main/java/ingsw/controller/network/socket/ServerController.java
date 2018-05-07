@@ -2,6 +2,7 @@ package ingsw.controller.network.socket;
 
 import ingsw.controller.Controller;
 import ingsw.controller.network.commands.*;
+import ingsw.exceptions.InvalidUsernameException;
 import ingsw.model.SagradaGame;
 import ingsw.model.User;
 import ingsw.model.cards.patterncard.PatternCard;
@@ -10,7 +11,7 @@ import java.rmi.RemoteException;
 
 public class ServerController implements RequestHandler {
     private ClientHandler clientHandler;
-    private final SagradaGame sagradaGame;
+    public final SagradaGame sagradaGame;
     private Controller controller;
     private User user;
 
@@ -21,14 +22,15 @@ public class ServerController implements RequestHandler {
     }
 
     @Override
-    public Response handle(LoginUserRequest loginUserRequest) {
+    public synchronized Response handle(LoginUserRequest loginUserRequest) {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username);
-        } catch (Exception e) {
-            System.err.println();
+        } catch (InvalidUsernameException e) {
+            return new LoginUserResponse(null);
         }
 
         user.addListener(clientHandler);
+        sagradaGame.broadcastUsersConnected();
         return new LoginUserResponse(user);
     }
 

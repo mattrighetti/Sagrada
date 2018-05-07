@@ -1,6 +1,7 @@
 package ingsw.model;
 
 import ingsw.controller.Controller;
+import ingsw.exceptions.InvalidUsernameException;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -27,16 +28,20 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
-    public synchronized User loginUser(String username) {
+    public synchronized User loginUser(String username) throws InvalidUsernameException {
         User currentUser = new User(username);
         if (!connectedUsers.containsKey(username)) {
-            if (connectedUsers.size() > 0)
-                for (User user : connectedUsers.values())
-                    user.updateUserConnected(connectedUsers.size() + 1);
-
             connectedUsers.put(username, currentUser);
-
             return connectedUsers.get(username);
-        } else return null;
+        }
+        throw new InvalidUsernameException("Username has been taken already");
+    }
+
+    @Override
+    public void broadcastUsersConnected() {
+        if (connectedUsers.size() > 0) {
+            for (User user : connectedUsers.values())
+                user.updateUserConnected(connectedUsers.size());
+        }
     }
 }

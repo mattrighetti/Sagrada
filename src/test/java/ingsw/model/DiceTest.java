@@ -17,7 +17,8 @@ class DiceTest {
 
     @RepeatedTest(10)
     void roll() {
-        int result = dice.roll();
+        dice.roll();
+        int result = dice.getFaceUpValue();
         assertTrue(result > 0 && result < 7);
     }
 

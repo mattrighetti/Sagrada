@@ -3,41 +3,56 @@ package ingsw.view;
 import ingsw.controller.network.socket.ClientController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
+import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 
-import javax.swing.text.TableView;
-import java.awt.*;
+public class LobbyController implements SceneUpdater {
 
-public class LobbyController {
+    @FXML
+    private GridPane lobbyPane;
+
     @FXML
     private Button exitButton;
+
     @FXML
     private Button joinButton;
+
     @FXML
     private Button createButton;
-    @FXML
-    private TableView matchesTable;
-    @FXML
-    private TableView rankingTable;
-    @FXML
-    private TableView statisticsTable;
 
-    ClientController clientController;
-    Stage primarystage;
+    @FXML
+    private Text connectedUsersText;
 
+    private ClientController clientController;
+    private View application;
 
-    public LobbyController(TableView tableView1) {
+    public void setClientController(ClientController clientController) {
+        this.clientController = clientController;
     }
 
-    public void onExitPressed(ActionEvent actionEvent) {
+    public void setApplication(View application) {
+        this.application = application;
+    }
+
+    @FXML
+    void onCreatePressed(ActionEvent event) {
 
     }
 
-    public void onJoinPressed(ActionEvent actionEvent) {
+    @FXML
+    void onExitPressed(ActionEvent event) {
 
     }
 
-    public void onCreatePressed(ActionEvent actionEvent) {
+    @FXML
+    void onJoinPressed(ActionEvent event) {
 
+    }
+
+    @Override
+    public void updateConnectedUsers(int usersConnected) {
+        connectedUsersText.setText(String.valueOf(usersConnected));
     }
 }
+

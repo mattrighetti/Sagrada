@@ -9,4 +9,5 @@ public interface ResponseHandler {
     void handle(ChosenPatternCardResponse chosenPatternCardResponse);
 
     void handle(MessageResponse messageResponse);
+
 }

@@ -2,11 +2,12 @@ package ingsw.controller.network.commands;
 
 import ingsw.model.cards.patterncard.PatternCard;
 
-public class ChosenPatternCardRequest extends CommandRequest implements Request {
+public class ChosenPatternCardRequest implements Request {
+    public String username;
     public PatternCard patternCard;
 
     public ChosenPatternCardRequest(String username, PatternCard chosenPatternCard) {
-        super(username);
+        this.username = username;
         this.patternCard = chosenPatternCard;
     }
 

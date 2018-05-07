@@ -32,6 +32,7 @@ public class ClientHandler implements Runnable, UserObserver {
                 Response response = ((Request) objectInputStream.readObject()).handle(serverController);
                 if (response != null) {
                     respond(response);
+                    serverController.sagradaGame.broadcastUsersConnected();
                 }
             } while (!stop);
         } catch (Exception e) {

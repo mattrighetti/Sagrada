@@ -7,17 +7,19 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class View extends Application {
+public class View extends Application implements GUIUpdater {
     private String username;
     private ResponseHandler RMITransmitter;
     private ResponseHandler SocketTransmitter;
     private ResponseHandler currentTransmitter;
     private ClientController clientController;
-    private Stage primaryStage;
+    private Stage mainStage;
+    private int connectedUsers = 0;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -25,33 +27,50 @@ public class View extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
         deployClient();
-
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login.fxml"));
-        Parent login = fxmlLoader.load();
-
-
-        LoginController loginController = fxmlLoader.getController();
-        loginController.setClientController(clientController);
-        loginController.setPrimaryStage(primaryStage);
-
-        primaryStage.setScene(new Scene(login));
-        primaryStage.setTitle("Sagrada Game");
-        primaryStage.show();
+        this.mainStage = primaryStage;
+        launchFirstGUI();
     }
 
     public void deployClient() throws IOException {
         Client client = new Client("localhost",8000);
         client.connect();
-        this.clientController = new ClientController(client, this);
+        this.clientController = new ClientController(client);
     }
 
-    public void switchToLobby() throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("lobby.fxml"));
+    public void launchFirstGUI() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login.fxml"));
+        GridPane login = fxmlLoader.load();
+        LoginController loginController = fxmlLoader.getController();
+        clientController.setSceneUpdater(loginController);
+        loginController.setClientController(clientController);
+        loginController.setApplication(this);
+        mainStage.setScene(new Scene(login));
+        mainStage.setTitle("Login");
+        mainStage.show();
+    }
 
-        primaryStage.setTitle("FXML Main");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
+    @Override
+    public void launchSecondGUI() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
+        Parent lobby = fxmlLoader.load();
+        LobbyController lobbyController = fxmlLoader.getController();
+        clientController.setSceneUpdater(lobbyController);
+        lobbyController.setClientController(clientController);
+        lobbyController.setApplication(this);
+        lobbyController.updateConnectedUsers(connectedUsers);
+        mainStage.setScene(new Scene(lobby));
+        mainStage.setTitle("Lobby");
+        mainStage.show();
+    }
+
+    @Override
+    public void launchThirdGUI() throws IOException {
+
+    }
+
+    @Override
+    public void updateConnectedUsers(int connectedUsers) {
+        this.connectedUsers = connectedUsers;
     }
 }
