@@ -9,5 +9,5 @@ public interface RemoteSagradaGame extends Remote {
 
     User loginUser(String username) throws RemoteException, InvalidUsernameException;
 
-    void broadcastUsersConnected() throws RemoteException;
+    void broadcastUsersConnected(String string) throws RemoteException;
 }

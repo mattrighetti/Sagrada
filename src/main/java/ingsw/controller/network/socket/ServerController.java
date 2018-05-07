@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
 
 public class ServerController implements RequestHandler {
     private ClientHandler clientHandler;
-    public final SagradaGame sagradaGame;
+    private final SagradaGame sagradaGame;
     private Controller controller;
     private User user;
 
@@ -26,12 +26,11 @@ public class ServerController implements RequestHandler {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username);
         } catch (InvalidUsernameException e) {
-            return new LoginUserResponse(null);
+            return new LoginUserResponse(null, -1);
         }
 
         user.addListener(clientHandler);
-        sagradaGame.broadcastUsersConnected();
-        return new LoginUserResponse(user);
+        return new LoginUserResponse(user, sagradaGame.getConnectedUsers());
     }
 
     @Override

@@ -36,6 +36,7 @@ public class ClientController implements ResponseHandler {
      */
     public void listenForNewUsers() {
         broadcastReceiver.start();
+        System.out.println("Thread started");
     }
 
     /**
@@ -55,12 +56,12 @@ public class ClientController implements ResponseHandler {
     @Override
     public void handle(LoginUserResponse loginUserResponse) {
         if (loginUserResponse.user != null) {
-            System.out.println("New connection >>> " + loginUserResponse.user);
+            System.out.println("New connection >>> " + loginUserResponse.user.getUsername());
             isUserLogged = true;
-            //listenForNewUsers();
+            sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
+            listenForNewUsers();
         } else {
             isUserLogged = false;
-            System.out.println("False");
         }
     }
 

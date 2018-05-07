@@ -3,10 +3,7 @@ package ingsw.view;
 import ingsw.controller.network.socket.ClientController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
@@ -49,8 +46,15 @@ public class LoginController implements SceneUpdater {
     @FXML
     void onLoginPressed(ActionEvent event) throws IOException {
         String username = usernameTextField.getText();
-        clientController.loginUser(username);
-        application.launchSecondGUI();
+        if(clientController.loginUser(username))
+            application.launchSecondGUI();
+        else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Username has already been taken");
+            alert.setContentText("Choose another username");
+            alert.showAndWait();
+        }
     }
 
     @FXML

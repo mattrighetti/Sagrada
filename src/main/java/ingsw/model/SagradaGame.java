@@ -27,21 +27,27 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         return sagradaGameSingleton;
     }
 
+    public int getConnectedUsers() {
+        return connectedUsers.size();
+    }
+
     @Override
     public synchronized User loginUser(String username) throws InvalidUsernameException {
         User currentUser = new User(username);
         if (!connectedUsers.containsKey(username)) {
             connectedUsers.put(username, currentUser);
+            broadcastUsersConnected(username);
             return connectedUsers.get(username);
         }
         throw new InvalidUsernameException("Username has been taken already");
     }
 
     @Override
-    public void broadcastUsersConnected() {
-        if (connectedUsers.size() > 0) {
-            for (User user : connectedUsers.values())
+    public void broadcastUsersConnected(String username) {
+        for (User user : connectedUsers.values()) {
+            if (!user.getUsername().equals(username)) {
                 user.updateUserConnected(connectedUsers.size());
+            }
         }
     }
 }

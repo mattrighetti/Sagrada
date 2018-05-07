@@ -52,7 +52,7 @@ public class LobbyController implements SceneUpdater {
 
     @Override
     public void updateConnectedUsers(int usersConnected) {
-        connectedUsersText.setText(String.valueOf(usersConnected));
+        connectedUsersText.setText("Connected users: "+ String.valueOf(usersConnected));
     }
 }
 

@@ -32,7 +32,6 @@ public class ClientHandler implements Runnable, UserObserver {
                 Response response = ((Request) objectInputStream.readObject()).handle(serverController);
                 if (response != null) {
                     respond(response);
-                    serverController.sagradaGame.broadcastUsersConnected();
                 }
             } while (!stop);
         } catch (Exception e) {
@@ -75,11 +74,6 @@ public class ClientHandler implements Runnable, UserObserver {
         } catch (IOException e) {
             System.err.println("Errors in closing - " + e.getMessage());
         }
-    }
-
-    @Override
-    public void onJoin(User user) {
-        respond(new LoginUserResponse(user));
     }
 
     @Override
