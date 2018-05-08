@@ -14,4 +14,6 @@ public interface UserObserver {
     void receiveDraftNotification();
 
     void sendResponse(DiceNotification diceNotification);
+
+    void activateTurnNotification();
 }

@@ -101,4 +101,8 @@ public class ClientHandler implements Runnable, UserObserver {
         //TODO send the list of dice (for now only the drafted dice)
     }
 
+    @Override
+    public void activateTurnNotification() {
+        //TODO notify player that is his turn
+    }
 }

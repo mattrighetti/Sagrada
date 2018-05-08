@@ -8,6 +8,7 @@ import ingsw.model.GameManager;
 import ingsw.model.Player;
 import ingsw.model.User;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.view.RemoteView;
 
 import java.rmi.RemoteException;
@@ -48,6 +49,10 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
 
     public void draftDice() {
         gameManager.draftDiceFromBoard();
+    }
+
+    public void toolCardMove(Player player, ToolCard toolCard){
+        gameManager.useToolCard(player, toolCard);
     }
 
 

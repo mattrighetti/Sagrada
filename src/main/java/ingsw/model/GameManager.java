@@ -11,13 +11,13 @@
 
 package ingsw.model;
 
-import ingsw.controller.network.commands.DiceNotification;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.Broadcaster;
 
+import javax.tools.Tool;
 import java.util.*;
 
 /**
@@ -25,16 +25,19 @@ import java.util.*;
  */
 public class GameManager {
     private Board board;
-    private int noOfPatternCardCounter;
+    private int noOfAck;
     private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
+    private Round currentRound;
+    private int playerIndex;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
      * assigning to each of them a PrivateObjectiveCard and asking them to choose a PatternCard.
+     *
      * @param players
      */
     public GameManager(List<Player> players) {
@@ -138,7 +141,7 @@ public class GameManager {
     }
 
     private Set<PatternCard> pickPatternCards() {
-        Set<PatternCard> pickedPatternCards = new HashSet<>(patternCards.subList(0,4));
+        Set<PatternCard> pickedPatternCards = new HashSet<>(patternCards.subList(0, 4));
         for (int i = 0; i < 4; i++) {
             patternCards.remove(0);
         }
@@ -150,14 +153,12 @@ public class GameManager {
         return playerList;
     }
 
-    public void draftDiceFromBoard() { Broadcaster.broadcastResponseToAll(playerList, board.draftDice()); }
-
 
     public PatternCard setPatternCardForPlayer(String username, PatternCard patternCard) {
         for (Player player : playerList) {
             if (player.getPlayerUsername().equals(username)) {
                 player.setPatternCard(patternCard);
-                noOfPatternCardCounter++;
+                noOfAck++;
             }
         }
 
@@ -165,15 +166,71 @@ public class GameManager {
     }
 
     public void waitForEveryPatternCard() {
-        new Thread( () -> {
-            while(noOfPatternCardCounter < 4) {
+        new Thread(() -> {
+            while (noOfAck < 4) {
 
             }
+            resetAck();
             notifyDraftToPlayer(playerList.get(0));
         });
+    }
+
+    public void draftDiceFromBoard() {
+        Broadcaster.broadcastResponseToAll(playerList, board.draftDice());
+        waitForDiceAck();
+    }
+
+    private void waitForDiceAck() {
+        new Thread(() -> {
+            while (noOfAck < 4) {
+
+            }
+            resetAck();
+            startRound();
+        });
+    }
+
+    public void useToolCard(Player player, ToolCard toolCard) {
+        //metodo toolCard.action(player.getPatternCard());
+    }
+
+    private void resetAck() {
+        noOfAck = 0;
+    }
+
+    private void ackReceived() {
+        noOfAck++;
     }
 
     private void notifyDraftToPlayer(Player player) {
         player.notifyDraft();
     }
+
+    private void startRound() {
+        currentRound = new Round(this);
+        new Thread(() -> {
+            do {
+                currentRound.startForPlayer(playerList.get(playerIndex));
+                nextPlayer();
+            } while (playerIndex < playerList.size());
+            playerIndex--;
+        });
+
+        new Thread(() -> {
+            do {
+                currentRound.startForPlayer(playerList.get(playerIndex));
+                previousPlayer();
+            } while (playerIndex > -1);
+            playerIndex++;
+        });
+    }
+
+    private void nextPlayer() {
+        playerIndex++;
+    }
+
+    private void previousPlayer() {
+        playerIndex--;
+    }
+
 }

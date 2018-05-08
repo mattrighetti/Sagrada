@@ -37,17 +37,15 @@ public final class Broadcaster {
         return userListToBroadcast;
     }
 
-    public static void broadcastMessage(List<Player> playerList, String username, Message message){
+    public static void broadcastMessage(List<Player> playerList, Message message){
         for (UserObserver userObserver : playerToBroadcast(playerList, message.sender)) {
             userObserver.sendMessage(message);
-            //TODO send messages directly from player (?)
         }
     }
 
-    public static void broadcastResponse(List<Player> playerList, String username, List<Dice> dice){
-        for (UserObserver userObserver : playerToBroadcast(playerList, username)) {
+    public static void broadcastResponse(List<Player> playerList, String usernameToExclude, List<Dice> dice){
+        for (UserObserver userObserver : playerToBroadcast(playerList, usernameToExclude)) {
             userObserver.sendResponse(new DiceNotification(dice));
-            //TODO send messages directly from player (?)
         }
     }
 
