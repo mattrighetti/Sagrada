@@ -34,10 +34,11 @@ public class ServerController implements RequestHandler {
 
     @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCard) {
-        PatternCard patternCard = controller.assignPatternCard(chosenPatternCard.patternCard, user.getUsername());
+        PatternCard patternCard = controller.assignPatternCard(user.getUsername(), chosenPatternCard.patternCard);
         if (patternCard != null) {
             return new ChosenPatternCardResponse(user.getUsername(), patternCard);
         } else
             return null; //TODO ritorna un comando negativo generale
     }
+
 }

@@ -41,5 +41,13 @@ public class Player {
         remoteView.displayPatternCardsToChoose(patternCards);
     }
 
+    public String getPlayerUsername() {
+        return getUser().getUsername();
+    }
+
+    public void notifyDraft() {
+        getUser().getUserObserver().receiveDraftNotification();
+    }
+
     //Get a Private Card of this player
 }

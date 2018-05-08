@@ -11,10 +11,12 @@
 
 package ingsw.model;
 
+import ingsw.controller.network.commands.DiceNotification;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
+import ingsw.utilities.Broadcaster;
 
 import java.util.*;
 
@@ -23,7 +25,7 @@ import java.util.*;
  */
 public class GameManager {
     private Board board;
-
+    private int noOfPatternCardCounter;
     private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
@@ -148,7 +150,30 @@ public class GameManager {
         return playerList;
     }
 
-    public List<Dice> draftDiceFromBoard() {
-        return board.draftDice();
+    public void draftDiceFromBoard() { Broadcaster.broadcastResponseToAll(playerList, board.draftDice()); }
+
+
+    public PatternCard setPatternCardForPlayer(String username, PatternCard patternCard) {
+        for (Player player : playerList) {
+            if (player.getPlayerUsername().equals(username)) {
+                player.setPatternCard(patternCard);
+                noOfPatternCardCounter++;
+            }
+        }
+
+        return patternCard;
+    }
+
+    public void waitForEveryPatternCard() {
+        new Thread( () -> {
+            while(noOfPatternCardCounter < 4) {
+
+            }
+            notifyDraftToPlayer(playerList.get(0));
+        });
+    }
+
+    private void notifyDraftToPlayer(Player player) {
+        player.notifyDraft();
     }
 }

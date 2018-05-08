@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Controller extends UnicastRemoteObject implements RemoteController {
-    Map<String, RequestHandler> serverSideControllers;
     private GameManager gameManager;
     private List<Player> playerList;
     private int generalCounter;
@@ -34,16 +33,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
 
     private void createMatch() {
         gameManager = new GameManager(playerList);
-    }
-
-    private List<UserObserver> playerToBroadcast(String username) {
-        List<UserObserver> playerListToBroadcast = new ArrayList<>();
-        for (Player player : playerList) {
-            if (!player.getUser().getUsername().equals(username)) {
-                playerListToBroadcast.add(player.getUser().getUserObserver());
-            }
-        }
-        return playerListToBroadcast;
+        gameManager.waitForEveryPatternCard();
     }
 
     /**
@@ -52,29 +42,13 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      * @param patternCard
      * @param username
      */
-    public synchronized PatternCard assignPatternCard(PatternCard patternCard, String username) {
-        for (Player player: gameManager.getPlayerList()) {
-            if (player.getUser().getUsername().equals(username)) {
-                player.setPatternCard(patternCard);
-                if (++generalCounter == 4) {
-                    broadcastMessage(new Message(username,
-                            "Tutti gli utenti hanno scelto la PatternCard. Utente "
-                            + playerList.get(0).getUser().getUsername() + " deve pescare i dadi"));
-                }
-                return player.getPatternCard();
-            }
-        }
-        return null;
+    public synchronized PatternCard assignPatternCard(String username, PatternCard patternCard) {
+       return gameManager.setPatternCardForPlayer(username, patternCard);
     }
 
-    public List<Dice> draftDice() {
-        return gameManager.draftDiceFromBoard();
+    public void draftDice() {
+        gameManager.draftDiceFromBoard();
     }
 
-    public void broadcastMessage(Message message) {
-        for (UserObserver userObserver : playerToBroadcast(message.sender)) {
-            userObserver.sendMessage(message);
-            //TODO send messages directly from player (?)
-        }
-    }
+
 }
