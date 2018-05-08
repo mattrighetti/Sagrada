@@ -4,7 +4,9 @@ import java.rmi.RemoteException;
 
 public interface RequestHandler {
 
-    Response handle(LoginUserRequest loginUserRequest);
+    Response handle(LoginUserRequest loginUserRequest) throws RemoteException;
 
     Response handle(ChosenPatternCardRequest chosenPatternCardRequest) throws RemoteException;
+
+    Response handle(CreateMatchRequest createMatchRequest) throws RemoteException;
 }

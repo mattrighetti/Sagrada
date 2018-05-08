@@ -38,7 +38,7 @@ public class LoginController implements SceneUpdater {
     }
 
     @Override
-    public void setClientController(NetworkType networkType) {
+    public void setNetworkType(NetworkType networkType) {
         this.networkType = networkType;
     }
 

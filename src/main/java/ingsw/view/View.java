@@ -26,7 +26,7 @@ public class View extends Application implements GUIUpdater {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws IOException {
         deploySocketClient();
         deployRMIClient();
         this.mainStage = primaryStage;
@@ -54,7 +54,7 @@ public class View extends Application implements GUIUpdater {
         LoginController loginController = fxmlLoader.getController();
         clientController.setSceneUpdater(loginController);
         rmiController.setSceneUpdater(loginController);
-        loginController.setClientController(clientController);
+        loginController.setNetworkType(clientController);
         loginController.setApplication(this);
         mainStage.setScene(new Scene(login));
         mainStage.setTitle("Login");
@@ -69,7 +69,7 @@ public class View extends Application implements GUIUpdater {
         LobbyController lobbyController = fxmlLoader.getController();
         clientController.setSceneUpdater(lobbyController);
         rmiController.setSceneUpdater(lobbyController);
-        lobbyController.setClientController(clientController);
+        lobbyController.setNetworkType(clientController);
         lobbyController.setApplication(this);
         lobbyController.updateConnectedUsers(connectedUsers);
         mainStage.setScene(new Scene(lobby));
@@ -91,12 +91,12 @@ public class View extends Application implements GUIUpdater {
 
     @Override
     public void changeToRMI() {
-        currentScene.setClientController(rmiController);
+        currentScene.setNetworkType(rmiController);
     }
 
     @Override
     public void changeToSocket() {
-        currentScene.setClientController(clientController);
+        currentScene.setNetworkType(clientController);
     }
 
     @Override

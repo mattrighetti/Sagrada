@@ -44,4 +44,18 @@ public class ServerController implements RequestHandler {
         } else
             return null; //TODO ritorna un comando negativo generale
     }
+
+    @Override
+    public Response handle(CreateMatchRequest createMatchRequest) {
+        try {
+            controller = sagradaGame.createMatch(createMatchRequest.matchName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        if (controller != null) {
+            return new CreateMatchResponse();
+        }
+        return null; // TODO ritorna un comando negativo generale
+    }
 }

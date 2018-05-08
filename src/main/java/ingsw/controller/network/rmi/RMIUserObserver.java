@@ -5,7 +5,6 @@ import ingsw.controller.network.commands.IntegerResponse;
 import ingsw.controller.network.commands.ResponseHandler;
 import ingsw.controller.network.socket.UserObserver;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 

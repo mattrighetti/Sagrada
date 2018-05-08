@@ -7,7 +7,7 @@ import ingsw.view.SceneUpdater;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public class RMIController implements Remote, ResponseHandler, NetworkType {
+public class RMIController implements ResponseHandler, NetworkType {
     private RMIHandler rmiHandler;
     private RMIUserObserver rmiUserObserver;
     private Response ack;
@@ -57,6 +57,10 @@ public class RMIController implements Remote, ResponseHandler, NetworkType {
 
     }
 
+    @Override
+    public void handle(CreateMatchResponse createMatchResponse) {
+
+    }
 
 
     /* NETWORK TYPE PART*/
@@ -69,5 +73,11 @@ public class RMIController implements Remote, ResponseHandler, NetworkType {
         ack.handle(this);
 
         return isUserLogged;
+    }
+
+    @Override
+    public void createMatch(String matchName) throws RemoteException {
+        ack = new CreateMatchRequest(matchName).handle(rmiHandler);
+        ack.handle(this);
     }
 }

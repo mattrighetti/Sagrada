@@ -6,11 +6,10 @@ import ingsw.model.RemoteSagradaGame;
 import ingsw.model.User;
 
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
-public class RMIHandler implements Remote, RequestHandler {
+public class RMIHandler implements RequestHandler {
     private ResponseHandler rmiController;
     private RMIUserObserver rmiUserObserver;
     private RemoteSagradaGame sagradaGame;

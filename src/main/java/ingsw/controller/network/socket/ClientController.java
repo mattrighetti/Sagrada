@@ -33,6 +33,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         return isUserLogged;
     }
 
+    @Override
+    public void createMatch(String matchName) {
+        client.request(new CreateMatchRequest(matchName));
+    }
+
     /**
      * Method that opens a Thread and listens for every incoming JoinedUserResponse sent by the Controller
      */
@@ -71,6 +76,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     public void handle(IntegerResponse integerResponse) {
         System.out.println("Connected Users: " + integerResponse.number);
         sceneUpdater.updateConnectedUsers(integerResponse.number);
+    }
+
+    @Override
+    public void handle(CreateMatchResponse createMatchResponse) {
+
     }
 
     @Override

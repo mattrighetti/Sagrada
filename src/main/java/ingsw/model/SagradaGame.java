@@ -48,6 +48,17 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
+    public synchronized Controller createMatch(String matchName) throws RemoteException {
+        Controller controller;
+        if (!matchesByName.containsKey(matchName)) {
+            controller = new Controller();
+            matchesByName.put(matchName, controller);
+            // Broadcast match to all players
+            return matchesByName.get(matchName);
+        } else throw new RemoteException("Match already exists");
+    }
+
+    @Override
     public void broadcastUsersConnected(String username) throws RemoteException {
         for (User user : connectedUsers.values()) {
             if (!user.getUsername().equals(username)) {

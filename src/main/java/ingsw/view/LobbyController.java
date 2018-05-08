@@ -25,25 +25,22 @@ public class LobbyController implements SceneUpdater {
     @FXML
     private Text connectedUsersText;
 
-    private ClientController clientController;
+    private NetworkType networkType;
     private View application;
-
-    public void setClientController(ClientController clientController) {
-        this.clientController = clientController;
-    }
 
     public void setApplication(View application) {
         this.application = application;
     }
 
     @Override
-    public void setClientController(NetworkType clientController) {
-
+    public void setNetworkType(NetworkType clientController) {
+        this.networkType = networkType;
     }
 
     @FXML
     void onCreatePressed(ActionEvent event) {
-
+        // Crea match
+        networkType.createMatch();
     }
 
     @FXML
