@@ -24,18 +24,21 @@ public class ServerController implements RequestHandler {
     @Override
     public synchronized Response handle(LoginUserRequest loginUserRequest) {
         try {
-            user = sagradaGame.loginUser(loginUserRequest.username);
+            user = sagradaGame.loginUser(loginUserRequest.username, clientHandler);
         } catch (InvalidUsernameException e) {
             return new LoginUserResponse(null, -1);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
 
-        user.addListener(clientHandler);
         return new LoginUserResponse(user, sagradaGame.getConnectedUsers());
     }
 
     @Override
-    public Response handle(ChosenPatternCardRequest chosenPatternCard) {
-        PatternCard patternCard = controller.assignPatternCard(chosenPatternCard.patternCard, user.getUsername());
+    public Response handle(ChosenPatternCardRequest chosenPatternCard) throws RemoteException {
+        PatternCard patternCard = null;
+        patternCard = controller.assignPatternCard(chosenPatternCard.patternCard, user.getUsername());
+
         if (patternCard != null) {
             return new ChosenPatternCardResponse(user.getUsername(), patternCard);
         } else

@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 
 public class View extends Application implements GUIUpdater {
     private String username;
@@ -38,7 +39,7 @@ public class View extends Application implements GUIUpdater {
         this.clientController = new ClientController(client);
     }
 
-    private void deployRMIClient() {
+    private void deployRMIClient() throws RemoteException {
         rmiController = new RMIController();
         rmiController.connect();
     }

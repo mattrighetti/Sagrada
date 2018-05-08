@@ -3,6 +3,7 @@ package ingsw.model;
 import ingsw.controller.network.socket.UserObserver;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class User implements Serializable {
         return userObserver;
     }
 
-    public void updateUserConnected(int numberOfConnectedUsers) {
+    public void updateUserConnected(int numberOfConnectedUsers) throws RemoteException {
         userObserver.onJoin(numberOfConnectedUsers);
     }
 }
