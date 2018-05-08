@@ -17,8 +17,7 @@ import java.util.List;
 public final class GridCreator {
     private static Gson gson = new Gson();
     private static JsonReader jsonReader;
-    public static final Type GRID_TYPE = new TypeToken<ArrayList<ArrayList<Box>>>() {
-    }.getType();
+    public static final Type GRID_TYPE = new TypeToken<ArrayList<ArrayList<Box>>>(){}.getType();
 
 
     private GridCreator() {

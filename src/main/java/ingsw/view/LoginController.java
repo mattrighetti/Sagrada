@@ -1,5 +1,6 @@
 package ingsw.view;
 
+import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.socket.ClientController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,6 +29,7 @@ public class LoginController implements SceneUpdater {
     @FXML
     private Button loginButton;
 
+    NetworkType networkType;
     ClientController clientController;
     GUIUpdater application;
 
@@ -35,8 +37,9 @@ public class LoginController implements SceneUpdater {
 
     }
 
-    public void setClientController(ClientController clientController) {
-        this.clientController = clientController;
+    @Override
+    public void setClientController(NetworkType networkType) {
+        this.networkType = networkType;
     }
 
     public void setApplication(GUIUpdater application) {
@@ -46,7 +49,7 @@ public class LoginController implements SceneUpdater {
     @FXML
     void onLoginPressed(ActionEvent event) throws IOException {
         String username = usernameTextField.getText();
-        if(clientController.loginUser(username))
+        if(networkType.loginUser(username))
             application.launchSecondGUI();
         else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -59,12 +62,12 @@ public class LoginController implements SceneUpdater {
 
     @FXML
     void selectedRMI(ActionEvent event) {
-
+        application.changeToRMI();
     }
 
     @FXML
     void selectedSocket(ActionEvent event) {
-
+        application.changeToSocket();
     }
 
     @Override

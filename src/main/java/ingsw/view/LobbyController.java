@@ -1,5 +1,6 @@
 package ingsw.view;
 
+import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.socket.ClientController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,6 +34,11 @@ public class LobbyController implements SceneUpdater {
 
     public void setApplication(View application) {
         this.application = application;
+    }
+
+    @Override
+    public void setClientController(NetworkType clientController) {
+
     }
 
     @FXML

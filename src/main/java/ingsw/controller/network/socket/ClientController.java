@@ -2,11 +2,12 @@ package ingsw.controller.network.socket;
 
 import ingsw.controller.network.commands.*;
 import ingsw.view.SceneUpdater;
+import ingsw.controller.network.NetworkType;
 
 /**
  * Class that defines the socket connection of the game
  */
-public class ClientController implements ResponseHandler {
+public class ClientController implements ResponseHandler, NetworkType {
     private BroadcastReceiver broadcastReceiver;
     private Client client;
     private boolean isUserLogged = false;
@@ -25,6 +26,7 @@ public class ClientController implements ResponseHandler {
         return client;
     }
 
+    @Override
     public boolean loginUser(String username) {
         client.request(new LoginUserRequest(username));
         client.nextResponse().handle(this);
