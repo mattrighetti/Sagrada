@@ -34,17 +34,17 @@ public class Board {
     }
 
     protected List<Dice> draftDice() {
+        draftedDice = new ArrayList<>();
         Collections.shuffle(diceBag);
         for (int i = 0; i < 5; i++) {
-            diceBag.get(i).roll();
-            draftedDice.add(diceBag.get(i));
-            diceBag.remove(i);
+            Dice dice = diceBag.get(0);
+            dice.roll();
+            draftedDice.add(dice);
+            diceBag.remove(0);
         }
         return draftedDice;
     }
 
-
-    //-----METHODS-----
 
     //Get the Player No. index
     public Player getPlayer(int index) {
