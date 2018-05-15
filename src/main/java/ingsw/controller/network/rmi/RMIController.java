@@ -68,7 +68,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
 
     @Override
-    public boolean loginUser(String username) {
+    public boolean loginUser(String username) throws RemoteException {
         ack = new LoginUserRequest(username).handle(rmiHandler);
         ack.handle(this);
 

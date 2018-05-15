@@ -45,4 +45,9 @@ public class RMIHandler implements RequestHandler {
     public Response handle(ChosenPatternCardRequest chosenPatternCardRequest) {
         return null;
     }
+
+    @Override
+    public Response handle(CreateMatchRequest createMatchRequest) throws RemoteException {
+        return null;
+    }
 }

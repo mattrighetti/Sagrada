@@ -8,6 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
+import java.rmi.RemoteException;
+
 public class LobbyController implements SceneUpdater {
 
     @FXML
@@ -38,9 +40,9 @@ public class LobbyController implements SceneUpdater {
     }
 
     @FXML
-    void onCreatePressed(ActionEvent event) {
+    void onCreatePressed(ActionEvent event) throws RemoteException {
         // Crea match
-        networkType.createMatch();
+        networkType.createMatch("Match");
     }
 
     @FXML

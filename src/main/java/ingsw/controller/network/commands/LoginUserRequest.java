@@ -1,5 +1,7 @@
 package ingsw.controller.network.commands;
 
+import java.rmi.RemoteException;
+
 public class LoginUserRequest implements Request {
     public String username;
 
@@ -8,7 +10,7 @@ public class LoginUserRequest implements Request {
     }
 
     @Override
-    public Response handle(RequestHandler requestHandler) {
+    public Response handle(RequestHandler requestHandler) throws RemoteException {
         return requestHandler.handle(this);
     }
 }
