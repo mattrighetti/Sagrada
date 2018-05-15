@@ -191,7 +191,7 @@ public class GameManager {
     }
 
     public void useToolCard(Player player, ToolCard toolCard) {
-        //metodo toolCard.action(player.getPatternCard());
+        //method toolCard.action(player.getPatternCard());
     }
 
     private void resetAck() {
