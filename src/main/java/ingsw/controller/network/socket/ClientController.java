@@ -40,6 +40,7 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method that opens a Thread and listens for every incoming JoinedUserResponse sent by the Controller
+     *
      */
     public void listenForNewUsers() {
         broadcastReceiver.start();

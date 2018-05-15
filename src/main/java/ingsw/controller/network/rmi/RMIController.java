@@ -4,7 +4,6 @@ import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.*;
 import ingsw.view.SceneUpdater;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public class RMIController implements ResponseHandler, NetworkType {
@@ -54,12 +53,15 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(MessageResponse messageResponse) {
-
+        System.out.println(messageResponse.message);
     }
 
     @Override
     public void handle(CreateMatchResponse createMatchResponse) {
-
+        if (createMatchResponse != null) {
+            System.out.println("Match created");
+            sceneUpdater.updateExistingMatches(createMatchResponse.matchName);
+        }
     }
 
 

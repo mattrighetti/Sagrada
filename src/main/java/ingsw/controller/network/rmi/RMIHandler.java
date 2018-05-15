@@ -1,5 +1,6 @@
 package ingsw.controller.network.rmi;
 
+import ingsw.controller.RemoteController;
 import ingsw.controller.network.commands.*;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.model.RemoteSagradaGame;
@@ -13,6 +14,7 @@ public class RMIHandler implements RequestHandler {
     private ResponseHandler rmiController;
     private RMIUserObserver rmiUserObserver;
     private RemoteSagradaGame sagradaGame;
+    private RemoteController controller;
     private User user;
 
     public RMIHandler(RMIController rmiController, RMIUserObserver rmiUserObserver) {
@@ -48,6 +50,10 @@ public class RMIHandler implements RequestHandler {
 
     @Override
     public Response handle(CreateMatchRequest createMatchRequest) throws RemoteException {
+        controller = sagradaGame.createMatch(createMatchRequest.matchName);
+        if (controller != null) {
+            return new CreateMatchResponse(createMatchRequest.matchName);
+        }
         return null;
     }
 }

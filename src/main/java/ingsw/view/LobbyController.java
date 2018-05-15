@@ -5,8 +5,10 @@ import ingsw.controller.network.socket.ClientController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import org.junit.FixMethodOrder;
 
 import java.rmi.RemoteException;
 
@@ -23,6 +25,12 @@ public class LobbyController implements SceneUpdater {
 
     @FXML
     private Button createButton;
+
+    @FXML
+    private TableColumn<?, ?> matchNameColumn;
+
+    @FXML
+    private TableColumn<?, ?> matchConnectedUsersColumn;
 
     @FXML
     private Text connectedUsersText;
@@ -58,6 +66,10 @@ public class LobbyController implements SceneUpdater {
     @Override
     public void updateConnectedUsers(int usersConnected) {
         connectedUsersText.setText("Connected users: "+ String.valueOf(usersConnected));
+    }
+
+    @Override
+    public void updateExistingMatches(String matchName) {
     }
 }
 

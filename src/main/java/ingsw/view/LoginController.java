@@ -9,7 +9,7 @@ import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
 
-public class LoginController implements SceneUpdater {
+public  abstract class LoginController implements SceneUpdater {
 
     @FXML
     private GridPane loginPane;

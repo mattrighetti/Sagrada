@@ -57,8 +57,8 @@
         </Button>
       <TableView prefHeight="209.0" prefWidth="361.0" GridPane.rowIndex="1" GridPane.rowSpan="5">
         <columns>
-          <TableColumn prefWidth="130.0" text="Name" />
-          <TableColumn prefWidth="130.0" text="People" />
+          <TableColumn fx:id="matchNameColumn" prefWidth="130.0" text="Name" />
+          <TableColumn fx:id="matchConnectedUsersColumn" prefWidth="130.0" text="People" />
         </columns>
          <GridPane.margin>
             <Insets left="10.0" right="10.0" />
