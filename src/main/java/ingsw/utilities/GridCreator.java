@@ -25,7 +25,6 @@ public final class GridCreator {
 
     /**
      * Reads a patter card's grid from JSON file passed as parameter
-     *
      * @param path
      * @return
      */

@@ -7,6 +7,10 @@ import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class that identifies the "client" until the game started, after the game has started it will be contained in
+ * the Player class
+ */
 public class User implements Serializable {
     private String username;
     private transient UserObserver userObserver;

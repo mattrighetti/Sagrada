@@ -23,8 +23,28 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
 
+    /* NETWORK TYPE PART*/
+    /* METHODS EXECUTED BY THE VIEW TO MAKE ACTIONS */
+
+
+
+    @Override
+    public boolean loginUser(String username) throws RemoteException {
+        ack = new LoginUserRequest(username).handle(rmiHandler);
+        ack.handle(this);
+
+        return isUserLogged;
+    }
+
+    @Override
+    public void createMatch(String matchName) throws RemoteException {
+        ack = new CreateMatchRequest(matchName).handle(rmiHandler);
+        ack.handle(this);
+    }
+
 
     /* HANDLER PART */
+    /* METHOD EXECUTED BY THE RMI HANDLER */
 
 
 
@@ -62,24 +82,5 @@ public class RMIController implements ResponseHandler, NetworkType {
             System.out.println("Match created");
             sceneUpdater.updateExistingMatches(createMatchResponse.matchName);
         }
-    }
-
-
-    /* NETWORK TYPE PART*/
-
-
-
-    @Override
-    public boolean loginUser(String username) throws RemoteException {
-        ack = new LoginUserRequest(username).handle(rmiHandler);
-        ack.handle(this);
-
-        return isUserLogged;
-    }
-
-    @Override
-    public void createMatch(String matchName) throws RemoteException {
-        ack = new CreateMatchRequest(matchName).handle(rmiHandler);
-        ack.handle(this);
     }
 }
