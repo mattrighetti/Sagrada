@@ -33,6 +33,10 @@ public class Board {
         });
     }
 
+    /**
+     * Method that drafts five dice from the diceBag
+     * @return
+     */
     protected List<Dice> draftDice() {
         draftedDice = new ArrayList<>();
         Collections.shuffle(diceBag);
@@ -46,7 +50,9 @@ public class Board {
     }
 
 
-    //Get the Player No. index
+    /**
+     * Get the Player No. index
+     */
     public Player getPlayer(int index) {
         return players.get(index);
     }

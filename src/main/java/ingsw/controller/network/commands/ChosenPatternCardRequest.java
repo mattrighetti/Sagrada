@@ -2,6 +2,8 @@ package ingsw.controller.network.commands;
 
 import ingsw.model.cards.patterncard.PatternCard;
 
+import java.rmi.RemoteException;
+
 public class ChosenPatternCardRequest implements Request {
     public String username;
     public PatternCard patternCard;
@@ -12,7 +14,7 @@ public class ChosenPatternCardRequest implements Request {
     }
 
     @Override
-    public Response handle(RequestHandler requestHandler) {
+    public Response handle(RequestHandler requestHandler) throws RemoteException {
         return requestHandler.handle(this);
     }
 }

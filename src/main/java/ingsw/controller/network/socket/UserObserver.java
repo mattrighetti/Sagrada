@@ -2,9 +2,12 @@ package ingsw.controller.network.socket;
 
 import ingsw.controller.network.Message;
 
-public interface UserObserver {
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
-    void onJoin(int numberOfConnectedUsers);
+public interface UserObserver extends Remote {
 
-    void sendMessage(Message message);
+    void onJoin(int numberOfConnectedUsers) throws RemoteException;
+
+    void sendMessage(Message message) throws RemoteException;
 }

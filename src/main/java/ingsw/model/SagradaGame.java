@@ -1,6 +1,7 @@
 package ingsw.model;
 
 import ingsw.controller.Controller;
+import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
 
 import java.rmi.RemoteException;
@@ -27,14 +28,18 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         return sagradaGameSingleton;
     }
 
+    /* REMOTE SAGRADAGAME PART*/
+
+    @Override
     public int getConnectedUsers() {
         return connectedUsers.size();
     }
 
     @Override
-    public synchronized User loginUser(String username) throws InvalidUsernameException {
+    public synchronized User loginUser(String username, UserObserver userObserver) throws InvalidUsernameException, RemoteException {
         User currentUser = new User(username);
         if (!connectedUsers.containsKey(username)) {
+            currentUser.addListener(userObserver);
             connectedUsers.put(username, currentUser);
             broadcastUsersConnected(username);
             return connectedUsers.get(username);
@@ -43,9 +48,21 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
-    public void broadcastUsersConnected(String username) {
+    public synchronized Controller createMatch(String matchName) throws RemoteException {
+        Controller controller;
+        if (!matchesByName.containsKey(matchName)) {
+            controller = new Controller();
+            matchesByName.put(matchName, controller);
+            // Broadcast match to all players
+            return matchesByName.get(matchName);
+        } else throw new RemoteException("Match already exists");
+    }
+
+    @Override
+    public void broadcastUsersConnected(String username) throws RemoteException {
         for (User user : connectedUsers.values()) {
             if (!user.getUsername().equals(username)) {
+                System.out.println(user.getUsername());
                 user.updateUserConnected(connectedUsers.size());
             }
         }

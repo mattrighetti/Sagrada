@@ -2,11 +2,11 @@ package ingsw.controller.network.commands;
 
 import java.rmi.RemoteException;
 
-public class LoginUserRequest implements Request {
-    public String username;
+public class CreateMatchRequest implements Request {
+    public String matchName;
 
-    public LoginUserRequest(String username) {
-        this.username = username;
+    public CreateMatchRequest(String matchName) {
+        this.matchName = matchName;
     }
 
     @Override

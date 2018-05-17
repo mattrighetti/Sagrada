@@ -52,7 +52,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      * @param patternCard
      * @param username
      */
-    public synchronized PatternCard assignPatternCard(PatternCard patternCard, String username) {
+    public synchronized PatternCard assignPatternCard(PatternCard patternCard, String username) throws RemoteException {
         for (Player player: gameManager.getPlayerList()) {
             if (player.getUser().getUsername().equals(username)) {
                 player.setPatternCard(patternCard);
@@ -72,7 +72,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
         return gameManager.draftDiceFromBoard();
     }
 
-    public void broadcastMessage(Message message) {
+    public void broadcastMessage(Message message) throws RemoteException {
         for (UserObserver userObserver : playerToBroadcast(message.sender)) {
             userObserver.sendMessage(message);
         }

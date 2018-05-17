@@ -8,4 +8,12 @@ public interface GUIUpdater {
     void launchThirdGUI() throws IOException;
 
     void updateConnectedUsers(int connectedUsers);
+
+    void setUsername(String username);
+
+    void changeToRMI();
+
+    void changeToSocket();
+
+    String getUsername();
 }

@@ -24,21 +24,42 @@ public class ServerController implements RequestHandler {
     @Override
     public synchronized Response handle(LoginUserRequest loginUserRequest) {
         try {
-            user = sagradaGame.loginUser(loginUserRequest.username);
+            user = sagradaGame.loginUser(loginUserRequest.username, clientHandler);
         } catch (InvalidUsernameException e) {
             return new LoginUserResponse(null, -1);
+        } catch (RemoteException e) {
+            return null;
         }
 
-        user.addListener(clientHandler);
         return new LoginUserResponse(user, sagradaGame.getConnectedUsers());
     }
 
     @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCard) {
-        PatternCard patternCard = controller.assignPatternCard(chosenPatternCard.patternCard, user.getUsername());
+        PatternCard patternCard = null;
+        try {
+            patternCard = controller.assignPatternCard(chosenPatternCard.patternCard, user.getUsername());
+        } catch (RemoteException e) {
+            return null;
+        }
+
         if (patternCard != null) {
             return new ChosenPatternCardResponse(user.getUsername(), patternCard);
-        } else
-            return null; //TODO ritorna un comando negativo generale
+        } else return null;
+
+    }
+
+    @Override
+    public Response handle(CreateMatchRequest createMatchRequest) {
+        try {
+            controller = sagradaGame.createMatch(createMatchRequest.matchName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        if (controller != null) {
+            return new CreateMatchResponse(createMatchRequest.matchName);
+        }
+        return null; // TODO ritorna un comando negativo generale
     }
 }
