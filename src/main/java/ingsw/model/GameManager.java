@@ -206,24 +206,33 @@ public class GameManager {
         player.notifyDraft();
     }
 
-    private void startRound() {
-        currentRound = new Round(this);
+    private void startMatch() {
         new Thread(() -> {
-            do {
-                currentRound.startForPlayer(playerList.get(playerIndex));
-                nextPlayer();
-            } while (playerIndex < playerList.size());
-            playerIndex--;
-        });
+            for (int i = 0; i < 10; i++) {
+                startRound();
+            }
 
-        new Thread(() -> {
-            do {
-                currentRound.startForPlayer(playerList.get(playerIndex));
-                previousPlayer();
-            } while (playerIndex > -1);
-            playerIndex++;
         });
     }
+
+    private void startRound() {
+        currentRound = new Round(this);
+        //Rounds going forward
+        do {
+            currentRound.startForPlayer(playerList.get(playerIndex));
+            nextPlayer();
+        } while (playerIndex < playerList.size());
+        playerIndex--;
+        //Rounds going backwards
+        do {
+            currentRound.startForPlayer(playerList.get(playerIndex));
+            previousPlayer();
+        } while (playerIndex > -1);
+        playerIndex++;
+
+
+    }
+
 
     private void nextPlayer() {
         playerIndex++;
