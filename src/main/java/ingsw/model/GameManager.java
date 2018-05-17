@@ -17,7 +17,6 @@ import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.Broadcaster;
 
-import javax.tools.Tool;
 import java.util.*;
 
 /**
@@ -140,13 +139,14 @@ public class GameManager {
         return new HashSet<>(publicObjectiveCards.subList(0, 3));
     }
 
-    private Set<PatternCard> pickPatternCards() {
-        Set<PatternCard> pickedPatternCards = new HashSet<>(patternCards.subList(0, 4));
-        for (int i = 0; i < 4; i++) {
-            patternCards.remove(0);
+    private void pickPatternCards() {
+        for (Player player : playerList) {
+            Set<PatternCard> pickedPatternCards = new HashSet<>(patternCards.subList(0, 4));
+            for (int i = 0; i < 4; i++) {
+                patternCards.remove(0);
+            }
+            player.getUser().getUserObserver().
         }
-
-        return pickedPatternCards;
     }
 
     public List<Player> getPlayerList() {
