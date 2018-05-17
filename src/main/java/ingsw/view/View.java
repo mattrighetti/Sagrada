@@ -25,6 +25,12 @@ public class View extends Application implements GUIUpdater {
         Application.launch(args);
     }
 
+    /**
+     * GUI starter which, in order, does create a Socket connection followed by an RMI connection and ultimately
+     * launches the first GUI
+     * @param primaryStage
+     * @throws IOException
+     */
     @Override
     public void start(Stage primaryStage) throws IOException {
         deploySocketClient();
@@ -33,21 +39,37 @@ public class View extends Application implements GUIUpdater {
         launchFirstGUI();
     }
 
-    public void deployClient() throws IOException {
+    /**
+     * Method that creates a client connection to the previously opened server socket
+     * @throws IOException
+     */
+    public void deploySocketClient() throws IOException {
         Client client = new Client("localhost",8000);
         client.connect();
         this.clientController = new ClientController(client);
     }
 
+    /**
+     * Method that creates a RMI connection to SagradaGame which resides in the RMIHandler
+     * @throws RemoteException
+     */
     private void deployRMIClient() throws RemoteException {
         rmiController = new RMIController();
         rmiController.connect();
     }
 
+    /**
+     * Method that sets the current scene. Used to keep track of the current scene and exchanging data with it
+     * @param currentScene
+     */
     public void setCurrentScene(SceneUpdater currentScene) {
         this.currentScene = currentScene;
     }
 
+    /**
+     * First GUI launcher
+     * @throws IOException
+     */
     public void launchFirstGUI() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login.fxml"));
         GridPane login = fxmlLoader.load();
@@ -62,6 +84,10 @@ public class View extends Application implements GUIUpdater {
         setCurrentScene(loginController);
     }
 
+    /**
+     * Second GUI launcher
+     * @throws IOException
+     */
     @Override
     public void launchSecondGUI() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
@@ -78,29 +104,56 @@ public class View extends Application implements GUIUpdater {
         setCurrentScene(lobbyController);
     }
 
+    /**
+     * Third GUI launcher
+     * @throws IOException
+     */
     @Override
     public void launchThirdGUI() throws IOException {
 
     }
 
-    public void deploySocketClient() throws IOException {
-        Client client = new Client("localhost",8000);
-        client.connect();
-        this.clientController = new ClientController(client);
-    }
-
+    /**
+     * Switch to RMI connection
+     */
     @Override
     public void changeToRMI() {
         currentScene.setNetworkType(rmiController);
     }
 
+    /**
+     * Switch to Socket connection
+     */
     @Override
     public void changeToSocket() {
         currentScene.setNetworkType(clientController);
     }
 
+    /**
+     * Update the connected users to the game (not the match)
+     * @param connectedUsers
+     */
     @Override
     public void updateConnectedUsers(int connectedUsers) {
         this.connectedUsers = connectedUsers;
+    }
+
+    /**
+     * Username setter
+     * @param username
+     */
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+
+    /**
+     * Username getter
+     * @return
+     */
+    @Override
+    public String getUsername() {
+        return username;
     }
 }

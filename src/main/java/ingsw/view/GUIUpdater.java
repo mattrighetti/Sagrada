@@ -9,7 +9,11 @@ public interface GUIUpdater {
 
     void updateConnectedUsers(int connectedUsers);
 
+    void setUsername(String username);
+
     void changeToRMI();
 
     void changeToSocket();
+
+    String getUsername();
 }
