@@ -64,7 +64,6 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(LoginUserResponse loginUserResponse) {
         if (loginUserResponse.user != null) {
-            System.out.println("New connection >>> " + loginUserResponse.user.getUsername());
             isUserLogged = true;
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             listenForNewUsers();
@@ -75,7 +74,6 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(IntegerResponse integerResponse) {
-        System.out.println("Connected Users: " + integerResponse.number);
         sceneUpdater.updateConnectedUsers(integerResponse.number);
     }
 

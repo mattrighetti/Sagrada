@@ -1,7 +1,6 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
-import ingsw.controller.network.socket.ClientController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -9,7 +8,7 @@ import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
 
-public  abstract class LoginController implements SceneUpdater {
+public class LoginController implements SceneUpdater {
 
     @FXML
     private GridPane loginPane;
@@ -30,7 +29,6 @@ public  abstract class LoginController implements SceneUpdater {
     private Button loginButton;
 
     NetworkType networkType;
-    ClientController clientController;
     GUIUpdater application;
 
     public LoginController() {

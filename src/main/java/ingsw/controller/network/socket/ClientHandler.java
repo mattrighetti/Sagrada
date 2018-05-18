@@ -2,7 +2,6 @@ package ingsw.controller.network.socket;
 
 import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.*;
-import ingsw.model.User;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,7 +20,6 @@ public class ClientHandler implements Runnable, UserObserver {
         this.clientSocket = clientSocket;
         this.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
-
         this.serverController = new ServerController(this);
     }
 
@@ -75,6 +73,12 @@ public class ClientHandler implements Runnable, UserObserver {
             System.err.println("Errors in closing - " + e.getMessage());
         }
     }
+
+    /*
+    *
+    * USER OBSERVER METHODS
+    *
+   */
 
     @Override
     public void onJoin(int numberOfConnectedUsers) {

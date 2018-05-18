@@ -17,6 +17,11 @@ public class RMIHandler implements RequestHandler {
     private RemoteController controller;
     private User user;
 
+    /**
+     * RMIHandler constructor which retrieves SagradaGame and sets
+     * @param rmiController
+     * @param rmiUserObserver
+     */
     public RMIHandler(RMIController rmiController, RMIUserObserver rmiUserObserver) {
         try {
             this.sagradaGame = (RemoteSagradaGame) LocateRegistry.getRegistry().lookup("sagrada");

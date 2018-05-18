@@ -35,6 +35,20 @@ public class ServerController implements RequestHandler {
     }
 
     @Override
+    public Response handle(CreateMatchRequest createMatchRequest) {
+        try {
+            controller = sagradaGame.createMatch(createMatchRequest.matchName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        if (controller != null) {
+            return new CreateMatchResponse(createMatchRequest.matchName);
+        }
+        return null; // TODO ritorna un comando negativo generale
+    }
+
+    @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCard) {
         PatternCard patternCard = null;
         try {
@@ -47,19 +61,5 @@ public class ServerController implements RequestHandler {
             return new ChosenPatternCardResponse(user.getUsername(), patternCard);
         } else return null;
 
-    }
-
-    @Override
-    public Response handle(CreateMatchRequest createMatchRequest) {
-        try {
-            controller = sagradaGame.createMatch(createMatchRequest.matchName);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-        if (controller != null) {
-            return new CreateMatchResponse(createMatchRequest.matchName);
-        }
-        return null; // TODO ritorna un comando negativo generale
     }
 }

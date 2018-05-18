@@ -23,7 +23,7 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
 
-    /* NETWORK TYPE PART*/
+    /* NETWORK TYPE PART */
     /* METHODS EXECUTED BY THE VIEW TO MAKE ACTIONS */
 
 
@@ -80,7 +80,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     public void handle(CreateMatchResponse createMatchResponse) {
         if (createMatchResponse != null) {
             System.out.println("Match created");
-            sceneUpdater.updateExistingMatches(createMatchResponse.matchName);
+            try {
+                sceneUpdater.updateExistingMatches(createMatchResponse.matchName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
