@@ -145,7 +145,7 @@ public class GameManager {
             for (int i = 0; i < 4; i++) {
                 patternCards.remove(0);
             }
-            player.getUser().getUserObserver().
+      //      player.getUser().getUserObserver().
         }
     }
 
@@ -171,7 +171,7 @@ public class GameManager {
 
             }
             resetAck();
-            notifyDraftToPlayer(playerList.get(0));
+            startMatch();
         });
     }
 
@@ -181,13 +181,9 @@ public class GameManager {
     }
 
     private void waitForDiceAck() {
-        new Thread(() -> {
-            while (noOfAck < 4) {
+        while (noOfAck < 4) {}
+        resetAck();
 
-            }
-            resetAck();
-            startRound();
-        });
     }
 
     public void useToolCard(Player player, ToolCard toolCard) {
@@ -209,6 +205,7 @@ public class GameManager {
     private void startMatch() {
         new Thread(() -> {
             for (int i = 0; i < 10; i++) {
+                notifyDraftToPlayer(playerList.get(0));
                 startRound();
             }
 
@@ -229,8 +226,14 @@ public class GameManager {
             previousPlayer();
         } while (playerIndex > -1);
         playerIndex++;
+        shiftPlayerList();
+    }
 
-
+    private void shiftPlayerList() {
+        Player tmpPlayer;
+        tmpPlayer = playerList.get(0);
+        playerList.remove(0);
+        playerList.add(tmpPlayer);
     }
 
 
