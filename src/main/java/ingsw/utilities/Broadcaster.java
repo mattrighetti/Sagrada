@@ -29,7 +29,7 @@ public final class Broadcaster {
 
     private static List<UserObserver> userToBroadcast(List<User> userList, String usernameToExclude) {
         List<UserObserver> userListToBroadcast = new ArrayList<>();
-        for (User user: userList) {
+        for (User user : userList) {
             if (!user.getUsername().equals(usernameToExclude)) {
                 userListToBroadcast.add(user.getUserObserver());
             }
@@ -37,20 +37,20 @@ public final class Broadcaster {
         return userListToBroadcast;
     }
 
-    public static void broadcastMessage(List<Player> playerList, Message message){
+    public static void broadcastMessage(List<Player> playerList, Message message) {
         for (UserObserver userObserver : playerToBroadcast(playerList, message.sender)) {
             userObserver.sendMessage(message);
         }
     }
 
-    public static void broadcastResponse(List<Player> playerList, String usernameToExclude, List<Dice> dice){
+    public static void broadcastResponse(List<Player> playerList, String usernameToExclude, List<Dice> dice) {
         for (UserObserver userObserver : playerToBroadcast(playerList, usernameToExclude)) {
             userObserver.sendResponse(new DiceNotification(dice));
         }
     }
 
     public static void broadcastResponseToAll(List<Player> playerList, List<Dice> dice) {
-        for(Player player : playerList ){
+        for (Player player : playerList) {
             player.getUser().getUserObserver().sendResponse(new DiceNotification(dice));
         }
     }

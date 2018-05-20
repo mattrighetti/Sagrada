@@ -7,44 +7,55 @@ public class Round implements Runnable {
     private Player player;
     private AtomicBoolean hasMadeAMove;
     private GameManager gameManager;
+    private AtomicBoolean playerEndedTurn;
 
     public Round(GameManager gameManager) {
         this.gameManager = gameManager;
-        hasMadeAMove.set(false);
     }
 
     public void startForPlayer(Player player) {
         this.player = player;
+        hasMadeAMove.set(false);
+        playerEndedTurn.set(false);
         run();
     }
 
     @Override
     public void run() {
         playerMoves = new Thread( () -> {
+            //TODO recheck activate turn
             player.getUser().getUserObserver().activateTurnNotification();
-            executeMove();
-            executeMove();
-            //gameManager.nextTurn();
+            waitForMove();
+            waitForMove();
+            playerEndedTurn.set(true);
         });
         playerMoves.start();
     }
 
-    private void executeMove() {
+    private void waitForMove() {
         while (!hasMadeAMove.get()) {
 
         }
         hasMadeAMove.set(false);
     }
 
+    public void setPlayerEndedTurn(AtomicBoolean playerEndedTurn) {
+        this.playerEndedTurn = playerEndedTurn;
+        playerMoves.interrupt();
+    }
 
+    public AtomicBoolean hasPlayerEndedTurn() {
+        return playerEndedTurn;
+    }
 
     public boolean makeMove() {
+        //TODO ricontrolla se deve ritornare realmente valori
         boolean isMoveAccepted = gameManager.equals("");
         hasMadeAMove.set(isMoveAccepted);
         return isMoveAccepted;
     }
 
-    public void doNotMakeAMove() {
+    public void skipMove() {
        hasMadeAMove.set(true);
     }
 }

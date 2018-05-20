@@ -31,7 +31,6 @@ public class GameManager {
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
     private Round currentRound;
-    private int playerIndex;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -145,7 +144,7 @@ public class GameManager {
             for (int i = 0; i < 4; i++) {
                 patternCards.remove(0);
             }
-      //      player.getUser().getUserObserver().
+            //TODO broadcast
         }
     }
 
@@ -215,34 +214,16 @@ public class GameManager {
     private void startRound() {
         currentRound = new Round(this);
         //Rounds going forward
-        do {
-            currentRound.startForPlayer(playerList.get(playerIndex));
-            nextPlayer();
-        } while (playerIndex < playerList.size());
-        playerIndex--;
-        //Rounds going backwards
-        do {
-            currentRound.startForPlayer(playerList.get(playerIndex));
-            previousPlayer();
-        } while (playerIndex > -1);
-        playerIndex++;
-        shiftPlayerList();
+        for (int i = 0; i < playerList.size(); i++) {
+            do {
+                currentRound.startForPlayer(playerList.get(i));
+            } while (!currentRound.hasPlayerEndedTurn().get());
+        }
+
+        for (int i = playerList.size() - 1; i >= 0; i--) {
+            do {
+                currentRound.startForPlayer(playerList.get(i));
+            } while (!currentRound.hasPlayerEndedTurn().get());
+        }
     }
-
-    private void shiftPlayerList() {
-        Player tmpPlayer;
-        tmpPlayer = playerList.get(0);
-        playerList.remove(0);
-        playerList.add(tmpPlayer);
-    }
-
-
-    private void nextPlayer() {
-        playerIndex++;
-    }
-
-    private void previousPlayer() {
-        playerIndex--;
-    }
-
 }
