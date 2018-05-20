@@ -14,6 +14,6 @@ public class PatternCardNotification extends Notification {
 
     @Override
     public void handle(ResponseHandler responseHandler) {
-        responseHandler.handle(this);
+        //responseHandler.handle(this);
     }
 }
