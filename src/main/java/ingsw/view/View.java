@@ -110,6 +110,16 @@ public class View extends Application implements GUIUpdater {
      */
     @Override
     public void launchThirdGUI() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
+        Parent game = fxmlLoader.load();
+        GameController gameController = fxmlLoader.getController();
+        clientController.setSceneUpdater(gameController);
+        rmiController.setSceneUpdater(gameController);
+
+        mainStage.setScene(new Scene(game));
+        mainStage.setTitle("Match");
+        mainStage.show();
+        setCurrentScene(gameController);
 
     }
 
@@ -118,7 +128,11 @@ public class View extends Application implements GUIUpdater {
      */
     @Override
     public void changeToRMI() {
-        currentScene.setNetworkType(rmiController);
+        try {
+            currentScene.setNetworkType(rmiController);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -126,7 +140,11 @@ public class View extends Application implements GUIUpdater {
      */
     @Override
     public void changeToSocket() {
-        currentScene.setNetworkType(clientController);
+        try {
+            currentScene.setNetworkType(clientController);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

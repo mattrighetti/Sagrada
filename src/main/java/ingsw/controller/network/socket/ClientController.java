@@ -65,7 +65,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     public void handle(LoginUserResponse loginUserResponse) {
         if (loginUserResponse.user != null) {
             isUserLogged = true;
-            sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
+            try {
+                sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
             listenForNewUsers();
         } else {
             isUserLogged = false;
@@ -74,7 +78,11 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(IntegerResponse integerResponse) {
-        sceneUpdater.updateConnectedUsers(integerResponse.number);
+        try {
+            sceneUpdater.updateConnectedUsers(integerResponse.number);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

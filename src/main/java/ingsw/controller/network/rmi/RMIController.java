@@ -54,7 +54,11 @@ public class RMIController implements ResponseHandler, NetworkType {
             loginUserResponse.user.addListener(rmiUserObserver);
             System.out.println("New connection >>> " + loginUserResponse.user.getUsername());
             isUserLogged = true;
-            sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
+            try {
+                sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         } else {
             isUserLogged = false;
         }
@@ -63,7 +67,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(IntegerResponse integerResponse) {
         System.out.println("Connected Users: " + integerResponse.number);
-        sceneUpdater.updateConnectedUsers(integerResponse.number);
+        try {
+            sceneUpdater.updateConnectedUsers(integerResponse.number);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

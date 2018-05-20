@@ -1,0 +1,5 @@
+.gameGridPane {
+    -fx-border-radius: 10 10 10 10;
+    -fx-background-radius: 50 10 10 10;
+    -fx-background-image: url("background_sagrada.png");
+}
