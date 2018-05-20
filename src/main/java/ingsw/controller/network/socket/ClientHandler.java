@@ -89,4 +89,19 @@ public class ClientHandler implements Runnable, UserObserver {
     public void sendMessage(Message message) {
         respond(new MessageResponse(message));
     }
+
+    @Override
+    public void receiveDraftNotification() {
+        //TODO implement first draft notification from server (button on the view)
+    }
+
+    @Override
+    public void sendResponse(DiceNotification diceNotification) {
+        //TODO send the list of dice (for now only the drafted dice)
+    }
+
+    @Override
+    public void activateTurnNotification() {
+        //TODO notify player that is his turn
+    }
 }

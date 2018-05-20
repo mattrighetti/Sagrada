@@ -73,12 +73,4 @@ class BoardTest {
         }
 
     }
-
-    @Test
-    void getPlayer(){
-        Player player = board.getPlayer(2);
-        assertEquals("player2", player.getUser().getUsername());
-
-    }
-
 }

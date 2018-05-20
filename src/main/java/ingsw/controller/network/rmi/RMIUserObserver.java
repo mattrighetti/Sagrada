@@ -1,6 +1,7 @@
 package ingsw.controller.network.rmi;
 
 import ingsw.controller.network.Message;
+import ingsw.controller.network.commands.DiceNotification;
 import ingsw.controller.network.commands.IntegerResponse;
 import ingsw.controller.network.commands.ResponseHandler;
 import ingsw.controller.network.socket.UserObserver;
@@ -24,5 +25,20 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     @Override
     public void sendMessage(Message message) {
 
+    }
+
+    @Override
+    public void receiveDraftNotification() {
+        //TODO
+    }
+
+    @Override
+    public void sendResponse(DiceNotification diceNotification) {
+        //TODO
+    }
+
+    @Override
+    public void activateTurnNotification() {
+        //TODO
     }
 }

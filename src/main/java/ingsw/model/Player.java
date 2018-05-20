@@ -4,6 +4,7 @@ import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.view.RemoteView;
 
+import java.util.Arrays;
 import java.util.Set;
 
 public class Player {
@@ -32,13 +33,24 @@ public class Player {
         this.privateObjectiveCard = privateObjectiveCard;
     }
 
+    public PrivateObjectiveCard getPrivateObjectiveCard() { return privateObjectiveCard; }
+
     //Get the User instance of this player
+
     public User getUser() {
         return user;
     }
 
     public void showAvailablePatternCard(Set<PatternCard> patternCards) {
         remoteView.displayPatternCardsToChoose(patternCards);
+    }
+
+    public String getPlayerUsername() {
+        return getUser().getUsername();
+    }
+
+    public void notifyDraft() {
+        getUser().getUserObserver().receiveDraftNotification();
     }
 
     //Get a Private Card of this player

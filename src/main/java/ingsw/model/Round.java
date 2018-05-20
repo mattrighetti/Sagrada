@@ -1,28 +1,61 @@
 package ingsw.model;
 
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Round {
+public class Round implements Runnable {
+    private Thread playerMoves;
+    private Player player;
+    private AtomicBoolean hasMadeAMove;
+    private GameManager gameManager;
+    private AtomicBoolean playerEndedTurn;
 
-    private static int currentRound = 0;
-    private int noRound;
-    private Set<Dice> unusedDice;
-
-    public Round(Set<Dice> unusedDice) {
-        currentRound++;
-        noRound = currentRound;
-        this.unusedDice = unusedDice;
+    public Round(GameManager gameManager) {
+        this.gameManager = gameManager;
     }
 
-    public int getCurrentRound() {
-        return currentRound;
+    public void startForPlayer(Player player) {
+        this.player = player;
+        hasMadeAMove.set(false);
+        playerEndedTurn.set(false);
+        run();
     }
 
-    public int getNoRound() {
-        return noRound;
+    @Override
+    public void run() {
+        playerMoves = new Thread( () -> {
+            //TODO recheck activate turn
+            player.getUser().getUserObserver().activateTurnNotification();
+            waitForMove();
+            waitForMove();
+            playerEndedTurn.set(true);
+        });
+        playerMoves.start();
     }
 
-    public Set<Dice> getUnusedDice() {
-        return unusedDice;
+    private void waitForMove() {
+        while (!hasMadeAMove.get()) {
+
+        }
+        hasMadeAMove.set(false);
+    }
+
+    public void setPlayerEndedTurn(AtomicBoolean playerEndedTurn) {
+        this.playerEndedTurn = playerEndedTurn;
+        playerMoves.interrupt();
+    }
+
+    public AtomicBoolean hasPlayerEndedTurn() {
+        return playerEndedTurn;
+    }
+
+    public boolean makeMove() {
+        //TODO ricontrolla se deve ritornare realmente valori
+        boolean isMoveAccepted = gameManager.equals("");
+        hasMadeAMove.set(isMoveAccepted);
+        return isMoveAccepted;
+    }
+
+    public void skipMove() {
+       hasMadeAMove.set(true);
     }
 }

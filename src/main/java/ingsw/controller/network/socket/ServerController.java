@@ -50,16 +50,11 @@ public class ServerController implements RequestHandler {
 
     @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCard) {
-        PatternCard patternCard = null;
-        try {
-            patternCard = controller.assignPatternCard(chosenPatternCard.patternCard, user.getUsername());
-        } catch (RemoteException e) {
-            return null;
-        }
-
+        PatternCard patternCard = controller.assignPatternCard(user.getUsername(), chosenPatternCard.patternCard);
         if (patternCard != null) {
             return new ChosenPatternCardResponse(user.getUsername(), patternCard);
         } else return null;
 
     }
+
 }
