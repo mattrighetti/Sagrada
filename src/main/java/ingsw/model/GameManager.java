@@ -205,6 +205,21 @@ public class GameManager {
         //method toolCard.action(player.getPatternCard());
     }
 
+    public void placeDice(Dice dice, int rowIndex, int columnIndex) {
+        // TODO completa
+        /*
+        1 - controlla se il dado è nella lista dei draftedDice
+        2 - posiziona il dado nella patternCard
+        3 - rimuovi dado dalla draftedDice
+        4 - aggiorna le view degli utenti
+        5 - currentRound.makeMove();
+         */
+    }
+
+    public void endTurn() {
+        currentRound.setPlayerEndedTurn(true);
+    }
+
     /**
      * Method that resets the received acks to zero
      */
