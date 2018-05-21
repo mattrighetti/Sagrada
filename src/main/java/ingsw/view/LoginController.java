@@ -44,6 +44,11 @@ public class LoginController implements SceneUpdater {
         this.application = application;
     }
 
+    /**
+     * Method that triggers the User login
+     * @param event
+     * @throws IOException
+     */
     @FXML
     void onLoginPressed(ActionEvent event) throws IOException {
         String username = usernameTextField.getText();
