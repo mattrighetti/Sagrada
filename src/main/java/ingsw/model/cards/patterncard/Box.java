@@ -6,7 +6,7 @@ import ingsw.model.Dice;
 public class Box {
     private Color color;
     private Integer value;
-    Dice dice;
+    private Dice dice;
 
     public Box(Color color) {
         this.color = color;
@@ -41,4 +41,6 @@ public class Box {
     public Dice getDice() {
         return dice;
     }
+
+    Boolean isDiceSet(){ return dice != null; }
 }

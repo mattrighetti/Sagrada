@@ -226,4 +226,8 @@ public class GameManager {
             } while (!currentRound.hasPlayerEndedTurn().get());
         }
     }
+
+    private void sendAvailablePositions(Player player){
+        player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
+    }
 }
