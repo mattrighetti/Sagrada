@@ -31,6 +31,7 @@ public class GameManager {
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
     private Round currentRound;
+    private boolean brokenWindow;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -39,6 +40,7 @@ public class GameManager {
      * @param players
      */
     public GameManager(List<Player> players) {
+        brokenWindow = false;
         playerList = players;
         setUpGameManager();
         this.board = new Board(choosePublicObjectiveCards(), chooseToolCards(), players);
@@ -202,17 +204,42 @@ public class GameManager {
      * @param toolCard
      */
     public void useToolCard(Player player, ToolCard toolCard) {
+        //Check if the window is broken (FLAG)
         //method toolCard.action(player.getPatternCard());
     }
 
     public void placeDice(Dice dice, int rowIndex, int columnIndex) {
         // TODO completa
         /*
+        0 - Check if the window is broken (FLAG)
         1 - controlla se il dado è nella lista dei draftedDice
         2 - posiziona il dado nella patternCard
         3 - rimuovi dado dalla draftedDice
         4 - aggiorna le view degli utenti
         5 - currentRound.makeMove();
+         */
+    }
+
+    public void removeDice() {
+        if (brokenWindow) {
+            /*
+            * 1 - rimuovi dado
+            * 2 - if getPatternCard().isBreakable()
+            *       notifica rimozione
+            *     else
+            *         brokenWindow = false;
+            *         notifica mossa
+             */
+        }
+
+    }
+
+    public void breakWindow(Player player){
+        /*
+         * if getPatternCard().isBreakable()
+         *      brokenWindow = true
+         *      disattiva tasti breakWindow di tutti gli utenti
+         *      notifica rimozione
          */
     }
 
