@@ -1,7 +1,7 @@
 .loginGridPane {
     -fx-border-radius: 10 10 10 10;
     -fx-background-radius: 50 10 10 10;
-    -fx-background-image: url("background-small.png");
+    -fx-background-image: url("img/background-small.png");
 }
 
 #grid {

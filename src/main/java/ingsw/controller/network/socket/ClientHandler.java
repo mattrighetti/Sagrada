@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.rmi.RemoteException;
+import java.util.List;
 
 public class ClientHandler implements Runnable, UserObserver {
     private Socket clientSocket;
@@ -101,7 +103,7 @@ public class ClientHandler implements Runnable, UserObserver {
     }
 
     @Override
-    public void activateTurnNotification() {
-        //TODO notify player that is his turn
+    public void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException {
+        //TODO
     }
 }

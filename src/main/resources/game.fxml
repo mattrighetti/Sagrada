@@ -1,40 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane fx:id="gameGridPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="275.3392333984375" minWidth="10.0" prefWidth="275.3392333984375" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="247.51300048828125" minWidth="10.0" prefWidth="182.43496704101562" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="323.59283447265625" minWidth="10.0" prefWidth="323.59283447265625" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="247.51300048828125" minWidth="10.0" prefWidth="133.40716552734375" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="413.7221374511719" minWidth="10.0" prefWidth="371.5650329589844" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.21746826171875" minWidth="10.0" prefWidth="179.4693603515625" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="270.82623291015625" minWidth="10.0" prefWidth="270.82623291015625" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.21746826171875" minWidth="10.0" prefWidth="125.57598876953125" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.42401123046875" minWidth="10.0" prefWidth="325.42401123046875" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints maxHeight="292.7481384277344" minHeight="10.0" prefHeight="135.59107971191406" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="336.72210693359375" minHeight="10.0" prefHeight="120.39962768554688" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="341.83551025390625" minHeight="10.0" prefHeight="295.17376708984375" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="191.678466796875" minHeight="10.0" prefHeight="153.82623291015625" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="184.33087158203125" minHeight="10.0" prefHeight="98.321533203125" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="336.72210693359375" minHeight="10.0" prefHeight="245.3545379638672" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="341.83551025390625" minHeight="10.0" prefHeight="237.6454620361328" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="240.21197509765625" minHeight="10.0" prefHeight="240.21197509765625" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="184.33087158203125" minHeight="10.0" prefHeight="54.78802490234375" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <HBox fx:id="diceBox" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
-      <GridPane fx:id="patternCardGrid" prefHeight="160.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         </rowConstraints>
-      </GridPane>
+      <HBox fx:id="diceHorizontalBox" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+      <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="2" GridPane.rowSpan="2" />
+      <VBox fx:id="toolCardVBox" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.rowSpan="3" />
+      <VBox fx:id="publicCardVBox" prefHeight="200.0" prefWidth="100.0" GridPane.rowSpan="2" />
+      <ImageView fx:id="privateCardImageView" fitHeight="220.0" fitWidth="324.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2" />
+      <Button fx:id="endTurnButton" contentDisplay="CENTER" mnemonicParsing="false" text="End Turn" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+      <Button fx:id="draftDiceButton" mnemonicParsing="false" text="Draft Dice" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3" />
    </children>
 </GridPane>

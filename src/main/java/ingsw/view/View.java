@@ -3,6 +3,7 @@ package ingsw.view;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
+import ingsw.model.cards.patterncard.PatternCard;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,6 +21,7 @@ public class View extends Application implements GUIUpdater {
     private Stage mainStage;
     private SceneUpdater currentScene;
     private int connectedUsers = 0;
+
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -110,17 +112,33 @@ public class View extends Application implements GUIUpdater {
      */
     @Override
     public void launchThirdGUI() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/patternCardChoice.fxml"));
+        Parent patternCardChoise = fxmlLoader.load();
+        PatternCardController patternCardContoller = fxmlLoader.getController();
+        clientController.setSceneUpdater(patternCardContoller);
+        rmiController.setSceneUpdater(patternCardContoller);
+        patternCardContoller.setNetworkType(clientController);
+        patternCardContoller.setApplication(this);
+        mainStage.setScene(new Scene(patternCardChoise));
+        mainStage.setTitle("Choose Pattern Card");
+        mainStage.show();
+        setCurrentScene(patternCardContoller);
+
+    }
+
+    @Override
+    public void launchFourthGUI() throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
         Parent game = fxmlLoader.load();
         GameController gameController = fxmlLoader.getController();
         clientController.setSceneUpdater(gameController);
         rmiController.setSceneUpdater(gameController);
-
+        gameController.setNetworkType(clientController);
+        gameController.setApplication(this);
         mainStage.setScene(new Scene(game));
-        mainStage.setTitle("Match");
+        mainStage.setTitle("Choose Pattern Card");
         mainStage.show();
         setCurrentScene(gameController);
-
     }
 
     /**

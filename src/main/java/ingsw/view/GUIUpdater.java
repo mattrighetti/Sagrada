@@ -7,6 +7,8 @@ public interface GUIUpdater {
 
     void launchThirdGUI() throws IOException;
 
+    void launchFourthGUI() throws IOException;
+
     void updateConnectedUsers(int connectedUsers);
 
     void setUsername(String username);
