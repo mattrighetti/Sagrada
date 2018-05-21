@@ -24,6 +24,11 @@ public class CLI implements SceneUpdater {
         this.scanner = scanner;
     }
 
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
     public static void main(String[] args) {
         CLI cli = new CLI(new Scanner(System.in));
         System.out.println("Deploying Socket & RMI");

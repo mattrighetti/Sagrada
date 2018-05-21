@@ -164,6 +164,9 @@ public class GameManager {
         return patternCard;
     }
 
+    /**
+     * Method that waits for every users to choose a patternCard
+     */
     public void waitForEveryPatternCard() {
         new Thread(() -> {
             while (noOfAck < 4) {
@@ -174,33 +177,60 @@ public class GameManager {
         });
     }
 
+    /**
+     * Method that drafts the dice from the board and sends them to every user view
+     */
     public void draftDiceFromBoard() {
         Broadcaster.broadcastResponseToAll(playerList, board.draftDice());
         waitForDiceAck();
     }
 
+    /**
+     * Method that stalls the program until every user has received every dice
+     */
     private void waitForDiceAck() {
-        while (noOfAck < 4) {}
+        while (noOfAck < 4) {
+        }
         resetAck();
 
     }
 
+    /**
+     * Method called when an user selected a patternCard from the view
+     *
+     * @param player
+     * @param toolCard
+     */
     public void useToolCard(Player player, ToolCard toolCard) {
         //method toolCard.action(player.getPatternCard());
     }
 
+    /**
+     * Method that resets the received acks to zero
+     */
     private void resetAck() {
         noOfAck = 0;
     }
 
+    /**
+     * Method that increments the acks received
+     */
     private void ackReceived() {
         noOfAck++;
     }
 
+    /**
+     * Method that alerts the user to draft, this activates a button "Draft" in the view
+     *
+     * @param player
+     */
     private void notifyDraftToPlayer(Player player) {
         player.notifyDraft();
     }
 
+    /**
+     * Method that opens a thread dedicated to the match
+     */
     private void startMatch() {
         new Thread(() -> {
             for (int i = 0; i < 10; i++) {
@@ -211,23 +241,34 @@ public class GameManager {
         });
     }
 
+    /**
+     * Method that starts the single round
+     */
     private void startRound() {
         currentRound = new Round(this);
         //Rounds going forward
         for (int i = 0; i < playerList.size(); i++) {
+            currentRound.startForPlayer(playerList.get(i));
             do {
-                currentRound.startForPlayer(playerList.get(i));
+
             } while (!currentRound.hasPlayerEndedTurn().get());
         }
 
         for (int i = playerList.size() - 1; i >= 0; i--) {
+            currentRound.startForPlayer(playerList.get(i));
             do {
-                currentRound.startForPlayer(playerList.get(i));
+
             } while (!currentRound.hasPlayerEndedTurn().get());
         }
     }
 
-    private void sendAvailablePositions(Player player){
-        player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
+    /**
+     * Method that notifies the player with a patternCard's mask which indicates the available positions in which
+     * a dice can be placed
+     *
+     * @param player
+     */
+    public List<Boolean[][]> sendAvailablePositions(Player player) {
+        return player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
     }
 }

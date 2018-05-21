@@ -60,7 +60,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
         gameManager.draftDiceFromBoard();
     }
 
-    public void toolCardMove(Player player, ToolCard toolCard){
+    public void toolCardMove(Player player, ToolCard toolCard) {
         gameManager.useToolCard(player, toolCard);
     }
 
