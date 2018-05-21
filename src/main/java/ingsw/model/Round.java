@@ -1,5 +1,6 @@
 package ingsw.model;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Round implements Runnable {
@@ -24,7 +25,11 @@ public class Round implements Runnable {
     public void run() {
         playerMoves = new Thread( () -> {
             //TODO recheck activate turn
-            player.getUser().getUserObserver().activateTurnNotification();
+            try {
+                player.getUser().getUserObserver().activateTurnNotification();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
             waitForMove();
             waitForMove();
             playerEndedTurn.set(true);

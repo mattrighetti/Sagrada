@@ -8,6 +8,7 @@ import ingsw.model.Player;
 import ingsw.model.User;
 
 import javax.jws.soap.SOAPBinding;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,19 +40,31 @@ public final class Broadcaster {
 
     public static void broadcastMessage(List<Player> playerList, Message message) {
         for (UserObserver userObserver : playerToBroadcast(playerList, message.sender)) {
-            userObserver.sendMessage(message);
+            try {
+                userObserver.sendMessage(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public static void broadcastResponse(List<Player> playerList, String usernameToExclude, List<Dice> dice) {
         for (UserObserver userObserver : playerToBroadcast(playerList, usernameToExclude)) {
-            userObserver.sendResponse(new DiceNotification(dice));
+            try {
+                userObserver.sendResponse(new DiceNotification(dice));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public static void broadcastResponseToAll(List<Player> playerList, List<Dice> dice) {
         for (Player player : playerList) {
-            player.getUser().getUserObserver().sendResponse(new DiceNotification(dice));
+            try {
+                player.getUser().getUserObserver().sendResponse(new DiceNotification(dice));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

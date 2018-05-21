@@ -4,6 +4,7 @@ import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.view.RemoteView;
 
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -50,7 +51,11 @@ public class Player {
     }
 
     public void notifyDraft() {
-        getUser().getUserObserver().receiveDraftNotification();
+        try {
+            getUser().getUserObserver().receiveDraftNotification();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     //Get a Private Card of this player
