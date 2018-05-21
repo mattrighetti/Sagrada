@@ -22,7 +22,6 @@ public class SagradaSocketServer {
             Socket clientSocket = serverSocket.accept();
             System.out.println("New connection from -> " + clientSocket.getRemoteSocketAddress());
             pool.submit(new ClientHandler(clientSocket));
-            System.out.println("Loop");
         } while (true);
     }
 

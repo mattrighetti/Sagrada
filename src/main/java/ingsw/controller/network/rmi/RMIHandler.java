@@ -43,7 +43,7 @@ public class RMIHandler implements RequestHandler {
             System.err.println("Remote Exception");
             e.printStackTrace();
         } catch (InvalidUsernameException e) {
-            System.err.println("Username has already been taken");
+            return new LoginUserResponse(null, -1);
         }
         return null;
     }

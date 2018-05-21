@@ -20,41 +20,49 @@ public class CLI implements SceneUpdater {
     private SceneUpdater currentScene;
     private Scanner scanner;
 
-    public CLI(Scanner scanner) {
-        this.scanner = scanner;
+    public CLI() {
+        this.scanner = new Scanner(System.in);
     }
 
-    public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-    }
-
-    public static void main(String[] args) {
-        CLI cli = new CLI(new Scanner(System.in));
+    public void startCLI() {
         System.out.println("Deploying Socket & RMI");
 
         try {
-            cli.deploySocketClient();
-            cli.deployRMIClient();
+            deploySocketClient();
+            deployRMIClient();
+            rmiController.setSceneUpdater(this);
+            clientController.setSceneUpdater(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        System.out.println("You're now connected!\nChoose a type of connection: ");
-        System.out.println("1 - RMI\n2 - Socket");
-        cli.askForTypeOfConnection();
-        System.out.println("We need to log you in now, choose a username");
-        cli.chooseUsernameAndLogin();
+        askForTypeOfConnection();
+        chooseUsernameAndLogin();
         System.out.println("You're finally logged to SagradaGame");
-        cli.showLobbyCommandsAndWait();
+        showLobbyCommandsAndWait();
+    }
+
+    public void flushScanner() {
+        scanner.nextLine();
+    }
+
+    public String userStringInput() {
+        return scanner.nextLine();
+    }
+
+    public int userIntegerInput() {
+        return scanner.nextInt();
     }
 
     public void askForTypeOfConnection() {
         int selectedConnection;
         boolean moveNext = false;
 
+        System.out.println("You're now connected!\nChoose a type of connection: ");
+
         do {
-            selectedConnection = scanner.nextInt();
+            System.out.println("1 - RMI\n2 - Socket");
+            selectedConnection = userIntegerInput();
 
             if (selectedConnection == 1) {
                 moveNext = true;
@@ -75,16 +83,21 @@ public class CLI implements SceneUpdater {
         String username;
         boolean moveNext = false;
 
+        System.out.println("We need to log you in now");
+        flushScanner();
+
         do {
-            username = scanner.nextLine();
+            System.out.println("Username: ");
+            username = userStringInput();
 
             try {
-                currentConnectionType.loginUser(username);
-                System.out.println("Ok! Your username is: " + username);
-                moveNext = true;
+                if (currentConnectionType.loginUser(username)) {
+                    System.out.println("Ok! Your username is: " + username);
+                    moveNext = true;
+                } else
+                    System.err.println("Username has already been taken");
             } catch (RemoteException e) {
                 e.printStackTrace();
-                System.err.println("Name has already been taken");
             }
 
         } while (!moveNext);
@@ -114,6 +127,9 @@ public class CLI implements SceneUpdater {
                 case 4:
                     showRanking();
                     break;
+                default:
+                    System.out.println("Wrong input");
+                    break;
             }
 
         } while (!moveNext);
@@ -141,20 +157,23 @@ public class CLI implements SceneUpdater {
     public void joinMatch() {
         int selectedMatch;
         boolean moveNext = false;
+        flushScanner();
 
         do {
             System.out.println("Available rounds:\n");
             // TODO decidi se richiedere le partite al momento o salvarle da qualche parte nella classe del CLI
-            selectedMatch = scanner.nextInt();
+            selectedMatch = userIntegerInput();
         } while (!moveNext);
 
     }
 
     public void showStatistics() {
+        flushScanner();
         // TODO da implementare
     }
 
     public void showRanking() {
+        flushScanner();
         // TODO da implementare
     }
 

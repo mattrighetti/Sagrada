@@ -18,7 +18,6 @@ public class ServerController implements RequestHandler {
     public ServerController(ClientHandler clientHandler) throws RemoteException {
         this.clientHandler = clientHandler;
         sagradaGame = SagradaGame.get();
-        System.out.println("Got sagrada!");
     }
 
     @Override
