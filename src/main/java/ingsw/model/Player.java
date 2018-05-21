@@ -1,5 +1,6 @@
 package ingsw.model;
 
+import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.view.RemoteView;
@@ -46,9 +47,9 @@ public class Player {
         remoteView.displayPatternCardsToChoose(patternCards);
     }
 
-    public String getPlayerUsername() {
-        return getUser().getUsername();
-    }
+    public String getPlayerUsername() { return getUser().getUsername(); }
+
+    public UserObserver getUserObserver(){ return user.getUserObserver(); }
 
     public void notifyDraft() {
         try {

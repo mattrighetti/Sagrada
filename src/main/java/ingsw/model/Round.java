@@ -26,7 +26,7 @@ public class Round implements Runnable {
         playerMoves = new Thread( () -> {
             //TODO recheck activate turn
             try {
-                player.getUser().getUserObserver().activateTurnNotification();
+                player.getUserObserver().activateTurnNotification(gameManager.sendAvailablePositions(player));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -44,8 +44,8 @@ public class Round implements Runnable {
         hasMadeAMove.set(false);
     }
 
-    public void setPlayerEndedTurn(AtomicBoolean playerEndedTurn) {
-        this.playerEndedTurn = playerEndedTurn;
+    public void setPlayerEndedTurn(boolean hasPlayerEndedTurn) {
+        playerEndedTurn.set(hasPlayerEndedTurn);
         playerMoves.interrupt();
     }
 

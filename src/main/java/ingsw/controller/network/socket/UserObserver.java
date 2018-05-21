@@ -5,6 +5,7 @@ import ingsw.controller.network.commands.DiceNotification;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface UserObserver extends Remote {
 
@@ -16,5 +17,5 @@ public interface UserObserver extends Remote {
 
     void sendResponse(DiceNotification diceNotification) throws RemoteException;
 
-    void activateTurnNotification() throws RemoteException;
+    void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException;
 }
