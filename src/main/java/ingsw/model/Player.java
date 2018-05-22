@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Set;
 
 public class Player {
-    private final RemoteView remoteView;
     private User user;
     private PrivateObjectiveCard privateObjectiveCard;
     private PatternCard patternCard;
@@ -18,9 +17,8 @@ public class Player {
 
     //TODO decide which collection to use for cards sets and add the others methods and the favor tokens(int or class)
 
-    public Player(User user, RemoteView remoteView) {
+    public Player(User user) {
         this.user = user;
-        this.remoteView = remoteView;
     }
 
     public void setPatternCard(PatternCard patternCard) {
@@ -43,9 +41,6 @@ public class Player {
         return user;
     }
 
-    public void showAvailablePatternCard(Set<PatternCard> patternCards) {
-        remoteView.displayPatternCardsToChoose(patternCards);
-    }
 
     public String getPlayerUsername() { return getUser().getUsername(); }
 

@@ -23,10 +23,10 @@ class GameManagerTest {
     @BeforeEach
     void setUp() {
         List<Player> players = new ArrayList<>();
-        players.add(new Player(new User("a"), mock(RemoteView.class)));
-        players.add(new Player(new User("b"), mock(RemoteView.class)));
-        players.add(new Player(new User("c"), mock(RemoteView.class)));
-        players.add(new Player(new User("d"), mock(RemoteView.class)));
+        players.add(new Player(new User("a")));
+        players.add(new Player(new User("b")));
+        players.add(new Player(new User("c")));
+        players.add(new Player(new User("d")));
         gameManager = new GameManager(players);
     }
 

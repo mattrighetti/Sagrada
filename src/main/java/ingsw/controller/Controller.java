@@ -38,8 +38,8 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      * @param user the user wants to join the match
      * @param remoteView the user's remoteView, will be used to send messages to the player (client)
      */
-    public void loginUser(User user, RemoteView remoteView) {
-        playerList.add(new Player(user, remoteView));
+    public void loginUser(User user) {
+        playerList.add(new Player(user));
         if (playerList.size() == 4) createMatch();
     }
 

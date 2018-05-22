@@ -34,7 +34,7 @@ class ControllerTest {
         Field field = controller.getClass().getDeclaredField("playerList");
         field.setAccessible(true);
         for (int i = 0; i < 4; i++) {
-            controller.loginUser(new User("i"), mock(RemoteView.class));
+            controller.loginUser(new User("i"));
             ArrayList<Player> playerList = (ArrayList<Player>) field.get(controller);
             assertEquals(playerList.size(), i+1);
         }
