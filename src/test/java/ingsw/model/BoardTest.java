@@ -20,7 +20,7 @@ class BoardTest {
         ArrayList<Player> playerlist = new ArrayList<>();
         for (int i = 0; i < 4; i++){
             User user = new User("player" + i);
-            playerlist.add(new Player(user,null));
+            playerlist.add(new Player(user));
         }
         board = new Board(publicObjectiveCards, toolCards, playerlist);
     }

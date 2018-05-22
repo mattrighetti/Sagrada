@@ -10,12 +10,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayerTest {
 
     Player player;
-    RemoteView remoteView;
 
     @BeforeEach
     void setUp() {
         User user = new User("Matt");
-        player = new Player(user, remoteView);
+        player = new Player(user);
     }
 
     @Test
