@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,6 +22,7 @@ public class CLI implements SceneUpdater {
     private Stage mainStage;
     private SceneUpdater currentScene;
     private Scanner scanner;
+    private List<DoubleString> availableMatches = new ArrayList<>();
 
     CLI() {
         this.scanner = new Scanner(System.in);
@@ -154,11 +156,20 @@ public class CLI implements SceneUpdater {
         do {
             matchName = userStringInput();
 
-            try {
-                currentConnectionType.createMatch(matchName);
+            boolean tmpBoolean = false;
+            for (DoubleString doubleString : availableMatches) {
+                if (doubleString.getFirstField().equals(matchName)) {
+                    tmpBoolean = true;
+                }
+            }
+            if (!tmpBoolean) {
+                try {
+                    currentConnectionType.createMatch(matchName);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 moveNext = true;
-            } catch (RemoteException e) {
-                e.printStackTrace();
+            } else {
                 System.err.println("Match name has already been taken, choose another one");
             }
 
@@ -172,7 +183,9 @@ public class CLI implements SceneUpdater {
 
         do {
             System.out.println("Available rounds:\n");
-            // TODO decidi se richiedere le partite al momento o salvarle da qualche parte nella classe del CLI
+            for (int i = 0; i < availableMatches.size(); i++) {
+                System.out.println( i+1 + " - " + availableMatches.get(i).getFirstField() + "\t players:" + availableMatches.get(i).getSecondField() + "\n");
+            }
             selectedMatch = userIntegerInput();
         } while (!moveNext);
 
@@ -222,7 +235,8 @@ public class CLI implements SceneUpdater {
 
     @Override
     public void updateExistingMatches(List<DoubleString> matches) {
-
+        availableMatches.clear();
+        availableMatches = matches;
     }
 
 }
