@@ -8,4 +8,5 @@ public interface NetworkType {
 
     void createMatch(String matchName) throws RemoteException;
 
+    boolean joinExistingMatch(String matchName) throws RemoteException;
 }

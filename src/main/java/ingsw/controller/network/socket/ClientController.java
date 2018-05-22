@@ -52,6 +52,16 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new CreateMatchRequest(matchName));
     }
 
+    @Override
+    public boolean joinExistingMatch(String matchName) {
+        broadcastReceiver.stop();
+        generalPurposeBoolean = false;
+        client.request(new JoinMatchRequest(matchName));
+        client.nextResponse().handle(this);
+
+        return generalPurposeBoolean;
+    }
+
     /**
      * Method that opens a Thread and listens for every incoming JoinedUserResponse sent by the Controller
      */
@@ -103,6 +113,11 @@ public class ClientController implements ResponseHandler, NetworkType {
 
             sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
         }
+    }
+
+    @Override
+    public void handle(JoinedMatchResponse joinedMatchResponse) {
+        generalPurposeBoolean = joinedMatchResponse.isLoginSuccessful;
     }
 
     @Override

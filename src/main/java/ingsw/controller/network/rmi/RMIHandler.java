@@ -48,16 +48,28 @@ public class RMIHandler implements RequestHandler {
     }
 
     @Override
-    public Response handle(ChosenPatternCardRequest chosenPatternCardRequest) {
-        return null;
-    }
-
-    @Override
     public void handle(CreateMatchRequest createMatchRequest) {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Response handle(JoinMatchRequest joinMatchRequest) {
+        try {
+            sagradaGame.loginUserToController(joinMatchRequest.matchName, user);
+            remoteController = (RemoteController) LocateRegistry.getRegistry().lookup(joinMatchRequest.matchName);
+            return new JoinedMatchResponse(true);
+        } catch (RemoteException | NotBoundException e) {
+            e.printStackTrace();
+            return new JoinedMatchResponse(false);
+        }
+    }
+
+    @Override
+    public Response handle(ChosenPatternCardRequest chosenPatternCardRequest) {
+        return null;
     }
 }

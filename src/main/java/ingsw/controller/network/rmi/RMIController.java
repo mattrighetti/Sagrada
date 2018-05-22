@@ -49,6 +49,15 @@ public class RMIController implements ResponseHandler, NetworkType {
         new CreateMatchRequest(matchName).handle(rmiHandler);
     }
 
+    @Override
+    public boolean joinExistingMatch(String matchName) throws RemoteException {
+        generalPurposeBoolean = false;
+        response = new JoinMatchRequest(matchName).handle(rmiHandler);
+        response.handle(this);
+
+        return generalPurposeBoolean;
+    }
+
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -79,11 +88,6 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public void handle(ChosenPatternCardResponse chosenPatternCardResponse) {
-
-    }
-
-    @Override
     public void handle(MessageResponse messageResponse) {
         System.out.println(messageResponse.message);
     }
@@ -95,5 +99,15 @@ public class RMIController implements ResponseHandler, NetworkType {
 
             sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
         }
+    }
+
+    @Override
+    public void handle(JoinedMatchResponse joinedMatchResponse) {
+        generalPurposeBoolean = joinedMatchResponse.isLoginSuccessful;
+    }
+
+    @Override
+    public void handle(ChosenPatternCardResponse chosenPatternCardResponse) {
+
     }
 }

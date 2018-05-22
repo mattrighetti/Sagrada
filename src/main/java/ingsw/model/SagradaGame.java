@@ -2,13 +2,11 @@ package ingsw.model;
 
 import ingsw.controller.Controller;
 import ingsw.controller.network.commands.CreateMatchResponse;
-import ingsw.controller.network.rmi.RMIUserObserver;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.utilities.Broadcaster;
 import ingsw.utilities.DoubleString;
 
-import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -95,6 +93,16 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
             Broadcaster.broadcastResponseToAll(connectedUsers, new CreateMatchResponse(doubleStringBuilder()));
         } else
             throw new RemoteException("Match already exists");
+    }
+
+    @Override
+    public void loginUserToController(String matchName, User user) throws RemoteException {
+        matchesByName.get(matchName).loginUser(user);
+        Broadcaster.broadcastResponse(connectedUsers, user.getUsername(), new CreateMatchResponse(doubleStringBuilder()));
+    }
+
+    public Controller getMatchController(String matchName) {
+        return matchesByName.get(matchName);
     }
 
     /**

@@ -1,6 +1,7 @@
 package ingsw.controller.network.socket;
 
 import ingsw.controller.network.commands.Request;
+import ingsw.controller.network.commands.RequestWoResponse;
 import ingsw.controller.network.commands.Response;
 
 import java.io.IOException;
@@ -35,6 +36,14 @@ public class Client {
     void request(Request request) {
         try {
             objectOutputStream.writeObject(request);
+        } catch (IOException e) {
+            System.err.println("Exception on network: " + e.getMessage());
+        }
+    }
+
+    void request(RequestWoResponse requestWoResponse) {
+        try {
+            objectOutputStream.writeObject(requestWoResponse);
         } catch (IOException e) {
             System.err.println("Exception on network: " + e.getMessage());
         }

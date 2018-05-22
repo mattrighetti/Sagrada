@@ -11,4 +11,6 @@ public interface ResponseHandler {
     void handle(MessageResponse messageResponse);
 
     void handle(CreateMatchResponse createMatchResponse);
+
+    void handle(JoinedMatchResponse joinedMatchResponse);
 }

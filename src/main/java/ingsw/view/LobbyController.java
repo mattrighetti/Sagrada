@@ -14,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
+import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -124,8 +125,23 @@ public class LobbyController implements SceneUpdater, Initializable {
 
     @FXML
     void onJoinPressed(ActionEvent event) {
-        System.out.println("Pressed");
-
+        try {
+            if (networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField())) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmed");
+                alert.setHeaderText("You logged in successfully");
+                alert.setContentText("Wait other playes");
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                alert.setHeaderText("You didn't log in successfully");
+                alert.setContentText("Retry");
+                alert.showAndWait();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

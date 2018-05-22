@@ -47,6 +47,18 @@ public class ServerController implements RequestHandler {
     }
 
     @Override
+    public Response handle(JoinMatchRequest joinMatchRequest) {
+        try {
+            sagradaGame.loginUserToController(joinMatchRequest.matchName, user);
+            controller = sagradaGame.getMatchController(joinMatchRequest.matchName);
+            return new JoinedMatchResponse(true);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return new JoinedMatchResponse(false);
+        }
+    }
+
+    @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCard) {
         PatternCard patternCard = controller.assignPatternCard(user.getUsername(), chosenPatternCard.patternCard);
         if (patternCard != null) {

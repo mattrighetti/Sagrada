@@ -25,7 +25,6 @@ public class BroadcastReceiver implements Runnable {
 
     public void stop() {
         running.set(false);
-        receiver.interrupt();
     }
 
     public void restart() {

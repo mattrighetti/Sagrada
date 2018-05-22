@@ -36,7 +36,6 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      * Wait for new Users who connect and want to enter the match and build the list of the match players
      * When all the players are connected, start the match.
      * @param user the user wants to join the match
-     * @param remoteView the user's remoteView, will be used to send messages to the player (client)
      */
     public void loginUser(User user) {
         playerList.add(new Player(user));

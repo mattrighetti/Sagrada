@@ -31,6 +31,15 @@ public final class Broadcaster {
         return playerListToBroadcast;
     }
 
+    private static List<UserObserver> playerToBroadcast(Map<String, User> userMap, String usernameToExclude) {
+        List<UserObserver> playerListToBroadcast = new ArrayList<>();
+        for (User user : userMap.values()) {
+            if (!user.getUsername().equals(usernameToExclude)) {
+                playerListToBroadcast.add(user.getUserObserver());
+            }
+        }
+        return playerListToBroadcast;
+    }
 
     private static List<UserObserver> userToBroadcast(List<User> userList, String usernameToExclude) {
         List<UserObserver> userListToBroadcast = new ArrayList<>();
@@ -76,6 +85,16 @@ public final class Broadcaster {
         for (User user : users.values()) {
             try {
                 user.getUserObserver().sendResponse(createMatchResponse);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void broadcastResponse(Map<String, User> users, String usernameToExclude, CreateMatchResponse createMatchResponse) {
+        for (UserObserver userObserver : playerToBroadcast(users, usernameToExclude)) {
+            try {
+                userObserver.sendResponse(createMatchResponse);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
