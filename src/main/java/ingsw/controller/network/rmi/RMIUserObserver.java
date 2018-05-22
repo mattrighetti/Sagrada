@@ -1,9 +1,7 @@
 package ingsw.controller.network.rmi;
 
 import ingsw.controller.network.Message;
-import ingsw.controller.network.commands.DiceNotification;
-import ingsw.controller.network.commands.IntegerResponse;
-import ingsw.controller.network.commands.ResponseHandler;
+import ingsw.controller.network.commands.*;
 import ingsw.controller.network.socket.UserObserver;
 
 import java.rmi.RemoteException;
@@ -36,6 +34,11 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     @Override
     public void sendResponse(DiceNotification diceNotification) {
         //TODO
+    }
+
+    @Override
+    public void sendResponse(CreateMatchResponse createMatchResponse) throws RemoteException {
+        rmiController.handle(createMatchResponse);
     }
 
     @Override

@@ -20,31 +20,31 @@ public class ServerController implements RequestHandler {
         sagradaGame = SagradaGame.get();
     }
 
+    /**
+     * Method that handles a LoginUserRequest
+     *
+     * @param loginUserRequest request
+     * @return a Response, if the user has been logged in successfully, that is going to be handled
+     * by the ClientController, otherwise it returns a negative Response
+     */
     @Override
-    public synchronized Response handle(LoginUserRequest loginUserRequest) {
+    public Response handle(LoginUserRequest loginUserRequest) {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, clientHandler);
-        } catch (InvalidUsernameException e) {
+        } catch (InvalidUsernameException | RemoteException e) {
             return new LoginUserResponse(null, -1);
-        } catch (RemoteException e) {
-            return null;
         }
 
         return new LoginUserResponse(user, sagradaGame.getConnectedUsers());
     }
 
     @Override
-    public Response handle(CreateMatchRequest createMatchRequest) {
+    public void handle(CreateMatchRequest createMatchRequest) {
         try {
             controller = sagradaGame.createMatch(createMatchRequest.matchName);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
-        if (controller != null) {
-            return new CreateMatchResponse(createMatchRequest.matchName);
-        }
-        return null; // TODO ritorna un comando negativo generale
     }
 
     @Override

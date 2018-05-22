@@ -1,17 +1,15 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.utilities.DoubleString;
+
+import java.util.List;
 
 public interface SceneUpdater {
-    default void updateConnectedUsers(int usersConnected) throws NoSuchMethodException {
-        throw new NoSuchMethodException(this.getClass() + " :Class does not implement this method");
-    }
 
-    default void setNetworkType(NetworkType clientController) throws NoSuchMethodException {
-        throw new NoSuchMethodException(this.getClass() + " :Class does not implement this method");
-    }
+    void updateConnectedUsers(int usersConnected);
 
-    default void updateExistingMatches(String matchName) throws NoSuchMethodException {
-        throw new NoSuchMethodException(this.getClass() + " :Class does not implement this method");
-    }
+    void setNetworkType(NetworkType clientController);
+
+    void updateExistingMatches(List<DoubleString> matches);
 }

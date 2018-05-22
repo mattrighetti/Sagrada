@@ -8,5 +8,5 @@ public interface RequestHandler {
 
     Response handle(ChosenPatternCardRequest chosenPatternCardRequest) throws RemoteException;
 
-    Response handle(CreateMatchRequest createMatchRequest) throws RemoteException;
+    void handle(CreateMatchRequest createMatchRequest) throws RemoteException;
 }

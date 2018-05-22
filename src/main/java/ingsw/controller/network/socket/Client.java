@@ -32,7 +32,7 @@ public class Client {
         connection.close();
     }
 
-    public void request(Request request) {
+    void request(Request request) {
         try {
             objectOutputStream.writeObject(request);
         } catch (IOException e) {
@@ -40,7 +40,7 @@ public class Client {
         }
     }
 
-    public Response nextResponse() {
+    Response nextResponse() {
         try {
             return ((Response) objectInputStream.readObject());
         } catch (IOException e) {

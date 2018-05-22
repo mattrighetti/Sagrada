@@ -13,13 +13,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Controller extends UnicastRemoteObject implements RemoteController {
+    private String matchName;
     private GameManager gameManager;
     private List<Player> playerList;
     private int generalCounter;
 
-    public Controller() throws RemoteException {
+    public Controller(String matchName) throws RemoteException {
         super();
+        this.matchName = matchName;
         playerList = new ArrayList<>();
+    }
+
+    public String getMatchName() {
+        return matchName;
+    }
+
+    public int getConnectedUsers() {
+        return playerList.size();
     }
 
     /**

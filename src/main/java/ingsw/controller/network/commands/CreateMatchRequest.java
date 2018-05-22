@@ -11,6 +11,7 @@ public class CreateMatchRequest implements Request {
 
     @Override
     public Response handle(RequestHandler requestHandler) throws RemoteException {
-        return requestHandler.handle(this);
+        requestHandler.handle(this);
+        return null;
     }
 }

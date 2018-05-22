@@ -1,10 +1,14 @@
 package ingsw.controller.network.commands;
 
-public class CreateMatchResponse implements Response {
-    public String matchName;
+import ingsw.utilities.DoubleString;
 
-    public CreateMatchResponse(String matchName) {
-        this.matchName = matchName;
+import java.util.List;
+
+public class CreateMatchResponse implements Response {
+    public List<DoubleString> doubleString;
+
+    public CreateMatchResponse(List<DoubleString> doubleString) {
+        this.doubleString = doubleString;
     }
 
     @Override

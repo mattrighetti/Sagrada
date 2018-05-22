@@ -26,6 +26,19 @@ public class ClientController implements ResponseHandler, NetworkType {
         return client;
     }
 
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    /* NETWORK TYPE PART */
+    /* METHODS EXECUTED BY THE VIEW TO MAKE ACTIONS */
+
+
+    /**
+     * Method that logs in the user to SagradaGame
+     *
+     * @param username username chosen by the user
+     * @return boolean value that indicates if the user has been successfully logged in to the game
+     */
     @Override
     public boolean loginUser(String username) {
         client.request(new LoginUserRequest(username));
@@ -40,11 +53,9 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method that opens a Thread and listens for every incoming JoinedUserResponse sent by the Controller
-     *
      */
     public void listenForNewUsers() {
         broadcastReceiver.start();
-        System.out.println("Thread started");
     }
 
     /**
@@ -61,33 +72,35 @@ public class ClientController implements ResponseHandler, NetworkType {
         broadcastReceiver.restart();
     }
 
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    /* HANDLER PART */
+    /* METHOD EXECUTED BY THE RMI HANDLER */
+
+
     @Override
     public void handle(LoginUserResponse loginUserResponse) {
         if (loginUserResponse.user != null) {
             isUserLogged = true;
-            try {
-                sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             listenForNewUsers();
-        } else {
+        } else
             isUserLogged = false;
-        }
     }
 
     @Override
     public void handle(IntegerResponse integerResponse) {
-        try {
-            sceneUpdater.updateConnectedUsers(integerResponse.number);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        sceneUpdater.updateConnectedUsers(integerResponse.number);
     }
 
     @Override
     public void handle(CreateMatchResponse createMatchResponse) {
+        if (createMatchResponse.doubleString != null) {
+            System.out.println("Match created");
 
+            sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
+        }
     }
 
     @Override

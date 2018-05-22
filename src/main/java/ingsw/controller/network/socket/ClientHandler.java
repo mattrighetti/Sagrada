@@ -25,6 +25,10 @@ public class ClientHandler implements Runnable, UserObserver {
         this.serverController = new ServerController(this);
     }
 
+    /**
+     * Method that receives every Request sent by the user and passes them to the ServerController
+     * and then waits for the Response given by the ServerController and handles it
+     */
     @Override
     public void run() {
         try {
@@ -39,6 +43,10 @@ public class ClientHandler implements Runnable, UserObserver {
         }
     }
 
+    /**
+     * Method that serializes objects and sends them to the other end of the connection
+     * @param response response to send
+     */
     private void respond(Response response) {
         try {
             objectOutputStream.writeObject(response);
@@ -51,6 +59,9 @@ public class ClientHandler implements Runnable, UserObserver {
         stop = true;
     }
 
+    /**
+     * Method that closes ClientHandler connection
+     */
     public void close() {
         stop = true;
         if (objectInputStream != null) {
@@ -103,7 +114,12 @@ public class ClientHandler implements Runnable, UserObserver {
     }
 
     @Override
-    public void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException {
+    public void sendResponse(CreateMatchResponse createMatchResponse) {
+        respond(createMatchResponse);
+    }
+
+    @Override
+    public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
         //TODO
     }
 }

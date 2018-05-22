@@ -1,12 +1,14 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.utilities.DoubleString;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
+import java.util.List;
 
 public class LoginController implements SceneUpdater {
 
@@ -31,10 +33,6 @@ public class LoginController implements SceneUpdater {
     NetworkType networkType;
     GUIUpdater application;
 
-    public LoginController() {
-
-    }
-
     @Override
     public void setNetworkType(NetworkType networkType) {
         this.networkType = networkType;
@@ -46,13 +44,14 @@ public class LoginController implements SceneUpdater {
 
     /**
      * Method that triggers the User login
+     *
      * @param event
      * @throws IOException
      */
     @FXML
     void onLoginPressed(ActionEvent event) throws IOException {
         String username = usernameTextField.getText();
-        if(networkType.loginUser(username))
+        if (networkType.loginUser(username))
             application.launchSecondGUI();
         else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -76,6 +75,11 @@ public class LoginController implements SceneUpdater {
     @Override
     public void updateConnectedUsers(int connectedUsers) {
         application.updateConnectedUsers(connectedUsers);
+    }
+
+    @Override
+    public void updateExistingMatches(List<DoubleString> matches) {
+
     }
 }
 

@@ -3,6 +3,7 @@ package ingsw.view;
 import ingsw.controller.network.NetworkType;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.utilities.DoubleString;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -13,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class GameController implements SceneUpdater {
@@ -45,21 +47,34 @@ public class GameController implements SceneUpdater {
     @FXML
     private TabPane tabPane;
 
-    @Override
-    public void setNetworkType(NetworkType networkType)  { this.networkType = networkType; }
+    public void setApplication(GUIUpdater application) {
+        this.application = application;
+    }
 
-    public void setApplication(GUIUpdater application) { this.application = application; }
 
-
-    public void setWindowsTabPane(){
+    public void setWindowsTabPane() {
 
     }
 
-    public void setDiceBox(){
+    public void setDiceBox() {
         for (int i = 0; i < ((numOfPLayers * 2) + 1); i++) {
             roundDice.add(new Button("dice" + i));
             diceHorizontalBox.getChildren().add(roundDice.get(i));
         }
     }
 
+    @Override
+    public void setNetworkType(NetworkType networkType) {
+        this.networkType = networkType;
+    }
+
+    @Override
+    public void updateConnectedUsers(int usersConnected) {
+
+    }
+
+    @Override
+    public void updateExistingMatches(List<DoubleString> matches) {
+
+    }
 }

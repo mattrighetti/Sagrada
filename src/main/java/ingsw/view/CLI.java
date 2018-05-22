@@ -5,10 +5,12 @@ import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
+import ingsw.utilities.DoubleString;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Scanner;
 
 public class CLI implements SceneUpdater {
@@ -20,11 +22,11 @@ public class CLI implements SceneUpdater {
     private SceneUpdater currentScene;
     private Scanner scanner;
 
-    public CLI() {
+    CLI() {
         this.scanner = new Scanner(System.in);
     }
 
-    public void startCLI() {
+    void startCLI() {
         System.out.println("Deploying Socket & RMI");
 
         try {
@@ -33,28 +35,28 @@ public class CLI implements SceneUpdater {
             rmiController.setSceneUpdater(this);
             clientController.setSceneUpdater(this);
         } catch (IOException e) {
+            System.err.println("Error during deployment of networkTypes");
             e.printStackTrace();
         }
 
         askForTypeOfConnection();
         chooseUsernameAndLogin();
-        System.out.println("You're finally logged to SagradaGame");
         showLobbyCommandsAndWait();
     }
 
-    public void flushScanner() {
+    private void flushScanner() {
         scanner.nextLine();
     }
 
-    public String userStringInput() {
+    private String userStringInput() {
         return scanner.nextLine();
     }
 
-    public int userIntegerInput() {
+    private int userIntegerInput() {
         return scanner.nextInt();
     }
 
-    public void askForTypeOfConnection() {
+    private void askForTypeOfConnection() {
         int selectedConnection;
         boolean moveNext = false;
 
@@ -79,7 +81,7 @@ public class CLI implements SceneUpdater {
         } while (!moveNext);
     }
 
-    public void chooseUsernameAndLogin() {
+    private void chooseUsernameAndLogin() {
         String username;
         boolean moveNext = false;
 
@@ -104,15 +106,21 @@ public class CLI implements SceneUpdater {
 
     }
 
-    public void showLobbyCommandsAndWait() {
+    private void showLobbyCommandsAndWait() {
         int selectedCommand;
         boolean moveNext = false;
 
+        System.out.println("You're finally logged to SagradaGame");
+        flushScanner();
+
         do {
-            System.out.println("Choose a command:\n1 - Create a match\n2 - Join an existing match\n3 - Show my statistics" +
+            System.out.println("Choose a command:\n" +
+                    "1 - Create a match\n" +
+                    "2 - Join an existing match\n" +
+                    "3 - Show my statistics" +
                     "\n4 - Show Ranking");
 
-            selectedCommand = scanner.nextInt();
+            selectedCommand = userIntegerInput();
 
             switch (selectedCommand) {
                 case 1:
@@ -128,7 +136,7 @@ public class CLI implements SceneUpdater {
                     showRanking();
                     break;
                 default:
-                    System.out.println("Wrong input");
+                    System.err.println("Wrong input");
                     break;
             }
 
@@ -140,8 +148,11 @@ public class CLI implements SceneUpdater {
         String matchName;
         boolean moveNext = false;
 
+        System.out.println("Insert Match Name: ");
+        flushScanner();
+
         do {
-            matchName = scanner.nextLine();
+            matchName = userStringInput();
 
             try {
                 currentConnectionType.createMatch(matchName);
@@ -154,7 +165,7 @@ public class CLI implements SceneUpdater {
         } while (!moveNext);
     }
 
-    public void joinMatch() {
+    private void joinMatch() {
         int selectedMatch;
         boolean moveNext = false;
         flushScanner();
@@ -167,12 +178,12 @@ public class CLI implements SceneUpdater {
 
     }
 
-    public void showStatistics() {
+    private void showStatistics() {
         flushScanner();
         // TODO da implementare
     }
 
-    public void showRanking() {
+    private void showRanking() {
         flushScanner();
         // TODO da implementare
     }
@@ -210,7 +221,7 @@ public class CLI implements SceneUpdater {
     }
 
     @Override
-    public void updateExistingMatches(String matchName) throws NoSuchMethodException {
+    public void updateExistingMatches(List<DoubleString> matches) {
 
     }
 }

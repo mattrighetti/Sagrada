@@ -3,10 +3,12 @@ package ingsw.view;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.User;
+import ingsw.utilities.DoubleString;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -14,9 +16,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
+import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
+import java.util.ResourceBundle;
 
-public class LobbyController implements SceneUpdater {
+public class LobbyController implements SceneUpdater, Initializable {
 
     @FXML
     private GridPane lobbyPane;
@@ -31,7 +36,7 @@ public class LobbyController implements SceneUpdater {
     private Button createButton;
 
     @FXML
-    private TableView<User> matchTableView;
+    private TableView<DoubleString> matchTableView;
 
     @FXML
     private TableColumn matchNameColumn;
@@ -66,11 +71,15 @@ public class LobbyController implements SceneUpdater {
     private NetworkType networkType;
     private View application;
 
-    private final ObservableList<User> availableMatches = FXCollections.observableArrayList(
-            new User("Matt"),
-            new User("Manuel"),
-            new User("Luca")
-    );
+    private ObservableList<DoubleString> availableMatches;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        availableMatches = FXCollections.observableArrayList(new DoubleString("MatchInit", 2));
+        matchTableView.setItems(availableMatches);
+        matchNameColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, String>("firstField"));
+        matchConnectedUsersColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, Integer>("secondField"));
+    }
 
     public void setApplication(View application) {
         this.application = application;
@@ -94,8 +103,7 @@ public class LobbyController implements SceneUpdater {
     @FXML
     void onJoinPressed(ActionEvent event) {
         System.out.println("Pressed");
-        matchTableView.setItems(availableMatches);
-        matchNameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("username"));
+
     }
 
     @Override
@@ -104,8 +112,9 @@ public class LobbyController implements SceneUpdater {
     }
 
     @Override
-    public void updateExistingMatches(String matchName) {
-
+    public void updateExistingMatches(List<DoubleString> matches) {
+        availableMatches.clear();
+        availableMatches.addAll(matches);
     }
 }
 

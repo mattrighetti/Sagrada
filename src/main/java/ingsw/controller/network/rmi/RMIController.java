@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 public class RMIController implements ResponseHandler, NetworkType {
     private RMIHandler rmiHandler;
     private RMIUserObserver rmiUserObserver;
-    private Response ack;
+    private Response response;
     private SceneUpdater sceneUpdater;
     private boolean isUserLogged;
 
@@ -23,29 +23,40 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
 
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     /* NETWORK TYPE PART */
     /* METHODS EXECUTED BY THE VIEW TO MAKE ACTIONS */
 
 
-
+    /**
+     * Method that logs in the user to SagradaGame
+     *
+     * @param username username chosen by the user
+     * @return boolean value that indicates if the user has been successfully logged in to the game
+     * @throws RemoteException throws RemoteException
+     */
     @Override
     public boolean loginUser(String username) throws RemoteException {
-        ack = new LoginUserRequest(username).handle(rmiHandler);
-        ack.handle(this);
+        response = new LoginUserRequest(username).handle(rmiHandler);
+        response.handle(this);
 
         return isUserLogged;
     }
 
     @Override
     public void createMatch(String matchName) throws RemoteException {
-        ack = new CreateMatchRequest(matchName).handle(rmiHandler);
-        ack.handle(this);
+        response = new CreateMatchRequest(matchName).handle(rmiHandler);
+        if (response != null) {
+            response.handle(this);
+        }
     }
 
 
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     /* HANDLER PART */
     /* METHOD EXECUTED BY THE RMI HANDLER */
-
 
 
     @Override
@@ -54,11 +65,9 @@ public class RMIController implements ResponseHandler, NetworkType {
             loginUserResponse.user.addListener(rmiUserObserver);
             System.out.println("New connection >>> " + loginUserResponse.user.getUsername());
             isUserLogged = true;
-            try {
-                sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+
+            sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
+
         } else {
             isUserLogged = false;
         }
@@ -67,11 +76,8 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(IntegerResponse integerResponse) {
         System.out.println("Connected Users: " + integerResponse.number);
-        try {
-            sceneUpdater.updateConnectedUsers(integerResponse.number);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+
+        sceneUpdater.updateConnectedUsers(integerResponse.number);
     }
 
     @Override
@@ -88,11 +94,8 @@ public class RMIController implements ResponseHandler, NetworkType {
     public void handle(CreateMatchResponse createMatchResponse) {
         if (createMatchResponse != null) {
             System.out.println("Match created");
-            try {
-                sceneUpdater.updateExistingMatches(createMatchResponse.matchName);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
+            sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
         }
     }
 }

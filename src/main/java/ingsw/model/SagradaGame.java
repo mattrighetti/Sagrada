@@ -1,13 +1,17 @@
 package ingsw.model;
 
 import ingsw.controller.Controller;
+import ingsw.controller.network.commands.CreateMatchResponse;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
+import ingsw.utilities.Broadcaster;
+import ingsw.utilities.DoubleString;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGame {
     private static SagradaGame sagradaGameSingleton;
@@ -37,6 +41,17 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     @Override
     public int getConnectedUsers() {
         return connectedUsers.size();
+    }
+
+    @Override
+    public List<DoubleString> doubleStringBuilder() throws RemoteException {
+        DoubleString doubleString;
+        List<DoubleString> availableMatchesDoubleString = new ArrayList<>();
+        for (Controller match : matchesByName.values()) {
+            doubleString = new DoubleString(match.getMatchName(), match.getConnectedUsers());
+            availableMatchesDoubleString.add(doubleString);
+        }
+        return availableMatchesDoubleString;
     }
 
     /**
@@ -69,9 +84,12 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     public synchronized Controller createMatch(String matchName) throws RemoteException {
         Controller controller;
         if (!matchesByName.containsKey(matchName)) {
-            controller = new Controller();
+            controller = new Controller(matchName);
             matchesByName.put(matchName, controller);
-            //TODO Broadcast match to all players
+
+            LocateRegistry.getRegistry().rebind(matchName, controller);
+
+            Broadcaster.broadcastResponseToAll(connectedUsers, new CreateMatchResponse(doubleStringBuilder()));
             return matchesByName.get(matchName);
         } else
             throw new RemoteException("Match already exists");

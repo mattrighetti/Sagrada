@@ -19,16 +19,19 @@ public class RMIHandler implements RequestHandler {
 
     /**
      * RMIHandler constructor which retrieves SagradaGame and sets
+     *
      * @param rmiController
      * @param rmiUserObserver
      */
-    public RMIHandler(RMIController rmiController, RMIUserObserver rmiUserObserver) {
+    RMIHandler(RMIController rmiController, RMIUserObserver rmiUserObserver) {
         try {
             this.sagradaGame = (RemoteSagradaGame) LocateRegistry.getRegistry().lookup("sagrada");
         } catch (RemoteException e) {
             System.err.println("Could not retrieve SagradaGame");
+            e.printStackTrace();
         } catch (NotBoundException e) {
             System.err.println("NotBoundException: SagradaGame");
+            e.printStackTrace();
         }
         this.rmiController = rmiController;
         this.rmiUserObserver = rmiUserObserver;
@@ -39,13 +42,9 @@ public class RMIHandler implements RequestHandler {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, rmiUserObserver);
             return new LoginUserResponse(user, sagradaGame.getConnectedUsers());
-        } catch (RemoteException e) {
-            System.err.println("Remote Exception");
-            e.printStackTrace();
-        } catch (InvalidUsernameException e) {
+        } catch (InvalidUsernameException | RemoteException e) {
             return new LoginUserResponse(null, -1);
         }
-        return null;
     }
 
     @Override
@@ -54,11 +53,12 @@ public class RMIHandler implements RequestHandler {
     }
 
     @Override
-    public Response handle(CreateMatchRequest createMatchRequest) throws RemoteException {
-        controller = sagradaGame.createMatch(createMatchRequest.matchName);
-        if (controller != null) {
-            return new CreateMatchResponse(createMatchRequest.matchName);
+    public void handle(CreateMatchRequest createMatchRequest) {
+        try {
+            sagradaGame.createMatch(createMatchRequest.matchName);
+            controller = (RemoteController) LocateRegistry.getRegistry().lookup(createMatchRequest.matchName);
+        } catch (RemoteException | NotBoundException e) {
+            e.printStackTrace();
         }
-        return null;
     }
 }

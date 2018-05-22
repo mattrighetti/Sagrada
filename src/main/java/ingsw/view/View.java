@@ -1,5 +1,6 @@
 package ingsw.view;
 
+import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
@@ -18,6 +19,7 @@ public class View extends Application implements GUIUpdater {
     private String username;
     private RMIController rmiController;
     private ClientController clientController;
+    private NetworkType currentNetworkType;
     private Stage mainStage;
     private SceneUpdater currentScene;
     private int connectedUsers = 0;
@@ -30,6 +32,7 @@ public class View extends Application implements GUIUpdater {
     /**
      * GUI starter which, in order, does create a Socket connection followed by an RMI connection and ultimately
      * launches the first GUI
+     *
      * @param primaryStage
      * @throws IOException
      */
@@ -43,16 +46,19 @@ public class View extends Application implements GUIUpdater {
 
     /**
      * Method that creates a client connection to the previously opened server socket
+     *
      * @throws IOException
      */
     public void deploySocketClient() throws IOException {
-        Client client = new Client("localhost",8000);
+        Client client = new Client("localhost", 8000);
         client.connect();
         this.clientController = new ClientController(client);
+        currentNetworkType = clientController;
     }
 
     /**
      * Method that creates a RMI connection to SagradaGame which resides in the RMIHandler
+     *
      * @throws RemoteException
      */
     private void deployRMIClient() throws RemoteException {
@@ -62,6 +68,7 @@ public class View extends Application implements GUIUpdater {
 
     /**
      * Method that sets the current scene. Used to keep track of the current scene and exchanging data with it
+     *
      * @param currentScene
      */
     public void setCurrentScene(SceneUpdater currentScene) {
@@ -70,24 +77,36 @@ public class View extends Application implements GUIUpdater {
 
     /**
      * First GUI launcher
+     *
      * @throws IOException
      */
     public void launchFirstGUI() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login.fxml"));
         GridPane login = fxmlLoader.load();
         LoginController loginController = fxmlLoader.getController();
+
+        // Pass the Scene to the first layer controllers
         clientController.setSceneUpdater(loginController);
         rmiController.setSceneUpdater(loginController);
+
+        // Set networkType to the ViewController
         loginController.setNetworkType(clientController);
+
+        // Pass GuiUpdater to the ViewController
         loginController.setApplication(this);
+
+        // Load the scene
         mainStage.setScene(new Scene(login));
         mainStage.setTitle("Login");
         mainStage.show();
+
+        // Updates CurrentScene
         setCurrentScene(loginController);
     }
 
     /**
      * Second GUI launcher
+     *
      * @throws IOException
      */
     @Override
@@ -95,45 +114,56 @@ public class View extends Application implements GUIUpdater {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
         Parent lobby = fxmlLoader.load();
         LobbyController lobbyController = fxmlLoader.getController();
+
+        // Pass the Scene to the first layer controllers
         clientController.setSceneUpdater(lobbyController);
         rmiController.setSceneUpdater(lobbyController);
-        lobbyController.setNetworkType(clientController);
+
+        // Set networkType to the ViewController
+        lobbyController.setNetworkType(currentNetworkType);
+
+        // Pass GuiUpdater to the ViewController
         lobbyController.setApplication(this);
         lobbyController.updateConnectedUsers(connectedUsers);
+
+        // Load the scene
         mainStage.setScene(new Scene(lobby));
         mainStage.setTitle("Lobby");
         mainStage.show();
+
+        // Updates CurrentScene
         setCurrentScene(lobbyController);
     }
 
     /**
      * Third GUI launcher
+     *
      * @throws IOException
      */
     @Override
     public void launchThirdGUI() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/patternCardChoice.fxml"));
-        Parent patternCardChoise = fxmlLoader.load();
-        PatternCardController patternCardContoller = fxmlLoader.getController();
-        clientController.setSceneUpdater(patternCardContoller);
-        rmiController.setSceneUpdater(patternCardContoller);
-        patternCardContoller.setNetworkType(clientController);
-        patternCardContoller.setApplication(this);
-        mainStage.setScene(new Scene(patternCardChoise));
+        Parent patternCardChoice = fxmlLoader.load();
+        PatternCardController patternCardController = fxmlLoader.getController();
+        clientController.setSceneUpdater(patternCardController);
+        rmiController.setSceneUpdater(patternCardController);
+        patternCardController.setNetworkType(currentNetworkType);
+        patternCardController.setApplication(this);
+        mainStage.setScene(new Scene(patternCardChoice));
         mainStage.setTitle("Choose Pattern Card");
         mainStage.show();
-        setCurrentScene(patternCardContoller);
+        setCurrentScene(patternCardController);
 
     }
 
     @Override
-    public void launchFourthGUI() throws IOException{
+    public void launchFourthGUI() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
         Parent game = fxmlLoader.load();
         GameController gameController = fxmlLoader.getController();
         clientController.setSceneUpdater(gameController);
         rmiController.setSceneUpdater(gameController);
-        gameController.setNetworkType(clientController);
+        gameController.setNetworkType(currentNetworkType);
         gameController.setApplication(this);
         mainStage.setScene(new Scene(game));
         mainStage.setTitle("Choose Pattern Card");
@@ -146,11 +176,8 @@ public class View extends Application implements GUIUpdater {
      */
     @Override
     public void changeToRMI() {
-        try {
-            currentScene.setNetworkType(rmiController);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        currentScene.setNetworkType(rmiController);
+        currentNetworkType = rmiController;
     }
 
     /**
@@ -158,15 +185,14 @@ public class View extends Application implements GUIUpdater {
      */
     @Override
     public void changeToSocket() {
-        try {
-            currentScene.setNetworkType(clientController);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        currentScene.setNetworkType(clientController);
+        currentNetworkType = clientController;
+
     }
 
     /**
      * Update the connected users to the game (not the match)
+     *
      * @param connectedUsers
      */
     @Override
@@ -176,6 +202,7 @@ public class View extends Application implements GUIUpdater {
 
     /**
      * Username setter
+     *
      * @param username
      */
     @Override
@@ -186,6 +213,7 @@ public class View extends Application implements GUIUpdater {
 
     /**
      * Username getter
+     *
      * @return
      */
     @Override

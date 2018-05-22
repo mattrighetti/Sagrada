@@ -1,7 +1,9 @@
 package ingsw.utilities;
 
 import ingsw.controller.network.Message;
+import ingsw.controller.network.commands.CreateMatchResponse;
 import ingsw.controller.network.commands.DiceNotification;
+import ingsw.controller.network.commands.Response;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.Dice;
 import ingsw.model.Player;
@@ -11,10 +13,12 @@ import javax.jws.soap.SOAPBinding;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class Broadcaster {
 
     private Broadcaster() {
+
     }
 
     private static List<UserObserver> playerToBroadcast(List<Player> playerList, String usernameToExclude) {
@@ -62,6 +66,16 @@ public final class Broadcaster {
         for (Player player : playerList) {
             try {
                 player.getUser().getUserObserver().sendResponse(new DiceNotification(dice));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void broadcastResponseToAll(Map<String, User> users, CreateMatchResponse createMatchResponse) {
+        for (User user : users.values()) {
+            try {
+                user.getUserObserver().sendResponse(createMatchResponse);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

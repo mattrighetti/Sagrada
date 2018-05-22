@@ -26,7 +26,7 @@ class ControllerTest {
 
     @BeforeEach
     void setUp() throws RemoteException {
-        controller = new Controller();
+        controller = new Controller("Test");
     }
 
     @Test
@@ -35,8 +35,8 @@ class ControllerTest {
         field.setAccessible(true);
         for (int i = 0; i < 4; i++) {
             controller.loginUser(new User("i"), mock(RemoteView.class));
-            ArrayList<Player> playerlist = (ArrayList<Player>) field.get(controller);
-            assertEquals(playerlist.size(), i+1);
+            ArrayList<Player> playerList = (ArrayList<Player>) field.get(controller);
+            assertEquals(playerList.size(), i+1);
         }
         field.setAccessible(false);
     }

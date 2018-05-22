@@ -1,6 +1,8 @@
 package ingsw.utilities;
 
-public class TripleString {
+import java.io.Serializable;
+
+public class TripleString implements Serializable {
     String firstField;
     String secondField;
     String thirdField;
@@ -11,4 +13,15 @@ public class TripleString {
         this.thirdField = thirdField;
     }
 
+    public String getFirstField() {
+        return firstField;
+    }
+
+    public String getSecondField() {
+        return secondField;
+    }
+
+    public String getThirdField() {
+        return thirdField;
+    }
 }
