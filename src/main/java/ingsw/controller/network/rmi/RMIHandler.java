@@ -14,7 +14,7 @@ public class RMIHandler implements RequestHandler {
     private ResponseHandler rmiController;
     private RMIUserObserver rmiUserObserver;
     private RemoteSagradaGame sagradaGame;
-    private RemoteController controller;
+    private RemoteController remoteController;
     private User user;
 
     /**
@@ -56,9 +56,8 @@ public class RMIHandler implements RequestHandler {
     public void handle(CreateMatchRequest createMatchRequest) {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);
-            controller = (RemoteController) LocateRegistry.getRegistry().lookup(createMatchRequest.matchName);
-        } catch (RemoteException | NotBoundException e) {
-            e.printStackTrace();
+        } catch (RemoteException e) {
+            new CreateMatchResponse(null).handle(rmiController);
         }
     }
 }

@@ -11,7 +11,7 @@ public class RMIController implements ResponseHandler, NetworkType {
     private RMIUserObserver rmiUserObserver;
     private Response response;
     private SceneUpdater sceneUpdater;
-    private boolean isUserLogged;
+    private boolean generalPurposeBoolean;
 
     public void connect() throws RemoteException {
         rmiUserObserver = new RMIUserObserver(this);
@@ -41,15 +41,17 @@ public class RMIController implements ResponseHandler, NetworkType {
         response = new LoginUserRequest(username).handle(rmiHandler);
         response.handle(this);
 
-        return isUserLogged;
+        return generalPurposeBoolean;
     }
 
     @Override
-    public void createMatch(String matchName) throws RemoteException {
+    public boolean createMatch(String matchName) throws RemoteException {
         response = new CreateMatchRequest(matchName).handle(rmiHandler);
         if (response != null) {
             response.handle(this);
-        }
+            return generalPurposeBoolean;
+        } else
+            return false;
     }
 
 
@@ -64,12 +66,12 @@ public class RMIController implements ResponseHandler, NetworkType {
         if (loginUserResponse.user != null) {
             loginUserResponse.user.addListener(rmiUserObserver);
             System.out.println("New connection >>> " + loginUserResponse.user.getUsername());
-            isUserLogged = true;
+            generalPurposeBoolean = true;
 
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
 
         } else {
-            isUserLogged = false;
+            generalPurposeBoolean = false;
         }
     }
 
@@ -92,10 +94,14 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(CreateMatchResponse createMatchResponse) {
-        if (createMatchResponse != null) {
+        if (createMatchResponse.doubleString != null) {
             System.out.println("Match created");
 
             sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
+            generalPurposeBoolean = true;
+        } else {
+            sceneUpdater.popUpMatchAlreadyExistent();
+            generalPurposeBoolean = false;
         }
     }
 }

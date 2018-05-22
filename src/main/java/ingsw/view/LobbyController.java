@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -115,6 +116,15 @@ public class LobbyController implements SceneUpdater, Initializable {
     public void updateExistingMatches(List<DoubleString> matches) {
         availableMatches.clear();
         availableMatches.addAll(matches);
+    }
+
+    @Override
+    public void popUpMatchAlreadyExistent() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Warning");
+        alert.setHeaderText("Match has already been taken");
+        alert.setContentText("Choose another match name");
+        alert.showAndWait();
     }
 }
 

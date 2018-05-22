@@ -224,4 +224,9 @@ public class CLI implements SceneUpdater {
     public void updateExistingMatches(List<DoubleString> matches) {
 
     }
+
+    @Override
+    public void popUpMatchAlreadyExistent() {
+
+    }
 }

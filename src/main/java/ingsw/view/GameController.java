@@ -77,4 +77,9 @@ public class GameController implements SceneUpdater {
     public void updateExistingMatches(List<DoubleString> matches) {
 
     }
+
+    @Override
+    public void popUpMatchAlreadyExistent() {
+
+    }
 }

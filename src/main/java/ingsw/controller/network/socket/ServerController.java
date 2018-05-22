@@ -41,9 +41,13 @@ public class ServerController implements RequestHandler {
     @Override
     public void handle(CreateMatchRequest createMatchRequest) {
         try {
-            controller = sagradaGame.createMatch(createMatchRequest.matchName);
+            sagradaGame.createMatch(createMatchRequest.matchName);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            try {
+                user.getUserObserver().sendResponse(new CreateMatchResponse(null));
+            } catch (RemoteException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 

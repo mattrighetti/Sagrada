@@ -10,7 +10,7 @@ import ingsw.controller.network.NetworkType;
 public class ClientController implements ResponseHandler, NetworkType {
     private BroadcastReceiver broadcastReceiver;
     private Client client;
-    private boolean isUserLogged = false;
+    private boolean generalPurposeBoolean = false;
     private SceneUpdater sceneUpdater;
 
     public ClientController(Client client) {
@@ -43,12 +43,14 @@ public class ClientController implements ResponseHandler, NetworkType {
     public boolean loginUser(String username) {
         client.request(new LoginUserRequest(username));
         client.nextResponse().handle(this);
-        return isUserLogged;
+        return generalPurposeBoolean;
     }
 
     @Override
-    public void createMatch(String matchName) {
+    public boolean createMatch(String matchName) {
+        generalPurposeBoolean = false;
         client.request(new CreateMatchRequest(matchName));
+        return generalPurposeBoolean;
     }
 
     /**
@@ -82,11 +84,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(LoginUserResponse loginUserResponse) {
         if (loginUserResponse.user != null) {
-            isUserLogged = true;
+            generalPurposeBoolean = true;
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             listenForNewUsers();
         } else
-            isUserLogged = false;
+            generalPurposeBoolean = false;
     }
 
     @Override
@@ -100,6 +102,7 @@ public class ClientController implements ResponseHandler, NetworkType {
             System.out.println("Match created");
 
             sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
+            generalPurposeBoolean = true;
         }
     }
 

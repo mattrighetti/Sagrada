@@ -15,7 +15,7 @@ public interface RemoteSagradaGame extends Remote {
 
     User loginUser(String username, UserObserver userObserver) throws RemoteException, InvalidUsernameException;
 
-    Controller createMatch(String matchName) throws RemoteException;
+    void createMatch(String matchName) throws RemoteException;
 
     Controller joinMatch(String matchName) throws RemoteException;
 
