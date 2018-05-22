@@ -38,9 +38,5 @@ public class WindowController implements SceneUpdater {
 
     }
 
-    @Override
-    public void popUpMatchAlreadyExistent() {
-
-    }
 }
 

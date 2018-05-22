@@ -225,8 +225,4 @@ public class CLI implements SceneUpdater {
 
     }
 
-    @Override
-    public void popUpMatchAlreadyExistent() {
-
-    }
 }

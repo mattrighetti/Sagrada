@@ -45,13 +45,8 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public boolean createMatch(String matchName) throws RemoteException {
-        response = new CreateMatchRequest(matchName).handle(rmiHandler);
-        if (response != null) {
-            response.handle(this);
-            return generalPurposeBoolean;
-        } else
-            return false;
+    public void createMatch(String matchName) throws RemoteException {
+        new CreateMatchRequest(matchName).handle(rmiHandler);
     }
 
 
@@ -69,6 +64,7 @@ public class RMIController implements ResponseHandler, NetworkType {
             generalPurposeBoolean = true;
 
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
+            sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
 
         } else {
             generalPurposeBoolean = false;
@@ -98,10 +94,6 @@ public class RMIController implements ResponseHandler, NetworkType {
             System.out.println("Match created");
 
             sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
-            generalPurposeBoolean = true;
-        } else {
-            sceneUpdater.popUpMatchAlreadyExistent();
-            generalPurposeBoolean = false;
         }
     }
 }

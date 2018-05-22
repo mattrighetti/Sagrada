@@ -78,8 +78,4 @@ public class GameController implements SceneUpdater {
 
     }
 
-    @Override
-    public void popUpMatchAlreadyExistent() {
-
-    }
 }

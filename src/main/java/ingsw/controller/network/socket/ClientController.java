@@ -11,6 +11,7 @@ public class ClientController implements ResponseHandler, NetworkType {
     private BroadcastReceiver broadcastReceiver;
     private Client client;
     private boolean generalPurposeBoolean = false;
+    private boolean hasMatchBeenCreated = false;
     private SceneUpdater sceneUpdater;
 
     public ClientController(Client client) {
@@ -47,10 +48,8 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public boolean createMatch(String matchName) {
-        generalPurposeBoolean = false;
+    public void createMatch(String matchName) {
         client.request(new CreateMatchRequest(matchName));
-        return generalPurposeBoolean;
     }
 
     /**
@@ -86,6 +85,7 @@ public class ClientController implements ResponseHandler, NetworkType {
         if (loginUserResponse.user != null) {
             generalPurposeBoolean = true;
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
+            sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
             listenForNewUsers();
         } else
             generalPurposeBoolean = false;
@@ -102,7 +102,6 @@ public class ClientController implements ResponseHandler, NetworkType {
             System.out.println("Match created");
 
             sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
-            generalPurposeBoolean = true;
         }
     }
 

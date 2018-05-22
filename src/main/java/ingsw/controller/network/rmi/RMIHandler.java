@@ -41,9 +41,9 @@ public class RMIHandler implements RequestHandler {
     public Response handle(LoginUserRequest loginUserRequest) {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, rmiUserObserver);
-            return new LoginUserResponse(user, sagradaGame.getConnectedUsers());
+            return new LoginUserResponse(user, sagradaGame.getConnectedUsers(), sagradaGame.doubleStringBuilder());
         } catch (InvalidUsernameException | RemoteException e) {
-            return new LoginUserResponse(null, -1);
+            return new LoginUserResponse(null, -1, null);
         }
     }
 
@@ -57,7 +57,7 @@ public class RMIHandler implements RequestHandler {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);
         } catch (RemoteException e) {
-            new CreateMatchResponse(null).handle(rmiController);
+            e.printStackTrace();
         }
     }
 }

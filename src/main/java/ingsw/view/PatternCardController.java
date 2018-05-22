@@ -88,8 +88,4 @@ public class PatternCardController implements SceneUpdater {
 
     }
 
-    @Override
-    public void popUpMatchAlreadyExistent() {
-
-    }
 }

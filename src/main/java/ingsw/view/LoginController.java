@@ -79,12 +79,8 @@ public class LoginController implements SceneUpdater {
 
     @Override
     public void updateExistingMatches(List<DoubleString> matches) {
-
+        application.updateExistingMatches(matches);
     }
 
-    @Override
-    public void popUpMatchAlreadyExistent() {
-
-    }
 }
 

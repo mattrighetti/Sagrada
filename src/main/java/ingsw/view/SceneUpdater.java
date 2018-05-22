@@ -12,6 +12,4 @@ public interface SceneUpdater {
     void setNetworkType(NetworkType clientController);
 
     void updateExistingMatches(List<DoubleString> matches);
-
-    void popUpMatchAlreadyExistent();
 }

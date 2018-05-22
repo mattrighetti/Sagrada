@@ -6,6 +6,6 @@ public interface NetworkType {
 
     boolean loginUser(String username) throws RemoteException;
 
-    boolean createMatch(String matchName) throws RemoteException;
+    void createMatch(String matchName) throws RemoteException;
 
 }

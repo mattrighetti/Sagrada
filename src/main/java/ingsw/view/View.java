@@ -5,6 +5,7 @@ import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.utilities.DoubleString;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +15,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class View extends Application implements GUIUpdater {
     private String username;
@@ -23,6 +26,7 @@ public class View extends Application implements GUIUpdater {
     private Stage mainStage;
     private SceneUpdater currentScene;
     private int connectedUsers = 0;
+    private List<DoubleString> matches = new ArrayList<>();
 
 
     public static void main(String[] args) {
@@ -125,6 +129,7 @@ public class View extends Application implements GUIUpdater {
         // Pass GuiUpdater to the ViewController
         lobbyController.setApplication(this);
         lobbyController.updateConnectedUsers(connectedUsers);
+        lobbyController.updateExistingMatches(matches);
 
         // Load the scene
         mainStage.setScene(new Scene(lobby));
@@ -153,7 +158,6 @@ public class View extends Application implements GUIUpdater {
         mainStage.setTitle("Choose Pattern Card");
         mainStage.show();
         setCurrentScene(patternCardController);
-
     }
 
     @Override
@@ -198,6 +202,11 @@ public class View extends Application implements GUIUpdater {
     @Override
     public void updateConnectedUsers(int connectedUsers) {
         this.connectedUsers = connectedUsers;
+    }
+
+    @Override
+    public void updateExistingMatches(List<DoubleString> matches) {
+        this.matches = matches;
     }
 
     /**

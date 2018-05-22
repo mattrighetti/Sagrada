@@ -31,11 +31,10 @@ public class ServerController implements RequestHandler {
     public Response handle(LoginUserRequest loginUserRequest) {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, clientHandler);
+            return new LoginUserResponse(user, sagradaGame.getConnectedUsers(), sagradaGame.doubleStringBuilder());
         } catch (InvalidUsernameException | RemoteException e) {
-            return new LoginUserResponse(null, -1);
+            return new LoginUserResponse(null, -1, null);
         }
-
-        return new LoginUserResponse(user, sagradaGame.getConnectedUsers());
     }
 
     @Override
@@ -43,11 +42,7 @@ public class ServerController implements RequestHandler {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);
         } catch (RemoteException e) {
-            try {
-                user.getUserObserver().sendResponse(new CreateMatchResponse(null));
-            } catch (RemoteException e1) {
-                e1.printStackTrace();
-            }
+            e.printStackTrace();
         }
     }
 
