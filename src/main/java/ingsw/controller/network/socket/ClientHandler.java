@@ -126,6 +126,11 @@ public class ClientHandler implements Runnable, UserObserver {
     }
 
     @Override
+    public void sendResponse(DiceMoveResponse diceMoveResponse) {
+        respond(diceMoveResponse);
+    }
+
+    @Override
     public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
         //TODO
     }

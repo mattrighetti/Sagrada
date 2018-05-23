@@ -179,14 +179,28 @@ public class CLI implements SceneUpdater {
         boolean moveNext = false;
         flushScanner();
 
-        do {
-            System.out.println("Available rounds:\n");
+        while (!moveNext) {
+            System.out.println("Available matches:\n");
             for (int i = 0; i < availableMatches.size(); i++) {
                 System.out.println( i+1 + " - " + availableMatches.get(i).getFirstField() + "\t players:" + availableMatches.get(i).getSecondField() + "\n");
             }
             selectedMatch = userIntegerInput();
-        } while (!moveNext);
 
+            if (0 < selectedMatch && selectedMatch < (availableMatches.size() + 1)) {
+                try {
+                    if (currentConnectionType.joinExistingMatch(availableMatches.get(selectedMatch - 1).getFirstField())){
+                        System.out.println("Confirmed\nYou logged in successfully!\nWait for other players");
+                        moveNext = true;
+                    }
+                    else System.out.println("Error\nYou didn't log in successfully\nRetry");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            else System.out.println("Not valid Match selected, choose another match");
+        }
+
+        System.out.println("Waiting...");
     }
 
     private void showStatistics() {

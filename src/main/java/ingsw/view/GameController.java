@@ -2,17 +2,21 @@ package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.model.Dice;
+import ingsw.model.Player;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +26,8 @@ public class GameController implements SceneUpdater {
     NetworkType networkType;
     GUIUpdater application;
 
-    private ArrayList<PatternCard> patternCards;
-    private ArrayList<Button> roundDice;
-    private int numOfPLayers;
+    private ArrayList<Player> players;
+    private ArrayList<Button> diceButton;
 
     @FXML
     private VBox toolCardVBox;
@@ -57,9 +60,29 @@ public class GameController implements SceneUpdater {
     }
 
     public void setDiceBox() {
-        for (int i = 0; i < ((numOfPLayers * 2) + 1); i++) {
-            roundDice.add(new Button("dice" + i));
-            diceHorizontalBox.getChildren().add(roundDice.get(i));
+        for (int i = 0; i < ((players.size() * 2) + 1); i++) {
+            diceButton.add(new Button("dice" + i));
+            diceHorizontalBox.getChildren().add(diceButton.get(i));
+        }
+    }
+
+    public void setWindowsTab() throws IOException {
+        for (int i = 0; i < players.size(); i++) {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/window.fxml"));
+            GridPane windowGrid = fxmlLoader.load();
+            Tab windowTab = new Tab();
+            windowTab.setContent(windowGrid);
+            tabPane.getTabs().add(windowTab);
+        }
+    }
+
+    public void setPrivateCardImageView(String privateCard){
+        privateCardImageView.setImage(new Image("img/" + privateCard + ".png"));
+    }
+
+    public void setPublicCardVBox(List<String> publicCards) {
+        for (String name : publicCards) {
+            publicCardVBox.getChildren().add(new ImageView("img/" + name + ".png"));
         }
     }
 

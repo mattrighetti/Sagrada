@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Round implements Runnable {
     private Thread playerMoves;
     private Player player;
+
     private AtomicBoolean hasMadeAMove;
     private GameManager gameManager;
     private AtomicBoolean playerEndedTurn;
@@ -37,6 +38,9 @@ public class Round implements Runnable {
         playerMoves.start();
     }
 
+    public void hasMadeAMove() {
+        hasMadeAMove.set(true);
+    }
     private void waitForMove() {
         while (!hasMadeAMove.get()) {
 
@@ -60,7 +64,21 @@ public class Round implements Runnable {
         return isMoveAccepted;
     }
 
+    /**
+     * Place-Dice move. Method for the placing dice move
+     * @param dice to place
+     * @param rowIndex index of the row where to place dice in the pattern card
+     * @param columnIndex index of the column where to place dice in pattern card
+     */
+    public void makeMove(Dice dice, int rowIndex, int columnIndex) {
+        if (gameManager.makeMove(player, dice, rowIndex, columnIndex)) hasMadeAMove.set(true);
+    }
+
     public void skipMove() {
        hasMadeAMove.set(true);
+    }
+
+    public Player getCurrentPlayer() {
+        return player;
     }
 }

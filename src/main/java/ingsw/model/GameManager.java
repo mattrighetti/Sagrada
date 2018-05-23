@@ -11,6 +11,7 @@
 
 package ingsw.model;
 
+import ingsw.controller.network.commands.DiceMoveResponse;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
@@ -205,19 +206,12 @@ public class GameManager {
      */
     public void useToolCard(Player player, ToolCard toolCard) {
         //Check if the window is broken (FLAG)
-        //method toolCard.action(player.getPatternCard());
     }
 
     public void placeDice(Dice dice, int rowIndex, int columnIndex) {
-        // TODO completa
-        /*
-        0 - Check if the window is broken (FLAG)
-        1 - controlla se il dado è nella lista dei draftedDice
-        2 - posiziona il dado nella patternCard
-        3 - rimuovi dado dalla draftedDice
-        4 - aggiorna le view degli utenti
-        5 - currentRound.makeMove();
-         */
+        if (!brokenWindow && board.getDraftedDice().contains(dice)){
+            currentRound.makeMove(dice, rowIndex, columnIndex);
+        }
     }
 
     public void removeDice() {
@@ -312,5 +306,15 @@ public class GameManager {
      */
     public List<Boolean[][]> sendAvailablePositions(Player player) {
         return player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
+    }
+
+    public boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
+        if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
+            player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
+            board.getDraftedDice().remove(dice);
+            Broadcaster.broadcastResponseToAll(playerList, new DiceMoveResponse(player,dice,rowIndex,columnIndex));
+            return true;
+            }
+            else return false;
     }
 }

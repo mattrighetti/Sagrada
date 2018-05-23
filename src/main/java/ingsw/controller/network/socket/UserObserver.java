@@ -2,6 +2,7 @@ package ingsw.controller.network.socket;
 
 import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.CreateMatchResponse;
+import ingsw.controller.network.commands.DiceMoveResponse;
 import ingsw.controller.network.commands.DiceNotification;
 
 import java.rmi.Remote;
@@ -21,4 +22,6 @@ public interface UserObserver extends Remote {
     void sendResponse(CreateMatchResponse createMatchResponse) throws RemoteException;
 
     void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException;
+
+    void sendResponse(DiceMoveResponse diceMoveResponse);
 }

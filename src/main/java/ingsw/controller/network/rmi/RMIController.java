@@ -107,6 +107,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void handle(DiceMoveResponse diceMoveResponse) {
+        //TODO
+    }
+
+    @Override
     public void handle(ChosenPatternCardResponse chosenPatternCardResponse) {
 
     }

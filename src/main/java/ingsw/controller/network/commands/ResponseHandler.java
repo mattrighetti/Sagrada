@@ -13,4 +13,6 @@ public interface ResponseHandler {
     void handle(CreateMatchResponse createMatchResponse);
 
     void handle(JoinedMatchResponse joinedMatchResponse);
+
+    void handle(DiceMoveResponse diceMoveResponse);
 }

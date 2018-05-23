@@ -2,6 +2,7 @@ package ingsw.utilities;
 
 import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.CreateMatchResponse;
+import ingsw.controller.network.commands.DiceMoveResponse;
 import ingsw.controller.network.commands.DiceNotification;
 import ingsw.controller.network.commands.Response;
 import ingsw.controller.network.socket.UserObserver;
@@ -78,6 +79,12 @@ public final class Broadcaster {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void broadcastResponseToAll(List<Player> playerList, DiceMoveResponse diceMoveResponse) {
+        for (Player player : playerList) {
+            player.getUserObserver().sendResponse(diceMoveResponse);
         }
     }
 

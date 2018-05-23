@@ -42,6 +42,11 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
+    public void sendResponse(DiceMoveResponse diceMoveResponse) {
+        //TODO
+    }
+
+    @Override
     public void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException {
         //TODO
     }
