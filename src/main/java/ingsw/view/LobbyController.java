@@ -1,25 +1,32 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
-import ingsw.controller.network.socket.UserObserver;
-import ingsw.model.User;
 import ingsw.utilities.DoubleString;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
-import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static javafx.application.Application.launch;
 
 public class LobbyController implements SceneUpdater, Initializable {
 
@@ -126,18 +133,17 @@ public class LobbyController implements SceneUpdater, Initializable {
     @FXML
     void onJoinPressed(ActionEvent event) {
         try {
-            if (networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField())) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirmed");
-                alert.setHeaderText("You logged in successfully");
-                alert.setContentText("Wait other playes");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("You didn't log in successfully");
-                alert.setContentText("Retry");
-                alert.showAndWait();
+            if (matchTableView.getSelectionModel().getSelectedItem() != null) {
+                if (networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField())) {
+                    ProgressForm progressForm = new ProgressForm();
+                    progressForm.activateProgressBar();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("You didn't log in successfully");
+                    alert.setContentText("Retry");
+                    alert.showAndWait();
+                }
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -154,5 +160,46 @@ public class LobbyController implements SceneUpdater, Initializable {
         availableMatches.clear();
         availableMatches.addAll(matches);
     }
+
+    static class ProgressForm {
+        private final Stage dialogStage;
+        private final Label headerLabel;
+        private final ProgressIndicator pin = new ProgressIndicator();
+
+        ProgressForm() {
+            dialogStage = new Stage();
+            dialogStage.initStyle(StageStyle.UNDECORATED);
+            dialogStage.setResizable(false);
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+
+            headerLabel = new Label();
+            headerLabel.setText("Waiting for other users");
+
+            pin.setProgress(-1F);
+            pin.setPadding(new Insets(10, 10, 10, 10));
+
+            final HBox hb = new HBox();
+            hb.setMinSize(200, 50);
+            hb.setSpacing(15);
+            hb.setAlignment(Pos.CENTER);
+            hb.getChildren().addAll(headerLabel, pin);
+
+            Scene scene = new Scene(hb);
+            dialogStage.setScene(scene);
+        }
+
+        void activateProgressBar()  {
+            dialogStage.show();
+        }
+
+        public Stage getDialogStage() {
+            return dialogStage;
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
 }
 
