@@ -8,6 +8,7 @@ public class BroadcastReceiver implements Runnable {
     private ClientController clientController;
     private AtomicBoolean running = new AtomicBoolean(false);
     private Thread receiver;
+    private boolean bool = true;
 
     public BroadcastReceiver(ClientController clientController) {
         this.clientController = clientController;
@@ -24,7 +25,7 @@ public class BroadcastReceiver implements Runnable {
     }
 
     public void stop() {
-        running.set(false);
+        bool = false;
     }
 
     public void restart() {
@@ -38,11 +39,17 @@ public class BroadcastReceiver implements Runnable {
     public void run() {
         Response response;
         do {
-            response = clientController.getClient().nextResponse();
-            if (response != null) {
-                response.handle(clientController);
-            } else
-                running.set(false);
-        } while (running.get());
+
+            if (bool) {
+                response = clientController.getClient().nextResponse();
+                System.out.println("Broadcast Reading");
+                if (response != null) {
+                    response.handle(clientController);
+                }
+            } else {
+                System.out.println("Broadcaster stopped");
+                break;
+            }
+        } while (true);
     }
 }

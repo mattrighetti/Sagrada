@@ -1,7 +1,6 @@
 package ingsw.controller.network.socket;
 
 import ingsw.controller.network.commands.Request;
-import ingsw.controller.network.commands.RequestWoResponse;
 import ingsw.controller.network.commands.Response;
 
 import java.io.IOException;
@@ -33,18 +32,20 @@ public class Client {
         connection.close();
     }
 
-    void request(Request request) {
+    void stopBroadcastReceiver() {
         try {
-            objectOutputStream.writeObject(request);
+            objectOutputStream.writeObject(null);
         } catch (IOException e) {
+            e.printStackTrace();
             System.err.println("Exception on network: " + e.getMessage());
         }
     }
 
-    void request(RequestWoResponse requestWoResponse) {
+    void request(Request request) {
         try {
-            objectOutputStream.writeObject(requestWoResponse);
+            objectOutputStream.writeObject(request);
         } catch (IOException e) {
+            e.printStackTrace();
             System.err.println("Exception on network: " + e.getMessage());
         }
     }
@@ -53,9 +54,11 @@ public class Client {
         try {
             return ((Response) objectInputStream.readObject());
         } catch (IOException e) {
-            System.err.println("Exception on network: " + e.getMessage());
+            e.printStackTrace();
+            System.err.println("Exception on network");
         } catch (ClassNotFoundException e) {
-            System.err.println("Wrong deserialization: " + e.getMessage());
+            e.printStackTrace();
+            System.err.println("Wrong deserialization");
         }
 
         return null;

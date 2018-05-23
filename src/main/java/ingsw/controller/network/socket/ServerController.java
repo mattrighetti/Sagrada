@@ -38,12 +38,14 @@ public class ServerController implements RequestHandler {
     }
 
     @Override
-    public void handle(CreateMatchRequest createMatchRequest) {
+    public Response handle(CreateMatchRequest createMatchRequest) {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
+        return null;
     }
 
     @Override
@@ -51,11 +53,12 @@ public class ServerController implements RequestHandler {
         try {
             sagradaGame.loginUserToController(joinMatchRequest.matchName, user);
             controller = sagradaGame.getMatchController(joinMatchRequest.matchName);
-            return new JoinedMatchResponse(true);
         } catch (RemoteException e) {
             e.printStackTrace();
             return new JoinedMatchResponse(false);
         }
+
+        return new JoinedMatchResponse(true);
     }
 
     @Override

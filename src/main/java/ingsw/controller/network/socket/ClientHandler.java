@@ -14,7 +14,7 @@ public class ClientHandler implements Runnable, UserObserver {
     private Socket clientSocket;
     private final ObjectInputStream objectInputStream;
     private final ObjectOutputStream objectOutputStream;
-    private boolean stop;
+    private boolean stop = false;
 
     private ServerController serverController;
 
@@ -33,13 +33,19 @@ public class ClientHandler implements Runnable, UserObserver {
     public void run() {
         try {
             do {
-                Response response = ((Request) objectInputStream.readObject()).handle(serverController);
-                if (response != null) {
-                    respond(response);
+                Request request;
+                request = (Request) objectInputStream.readObject();
+                if (request != null) {
+                    Response response = request.handle(serverController);
+                    if (response != null) {
+                        respond(response);
+                    }
+                } else {
+                    respond(null);
                 }
             } while (!stop);
         } catch (Exception e) {
-            // TODO Handle Excpetions
+            e.printStackTrace();
         }
     }
 
@@ -51,6 +57,7 @@ public class ClientHandler implements Runnable, UserObserver {
         try {
             objectOutputStream.writeObject(response);
         } catch (IOException e) {
+            e.printStackTrace();
             System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
         }
     }

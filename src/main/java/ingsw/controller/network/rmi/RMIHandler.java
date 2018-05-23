@@ -48,12 +48,14 @@ public class RMIHandler implements RequestHandler {
     }
 
     @Override
-    public void handle(CreateMatchRequest createMatchRequest) {
+    public Response handle(CreateMatchRequest createMatchRequest) {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
+        return null;
     }
 
     @Override

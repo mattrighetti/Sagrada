@@ -8,15 +8,16 @@ import ingsw.controller.network.NetworkType;
  * Class that defines the socket connection of the game
  */
 public class ClientController implements ResponseHandler, NetworkType {
-    private BroadcastReceiver broadcastReceiver;
     private Client client;
+    private Thread thread;
+    private boolean stop = false;
+    private boolean isRunning = false;
     private boolean generalPurposeBoolean = false;
     private boolean hasMatchBeenCreated = false;
     private SceneUpdater sceneUpdater;
 
     public ClientController(Client client) {
         this.client = client;
-        this.broadcastReceiver = new BroadcastReceiver(this);
     }
 
     public void setSceneUpdater(SceneUpdater sceneUpdater) {
@@ -27,6 +28,29 @@ public class ClientController implements ResponseHandler, NetworkType {
         return client;
     }
 
+    public void stop(boolean stop) {
+        this.stop = stop;
+    }
+
+    public boolean isThreadRunning() {
+        return isRunning;
+    }
+
+    public void isRunning() {
+        isRunning = true;
+    }
+
+    public void isNotRunning() {
+        isRunning = false;
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    /* EXCLUSIVE SOCKET PART */
+
+    public void stopBroadcastReceiver() {
+        client.stopBroadcastReceiver();
+    }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -54,8 +78,8 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     @Override
     public boolean joinExistingMatch(String matchName) {
-        broadcastReceiver.stop();
         generalPurposeBoolean = false;
+        stopBroadcastReceiver();
         client.request(new JoinMatchRequest(matchName));
         client.nextResponse().handle(this);
 
@@ -63,24 +87,29 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     /**
-     * Method that opens a Thread and listens for every incoming JoinedUserResponse sent by the Controller
-     */
-    public void listenForNewUsers() {
-        broadcastReceiver.start();
-    }
-
-    /**
-     * Method that stops the BroadcastReceiver
-     */
-    public void stopReceiver() {
-        broadcastReceiver.stop();
-    }
-
-    /**
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */
     public void listenForResponses() {
-        broadcastReceiver.restart();
+        thread = new Thread(
+                () -> {
+                    isRunning();
+                    System.out.println("Opening the Thread");
+                    Response response;
+                    do {
+                        response = client.nextResponse();
+                        if (response != null) {
+                            response.handle(this);
+                            System.out.println("Received a response: " + response);
+                        } else {
+                            System.err.println("Null received, stopping broadcast");
+                            break;
+                        }
+                    } while (true);
+                    isNotRunning();
+                    System.out.println("Closing thread");
+                }
+        );
+        thread.start();
     }
 
 
@@ -96,7 +125,7 @@ public class ClientController implements ResponseHandler, NetworkType {
             generalPurposeBoolean = true;
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
-            listenForNewUsers();
+            listenForResponses();
         } else
             generalPurposeBoolean = false;
     }
@@ -106,6 +135,10 @@ public class ClientController implements ResponseHandler, NetworkType {
         sceneUpdater.updateConnectedUsers(integerResponse.number);
     }
 
+    /**
+     * Method that updates the list of matches in the application's TableView
+     * @param createMatchResponse response that encapsulates the new list of available matches
+     */
     @Override
     public void handle(CreateMatchResponse createMatchResponse) {
         if (createMatchResponse.doubleString != null) {
@@ -115,6 +148,10 @@ public class ClientController implements ResponseHandler, NetworkType {
         }
     }
 
+    /**
+     * Method used to confirm to every user their successful login
+     * @param joinedMatchResponse response that encapsulates the successful login boolean
+     */
     @Override
     public void handle(JoinedMatchResponse joinedMatchResponse) {
         generalPurposeBoolean = joinedMatchResponse.isLoginSuccessful;

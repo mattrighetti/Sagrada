@@ -6,7 +6,6 @@ import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
 import ingsw.utilities.DoubleString;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -19,7 +18,6 @@ public class CLI implements SceneUpdater {
     private RMIController rmiController;
     private ClientController clientController;
     private NetworkType currentConnectionType;
-    private Stage mainStage;
     private SceneUpdater currentScene;
     private Scanner scanner;
     private List<DoubleString> availableMatches = new ArrayList<>();
