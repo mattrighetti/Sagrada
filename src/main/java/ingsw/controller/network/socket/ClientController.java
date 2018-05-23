@@ -10,8 +10,6 @@ import ingsw.controller.network.NetworkType;
 public class ClientController implements ResponseHandler, NetworkType {
     private Client client;
     private Thread thread;
-    private boolean stop = false;
-    private boolean isRunning = false;
     private boolean generalPurposeBoolean = false;
     private boolean hasMatchBeenCreated = false;
     private SceneUpdater sceneUpdater;
@@ -28,26 +26,13 @@ public class ClientController implements ResponseHandler, NetworkType {
         return client;
     }
 
-    public void stop(boolean stop) {
-        this.stop = stop;
-    }
-
-    public boolean isThreadRunning() {
-        return isRunning;
-    }
-
-    public void isRunning() {
-        isRunning = true;
-    }
-
-    public void isNotRunning() {
-        isRunning = false;
-    }
-
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* EXCLUSIVE SOCKET PART */
 
+    /**
+     * Method that stops the active receiver thread triggering a null response
+     */
     public void stopBroadcastReceiver() {
         client.stopBroadcastReceiver();
     }
@@ -71,11 +56,20 @@ public class ClientController implements ResponseHandler, NetworkType {
         return generalPurposeBoolean;
     }
 
+    /**
+     * Method that creates a match
+     * @param matchName name of the match to create
+     */
     @Override
     public void createMatch(String matchName) {
         client.request(new CreateMatchRequest(matchName));
     }
 
+    /**
+     * Method that logs the user into the match
+     * @param matchName name of the match to join
+     * @return true if the login was successful or false if not
+     */
     @Override
     public boolean joinExistingMatch(String matchName) {
         generalPurposeBoolean = false;
@@ -92,7 +86,6 @@ public class ClientController implements ResponseHandler, NetworkType {
     public void listenForResponses() {
         thread = new Thread(
                 () -> {
-                    isRunning();
                     System.out.println("Opening the Thread");
                     Response response;
                     do {
@@ -105,7 +98,6 @@ public class ClientController implements ResponseHandler, NetworkType {
                             break;
                         }
                     } while (true);
-                    isNotRunning();
                     System.out.println("Closing thread");
                 }
         );
