@@ -1,6 +1,8 @@
 package ingsw.controller.network;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
     public String sender;
     public String message;
 
