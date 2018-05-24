@@ -33,14 +33,13 @@ public class ClientHandler implements Runnable, UserObserver {
     public void run() {
         try {
             do {
-                Request request;
-                request = (Request) objectInputStream.readObject();
-                if (request != null) {
-                    Response response = request.handle(serverController);
+                try {
+                    Response response = ((Request) objectInputStream.readObject()).handle(serverController);
                     if (response != null) {
                         respond(response);
                     }
-                } else {
+                } catch (NullPointerException e) {
+                    System.err.println("Catching null");
                     respond(null);
                 }
             } while (!stop);
@@ -49,8 +48,10 @@ public class ClientHandler implements Runnable, UserObserver {
         }
     }
 
+
     /**
      * Method that serializes objects and sends them to the other end of the connection
+     *
      * @param response response to send
      */
     private void respond(Response response) {
@@ -95,10 +96,10 @@ public class ClientHandler implements Runnable, UserObserver {
     }
 
     /*
-    *
-    * USER OBSERVER METHODS
-    *
-   */
+     *
+     * USER OBSERVER METHODS
+     *
+     */
 
     @Override
     public void onJoin(int numberOfConnectedUsers) {
