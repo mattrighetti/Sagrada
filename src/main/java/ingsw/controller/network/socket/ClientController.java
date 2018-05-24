@@ -4,6 +4,8 @@ import ingsw.controller.network.commands.*;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
+import java.io.IOException;
+
 /**
  * Class that defines the socket connection of the game
  */
@@ -76,7 +78,7 @@ public class ClientController implements ResponseHandler, NetworkType {
         stopBroadcastReceiver();
         client.request(new JoinMatchRequest(matchName));
         client.nextResponse().handle(this);
-
+        listenForResponses();
         return generalPurposeBoolean;
     }
 
@@ -111,6 +113,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     /* METHOD EXECUTED BY THE RMI HANDLER */
 
 
+    /**
+     * Method that is executed every time a User logs into the game.
+     * It updates the number of users connected and the available matches in the View.
+     * @param loginUserResponse response sent by SagradaGame every time a user logs into the game
+     */
     @Override
     public void handle(LoginUserResponse loginUserResponse) {
         if (loginUserResponse.user != null) {
@@ -122,6 +129,10 @@ public class ClientController implements ResponseHandler, NetworkType {
             generalPurposeBoolean = false;
     }
 
+    /**
+     * Method that updates the number of connected users in the View.
+     * @param integerResponse response sent by SagradaGame every time a user logs into the game
+     */
     @Override
     public void handle(IntegerResponse integerResponse) {
         sceneUpdater.updateConnectedUsers(integerResponse.number);
@@ -159,9 +170,18 @@ public class ClientController implements ResponseHandler, NetworkType {
         //TODO
     }
 
+    /**
+     * Method that prints a message received by either the Controller or SagradaGame
+     * @param messageResponse response sent by the Server-side running classes
+     *                        whenever a user sends a message to broadcast
+     */
     @Override
     public void handle(MessageResponse messageResponse) {
-        System.out.println(messageResponse.message);
+        try {
+            sceneUpdater.launchThirdGui();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
