@@ -55,6 +55,13 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.nextResponse().handle(this);
     }
 
+    @Override
+    public void logoutUser() {
+        stopBroadcastReceiver();
+        client.request(new LogoutRequest());
+        client.nextResponse().handle(this);
+    }
+
     /**
      * Method that creates a match
      *
@@ -126,6 +133,12 @@ public class ClientController implements ResponseHandler, NetworkType {
             sceneUpdater.launchAlert();
     }
 
+    @Override
+    public void handle(LogoutResponse logoutResponse) {
+        client.close();
+        sceneUpdater.closeStage();
+    }
+
     /**
      * Method that updates the number of connected users in the View.
      *
@@ -186,4 +199,6 @@ public class ClientController implements ResponseHandler, NetworkType {
     public void handle(PatternCardNotification patternCardNotification) {
         sceneUpdater.setPatternCards(patternCardNotification.patternCards);
     }
+
+
 }

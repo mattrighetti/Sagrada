@@ -29,4 +29,8 @@ public interface SceneUpdater {
     default void launchAlert() {
 
     }
+
+    default void closeStage() {
+
+    }
 }

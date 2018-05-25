@@ -71,4 +71,14 @@ public class ServerController implements RequestHandler, Serializable {
 
     }
 
+    @Override
+    public Response handle(LogoutRequest logoutRequest) {
+        try {
+            sagradaGame.logoutUser(user.getUsername());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return new LogoutResponse();
+    }
 }

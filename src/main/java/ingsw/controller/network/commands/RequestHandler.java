@@ -9,4 +9,6 @@ public interface RequestHandler {
     Response handle(CreateMatchRequest createMatchRequest);
 
     Response handle(JoinMatchRequest joinMatchRequest);
+
+    Response handle(LogoutRequest logoutRequest);
 }

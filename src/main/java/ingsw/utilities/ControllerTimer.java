@@ -34,7 +34,7 @@ public class ControllerTimer {
                     new Message(
                             "Ciao",
                             "Match starting"));
-            //controller.createMatch();
+            controller.createMatch();
         }
     }
 

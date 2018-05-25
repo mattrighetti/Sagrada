@@ -48,6 +48,16 @@ public class RMIHandler implements RequestHandler {
     }
 
     @Override
+    public Response handle(LogoutRequest logoutRequest) {
+        try {
+            sagradaGame.logoutUser(user.getUsername());
+            return new LogoutResponse();
+        } catch (RemoteException e) {
+            return null;
+        }
+    }
+
+    @Override
     public Response handle(CreateMatchRequest createMatchRequest) {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);

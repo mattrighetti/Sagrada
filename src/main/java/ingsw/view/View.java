@@ -263,4 +263,9 @@ public class View extends Application implements GUIUpdater {
     public String getUsername() {
         return username;
     }
+
+    @Override
+    public void closeApplication() {
+        mainStage.close();
+    }
 }

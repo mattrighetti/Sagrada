@@ -23,4 +23,6 @@ public interface GUIUpdater {
     void changeToSocket();
 
     String getUsername();
+
+    void closeApplication();
 }

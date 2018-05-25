@@ -46,6 +46,12 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void logoutUser() {
+        response = new LogoutRequest().handle(rmiHandler);
+        response.handle(this);
+    }
+
+    @Override
     public void createMatch(String matchName) {
         new CreateMatchRequest(matchName).handle(rmiHandler);
     }
@@ -74,6 +80,13 @@ public class RMIController implements ResponseHandler, NetworkType {
             sceneUpdater.launchSecondGui();
         } else
             sceneUpdater.launchAlert();
+    }
+
+    @Override
+    public void handle(LogoutResponse logoutResponse) {
+        if (logoutResponse != null) {
+            sceneUpdater.closeStage();
+        }
     }
 
     @Override

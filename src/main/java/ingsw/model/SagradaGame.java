@@ -74,6 +74,16 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         throw new InvalidUsernameException("Username has been taken already");
     }
 
+    @Override
+    public void logoutUser(String username) throws RemoteException {
+        connectedUsers.remove(username);
+        broadcastUsersConnected(username);
+
+        if (connectedUsers.get(username) != null) {
+            throw new RemoteException("Logout unsuccessful");
+        }
+    }
+
     /**
      * Method that lets the user create a match
      * @param matchName Name of the match to create

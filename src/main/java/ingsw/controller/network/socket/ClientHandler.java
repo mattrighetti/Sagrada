@@ -41,8 +41,14 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         try {
             Response response = ((Request) objectInputStream.readObject()).handle(serverController);
             if (response != null) {
-                respond(response);
+                if (response instanceof LogoutResponse) {
+                    respond(response);
+                    close();
+                }
+                else
+                    respond(response);
             }
+
         } catch (NullPointerException e) {
             System.err.println("Catching null");
             respond(null);

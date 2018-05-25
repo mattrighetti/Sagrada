@@ -19,4 +19,6 @@ public interface ResponseHandler {
     void handle(DiceMoveResponse diceMoveResponse);
 
     void handle(PatternCardNotification patternCardNotification);
+
+    void handle(LogoutResponse logoutResponse);
 }
