@@ -1,5 +1,7 @@
 package ingsw.controller.network.commands;
 
+import java.io.IOException;
+
 public interface ResponseHandler {
 
     void handle(LoginUserResponse loginUserResponse);
@@ -15,4 +17,6 @@ public interface ResponseHandler {
     void handle(JoinedMatchResponse joinedMatchResponse);
 
     void handle(DiceMoveResponse diceMoveResponse);
+
+    void handle(PatternCardNotification patternCardNotification);
 }

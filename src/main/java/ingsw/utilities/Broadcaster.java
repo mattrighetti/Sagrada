@@ -42,6 +42,15 @@ public final class Broadcaster {
         return playerListToBroadcast;
     }
 
+
+    private static List<UserObserver> playerToBroadcast(List<Player> playerList) {
+        List<UserObserver> playerListToBroadcast = new ArrayList<>();
+        for (Player player : playerList) {
+            playerListToBroadcast.add(player.getUser().getUserObserver());
+        }
+        return playerListToBroadcast;
+    }
+
     private static List<UserObserver> userToBroadcast(List<User> userList, String usernameToExclude) {
         List<UserObserver> userListToBroadcast = new ArrayList<>();
         for (User user : userList) {
@@ -84,7 +93,11 @@ public final class Broadcaster {
 
     public static void broadcastResponseToAll(List<Player> playerList, DiceMoveResponse diceMoveResponse) {
         for (Player player : playerList) {
-            player.getUserObserver().sendResponse(diceMoveResponse);
+            try {
+                player.getUserObserver().sendResponse(diceMoveResponse);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -107,4 +120,15 @@ public final class Broadcaster {
             }
         }
     }
+
+    public static void broadcastMessageToAll(List<Player> playerList, Message message) {
+        for (UserObserver userObserver : playerToBroadcast(playerList)) {
+            try {
+                userObserver.sendMessage(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

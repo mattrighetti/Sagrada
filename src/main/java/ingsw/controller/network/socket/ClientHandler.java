@@ -3,11 +3,11 @@ package ingsw.controller.network.socket;
 import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.*;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.rmi.RemoteException;
 import java.util.List;
 
 public class ClientHandler implements Runnable, UserObserver {
@@ -33,17 +33,28 @@ public class ClientHandler implements Runnable, UserObserver {
     public void run() {
         try {
             do {
-                try {
-                    Response response = ((Request) objectInputStream.readObject()).handle(serverController);
-                    if (response != null) {
-                        respond(response);
-                    }
-                } catch (NullPointerException e) {
-                    System.err.println("Catching null");
-                    respond(null);
-                }
+                readResponse();
             } while (!stop);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readResponse() {
+        try {
+            Response response = ((Request) objectInputStream.readObject()).handle(serverController);
+            if (response != null) {
+                respond(response);
+            }
+        } catch (NullPointerException e) {
+            System.err.println("Catching null");
+            respond(null);
+        } catch (EOFException e) {
+          close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.err.println("The class is probably not Serializable");
             e.printStackTrace();
         }
     }
@@ -134,5 +145,10 @@ public class ClientHandler implements Runnable, UserObserver {
     @Override
     public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
         //TODO
+    }
+
+    @Override
+    public void sendPatternCards(PatternCardNotification patternCardNotification) {
+        respond(patternCardNotification);
     }
 }

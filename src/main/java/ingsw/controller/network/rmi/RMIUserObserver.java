@@ -23,7 +23,7 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
 
     @Override
     public void sendMessage(Message message) {
-
+        new MessageResponse(message).handle(rmiController);
     }
 
     @Override
@@ -42,8 +42,13 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
-    public void sendResponse(DiceMoveResponse diceMoveResponse) {
+    public void sendResponse(DiceMoveResponse diceMoveResponse) throws RemoteException {
         //TODO
+    }
+
+    @Override
+    public void sendPatternCards(PatternCardNotification patternCardNotification) {
+        rmiController.handle(patternCardNotification);
     }
 
     @Override

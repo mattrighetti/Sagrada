@@ -51,7 +51,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     public void loginUser(User user) {
         playerList.add(new Player(user));
         if (playerList.size() == 1) {
-            controllerTimer.startTimer(40);
+            controllerTimer.startTimer(5);
         }
         if (playerList.size() == 4) {
             controllerTimer.cancelTimer();
@@ -66,6 +66,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      */
     public void createMatch() {
         gameManager = new GameManager(playerList);
+        gameManager.pickPatternCards();
         gameManager.waitForEveryPatternCard();
     }
 

@@ -2,6 +2,7 @@ package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.utilities.DoubleString;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,6 +21,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -79,6 +81,7 @@ public class LobbyController implements SceneUpdater, Initializable {
     private View application;
 
     private ObservableList<DoubleString> availableMatches;
+    private ProgressForm progressForm;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -135,7 +138,7 @@ public class LobbyController implements SceneUpdater, Initializable {
         try {
             if (matchTableView.getSelectionModel().getSelectedItem() != null) {
                 if (networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField())) {
-                    ProgressForm progressForm = new ProgressForm();
+                    progressForm = new ProgressForm();
                     progressForm.activateProgressBar();
                 } else {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -148,6 +151,20 @@ public class LobbyController implements SceneUpdater, Initializable {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void launchThirdGui() {
+        Platform.runLater(
+                () -> {
+                    try {
+                        progressForm.getDialogStage().close();
+                        application.launchThirdGUI();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+        );
     }
 
     @Override

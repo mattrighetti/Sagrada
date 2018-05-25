@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class User implements Serializable {
     private String username;
-    private transient UserObserver userObserver;
+    private UserObserver userObserver;
     private int noOfWins;
     private int noOfLose;
     private int noOfDraws;

@@ -4,7 +4,7 @@ import ingsw.model.cards.patterncard.PatternCard;
 
 import java.util.List;
 
-public class PatternCardNotification extends Notification {
+public class PatternCardNotification implements Response {
 
     public List<PatternCard> patternCards;
 
@@ -14,6 +14,6 @@ public class PatternCardNotification extends Notification {
 
     @Override
     public void handle(ResponseHandler responseHandler) {
-        //responseHandler.handle(this);
+        responseHandler.handle(this);
     }
 }

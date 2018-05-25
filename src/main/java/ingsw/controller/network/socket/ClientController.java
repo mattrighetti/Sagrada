@@ -5,6 +5,7 @@ import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 
 /**
  * Class that defines the socket connection of the game
@@ -184,4 +185,8 @@ public class ClientController implements ResponseHandler, NetworkType {
         }
     }
 
+    @Override
+    public void handle(PatternCardNotification patternCardNotification) {
+        sceneUpdater.setPatternCards(patternCardNotification.patternCards);
+    }
 }

@@ -3,7 +3,9 @@ package ingsw.model.cards.patterncard;
 import ingsw.model.Color;
 import ingsw.model.Dice;
 
-public class Box {
+import java.io.Serializable;
+
+public class Box implements Serializable {
     private Color color;
     private Integer value;
     private Dice dice;

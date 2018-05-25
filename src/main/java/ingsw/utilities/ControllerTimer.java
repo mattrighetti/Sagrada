@@ -26,7 +26,7 @@ public class ControllerTimer {
     class LaunchMatch extends TimerTask {
         @Override
         public void run() {
-            Broadcaster.broadcastMessage(controller.getPlayerList(),
+            Broadcaster.broadcastMessageToAll(controller.getPlayerList(),
                     new Message(
                             controller.getPlayerList().get(controller.getPlayerList().size() - 1).getPlayerUsername(),
                             "Match starting"));

@@ -11,13 +11,16 @@
 
 package ingsw.model;
 
+import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.DiceMoveResponse;
+import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.Broadcaster;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 /**
@@ -141,13 +144,18 @@ public class GameManager {
         return new HashSet<>(publicObjectiveCards.subList(0, 3));
     }
 
-    private void pickPatternCards() {
+    public void pickPatternCards() {
         for (Player player : playerList) {
-            Set<PatternCard> pickedPatternCards = new HashSet<>(patternCards.subList(0, 4));
+            try {
+                //Need to create another List: subList is not Serializable
+                ArrayList<PatternCard> patternCardArrayList = new ArrayList<>(patternCards.subList(0, 4));
+                player.getUserObserver().sendPatternCards(new PatternCardNotification(patternCardArrayList));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
             for (int i = 0; i < 4; i++) {
                 patternCards.remove(0);
             }
-            //TODO broadcast
         }
     }
 
