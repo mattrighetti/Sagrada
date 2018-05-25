@@ -4,5 +4,5 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 public interface Request extends Serializable {
-    Response handle(RequestHandler requestHandler) throws RemoteException;
+    Response handle(RequestHandler requestHandler);
 }

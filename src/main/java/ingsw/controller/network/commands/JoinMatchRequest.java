@@ -1,7 +1,5 @@
 package ingsw.controller.network.commands;
 
-import java.rmi.RemoteException;
-
 public class JoinMatchRequest implements Request {
     public String matchName;
 
@@ -10,7 +8,7 @@ public class JoinMatchRequest implements Request {
     }
 
     @Override
-    public Response handle(RequestHandler requestHandler) throws RemoteException {
+    public Response handle(RequestHandler requestHandler) {
         return requestHandler.handle(this);
     }
 }

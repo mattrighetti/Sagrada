@@ -92,15 +92,11 @@ public class CLI implements SceneUpdater {
             System.out.println("Username: ");
             username = userStringInput();
 
-            try {
-                if (currentConnectionType.loginUser(username)) {
-                    System.out.println("Ok! Your username is: " + username);
-                    moveNext = true;
-                } else
-                    System.err.println("Username has already been taken");
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+            if (currentConnectionType.loginUser(username)) {
+                System.out.println("Ok! Your username is: " + username);
+                moveNext = true;
+            } else
+                System.err.println("Username has already been taken");
 
         } while (!moveNext);
 
@@ -161,11 +157,7 @@ public class CLI implements SceneUpdater {
                 }
             }
             if (!tmpBoolean) {
-                try {
-                    currentConnectionType.createMatch(matchName);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+                currentConnectionType.createMatch(matchName);
                 moveNext = true;
             } else {
                 System.err.println("Match name has already been taken, choose another one");
@@ -182,22 +174,16 @@ public class CLI implements SceneUpdater {
         while (!moveNext) {
             System.out.println("Available matches:\n");
             for (int i = 0; i < availableMatches.size(); i++) {
-                System.out.println( i+1 + " - " + availableMatches.get(i).getFirstField() + "\t players:" + availableMatches.get(i).getSecondField() + "\n");
+                System.out.println(i + 1 + " - " + availableMatches.get(i).getFirstField() + "\t players:" + availableMatches.get(i).getSecondField() + "\n");
             }
             selectedMatch = userIntegerInput();
 
             if (0 < selectedMatch && selectedMatch < (availableMatches.size() + 1)) {
-                try {
-                    if (currentConnectionType.joinExistingMatch(availableMatches.get(selectedMatch - 1).getFirstField())){
-                        System.out.println("Confirmed\nYou logged in successfully!\nWait for other players");
-                        moveNext = true;
-                    }
-                    else System.out.println("Error\nYou didn't log in successfully\nRetry");
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-            else System.out.println("Not valid Match selected, choose another match");
+                if (currentConnectionType.joinExistingMatch(availableMatches.get(selectedMatch - 1).getFirstField())) {
+                    System.out.println("Confirmed\nYou logged in successfully!\nWait for other players");
+                    moveNext = true;
+                } else System.out.println("Error\nYou didn't log in successfully\nRetry");
+            } else System.out.println("Not valid Match selected, choose another match");
         }
 
         System.out.println("Waiting...");

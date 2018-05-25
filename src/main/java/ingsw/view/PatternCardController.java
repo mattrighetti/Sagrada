@@ -4,14 +4,13 @@ import ingsw.controller.network.NetworkType;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
 import javafx.application.Platform;
+import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PatternCardController implements SceneUpdater {
@@ -21,6 +20,7 @@ public class PatternCardController implements SceneUpdater {
 
     @FXML
     private Button patternCardOne;
+
     @FXML
     private Button patternCardTwo;
 
@@ -30,40 +30,24 @@ public class PatternCardController implements SceneUpdater {
     @FXML
     private Button patternCardFour;
 
+    @FXML
+    void onSelectPatternCardFour(ActionEvent event) {
 
-    NetworkType networkType;
-    GUIUpdater application;
-
-    public PatternCardController() {
-
-    }
-
-    public void setApplication(GUIUpdater application) {
-        this.application = application;
     }
 
     @FXML
-    void onSelectPatternCardOne(ActionEvent event) throws IOException {
-        //TODO
-        application.launchFourthGUI();
+    void onSelectPatternCardOne(ActionEvent event) {
+
     }
 
     @FXML
-    void onSelectPatternCardTwo(ActionEvent event) throws IOException {
-        //TODO
-        application.launchFourthGUI();
+    void onSelectPatternCardThree(ActionEvent event) {
+
     }
 
     @FXML
-    void onSelectPatternCardThree(ActionEvent event) throws IOException {
-        //TODO
-        application.launchFourthGUI();
-    }
+    void onSelectPatternCardTwo(ActionEvent event) {
 
-    @FXML
-    void onSelectPatternCardFour(ActionEvent event) throws IOException {
-        //TODO
-        application.launchFourthGUI();
     }
 
     public void showPatternCard(List<PatternCard> patternCards) {
@@ -74,13 +58,17 @@ public class PatternCardController implements SceneUpdater {
         patternCardFour.setGraphic(new ImageView("img/" + patternCards.get(3).getName() + ".jpg"));
     }
 
-    @Override
-    public void setNetworkType(NetworkType networkType) {
-        this.networkType = networkType;
+        public void setApplication(Application application) {
+
     }
 
     @Override
     public void updateConnectedUsers(int usersConnected) {
+
+    }
+
+    @Override
+    public void setNetworkType(NetworkType clientController) {
 
     }
 

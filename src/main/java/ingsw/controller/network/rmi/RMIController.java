@@ -13,8 +13,12 @@ public class RMIController implements ResponseHandler, NetworkType {
     private SceneUpdater sceneUpdater;
     private boolean generalPurposeBoolean;
 
-    public void connect() throws RemoteException {
-        rmiUserObserver = new RMIUserObserver(this);
+    public void connect() {
+        try {
+            rmiUserObserver = new RMIUserObserver(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         rmiHandler = new RMIHandler(this, rmiUserObserver);
     }
 
@@ -37,7 +41,7 @@ public class RMIController implements ResponseHandler, NetworkType {
      * @throws RemoteException throws RemoteException
      */
     @Override
-    public boolean loginUser(String username) throws RemoteException {
+    public boolean loginUser(String username) {
         response = new LoginUserRequest(username).handle(rmiHandler);
         response.handle(this);
 
@@ -45,12 +49,12 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public void createMatch(String matchName) throws RemoteException {
+    public void createMatch(String matchName) {
         new CreateMatchRequest(matchName).handle(rmiHandler);
     }
 
     @Override
-    public boolean joinExistingMatch(String matchName) throws RemoteException {
+    public boolean joinExistingMatch(String matchName) {
         generalPurposeBoolean = false;
         response = new JoinMatchRequest(matchName).handle(rmiHandler);
         response.handle(this);

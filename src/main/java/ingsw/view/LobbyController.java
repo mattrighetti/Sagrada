@@ -130,27 +130,38 @@ public class LobbyController implements SceneUpdater, Initializable {
 
     @FXML
     void onExitPressed(ActionEvent event) {
-
+        try {
+            application.launchThirdGUI();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void onJoinPressed(ActionEvent event) {
-        try {
-            if (matchTableView.getSelectionModel().getSelectedItem() != null) {
-                if (networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField())) {
-                    progressForm = new ProgressForm();
-                    progressForm.activateProgressBar();
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText("You didn't log in successfully");
-                    alert.setContentText("Retry");
-                    alert.showAndWait();
-                }
+        if (matchTableView.getSelectionModel().getSelectedItem() != null) {
+            if (networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField())) {
+                progressForm = new ProgressForm();
+                progressForm.activateProgressBar();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                alert.setHeaderText("You didn't log in successfully");
+                alert.setContentText("Retry");
+                alert.showAndWait();
             }
-        } catch (RemoteException e) {
-            e.printStackTrace();
         }
+    }
+
+    @Override
+    public void updateConnectedUsers(int usersConnected) {
+        connectedUsersText.setText("Connected users: " + usersConnected);
+    }
+
+    @Override
+    public void updateExistingMatches(List<DoubleString> matches) {
+        availableMatches.clear();
+        availableMatches.addAll(matches);
     }
 
     @Override
@@ -165,17 +176,6 @@ public class LobbyController implements SceneUpdater, Initializable {
                     }
                 }
         );
-    }
-
-    @Override
-    public void updateConnectedUsers(int usersConnected) {
-        connectedUsersText.setText("Connected users: " + usersConnected);
-    }
-
-    @Override
-    public void updateExistingMatches(List<DoubleString> matches) {
-        availableMatches.clear();
-        availableMatches.addAll(matches);
     }
 
     static class ProgressForm {
@@ -205,7 +205,7 @@ public class LobbyController implements SceneUpdater, Initializable {
             dialogStage.setScene(scene);
         }
 
-        void activateProgressBar()  {
+        void activateProgressBar() {
             dialogStage.show();
         }
 
