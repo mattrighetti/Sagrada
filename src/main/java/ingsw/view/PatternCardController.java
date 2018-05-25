@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -52,10 +53,7 @@ public class PatternCardController implements SceneUpdater {
 
     public void showPatternCard(List<PatternCard> patternCards) {
         //TODO check url format
-        patternCardOne.setGraphic(new ImageView("img/" + patternCards.get(0).getName() + ".jpg"));
-        patternCardTwo.setGraphic(new ImageView("img/" + patternCards.get(1).getName() + ".jpg"));
-        patternCardThree.setGraphic(new ImageView("img/" + patternCards.get(2).getName() + ".jpg"));
-        patternCardFour.setGraphic(new ImageView("img/" + patternCards.get(3).getName() + ".jpg"));
+
     }
 
         public void setApplication(Application application) {
@@ -79,17 +77,32 @@ public class PatternCardController implements SceneUpdater {
 
     @Override
     public void setPatternCards(List<PatternCard> patternCards) {
-        patternCardOne.setVisible(true);
-        patternCardTwo.setVisible(true);
-        patternCardThree.setVisible(true);
-        patternCardFour.setVisible(true);
-
         Platform.runLater(
                 () -> {
-                    patternCardOne.setText(patternCards.get(0).toString());
-                    patternCardTwo.setText(patternCards.get(1).toString());
-                    patternCardThree.setText(patternCards.get(2).toString());
-                    patternCardFour.setText(patternCards.get(3).toString());
+                    patternCardOne.setVisible(true);
+                    patternCardTwo.setVisible(true);
+                    patternCardThree.setVisible(true);
+                    patternCardFour.setVisible(true);
+                    patternCardOne.setPadding(new Insets(1,1,1,1));
+                    patternCardTwo.setPadding(new Insets(1,1,1,1));
+                    patternCardThree.setPadding(new Insets(1,1,1,1));
+                    patternCardFour.setPadding(new Insets(1,1,1,1));
+                    ImageView imageViewOne = new ImageView("/img/" + patternCards.get(0).getName() + ".png");
+                    imageViewOne.setFitWidth(194);
+                    imageViewOne.setFitHeight(165.5);
+                    ImageView imageViewTwo = new ImageView("/img/" + patternCards.get(1).getName() + ".png");
+                    imageViewTwo.setFitWidth(194);
+                    imageViewTwo.setFitHeight(165.5);
+                    ImageView imageViewThree = new ImageView("/img/" + patternCards.get(2).getName() + ".png");
+                    imageViewThree.setFitWidth(194);
+                    imageViewThree.setFitHeight(165.5);
+                    ImageView imageViewFour = new ImageView("/img/" + patternCards.get(3).getName() + ".png");
+                    imageViewFour.setFitWidth(194);
+                    imageViewFour.setFitHeight(165.5);
+                    patternCardOne.setGraphic(imageViewOne);
+                    patternCardTwo.setGraphic(imageViewTwo);
+                    patternCardThree.setGraphic(imageViewThree);
+                    patternCardFour.setGraphic(imageViewFour);
                 }
         );
     }

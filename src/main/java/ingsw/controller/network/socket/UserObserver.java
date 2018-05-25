@@ -18,14 +18,16 @@ public interface UserObserver extends Remote {
 
     void receiveDraftNotification() throws RemoteException;
 
+    void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException;
+
+    /* OVERLOADING RESPONSES */
+
     void sendResponse(DiceNotification diceNotification) throws RemoteException;
 
     void sendResponse(CreateMatchResponse createMatchResponse) throws RemoteException;
 
-    void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException;
-
     void sendResponse(DiceMoveResponse diceMoveResponse) throws RemoteException;
 
-    void sendPatternCards(PatternCardNotification patternCardNotification) throws RemoteException;
+    void sendResponse(PatternCardNotification patternCardNotification) throws RemoteException;
 
 }

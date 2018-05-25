@@ -99,7 +99,6 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(MessageResponse messageResponse) {
         System.out.println(messageResponse.message);
-        sceneUpdater.launchThirdGui();
     }
 
     @Override
@@ -123,7 +122,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(PatternCardNotification patternCardNotification) {
-        //TODO
+        sceneUpdater.launchThirdGui(patternCardNotification);
     }
 
     @Override

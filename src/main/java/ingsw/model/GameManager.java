@@ -149,7 +149,7 @@ public class GameManager {
             try {
                 //Need to create another List: subList is not Serializable
                 ArrayList<PatternCard> patternCardArrayList = new ArrayList<>(patternCards.subList(0, 4));
-                player.getUserObserver().sendPatternCards(new PatternCardNotification(patternCardArrayList));
+                player.getUserObserver().sendResponse(new PatternCardNotification(patternCardArrayList));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

@@ -1,7 +1,6 @@
 package ingsw.utilities;
 
 import ingsw.controller.Controller;
-import ingsw.controller.network.Message;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,10 +29,6 @@ public class ControllerTimer {
     public class LaunchMatch extends TimerTask {
         @Override
         public void run() {
-            Broadcaster.broadcastMessageToAll(controller.getPlayerList(),
-                    new Message(
-                            "Ciao",
-                            "Match starting"));
             controller.createMatch();
         }
     }

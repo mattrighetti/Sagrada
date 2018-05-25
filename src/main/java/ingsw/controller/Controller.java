@@ -54,8 +54,6 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
 
         if (playerList.size() == 4) {
             controllerTimer.cancelTimer();
-            // TODO this message, when received, should remove the match from the available matches
-            Broadcaster.broadcastMessage(getPlayerList(), new Message("Controller", "Match starting"));
             createMatch();
         }
     }

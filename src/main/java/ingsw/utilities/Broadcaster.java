@@ -1,14 +1,12 @@
 package ingsw.utilities;
 
 import ingsw.controller.network.Message;
-import ingsw.controller.network.commands.CreateMatchResponse;
-import ingsw.controller.network.commands.DiceMoveResponse;
-import ingsw.controller.network.commands.DiceNotification;
-import ingsw.controller.network.commands.Response;
+import ingsw.controller.network.commands.*;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.Dice;
 import ingsw.model.Player;
 import ingsw.model.User;
+import ingsw.model.cards.patterncard.PatternCard;
 
 import javax.jws.soap.SOAPBinding;
 import java.rmi.RemoteException;
@@ -115,6 +113,16 @@ public final class Broadcaster {
         for (UserObserver userObserver : playerToBroadcast(users, usernameToExclude)) {
             try {
                 userObserver.sendResponse(createMatchResponse);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void broadcastResponseToAll(List<Player> playerList, PatternCardNotification patternCardNotification) {
+        for (UserObserver userObserver : playerToBroadcast(playerList)) {
+            try {
+                userObserver.sendResponse(patternCardNotification);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

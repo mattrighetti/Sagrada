@@ -1,6 +1,7 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
 
@@ -13,10 +14,6 @@ public interface SceneUpdater {
     void setNetworkType(NetworkType clientController);
 
     void updateExistingMatches(List<DoubleString> matches);
-
-    default void launchThirdGui() {
-
-    }
 
     default void setPatternCards(List<PatternCard> patternCards) {
 
@@ -31,6 +28,14 @@ public interface SceneUpdater {
     }
 
     default void closeStage() {
+
+    }
+
+    default void launchThirdGui(PatternCardNotification patternCardNotification) {
+
+    }
+
+    default void launchThirdGui() {
 
     }
 }

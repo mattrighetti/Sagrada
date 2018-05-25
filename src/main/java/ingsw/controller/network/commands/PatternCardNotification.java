@@ -5,7 +5,6 @@ import ingsw.model.cards.patterncard.PatternCard;
 import java.util.List;
 
 public class PatternCardNotification implements Response {
-
     public List<PatternCard> patternCards;
 
     public PatternCardNotification(List<PatternCard> patternCards) {

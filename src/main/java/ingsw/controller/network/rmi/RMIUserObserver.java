@@ -47,7 +47,7 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
-    public void sendPatternCards(PatternCardNotification patternCardNotification) {
+    public void sendResponse(PatternCardNotification patternCardNotification) {
         rmiController.handle(patternCardNotification);
     }
 

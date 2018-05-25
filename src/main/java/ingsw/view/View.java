@@ -1,6 +1,7 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
@@ -166,7 +167,7 @@ public class View extends Application implements GUIUpdater {
      * @throws IOException
      */
     @Override
-    public void launchThirdGUI() {
+    public void launchThirdGUI(PatternCardNotification patternCardNotification) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/patternCardChoice.fxml"));
         Parent patternCardChoice = null;
 
@@ -184,6 +185,7 @@ public class View extends Application implements GUIUpdater {
         mainStage.setScene(new Scene(patternCardChoice));
         mainStage.setTitle("Choose Pattern Card");
         mainStage.show();
+        patternCardController.setPatternCards(patternCardNotification.patternCards);
         setCurrentScene(patternCardController);
     }
 

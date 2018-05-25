@@ -1,5 +1,6 @@
 package ingsw.view;
 
+import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.utilities.DoubleString;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.util.List;
 public interface GUIUpdater {
     void launchSecondGUI();
 
-    void launchThirdGUI();
+    void launchThirdGUI(PatternCardNotification patternCardNotification);
 
     void launchFourthGUI();
 

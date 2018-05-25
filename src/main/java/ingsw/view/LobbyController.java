@@ -1,6 +1,7 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.utilities.DoubleString;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -162,11 +163,11 @@ public class LobbyController implements SceneUpdater, Initializable {
     }
 
     @Override
-    public void launchThirdGui() {
+    public void launchThirdGui(PatternCardNotification patternCardNotification) {
         Platform.runLater(
                 () -> {
                     progressForm.getDialogStage().close();
-                    application.launchThirdGUI();
+                    application.launchThirdGUI(patternCardNotification);
                 }
         );
     }

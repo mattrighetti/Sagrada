@@ -151,7 +151,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     }
 
     @Override
-    public void sendPatternCards(PatternCardNotification patternCardNotification) {
+    public void sendResponse(PatternCardNotification patternCardNotification) {
         respond(patternCardNotification);
     }
 }

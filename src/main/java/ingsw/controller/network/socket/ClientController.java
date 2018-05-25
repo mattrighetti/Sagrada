@@ -1,6 +1,7 @@
 package ingsw.controller.network.socket;
 
 import ingsw.controller.network.commands.*;
+import ingsw.view.PatternCardController;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
@@ -192,12 +193,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(MessageResponse messageResponse) {
         System.out.println(messageResponse.message);
-        sceneUpdater.launchThirdGui();
     }
 
     @Override
     public void handle(PatternCardNotification patternCardNotification) {
-        sceneUpdater.setPatternCards(patternCardNotification.patternCards);
+        sceneUpdater.launchThirdGui(patternCardNotification);
     }
 
 
