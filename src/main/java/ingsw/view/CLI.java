@@ -171,7 +171,9 @@ public class CLI implements SceneUpdater {
         while (!moveNext) {
             System.out.println("Available matches:\n");
             for (int i = 0; i < availableMatches.size(); i++) {
-                System.out.println(i + 1 + " - " + availableMatches.get(i).getFirstField() + "\t players:" + availableMatches.get(i).getSecondField() + "\n");
+                System.out.println(i + 1 + " - "
+                        + availableMatches.get(i).getFirstField() + "\t players:"
+                        + availableMatches.get(i).getSecondField() + "\n");
             }
             selectedMatch = userIntegerInput();
 
