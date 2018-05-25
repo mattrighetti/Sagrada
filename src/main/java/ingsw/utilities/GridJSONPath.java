@@ -6,7 +6,7 @@ package ingsw.utilities;
 public enum GridJSONPath {
     AURORAE_MAGNIFICUS("AuroraeMagnificus.json"),
     AURORA_SAGRADIS("AuroraSagradis.json"),
-    BATTLO("Battlo.json"),
+    BATLLO("Batllo.json"),
     BELLESGUARD("Bellesguard.json"),
     CHROMATIC_SPLENDOR("ChromaticSplendor.json"),
     COMITAS("Comitas.json"),

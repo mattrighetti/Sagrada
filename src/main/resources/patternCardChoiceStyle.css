@@ -1,3 +1,4 @@
-.color {
-    -fx-background-color: #a3190f;
+.grid-background {
+    -fx-background-image: url(img/background_sagrada.jpg);
+    -fx-background-size: cover;
 }

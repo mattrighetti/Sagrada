@@ -5,7 +5,7 @@ import ingsw.utilities.GridJSONPath;
 
 public class Batllo extends PatternCard {
     public Batllo() {
-        super("Battlo", 5);
-        setGrid(GridCreator.fromFile(GridJSONPath.BATTLO));
+        super("Batllo", 5);
+        setGrid(GridCreator.fromFile(GridJSONPath.BATLLO));
     }
 }
