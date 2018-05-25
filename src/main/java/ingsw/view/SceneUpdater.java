@@ -4,7 +4,6 @@ import ingsw.controller.network.NetworkType;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface SceneUpdater {
@@ -15,11 +14,19 @@ public interface SceneUpdater {
 
     void updateExistingMatches(List<DoubleString> matches);
 
-    default void launchThirdGui() throws IOException {
+    default void launchThirdGui() {
 
     }
 
     default void setPatternCards(List<PatternCard> patternCards) {
+
+    }
+
+     default void launchSecondGui() {
+
+     }
+
+    default void launchAlert() {
 
     }
 }

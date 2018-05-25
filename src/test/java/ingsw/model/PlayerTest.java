@@ -1,6 +1,5 @@
 package ingsw.model;
 
-import ingsw.view.RemoteView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

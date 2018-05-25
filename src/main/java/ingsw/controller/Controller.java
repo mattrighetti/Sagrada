@@ -8,13 +8,11 @@ import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.Broadcaster;
 import ingsw.utilities.ControllerTimer;
-import ingsw.view.RemoteView;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 public class Controller extends UnicastRemoteObject implements RemoteController {
     private String matchName;

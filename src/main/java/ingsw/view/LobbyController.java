@@ -130,28 +130,24 @@ public class LobbyController implements SceneUpdater, Initializable {
 
     @FXML
     void onExitPressed(ActionEvent event) {
-        try {
-            application.launchThirdGUI();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        application.launchThirdGUI();
     }
 
     @FXML
     void onJoinPressed(ActionEvent event) {
         if (matchTableView.getSelectionModel().getSelectedItem() != null) {
-            if (networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField())) {
-                progressForm = new ProgressForm();
-                progressForm.activateProgressBar();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("You didn't log in successfully");
-                alert.setContentText("Retry");
-                alert.showAndWait();
-            }
+            networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField());
+            progressForm = new ProgressForm();
+            progressForm.activateProgressBar();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText("You didn't log in successfully");
+            alert.setContentText("Retry");
+            alert.showAndWait();
         }
     }
+
 
     @Override
     public void updateConnectedUsers(int usersConnected) {
@@ -168,12 +164,8 @@ public class LobbyController implements SceneUpdater, Initializable {
     public void launchThirdGui() {
         Platform.runLater(
                 () -> {
-                    try {
-                        progressForm.getDialogStage().close();
-                        application.launchThirdGUI();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    progressForm.getDialogStage().close();
+                    application.launchThirdGUI();
                 }
         );
     }
@@ -212,6 +204,7 @@ public class LobbyController implements SceneUpdater, Initializable {
         public Stage getDialogStage() {
             return dialogStage;
         }
+
     }
 
     public static void main(String[] args) {

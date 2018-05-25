@@ -3,18 +3,15 @@ package ingsw.controller.network.socket;
 import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.*;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.List;
 
-public class ClientHandler implements Runnable, UserObserver {
-    private Socket clientSocket;
-    private final ObjectInputStream objectInputStream;
-    private final ObjectOutputStream objectOutputStream;
-    private boolean stop = false;
+public class ClientHandler implements Runnable, UserObserver, Serializable {
+    private transient Socket clientSocket;
+    private transient final ObjectInputStream objectInputStream;
+    private transient final ObjectOutputStream objectOutputStream;
+    private transient boolean stop = false;
 
     private ServerController serverController;
 

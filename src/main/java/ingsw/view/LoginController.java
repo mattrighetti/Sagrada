@@ -2,6 +2,7 @@ package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.utilities.DoubleString;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -51,15 +52,7 @@ public class LoginController implements SceneUpdater {
     @FXML
     void onLoginPressed(ActionEvent event) throws IOException {
         String username = usernameTextField.getText();
-        if (networkType.loginUser(username))
-            application.launchSecondGUI();
-        else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Username has already been taken");
-            alert.setContentText("Choose another username");
-            alert.showAndWait();
-        }
+        networkType.loginUser(username);
     }
 
     @FXML
@@ -80,6 +73,20 @@ public class LoginController implements SceneUpdater {
     @Override
     public void updateExistingMatches(List<DoubleString> matches) {
         application.updateExistingMatches(matches);
+    }
+
+    @Override
+    public void launchSecondGui() {
+        Platform.runLater(() -> application.launchSecondGUI());
+    }
+
+    @Override
+    public void launchAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Warning");
+        alert.setHeaderText("Username has already been taken");
+        alert.setContentText("Choose another username");
+        alert.showAndWait();
     }
 
 }

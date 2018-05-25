@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.List;
 
 public interface GUIUpdater {
-    void launchSecondGUI() throws IOException;
+    void launchSecondGUI();
 
-    void launchThirdGUI() throws IOException;
+    void launchThirdGUI();
 
-    void launchFourthGUI() throws IOException;
+    void launchFourthGUI();
 
     void updateConnectedUsers(int connectedUsers);
 

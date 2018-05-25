@@ -41,7 +41,7 @@ public class View extends Application implements GUIUpdater {
      * @throws IOException
      */
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
         deploySocketClient();
         deployRMIClient();
         this.mainStage = primaryStage;
@@ -53,9 +53,15 @@ public class View extends Application implements GUIUpdater {
      *
      * @throws IOException
      */
-    public void deploySocketClient() throws IOException {
+    public void deploySocketClient() {
         Client client = new Client("localhost", 8000);
-        client.connect();
+
+        try {
+            client.connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         this.clientController = new ClientController(client);
         currentNetworkType = clientController;
     }
@@ -65,7 +71,7 @@ public class View extends Application implements GUIUpdater {
      *
      * @throws RemoteException
      */
-    private void deployRMIClient() throws RemoteException {
+    private void deployRMIClient() {
         rmiController = new RMIController();
         rmiController.connect();
     }
@@ -84,9 +90,16 @@ public class View extends Application implements GUIUpdater {
      *
      * @throws IOException
      */
-    public void launchFirstGUI() throws IOException {
+    public void launchFirstGUI() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login.fxml"));
-        GridPane login = fxmlLoader.load();
+        GridPane login = null;
+
+        try {
+            login = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         LoginController loginController = fxmlLoader.getController();
 
         // Pass the Scene to the first layer controllers
@@ -114,9 +127,16 @@ public class View extends Application implements GUIUpdater {
      * @throws IOException
      */
     @Override
-    public void launchSecondGUI() throws IOException {
+    public void launchSecondGUI() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
-        Parent lobby = fxmlLoader.load();
+        Parent lobby = null;
+
+        try {
+            lobby = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         LobbyController lobbyController = fxmlLoader.getController();
 
         // Pass the Scene to the first layer controllers
@@ -146,9 +166,16 @@ public class View extends Application implements GUIUpdater {
      * @throws IOException
      */
     @Override
-    public void launchThirdGUI() throws IOException {
+    public void launchThirdGUI() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/patternCardChoice.fxml"));
-        Parent patternCardChoice = fxmlLoader.load();
+        Parent patternCardChoice = null;
+
+        try {
+            patternCardChoice = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         PatternCardController patternCardController = fxmlLoader.getController();
         clientController.setSceneUpdater(patternCardController);
         rmiController.setSceneUpdater(patternCardController);
@@ -161,9 +188,16 @@ public class View extends Application implements GUIUpdater {
     }
 
     @Override
-    public void launchFourthGUI() throws IOException {
+    public void launchFourthGUI() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
-        Parent game = fxmlLoader.load();
+        Parent game = null;
+
+        try {
+            game = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         GameController gameController = fxmlLoader.getController();
         clientController.setSceneUpdater(gameController);
         rmiController.setSceneUpdater(gameController);

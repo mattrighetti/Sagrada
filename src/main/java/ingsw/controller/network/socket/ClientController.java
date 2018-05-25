@@ -4,8 +4,6 @@ import ingsw.controller.network.commands.*;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
-import java.io.IOException;
-
 /**
  * Class that defines the socket connection of the game
  */
@@ -52,14 +50,14 @@ public class ClientController implements ResponseHandler, NetworkType {
      * @return boolean value that indicates if the user has been successfully logged in to the game
      */
     @Override
-    public boolean loginUser(String username) {
+    public void loginUser(String username) {
         client.request(new LoginUserRequest(username));
         client.nextResponse().handle(this);
-        return generalPurposeBoolean;
     }
 
     /**
      * Method that creates a match
+     *
      * @param matchName name of the match to create
      */
     @Override
@@ -69,17 +67,15 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method that logs the user into the match
+     *
      * @param matchName name of the match to join
      * @return true if the login was successful or false if not
      */
     @Override
-    public boolean joinExistingMatch(String matchName) {
-        generalPurposeBoolean = false;
+    public void joinExistingMatch(String matchName) {
         stopBroadcastReceiver();
         client.request(new JoinMatchRequest(matchName));
         client.nextResponse().handle(this);
-        listenForResponses();
-        return generalPurposeBoolean;
     }
 
     /**
@@ -116,21 +112,23 @@ public class ClientController implements ResponseHandler, NetworkType {
     /**
      * Method that is executed every time a User logs into the game.
      * It updates the number of users connected and the available matches in the View.
+     *
      * @param loginUserResponse response sent by SagradaGame every time a user logs into the game
      */
     @Override
     public void handle(LoginUserResponse loginUserResponse) {
         if (loginUserResponse.user != null) {
-            generalPurposeBoolean = true;
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
+            sceneUpdater.launchSecondGui();
             listenForResponses();
         } else
-            generalPurposeBoolean = false;
+            sceneUpdater.launchAlert();
     }
 
     /**
      * Method that updates the number of connected users in the View.
+     *
      * @param integerResponse response sent by SagradaGame every time a user logs into the game
      */
     @Override
@@ -140,6 +138,7 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method that updates the list of matches in the application's TableView
+     *
      * @param createMatchResponse response that encapsulates the new list of available matches
      */
     @Override
@@ -153,11 +152,12 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method used to confirm to every user their successful login
+     *
      * @param joinedMatchResponse response that encapsulates the successful login boolean
      */
     @Override
     public void handle(JoinedMatchResponse joinedMatchResponse) {
-        generalPurposeBoolean = joinedMatchResponse.isLoginSuccessful;
+        listenForResponses();
     }
 
     @Override
@@ -172,17 +172,14 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method that prints a message received by either the Controller or SagradaGame
+     *
      * @param messageResponse response sent by the Server-side running classes
      *                        whenever a user sends a message to broadcast
      */
     @Override
     public void handle(MessageResponse messageResponse) {
-        try {
-            System.out.println(messageResponse.message);
-            sceneUpdater.launchThirdGui();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println(messageResponse.message);
+        sceneUpdater.launchThirdGui();
     }
 
     @Override

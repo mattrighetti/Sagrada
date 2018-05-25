@@ -1,23 +1,16 @@
 package ingsw.controller;
 
-import ingsw.controller.network.socket.ClientHandler;
 import ingsw.model.Player;
 import ingsw.model.User;
-import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.view.RemoteView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.lang.reflect.Field;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class ControllerTest {

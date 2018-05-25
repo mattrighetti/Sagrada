@@ -92,12 +92,9 @@ public class CLI implements SceneUpdater {
             System.out.println("Username: ");
             username = userStringInput();
 
-            if (currentConnectionType.loginUser(username)) {
-                System.out.println("Ok! Your username is: " + username);
-                moveNext = true;
-            } else
-                System.err.println("Username has already been taken");
-
+            currentConnectionType.loginUser(username);
+            System.out.println("Ok! Your username is: " + username);
+            moveNext = true;
         } while (!moveNext);
 
     }
@@ -179,10 +176,9 @@ public class CLI implements SceneUpdater {
             selectedMatch = userIntegerInput();
 
             if (0 < selectedMatch && selectedMatch < (availableMatches.size() + 1)) {
-                if (currentConnectionType.joinExistingMatch(availableMatches.get(selectedMatch - 1).getFirstField())) {
-                    System.out.println("Confirmed\nYou logged in successfully!\nWait for other players");
-                    moveNext = true;
-                } else System.out.println("Error\nYou didn't log in successfully\nRetry");
+                currentConnectionType.joinExistingMatch(availableMatches.get(selectedMatch - 1).getFirstField());
+                System.out.println("Confirmed\nYou logged in successfully!\nWait for other players");
+                moveNext = true;
             } else System.out.println("Not valid Match selected, choose another match");
         }
 

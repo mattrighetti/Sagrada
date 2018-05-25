@@ -7,9 +7,10 @@ import ingsw.model.SagradaGame;
 import ingsw.model.User;
 import ingsw.model.cards.patterncard.PatternCard;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public class ServerController implements RequestHandler {
+public class ServerController implements RequestHandler, Serializable {
     private ClientHandler clientHandler;
     private final SagradaGame sagradaGame;
     private Controller controller;

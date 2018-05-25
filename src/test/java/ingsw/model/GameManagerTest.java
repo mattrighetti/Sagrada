@@ -5,7 +5,6 @@ import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
-import ingsw.view.RemoteView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class GameManagerTest {
 

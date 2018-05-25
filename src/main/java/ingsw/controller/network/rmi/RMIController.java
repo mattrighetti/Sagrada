@@ -11,7 +11,6 @@ public class RMIController implements ResponseHandler, NetworkType {
     private RMIUserObserver rmiUserObserver;
     private Response response;
     private SceneUpdater sceneUpdater;
-    private boolean generalPurposeBoolean;
 
     public void connect() {
         try {
@@ -41,11 +40,9 @@ public class RMIController implements ResponseHandler, NetworkType {
      * @throws RemoteException throws RemoteException
      */
     @Override
-    public boolean loginUser(String username) {
+    public void loginUser(String username) {
         response = new LoginUserRequest(username).handle(rmiHandler);
         response.handle(this);
-
-        return generalPurposeBoolean;
     }
 
     @Override
@@ -54,12 +51,9 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public boolean joinExistingMatch(String matchName) {
-        generalPurposeBoolean = false;
+    public void joinExistingMatch(String matchName) {
         response = new JoinMatchRequest(matchName).handle(rmiHandler);
         response.handle(this);
-
-        return generalPurposeBoolean;
     }
 
 
@@ -74,14 +68,12 @@ public class RMIController implements ResponseHandler, NetworkType {
         if (loginUserResponse.user != null) {
             loginUserResponse.user.addListener(rmiUserObserver);
             System.out.println("New connection >>> " + loginUserResponse.user.getUsername());
-            generalPurposeBoolean = true;
 
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
-
-        } else {
-            generalPurposeBoolean = false;
-        }
+            sceneUpdater.launchSecondGui();
+        } else
+            sceneUpdater.launchAlert();
     }
 
     @Override
@@ -94,6 +86,7 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(MessageResponse messageResponse) {
         System.out.println(messageResponse.message);
+        sceneUpdater.launchThirdGui();
     }
 
     @Override
@@ -107,7 +100,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(JoinedMatchResponse joinedMatchResponse) {
-        generalPurposeBoolean = joinedMatchResponse.isLoginSuccessful;
+
     }
 
     @Override
