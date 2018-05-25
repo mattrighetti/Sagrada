@@ -2,6 +2,7 @@ package ingsw.controller.network.rmi;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.*;
+import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.view.SceneUpdater;
 
 import java.rmi.RemoteException;
@@ -62,6 +63,10 @@ public class RMIController implements ResponseHandler, NetworkType {
         response.handle(this);
     }
 
+    @Override
+    public void choosePatternCard(PatternCard patternCard) {
+        new ChosenPatternCardRequest(patternCard).handle(rmiHandler);
+    }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -98,7 +103,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(MessageResponse messageResponse) {
-        System.out.println(messageResponse.message);
+        sceneUpdater.launchFourthGui();
     }
 
     @Override

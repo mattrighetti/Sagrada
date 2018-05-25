@@ -1,6 +1,7 @@
 package ingsw.controller.network.socket;
 
 import ingsw.controller.network.commands.*;
+import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.view.PatternCardController;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
@@ -84,6 +85,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         stopBroadcastReceiver();
         client.request(new JoinMatchRequest(matchName));
         client.nextResponse().handle(this);
+    }
+
+    @Override
+    public void choosePatternCard(PatternCard patternCard) {
+        client.request(new ChosenPatternCardRequest(patternCard));
     }
 
     /**
@@ -192,7 +198,7 @@ public class ClientController implements ResponseHandler, NetworkType {
      */
     @Override
     public void handle(MessageResponse messageResponse) {
-        System.out.println(messageResponse.message);
+        sceneUpdater.launchFourthGui();
     }
 
     @Override

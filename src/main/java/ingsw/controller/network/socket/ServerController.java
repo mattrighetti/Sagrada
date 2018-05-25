@@ -64,11 +64,12 @@ public class ServerController implements RequestHandler, Serializable {
 
     @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCard) {
-        PatternCard patternCard = controller.assignPatternCard(user.getUsername(), chosenPatternCard.patternCard);
-        if (patternCard != null) {
-            return new ChosenPatternCardResponse(user.getUsername(), patternCard);
-        } else return null;
-
+        try {
+            controller.assignPatternCard(user.getUsername(), chosenPatternCard.patternCard);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

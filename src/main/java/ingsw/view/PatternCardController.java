@@ -30,42 +30,45 @@ public class PatternCardController implements SceneUpdater {
     @FXML
     private Button patternCardFour;
 
-    @FXML
-    void onClickPatternCardOne(ActionEvent event) {
+    private List<PatternCard> patternCards;
 
-    }
+    private NetworkType networkType;
 
-    @FXML
-    void onClickPatternCardThree(ActionEvent event) {
+    private View application;
 
-    }
-
-    @FXML
-    void onClickPatternCardTwo(ActionEvent event) {
-
-    }
-
-    @FXML
-    void onClickPatternCardFour(ActionEvent event) {
-
-    }
-
-    public void showPatternCard(List<PatternCard> patternCards) {
-        //TODO check url format
-
-    }
-
-    public void setApplication(Application application) {
-
-    }
-
-    @Override
-    public void updateConnectedUsers(int usersConnected) {
-
+    public void setApplication(View application) {
+        this.application = application;
     }
 
     @Override
     public void setNetworkType(NetworkType clientController) {
+        this.networkType = clientController;
+    }
+
+    @FXML
+    void onClickPatternCardFour(ActionEvent event) {
+        networkType.choosePatternCard(patternCards.get(3));
+    }
+
+    @FXML
+    void onClickPatternCardOne(ActionEvent event) {
+        System.out.println(patternCards.get(0).toString() + " clicked.");
+        networkType.choosePatternCard(patternCards.get(0));
+    }
+
+    @FXML
+    void onClickPatternCardThree(ActionEvent event) {
+        networkType.choosePatternCard(patternCards.get(2));
+    }
+
+    @FXML
+    void onClickPatternCardTwo(ActionEvent event) {
+        networkType.choosePatternCard(patternCards.get(1));
+    }
+
+
+    @Override
+    public void updateConnectedUsers(int usersConnected) {
 
     }
 
@@ -76,6 +79,7 @@ public class PatternCardController implements SceneUpdater {
 
     @Override
     public void setPatternCards(List<PatternCard> patternCards) {
+        this.patternCards = patternCards;
         Platform.runLater(
                 () -> {
                     ImageView imageViewOne = new ImageView("/img/" + patternCards.get(0).getName() + ".png");
@@ -96,5 +100,10 @@ public class PatternCardController implements SceneUpdater {
                     patternCardFour.setGraphic(imageViewFour);
                 }
         );
+    }
+
+    @Override
+    public void launchFourthGui() {
+        Platform.runLater( () -> application.launchFourthGUI());
     }
 }

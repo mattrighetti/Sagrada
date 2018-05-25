@@ -198,6 +198,7 @@ public class View extends Application implements GUIUpdater {
             game = fxmlLoader.load();
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("error");
         }
 
         GameController gameController = fxmlLoader.getController();
@@ -206,7 +207,7 @@ public class View extends Application implements GUIUpdater {
         gameController.setNetworkType(currentNetworkType);
         gameController.setApplication(this);
         mainStage.setScene(new Scene(game));
-        mainStage.setTitle("Choose Pattern Card");
+        mainStage.setTitle("Sagrada");
         mainStage.show();
         setCurrentScene(gameController);
     }

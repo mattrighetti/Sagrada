@@ -82,6 +82,12 @@ public class RMIHandler implements RequestHandler {
 
     @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCardRequest) {
+        try {
+            remoteController.assignPatternCard(user.getUsername(), chosenPatternCardRequest.patternCard);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 }

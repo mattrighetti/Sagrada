@@ -38,4 +38,8 @@ public interface SceneUpdater {
     default void launchThirdGui() {
 
     }
+
+    default void launchFourthGui() {
+
+    }
 }

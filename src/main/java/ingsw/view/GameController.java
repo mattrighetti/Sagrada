@@ -23,35 +23,40 @@ import java.util.List;
 
 public class GameController implements SceneUpdater {
 
+    @FXML
+    private HBox diceHorizontalBox;
+
+    @FXML
+    private TabPane tabPane;
+
+    @FXML
+    private VBox toolCardVBox;
+
+    @FXML
+    private VBox publicCardVBox;
+
+    @FXML
+    private ImageView privateCardImageView;
+
+    @FXML
+    private Button endTurnButton;
+
+    @FXML
+    private Button draftDiceButton;
+
     NetworkType networkType;
     GUIUpdater application;
 
     private ArrayList<Player> players;
     private ArrayList<Button> diceButton;
 
-    @FXML
-    private VBox toolCardVBox;
-
-    @FXML
-    private ImageView privateCardImageView;
-
-    @FXML
-    private VBox publicCardVBox;
-
-    @FXML
-    private Button draftDiceButton;
-
-    @FXML
-    private HBox diceHorizontalBox;
-
-    @FXML
-    private Button endTurnButton;
-
-    @FXML
-    private TabPane tabPane;
-
     public void setApplication(GUIUpdater application) {
         this.application = application;
+    }
+
+    @Override
+    public void setNetworkType(NetworkType networkType) {
+        this.networkType = networkType;
     }
 
 
@@ -84,11 +89,6 @@ public class GameController implements SceneUpdater {
         for (String name : publicCards) {
             publicCardVBox.getChildren().add(new ImageView("img/" + name + ".png"));
         }
-    }
-
-    @Override
-    public void setNetworkType(NetworkType networkType) {
-        this.networkType = networkType;
     }
 
     @Override

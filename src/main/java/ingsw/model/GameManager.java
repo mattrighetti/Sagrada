@@ -13,6 +13,7 @@ package ingsw.model;
 
 import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.DiceMoveResponse;
+import ingsw.controller.network.commands.MessageResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
@@ -22,13 +23,14 @@ import ingsw.utilities.Broadcaster;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Class that handles the entire game process and modifies the model itself
  */
 public class GameManager {
     private Board board;
-    private int noOfAck;
+    private AtomicInteger noOfAck;
     private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
@@ -44,6 +46,8 @@ public class GameManager {
      * @param players
      */
     public GameManager(List<Player> players) {
+        noOfAck = new AtomicInteger();
+        resetAck();
         brokenWindow = false;
         playerList = players;
         setUpGameManager();
@@ -168,7 +172,7 @@ public class GameManager {
         for (Player player : playerList) {
             if (player.getPlayerUsername().equals(username)) {
                 player.setPatternCard(patternCard);
-                noOfAck++;
+                ackReceived();
             }
         }
 
@@ -180,12 +184,13 @@ public class GameManager {
      */
     public void waitForEveryPatternCard() {
         new Thread(() -> {
-            while (noOfAck < 4) {
+            while (noOfAck.get() < playerList.size()) {
 
             }
             resetAck();
-            startMatch();
-        });
+            Broadcaster.broadcastMessageToAll(playerList, new Message("controller", "Match has started"));
+//            startMatch();
+        }).start();
     }
 
     /**
@@ -200,7 +205,7 @@ public class GameManager {
      * Method that stalls the program until every user has received every dice
      */
     private void waitForDiceAck() {
-        while (noOfAck < 4) {
+        while (noOfAck.get() < playerList.size()) {
         }
         resetAck();
 
@@ -253,14 +258,14 @@ public class GameManager {
      * Method that resets the received acks to zero
      */
     private void resetAck() {
-        noOfAck = 0;
+        noOfAck.set(0);
     }
 
     /**
      * Method that increments the acks received
      */
     private void ackReceived() {
-        noOfAck++;
+        noOfAck.getAndIncrement();
     }
 
     /**
@@ -282,7 +287,7 @@ public class GameManager {
                 startRound();
             }
 
-        });
+        }).start();
     }
 
     /**

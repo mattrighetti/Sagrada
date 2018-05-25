@@ -13,6 +13,8 @@ public class Round implements Runnable {
 
     public Round(GameManager gameManager) {
         this.gameManager = gameManager;
+        hasMadeAMove = new AtomicBoolean();
+        playerEndedTurn = new AtomicBoolean();
     }
 
     public void startForPlayer(Player player) {

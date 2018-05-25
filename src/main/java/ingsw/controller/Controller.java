@@ -1,12 +1,10 @@
 package ingsw.controller;
 
-import ingsw.controller.network.Message;
 import ingsw.model.GameManager;
 import ingsw.model.Player;
 import ingsw.model.User;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.toolcards.ToolCard;
-import ingsw.utilities.Broadcaster;
 import ingsw.utilities.ControllerTimer;
 
 import java.rmi.RemoteException;
@@ -72,11 +70,17 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      * Assigns PatternCard to specified Player
      * Triggered by Command(PatterCard, String)
      *
-     * @param patternCard the card choosen by the player
      * @param username    the player's username who choose the PatternCard
+     * @param patternCard the card choosen by the player
      */
-    public synchronized PatternCard assignPatternCard(String username, PatternCard patternCard) {
-        return gameManager.setPatternCardForPlayer(username, patternCard);
+    @Override
+    public synchronized void assignPatternCard(String username, PatternCard patternCard) throws RemoteException {
+        gameManager.setPatternCardForPlayer(username, patternCard);
+        for (Player player : playerList) {
+            if(player.getPlayerUsername().equals(username))
+                if (player.getPatternCard() != null && !player.getPatternCard().equals(patternCard))
+                    throw new RemoteException("Pattern card not assigned correctly");
+        }
     }
 
     /**
