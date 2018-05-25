@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -32,22 +31,22 @@ public class PatternCardController implements SceneUpdater {
     private Button patternCardFour;
 
     @FXML
-    void onSelectPatternCardFour(ActionEvent event) {
+    void onClickPatternCardOne(ActionEvent event) {
 
     }
 
     @FXML
-    void onSelectPatternCardOne(ActionEvent event) {
+    void onClickPatternCardThree(ActionEvent event) {
 
     }
 
     @FXML
-    void onSelectPatternCardThree(ActionEvent event) {
+    void onClickPatternCardTwo(ActionEvent event) {
 
     }
 
     @FXML
-    void onSelectPatternCardTwo(ActionEvent event) {
+    void onClickPatternCardFour(ActionEvent event) {
 
     }
 
@@ -56,7 +55,7 @@ public class PatternCardController implements SceneUpdater {
 
     }
 
-        public void setApplication(Application application) {
+    public void setApplication(Application application) {
 
     }
 
@@ -79,14 +78,6 @@ public class PatternCardController implements SceneUpdater {
     public void setPatternCards(List<PatternCard> patternCards) {
         Platform.runLater(
                 () -> {
-                    patternCardOne.setVisible(true);
-                    patternCardTwo.setVisible(true);
-                    patternCardThree.setVisible(true);
-                    patternCardFour.setVisible(true);
-                    patternCardOne.setPadding(new Insets(1,1,1,1));
-                    patternCardTwo.setPadding(new Insets(1,1,1,1));
-                    patternCardThree.setPadding(new Insets(1,1,1,1));
-                    patternCardFour.setPadding(new Insets(1,1,1,1));
                     ImageView imageViewOne = new ImageView("/img/" + patternCards.get(0).getName() + ".png");
                     imageViewOne.setFitWidth(194);
                     imageViewOne.setFitHeight(165.5);

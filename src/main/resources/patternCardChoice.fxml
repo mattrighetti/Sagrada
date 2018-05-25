@@ -21,11 +21,11 @@
     <RowConstraints maxHeight="79.0" minHeight="10.0" prefHeight="79.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Button fx:id="patternCardThree1" mnemonicParsing="false" onAction="#onSelectPatternCardThree" prefHeight="165.5" prefWidth="194.0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+      <Button fx:id="patternCardOne" mnemonicParsing="false" onMouseClicked="#onClickPatternCardOne" prefHeight="165.5" prefWidth="194.0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <padding>
             <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
          </padding></Button>
-      <Button fx:id="patternCardOne" mnemonicParsing="false" onAction="#onSelectPatternCardOne" prefHeight="165.5" prefWidth="194.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+      <Button fx:id="patternCardTwo" mnemonicParsing="false" onMouseClicked="#onClickPatternCardTwo" prefHeight="165.5" prefWidth="194.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin>
@@ -33,7 +33,7 @@
             <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
          </padding>
       </Button>
-      <Button fx:id="patternCardTwo" mnemonicParsing="false" onAction="#onSelectPatternCardTwo" prefHeight="165.5" prefWidth="194.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+      <Button fx:id="patternCardThree" mnemonicParsing="false" onMouseClicked="#onClickPatternCardThree" prefHeight="165.5" prefWidth="194.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin>
@@ -41,7 +41,7 @@
             <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
          </padding>
       </Button>
-      <Button fx:id="patternCardThree" mnemonicParsing="false" onAction="#onSelectPatternCardThree" prefHeight="165.5" prefWidth="194.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+      <Button fx:id="patternCardFour" mnemonicParsing="false" onMouseClicked="#onClickPatternCardFour" prefHeight="165.5" prefWidth="194.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin>
