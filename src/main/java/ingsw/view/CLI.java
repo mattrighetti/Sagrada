@@ -21,6 +21,7 @@ public class CLI implements SceneUpdater {
     private SceneUpdater currentScene;
     private Scanner scanner;
     private List<DoubleString> availableMatches = new ArrayList<>();
+    boolean moveNext;
 
     CLI() {
         this.scanner = new Scanner(System.in);
@@ -56,9 +57,17 @@ public class CLI implements SceneUpdater {
         return scanner.nextInt();
     }
 
+    public void notMoveNext() {
+        moveNext = false;
+    }
+
+    public void moveNext() {
+        moveNext = true;
+    }
+
     private void askForTypeOfConnection() {
         int selectedConnection;
-        boolean moveNext = false;
+        moveNext = false;
 
         System.out.println("You're now connected!\nChoose a type of connection: ");
 
@@ -67,11 +76,11 @@ public class CLI implements SceneUpdater {
             selectedConnection = userIntegerInput();
 
             if (selectedConnection == 1) {
-                moveNext = true;
+                moveNext();
                 setNetworkType(rmiController);
                 System.out.println("Alright! You selected RMI");
             } else if (selectedConnection == 2) {
-                moveNext = true;
+                moveNext();
                 setNetworkType(clientController);
                 System.out.println("Alright! You selected Socket");
             } else {
@@ -83,7 +92,7 @@ public class CLI implements SceneUpdater {
 
     private void chooseUsernameAndLogin() {
         String username;
-        boolean moveNext = false;
+        moveNext = false;
 
         System.out.println("We need to log you in now");
         flushScanner();
@@ -94,14 +103,14 @@ public class CLI implements SceneUpdater {
 
             currentConnectionType.loginUser(username);
             System.out.println("Ok! Your username is: " + username);
-            moveNext = true;
+            moveNext();
         } while (!moveNext);
 
     }
 
     private void showLobbyCommandsAndWait() {
         int selectedCommand;
-        boolean moveNext = false;
+        moveNext = false;
 
         System.out.println("You're finally logged to SagradaGame");
         flushScanner();
@@ -118,15 +127,18 @@ public class CLI implements SceneUpdater {
             switch (selectedCommand) {
                 case 1:
                     createMatch();
+                    notMoveNext();
                     break;
                 case 2:
                     joinMatch();
                     break;
                 case 3:
                     showStatistics();
+                    notMoveNext();
                     break;
                 case 4:
                     showRanking();
+                    notMoveNext();
                     break;
                 default:
                     System.err.println("Wrong input");
@@ -139,7 +151,7 @@ public class CLI implements SceneUpdater {
 
     public void createMatch() {
         String matchName;
-        boolean moveNext = false;
+        moveNext = false;
 
         System.out.println("Insert Match Name: ");
         flushScanner();
@@ -155,7 +167,7 @@ public class CLI implements SceneUpdater {
             }
             if (!tmpBoolean) {
                 currentConnectionType.createMatch(matchName);
-                moveNext = true;
+                moveNext();
             } else {
                 System.err.println("Match name has already been taken, choose another one");
             }
@@ -165,7 +177,7 @@ public class CLI implements SceneUpdater {
 
     private void joinMatch() {
         int selectedMatch;
-        boolean moveNext = false;
+        moveNext = false;
         flushScanner();
 
         while (!moveNext) {
@@ -180,7 +192,7 @@ public class CLI implements SceneUpdater {
             if (0 < selectedMatch && selectedMatch < (availableMatches.size() + 1)) {
                 currentConnectionType.joinExistingMatch(availableMatches.get(selectedMatch - 1).getFirstField());
                 System.out.println("Confirmed\nYou logged in successfully!\nWait for other players");
-                moveNext = true;
+                moveNext();
             } else System.out.println("Not valid Match selected, choose another match");
         }
 
@@ -234,5 +246,18 @@ public class CLI implements SceneUpdater {
         availableMatches.clear();
         availableMatches = matches;
     }
+
+    @Override
+    public void launchSecondGui() {
+        moveNext();
+    }
+
+    @Override
+    public void launchThirdGui() {
+        moveNext();
+    }
+
+
+
 
 }
