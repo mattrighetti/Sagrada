@@ -252,10 +252,10 @@ public class CLI implements SceneUpdater {
         moveNext();
     }
 
-    @Override
-    public void launchThirdGui() {
-        moveNext();
-    }
+//    @Override
+//    public void launchThirdGui() {
+//        moveNext();
+//     }
 
 
 

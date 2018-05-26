@@ -36,13 +36,6 @@ public interface SceneUpdater {
 
     }
 
-    default void launchThirdGui() {
-
-    }
-
-    default void launchFourthGui() {
-
-    }
 
     default void loadData(BoardDataResponse boardDataResponse) {
         System.out.println("I'm not in GameController");

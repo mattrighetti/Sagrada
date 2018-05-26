@@ -103,7 +103,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(MessageResponse messageResponse) {
-        sceneUpdater.launchFourthGui();
+
     }
 
     @Override
@@ -132,7 +132,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(BoardDataResponse boardDataResponse) {
-        sceneUpdater.loadData(boardDataResponse);
+        sceneUpdater.launchFourthGui(boardDataResponse);
     }
 
 }
