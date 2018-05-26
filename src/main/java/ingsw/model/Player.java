@@ -4,9 +4,10 @@ import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public class Player {
+public class Player implements Serializable {
     private User user;
     private PrivateObjectiveCard privateObjectiveCard;
     private PatternCard patternCard;

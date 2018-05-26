@@ -1,9 +1,9 @@
 package ingsw.view;
 
+import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.utilities.DoubleString;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface GUIUpdater {
@@ -11,7 +11,7 @@ public interface GUIUpdater {
 
     void launchThirdGUI(PatternCardNotification patternCardNotification);
 
-    void launchFourthGUI();
+    void launchFourthGUI(BoardDataResponse boardDataResponse);
 
     void updateConnectedUsers(int connectedUsers);
 

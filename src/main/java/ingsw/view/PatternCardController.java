@@ -1,6 +1,7 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
 import javafx.application.Platform;
@@ -103,7 +104,7 @@ public class PatternCardController implements SceneUpdater {
     }
 
     @Override
-    public void launchFourthGui() {
-        Platform.runLater( () -> application.launchFourthGUI());
+    public void launchFourthGui(BoardDataResponse boardDataResponse) {
+        Platform.runLater( () -> application.launchFourthGUI(boardDataResponse));
     }
 }

@@ -8,8 +8,6 @@ public interface ResponseHandler {
 
     void handle(IntegerResponse integerResponse);
 
-    void handle(ChosenPatternCardResponse chosenPatternCardResponse);
-
     void handle(MessageResponse messageResponse);
 
     void handle(CreateMatchResponse createMatchResponse);
@@ -21,4 +19,6 @@ public interface ResponseHandler {
     void handle(PatternCardNotification patternCardNotification);
 
     void handle(LogoutResponse logoutResponse);
+
+    void handle(BoardDataResponse boardDataResponse);
 }

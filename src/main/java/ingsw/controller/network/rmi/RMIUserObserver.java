@@ -52,6 +52,11 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
+    public void sendResponse(BoardDataResponse boardDataResponse) throws RemoteException {
+        rmiController.handle(boardDataResponse);
+    }
+
+    @Override
     public void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException {
         //TODO
     }

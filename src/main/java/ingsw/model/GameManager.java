@@ -12,8 +12,8 @@
 package ingsw.model;
 
 import ingsw.controller.network.Message;
+import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.DiceMoveResponse;
-import ingsw.controller.network.commands.MessageResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
@@ -46,12 +46,10 @@ public class GameManager {
      * @param players
      */
     public GameManager(List<Player> players) {
-        noOfAck = new AtomicInteger();
-        resetAck();
+        noOfAck = new AtomicInteger(0);
         brokenWindow = false;
         playerList = players;
         setUpGameManager();
-        this.board = new Board(choosePublicObjectiveCards(), chooseToolCards(), players);
     }
 
     private synchronized void setUpGameManager() {
@@ -189,6 +187,9 @@ public class GameManager {
             }
             resetAck();
             Broadcaster.broadcastMessageToAll(playerList, new Message("controller", "Match has started"));
+            BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
+            Broadcaster.broadcastResponseToAll(playerList, boardDataResponse);
+            this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards, playerList);
 //            startMatch();
         }).start();
     }

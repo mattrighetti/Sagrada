@@ -139,4 +139,13 @@ public final class Broadcaster {
         }
     }
 
+    public static void broadcastResponseToAll(List<Player> playerList, BoardDataResponse boardDataResponse) {
+        for (UserObserver userObserver : playerToBroadcast(playerList)) {
+            try {
+                userObserver.sendResponse(boardDataResponse);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

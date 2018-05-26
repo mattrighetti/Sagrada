@@ -131,7 +131,8 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public void handle(ChosenPatternCardResponse chosenPatternCardResponse) {
-
+    public void handle(BoardDataResponse boardDataResponse) {
+        sceneUpdater.loadData(boardDataResponse);
     }
+
 }

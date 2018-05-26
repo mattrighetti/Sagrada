@@ -1,6 +1,7 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
@@ -40,6 +41,14 @@ public interface SceneUpdater {
     }
 
     default void launchFourthGui() {
+
+    }
+
+    default void loadData(BoardDataResponse boardDataResponse) {
+        System.out.println("I'm not in GameController");
+    }
+
+    default void launchFourthGui(BoardDataResponse boardDataResponse) {
 
     }
 }

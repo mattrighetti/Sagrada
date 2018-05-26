@@ -1,11 +1,11 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
-import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -190,7 +190,7 @@ public class View extends Application implements GUIUpdater {
     }
 
     @Override
-    public void launchFourthGUI() {
+    public void launchFourthGUI(BoardDataResponse boardDataResponse) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
         Parent game = null;
 
@@ -209,6 +209,7 @@ public class View extends Application implements GUIUpdater {
         mainStage.setScene(new Scene(game));
         mainStage.setTitle("Sagrada");
         mainStage.show();
+        gameController.loadData(boardDataResponse);
         setCurrentScene(gameController);
     }
 

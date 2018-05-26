@@ -1,12 +1,16 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.model.Dice;
 import ingsw.model.Player;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.model.cards.publicoc.PublicObjectiveCard;
+import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.DoubleString;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -17,11 +21,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 
-public class GameController implements SceneUpdater {
+public class GameController implements SceneUpdater, Initializable {
 
     @FXML
     private HBox diceHorizontalBox;
@@ -47,8 +54,15 @@ public class GameController implements SceneUpdater {
     NetworkType networkType;
     GUIUpdater application;
 
-    private ArrayList<Player> players;
-    private ArrayList<Button> diceButton;
+    private List<Player> players;
+    private List<Button> diceButton;
+    private Set<PublicObjectiveCard> publicObjectiveCards;
+    private Set<ToolCard> toolCards;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+    }
 
     public void setApplication(GUIUpdater application) {
         this.application = application;
@@ -101,4 +115,10 @@ public class GameController implements SceneUpdater {
 
     }
 
+    @Override
+    public void loadData(BoardDataResponse boardDataResponse) {
+        this.players = boardDataResponse.players;
+        this.publicObjectiveCards = boardDataResponse.publicObjectiveCards;
+        this.toolCards = boardDataResponse.toolCards;
+    }
 }

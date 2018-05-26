@@ -5,6 +5,7 @@ import ingsw.controller.network.commands.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
@@ -153,5 +154,10 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     @Override
     public void sendResponse(PatternCardNotification patternCardNotification) {
         respond(patternCardNotification);
+    }
+
+    @Override
+    public void sendResponse(BoardDataResponse boardDataResponse) throws RemoteException {
+        respond(boardDataResponse);
     }
 }

@@ -1,10 +1,7 @@
 package ingsw.controller.network.socket;
 
 import ingsw.controller.network.Message;
-import ingsw.controller.network.commands.CreateMatchResponse;
-import ingsw.controller.network.commands.DiceMoveResponse;
-import ingsw.controller.network.commands.DiceNotification;
-import ingsw.controller.network.commands.PatternCardNotification;
+import ingsw.controller.network.commands.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -30,4 +27,5 @@ public interface UserObserver extends Remote {
 
     void sendResponse(PatternCardNotification patternCardNotification) throws RemoteException;
 
+    void sendResponse(BoardDataResponse boardDataResponse) throws RemoteException;
 }

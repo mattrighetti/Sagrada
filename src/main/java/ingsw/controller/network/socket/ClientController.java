@@ -185,11 +185,6 @@ public class ClientController implements ResponseHandler, NetworkType {
         //TODO
     }
 
-    @Override
-    public void handle(ChosenPatternCardResponse chosenPatternCardResponse) {
-        //TODO
-    }
-
     /**
      * Method that prints a message received by either the Controller or SagradaGame
      *
@@ -198,7 +193,6 @@ public class ClientController implements ResponseHandler, NetworkType {
      */
     @Override
     public void handle(MessageResponse messageResponse) {
-        sceneUpdater.launchFourthGui();
     }
 
     @Override
@@ -206,5 +200,8 @@ public class ClientController implements ResponseHandler, NetworkType {
         sceneUpdater.launchThirdGui(patternCardNotification);
     }
 
-
+    @Override
+    public void handle(BoardDataResponse boardDataResponse) {
+        sceneUpdater.launchFourthGui(boardDataResponse);
+    }
 }
