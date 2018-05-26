@@ -27,11 +27,6 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
-    public void receiveDraftNotification() {
-        //TODO
-    }
-
-    @Override
     public void sendResponse(DiceNotification diceNotification) {
         //TODO
     }
@@ -59,5 +54,10 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     @Override
     public void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException {
         //TODO
+    }
+
+    @Override
+    public void receiveNotification(Notification notification) throws RemoteException {
+        rmiController.handle(notification);
     }
 }

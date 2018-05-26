@@ -13,7 +13,7 @@ public interface UserObserver extends Remote {
 
     void sendMessage(Message message) throws RemoteException;
 
-    void receiveDraftNotification() throws RemoteException;
+    void receiveNotification(Notification notification) throws RemoteException;
 
     void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException;
 

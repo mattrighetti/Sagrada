@@ -186,11 +186,11 @@ public class GameManager {
 
             }
             resetAck();
-            Broadcaster.broadcastMessageToAll(playerList, new Message("controller", "Match has started"));
             BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
             Broadcaster.broadcastResponseToAll(playerList, boardDataResponse);
             this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards, playerList);
-//            startMatch();
+
+            startMatch();
         }).start();
     }
 
@@ -283,6 +283,13 @@ public class GameManager {
      */
     private void startMatch() {
         new Thread(() -> {
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             for (int i = 0; i < 10; i++) {
                 notifyDraftToPlayer(playerList.get(0));
                 startRound();

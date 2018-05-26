@@ -43,6 +43,8 @@ public class View extends Application implements GUIUpdater {
      */
     @Override
     public void start(Stage primaryStage) {
+        System.setProperty("java.security.policy", "stupid.policy");
+        System.setSecurityManager(new SecurityManager());
         deploySocketClient();
         deployRMIClient();
         this.mainStage = primaryStage;

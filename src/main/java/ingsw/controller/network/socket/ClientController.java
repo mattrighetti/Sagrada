@@ -120,7 +120,7 @@ public class ClientController implements ResponseHandler, NetworkType {
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* HANDLER PART */
-    /* METHOD EXECUTED BY THE RMI HANDLER */
+    /* METHOD EXECUTED BY THE CLIENT HANDLER */
 
 
     /**
@@ -203,5 +203,14 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(BoardDataResponse boardDataResponse) {
         sceneUpdater.launchFourthGui(boardDataResponse);
+    }
+
+    @Override
+    public void handle(Notification notification) {
+        switch (notification.notificationType) {
+            case DRAFT_DICE:
+                sceneUpdater.popUpDraftNotification();
+                break;
+        }
     }
 }

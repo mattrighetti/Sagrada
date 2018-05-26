@@ -86,7 +86,7 @@ public class LobbyController implements SceneUpdater, Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        availableMatches = FXCollections.observableArrayList(new DoubleString("MatchInit", 2));
+        availableMatches = FXCollections.observableArrayList();
         matchTableView.setItems(availableMatches);
         matchNameColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, String>("firstField"));
         matchConnectedUsersColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, Integer>("secondField"));
@@ -102,11 +102,11 @@ public class LobbyController implements SceneUpdater, Initializable {
     }
 
     @FXML
-    void onCreatePressed(ActionEvent event) throws RemoteException {
-        TextInputDialog dialog = new TextInputDialog("walter");
-        dialog.setTitle("Text Input Dialog");
-        dialog.setHeaderText("Look, a Text Input Dialog");
-        dialog.setContentText("Please enter your name:");
+    void onCreatePressed(ActionEvent event) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Create Match");
+        dialog.setHeaderText("Creating Match");
+        dialog.setContentText("Please enter the match name you'd like to create");
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {

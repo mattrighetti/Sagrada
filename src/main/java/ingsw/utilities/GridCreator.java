@@ -7,6 +7,7 @@ import ingsw.model.cards.patterncard.Box;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;

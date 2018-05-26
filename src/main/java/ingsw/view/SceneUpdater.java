@@ -44,4 +44,8 @@ public interface SceneUpdater {
     default void launchFourthGui(BoardDataResponse boardDataResponse) {
 
     }
+
+    default void popUpDraftNotification() {
+        System.out.println("Not in controller");
+    }
 }

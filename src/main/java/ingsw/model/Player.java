@@ -1,8 +1,10 @@
 package ingsw.model;
 
+import ingsw.controller.network.commands.Notification;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
+import ingsw.utilities.NotificationType;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -46,7 +48,7 @@ public class Player implements Serializable {
 
     public void notifyDraft() {
         try {
-            getUser().getUserObserver().receiveDraftNotification();
+            getUserObserver().receiveNotification(new Notification(NotificationType.DRAFT_DICE));
         } catch (RemoteException e) {
             e.printStackTrace();
         }

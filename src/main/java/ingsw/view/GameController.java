@@ -8,6 +8,7 @@ import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.DoubleString;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -91,6 +92,10 @@ public class GameController implements SceneUpdater, Initializable {
         publicCardsImageViews = new ArrayList<>();
         toolCardsImageViews = new ArrayList<>();
 
+        /* Every button must be disables at the first launch */
+        draftDiceButton.setDisable(true);
+        endTurnButton.setDisable(true);
+
         /* Create a list used to iterate through ImageViews */
         toolCardsImageViews.add(firstToolCardImageView);
         toolCardsImageViews.add(secondToolCardImageView);
@@ -121,8 +126,6 @@ public class GameController implements SceneUpdater, Initializable {
             imageView.setImage(new Image("/img/publicoc/"+ publicObjectiveCardList.get(counter).getName() +".png"));
             counter++;
         }
-
-        System.out.println(players.get(0).getPrivateObjectiveCard().getName());
     }
 
 
@@ -207,5 +210,17 @@ public class GameController implements SceneUpdater, Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void popUpDraftNotification() {
+        Platform.runLater(() -> {
+            draftDiceButton.setDisable(false);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Notification");
+            alert.setHeaderText("It's your turn");
+            alert.setContentText("Click on Draft Dice to draft the dice");
+            alert.showAndWait();
+        });
     }
 }

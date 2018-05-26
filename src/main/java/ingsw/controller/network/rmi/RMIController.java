@@ -135,4 +135,11 @@ public class RMIController implements ResponseHandler, NetworkType {
         sceneUpdater.launchFourthGui(boardDataResponse);
     }
 
+    @Override
+    public void handle(Notification notification) {
+        switch (notification.notificationType) {
+            case DRAFT_DICE:
+                sceneUpdater.popUpDraftNotification();
+        }
+    }
 }

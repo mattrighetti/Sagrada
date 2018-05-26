@@ -21,4 +21,6 @@ public interface ResponseHandler {
     void handle(LogoutResponse logoutResponse);
 
     void handle(BoardDataResponse boardDataResponse);
+
+    void handle(Notification notification);
 }

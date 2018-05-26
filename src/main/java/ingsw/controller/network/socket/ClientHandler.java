@@ -127,16 +127,6 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     }
 
     @Override
-    public void receiveDraftNotification() {
-        //TODO implement first draft notification from server (button on the view)
-    }
-
-    @Override
-    public void sendResponse(DiceNotification diceNotification) {
-        //TODO send the list of dice (for now only the drafted dice)
-    }
-
-    @Override
     public void sendResponse(CreateMatchResponse createMatchResponse) {
         respond(createMatchResponse);
     }
@@ -159,5 +149,15 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     @Override
     public void sendResponse(BoardDataResponse boardDataResponse) throws RemoteException {
         respond(boardDataResponse);
+    }
+
+    @Override
+    public void receiveNotification(Notification notification) throws RemoteException {
+        respond(notification);
+    }
+
+    @Override
+    public void sendResponse(DiceNotification diceNotification) throws RemoteException {
+
     }
 }
