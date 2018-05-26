@@ -248,7 +248,8 @@ public class CLI implements SceneUpdater {
     }
 
     @Override
-    public void launchSecondGui() {
+    public void launchSecondGui(String username) {
+        this.username = username;
         moveNext();
     }
 

@@ -3,6 +3,7 @@ package ingsw.view;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
+import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
 
@@ -20,7 +21,7 @@ public interface SceneUpdater {
 
     }
 
-     default void launchSecondGui() {
+     default void launchSecondGui(String username) {
 
      }
 
@@ -47,5 +48,9 @@ public interface SceneUpdater {
 
     default void popUpDraftNotification() {
         System.out.println("Not in controller");
+    }
+
+    default void setDraftedDice(List<Dice> dice) {
+
     }
 }

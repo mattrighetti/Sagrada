@@ -9,7 +9,7 @@ import java.rmi.registry.Registry;
 public class LaunchServer {
     public static void main(String[] args) throws Exception {
         SagradaGame sagradaGame = SagradaGame.get();
-        System.setProperty("java.security.policy", "/Users/matt/Dev/IntelliJ/ingswproject/stupid.policy");
+        System.setProperty("java.security.policy", "stupid.policy");
         System.setSecurityManager(new SecurityManager());
 
         /* RMI registry connection */

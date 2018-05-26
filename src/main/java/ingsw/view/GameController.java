@@ -84,9 +84,12 @@ public class GameController implements SceneUpdater, Initializable {
     private List<PublicObjectiveCard> publicObjectiveCardList;
     private Set<ToolCard> toolCards = new HashSet<>();
     private List<ToolCard> toolCardList;
+    private List<Dice> dice;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        diceButton = new ArrayList<>();
+        dice = new ArrayList<>();
         publicObjectiveCardList = new ArrayList<>();
         toolCardList = new ArrayList<>();
         publicCardsImageViews = new ArrayList<>();
@@ -123,16 +126,15 @@ public class GameController implements SceneUpdater, Initializable {
 
         counter = 0;
         for (ImageView imageView : publicCardsImageViews) {
-            imageView.setImage(new Image("/img/publicoc/"+ publicObjectiveCardList.get(counter).getName() +".png"));
+            imageView.setImage(new Image("/img/publicoc/" + publicObjectiveCardList.get(counter).getName() + ".png"));
             counter++;
         }
     }
 
 
-
     @FXML
     void onDraftDicePressed(ActionEvent event) {
-
+        networkType.draftDice(application.getUsername());
     }
 
     @FXML
@@ -156,6 +158,7 @@ public class GameController implements SceneUpdater, Initializable {
             diceButton.add(new Button("dice" + i));
             diceHorizontalBox.getChildren().add(diceButton.get(i));
         }
+
     }
 
     public void setWindowsTab() throws IOException {
@@ -167,7 +170,7 @@ public class GameController implements SceneUpdater, Initializable {
             windowGrid.setMinSize(633, 666);
             windowTab.setContent(windowGrid);
             windowTab.setText("You");
-            tabPane.setPadding(new Insets(0,0,0,0));
+            tabPane.setPadding(new Insets(0, 0, 0, 0));
             tabPane.getTabs().add(windowTab);
             windowController.setPatternCardImageView(new ImageView("/img/patterncards/" + players.get(0).getPatternCard().getName() + ".png"));
         }
@@ -222,5 +225,21 @@ public class GameController implements SceneUpdater, Initializable {
             alert.setContentText("Click on Draft Dice to draft the dice");
             alert.showAndWait();
         });
+    }
+
+    @Override
+    public void setDraftedDice(List<Dice> diceList) {
+        this.dice = diceList;
+        System.out.println(diceList.size());
+
+        Platform.runLater(
+                () -> {
+                    setDiceBox();
+                    for (int i = 0; i < diceList.size(); i++) {
+                        diceButton.get(i).setText(diceList.get(i).toString());
+
+                    }
+                }
+        );
     }
 }

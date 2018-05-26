@@ -11,4 +11,6 @@ public interface RequestHandler {
     Response handle(JoinMatchRequest joinMatchRequest);
 
     Response handle(LogoutRequest logoutRequest);
+
+    Response handle(DraftDiceRequest draftDiceRequest);
 }

@@ -27,8 +27,8 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
-    public void sendResponse(DiceNotification diceNotification) {
-        //TODO
+    public void sendResponse(DraftedDiceResponse draftedDiceResponse) throws RemoteException {
+        rmiController.handle(draftedDiceResponse);
     }
 
     @Override

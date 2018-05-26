@@ -72,7 +72,7 @@ public final class Broadcaster {
     public static void broadcastResponse(List<Player> playerList, String usernameToExclude, List<Dice> dice) {
         for (UserObserver userObserver : playerToBroadcast(playerList, usernameToExclude)) {
             try {
-                userObserver.sendResponse(new DiceNotification(dice));
+                userObserver.sendResponse(new DraftedDiceResponse(dice));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -82,7 +82,7 @@ public final class Broadcaster {
     public static void broadcastResponseToAll(List<Player> playerList, List<Dice> dice) {
         for (Player player : playerList) {
             try {
-                player.getUser().getUserObserver().sendResponse(new DiceNotification(dice));
+                player.getUser().getUserObserver().sendResponse(new DraftedDiceResponse(dice));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

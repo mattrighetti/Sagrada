@@ -198,7 +198,7 @@ public class GameManager {
      * Method that drafts the dice from the board and sends them to every user view
      */
     public void draftDiceFromBoard() {
-        Broadcaster.broadcastResponseToAll(playerList, board.draftDice());
+        Broadcaster.broadcastResponseToAll(playerList, board.draftDice(playerList));
         waitForDiceAck();
     }
 

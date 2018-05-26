@@ -19,8 +19,6 @@ public interface UserObserver extends Remote {
 
     /* OVERLOADING RESPONSES */
 
-    void sendResponse(DiceNotification diceNotification) throws RemoteException;
-
     void sendResponse(CreateMatchResponse createMatchResponse) throws RemoteException;
 
     void sendResponse(DiceMoveResponse diceMoveResponse) throws RemoteException;
@@ -28,4 +26,6 @@ public interface UserObserver extends Remote {
     void sendResponse(PatternCardNotification patternCardNotification) throws RemoteException;
 
     void sendResponse(BoardDataResponse boardDataResponse) throws RemoteException;
+
+    void sendResponse(DraftedDiceResponse draftedDiceResponse) throws RemoteException;
 }

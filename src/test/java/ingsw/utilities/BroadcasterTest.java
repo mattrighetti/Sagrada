@@ -2,7 +2,7 @@ package ingsw.utilities;
 
 import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.CreateMatchResponse;
-import ingsw.controller.network.commands.DiceNotification;
+import ingsw.controller.network.commands.DraftedDiceResponse;
 import ingsw.controller.network.socket.ClientHandler;
 import ingsw.model.Dice;
 import ingsw.model.Player;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import javax.jws.soap.SOAPBinding;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,22 +69,20 @@ class BroadcasterTest {
 
         Broadcaster.broadcastResponse(playerlist,"c",dice);
         try {
-            Mockito.verify(playerlist.get(0).getUserObserver(),times(1)).sendResponse(Mockito.any(DiceNotification.class));
+            Mockito.verify(playerlist.get(0).getUserObserver(),times(1)).sendResponse(Mockito.any(DraftedDiceResponse.class));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         try {
-            Mockito.verify(playerlist.get(1).getUserObserver(),times(1)).sendResponse(Mockito.any(DiceNotification.class));
+            Mockito.verify(playerlist.get(1).getUserObserver(),times(1)).sendResponse(Mockito.any(DraftedDiceResponse.class));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         try {
-            Mockito.verify(playerlist.get(3).getUserObserver(),times(1)).sendResponse(Mockito.any(DiceNotification.class));
+            Mockito.verify(playerlist.get(3).getUserObserver(),times(1)).sendResponse(Mockito.any(DraftedDiceResponse.class));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Test
@@ -95,22 +92,22 @@ class BroadcasterTest {
         Broadcaster.broadcastResponseToAll(playerlist, dice);
 
         try {
-            Mockito.verify(playerlist.get(0).getUserObserver(),times(1)).sendResponse(Mockito.any(DiceNotification.class));
+            Mockito.verify(playerlist.get(0).getUserObserver(),times(1)).sendResponse(Mockito.any(DraftedDiceResponse.class));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         try {
-            Mockito.verify(playerlist.get(1).getUserObserver(),times(1)).sendResponse(Mockito.any(DiceNotification.class));
+            Mockito.verify(playerlist.get(1).getUserObserver(),times(1)).sendResponse(Mockito.any(DraftedDiceResponse.class));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         try {
-            Mockito.verify(playerlist.get(2).getUserObserver(),times(1)).sendResponse(Mockito.any(DiceNotification.class));
+            Mockito.verify(playerlist.get(2).getUserObserver(),times(1)).sendResponse(Mockito.any(DraftedDiceResponse.class));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         try {
-            Mockito.verify(playerlist.get(3).getUserObserver(),times(1)).sendResponse(Mockito.any(DiceNotification.class));
+            Mockito.verify(playerlist.get(3).getUserObserver(),times(1)).sendResponse(Mockito.any(DraftedDiceResponse.class));
         } catch (RemoteException e) {
             e.printStackTrace();
         }

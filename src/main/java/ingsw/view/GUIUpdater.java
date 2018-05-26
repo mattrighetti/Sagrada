@@ -7,7 +7,7 @@ import ingsw.utilities.DoubleString;
 import java.util.List;
 
 public interface GUIUpdater {
-    void launchSecondGUI();
+    void launchSecondGUI(String username);
 
     void launchThirdGUI(PatternCardNotification patternCardNotification);
 
@@ -16,8 +16,6 @@ public interface GUIUpdater {
     void updateConnectedUsers(int connectedUsers);
 
     void updateExistingMatches(List<DoubleString> matches);
-
-    void setUsername(String username);
 
     void changeToRMI();
 

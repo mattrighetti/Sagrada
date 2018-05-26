@@ -68,6 +68,11 @@ public class RMIController implements ResponseHandler, NetworkType {
         new ChosenPatternCardRequest(patternCard).handle(rmiHandler);
     }
 
+    @Override
+    public void draftDice(String username) {
+        new DraftDiceRequest(username).handle(rmiHandler);
+    }
+
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* HANDLER PART */
@@ -82,7 +87,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
-            sceneUpdater.launchSecondGui();
+            sceneUpdater.launchSecondGui(loginUserResponse.user.getUsername());
         } else
             sceneUpdater.launchAlert();
     }
@@ -133,6 +138,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(BoardDataResponse boardDataResponse) {
         sceneUpdater.launchFourthGui(boardDataResponse);
+    }
+
+    @Override
+    public void handle(DraftedDiceResponse draftedDiceResponse) {
+        sceneUpdater.setDraftedDice(draftedDiceResponse.dice);
     }
 
     @Override

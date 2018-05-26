@@ -2,7 +2,6 @@ package ingsw.controller.network.socket;
 
 import ingsw.controller.network.commands.*;
 import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.view.PatternCardController;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
@@ -92,6 +91,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new ChosenPatternCardRequest(patternCard));
     }
 
+    @Override
+    public void draftDice(String username) {
+        client.request(new DraftDiceRequest(username));
+    }
+
     /**
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */
@@ -134,11 +138,12 @@ public class ClientController implements ResponseHandler, NetworkType {
         if (loginUserResponse.user != null) {
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
-            sceneUpdater.launchSecondGui();
+            sceneUpdater.launchSecondGui(loginUserResponse.user.getUsername());
             listenForResponses();
         } else
             sceneUpdater.launchAlert();
     }
+
 
     @Override
     public void handle(LogoutResponse logoutResponse) {
@@ -212,5 +217,10 @@ public class ClientController implements ResponseHandler, NetworkType {
                 sceneUpdater.popUpDraftNotification();
                 break;
         }
+    }
+
+    @Override
+    public void handle(DraftedDiceResponse draftedDiceResponse) {
+        sceneUpdater.setDraftedDice(draftedDiceResponse.dice);
     }
 }

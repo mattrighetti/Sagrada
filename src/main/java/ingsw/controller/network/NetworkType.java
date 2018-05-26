@@ -13,4 +13,6 @@ public interface NetworkType {
     void joinExistingMatch(String matchName);
 
     void choosePatternCard(PatternCard patternCard);
+
+    void draftDice(String username);
 }

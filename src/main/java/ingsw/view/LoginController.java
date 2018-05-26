@@ -76,8 +76,8 @@ public class LoginController implements SceneUpdater {
     }
 
     @Override
-    public void launchSecondGui() {
-        Platform.runLater(() -> application.launchSecondGUI());
+    public void launchSecondGui(String username) {
+        Platform.runLater(() -> application.launchSecondGUI(username));
     }
 
     @Override

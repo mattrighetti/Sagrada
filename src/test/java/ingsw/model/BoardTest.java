@@ -12,12 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class BoardTest {
 
     Board board;
+    List<Player> playerlist;
 
     @BeforeEach
     void setUp(){
         HashSet publicObjectiveCards = new HashSet();
         HashSet toolCards = new HashSet();
-        ArrayList<Player> playerlist = new ArrayList<>();
+        playerlist = new ArrayList<>();
         for (int i = 0; i < 4; i++){
             User user = new User("player" + i);
             playerlist.add(new Player(user));
@@ -28,9 +29,9 @@ class BoardTest {
     @Test
     void setupDiceBag(){
         int[] counterDice = new int[6];
-        for (int i = 0; i < 18; i++){
+        for (int i = 0; i < 10; i++){
 
-            List<Dice> draftedDice = board.draftDice();
+            List<Dice> draftedDice = board.draftDice(playerlist);
 
             for (Dice dice : draftedDice) {
 
@@ -66,8 +67,8 @@ class BoardTest {
 
     @Test
     void draftDice() {
-        List<Dice> draftedDice = board.draftDice();
-        assertEquals(5, draftedDice.size());
+        List<Dice> draftedDice = board.draftDice(playerlist);
+        assertEquals( (playerlist.size() * 2) + 1, draftedDice.size());
         for (Dice dice : draftedDice) {
             assertNotEquals(null, dice.getFaceUpValue());
         }

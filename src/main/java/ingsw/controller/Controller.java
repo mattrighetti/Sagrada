@@ -83,11 +83,13 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
         }
     }
 
+
     /**
      * After the first player of the round chooses "Draft Dice" on the View
      * this method is triggered to draft the dice calling the gameManager method
      */
-    public void draftDice() {
+    @Override
+    public void draftDice(String username) throws RemoteException {
         gameManager.draftDiceFromBoard();
     }
 

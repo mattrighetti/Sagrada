@@ -5,7 +5,6 @@ import ingsw.controller.network.commands.*;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.model.SagradaGame;
 import ingsw.model.User;
-import ingsw.model.cards.patterncard.PatternCard;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -36,6 +35,17 @@ public class ServerController implements RequestHandler, Serializable {
         } catch (InvalidUsernameException | RemoteException e) {
             return new LoginUserResponse(null, -1, null);
         }
+    }
+
+    @Override
+    public Response handle(LogoutRequest logoutRequest) {
+        try {
+            sagradaGame.logoutUser(user.getUsername());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return new LogoutResponse();
     }
 
     @Override
@@ -73,13 +83,15 @@ public class ServerController implements RequestHandler, Serializable {
     }
 
     @Override
-    public Response handle(LogoutRequest logoutRequest) {
+    public Response handle(DraftDiceRequest draftDiceRequest) {
         try {
-            sagradaGame.logoutUser(user.getUsername());
+            controller.draftDice(draftDiceRequest.username);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        return null;
 
-        return new LogoutResponse();
     }
+
+
 }

@@ -38,6 +38,10 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         }
     }
 
+    /**
+     * Read a request incoming from ClientController and wait for a response from the ServerController.
+     * After that the response returned is passed as parameter to response().
+     */
     private void readResponse() {
         try {
             Response response = ((Request) objectInputStream.readObject()).handle(serverController);
@@ -157,7 +161,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     }
 
     @Override
-    public void sendResponse(DiceNotification diceNotification) throws RemoteException {
-
+    public void sendResponse(DraftedDiceResponse draftedDiceResponse) throws RemoteException {
+        respond(draftedDiceResponse);
     }
 }

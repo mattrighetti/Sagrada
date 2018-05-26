@@ -130,7 +130,7 @@ public class View extends Application implements GUIUpdater {
      * @throws IOException
      */
     @Override
-    public void launchSecondGUI() {
+    public void launchSecondGUI(String username) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
         Parent lobby = null;
 
@@ -161,6 +161,8 @@ public class View extends Application implements GUIUpdater {
 
         // Updates CurrentScene
         setCurrentScene(lobbyController);
+
+        this.username = username;
     }
 
     /**
@@ -248,17 +250,6 @@ public class View extends Application implements GUIUpdater {
     public void updateExistingMatches(List<DoubleString> matches) {
         this.matches = matches;
     }
-
-    /**
-     * Username setter
-     *
-     * @param username
-     */
-    @Override
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
 
     /**
      * Username getter

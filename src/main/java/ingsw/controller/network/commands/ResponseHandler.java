@@ -23,4 +23,6 @@ public interface ResponseHandler {
     void handle(BoardDataResponse boardDataResponse);
 
     void handle(Notification notification);
+
+    void handle(DraftedDiceResponse draftedDiceResponse);
 }

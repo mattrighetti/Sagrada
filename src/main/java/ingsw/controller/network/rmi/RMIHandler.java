@@ -90,4 +90,15 @@ public class RMIHandler implements RequestHandler {
 
         return null;
     }
+
+    @Override
+    public Response handle(DraftDiceRequest draftDiceRequest) {
+        try {
+            remoteController.draftDice(draftDiceRequest.username);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

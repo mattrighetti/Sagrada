@@ -33,11 +33,12 @@ public class Board {
     /**
      * Method that drafts five dice from the diceBag
      * @return
+     * @param playerList
      */
-    protected List<Dice> draftDice() {
+    protected List<Dice> draftDice(List<Player> playerList) {
         draftedDice = new ArrayList<>();
         Collections.shuffle(diceBag);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < (playerList.size() * 2) + 1; i++) {
             Dice dice = diceBag.get(0);
             dice.roll();
             draftedDice.add(dice);
