@@ -83,16 +83,16 @@ public class PatternCardController implements SceneUpdater {
         this.patternCards = patternCards;
         Platform.runLater(
                 () -> {
-                    ImageView imageViewOne = new ImageView("/img/" + patternCards.get(0).getName() + ".png");
+                    ImageView imageViewOne = new ImageView("/img/patterncards/" + patternCards.get(0).getName() + ".png");
                     imageViewOne.setFitWidth(194);
                     imageViewOne.setFitHeight(165.5);
-                    ImageView imageViewTwo = new ImageView("/img/" + patternCards.get(1).getName() + ".png");
+                    ImageView imageViewTwo = new ImageView("/img/patterncards/" + patternCards.get(1).getName() + ".png");
                     imageViewTwo.setFitWidth(194);
                     imageViewTwo.setFitHeight(165.5);
-                    ImageView imageViewThree = new ImageView("/img/" + patternCards.get(2).getName() + ".png");
+                    ImageView imageViewThree = new ImageView("/img/patterncards/" + patternCards.get(2).getName() + ".png");
                     imageViewThree.setFitWidth(194);
                     imageViewThree.setFitHeight(165.5);
-                    ImageView imageViewFour = new ImageView("/img/" + patternCards.get(3).getName() + ".png");
+                    ImageView imageViewFour = new ImageView("/img/patterncards/" + patternCards.get(3).getName() + ".png");
                     imageViewFour.setFitWidth(194);
                     imageViewFour.setFitHeight(165.5);
                     patternCardOne.setGraphic(imageViewOne);

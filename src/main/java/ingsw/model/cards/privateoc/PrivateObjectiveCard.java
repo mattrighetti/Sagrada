@@ -32,6 +32,10 @@ public class PrivateObjectiveCard extends Card {
      */
     public int check(List<List<Box>> grid) {
         return grid.stream().
-                mapToInt(row -> (int) row.stream().filter(box -> box.getDice() != null).map( box -> box.getDice().getDiceColor()).filter(box -> box.equals(color)).count()).reduce(0, (sum,x) -> sum + x );
+                mapToInt(row -> (int) row.stream()
+                        .filter(box -> box.getDice() != null)
+                        .map( box -> box.getDice().getDiceColor())
+                        .filter(box -> box.equals(color)).count())
+                .reduce(0, (sum,x) -> sum + x );
     }
 }

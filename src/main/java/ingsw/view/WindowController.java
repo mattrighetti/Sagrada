@@ -1,21 +1,15 @@
 package ingsw.view;
 
-import ingsw.controller.network.NetworkType;
-import ingsw.utilities.DoubleString;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 
-import java.util.List;
-
-public class WindowController implements SceneUpdater {
+public class WindowController  {
 
     @FXML
-    private GridPane patternCardGrid;
-
-    @FXML
-    private GridPane windowGrid;
+    private VBox windowFrameVBox;
 
     @FXML
     private ImageView patternCardImageView;
@@ -23,20 +17,13 @@ public class WindowController implements SceneUpdater {
     @FXML
     private Button breakWindowButton;
 
-    @Override
-    public void updateConnectedUsers(int usersConnected) {
-
+    @FXML
+    void onBreakWindowPressed(ActionEvent event) {
+        System.out.println("Broken window");
     }
 
-    @Override
-    public void setNetworkType(NetworkType clientController) {
-
-    }
-
-    @Override
-    public void updateExistingMatches(List<DoubleString> matches) {
-
+    public void setPatternCardImageView(ImageView imageView) {
+        this.patternCardImageView.setImage(imageView.getImage());
     }
 
 }
-

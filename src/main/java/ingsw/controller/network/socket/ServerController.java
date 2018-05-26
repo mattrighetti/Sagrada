@@ -11,9 +11,9 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 public class ServerController implements RequestHandler, Serializable {
-    private ClientHandler clientHandler;
-    private final SagradaGame sagradaGame;
-    private Controller controller;
+    private transient ClientHandler clientHandler;
+    private transient final SagradaGame sagradaGame;
+    private transient Controller controller;
     private User user;
 
     public ServerController(ClientHandler clientHandler) throws RemoteException {

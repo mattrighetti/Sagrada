@@ -209,8 +209,8 @@ public class View extends Application implements GUIUpdater {
         mainStage.setScene(new Scene(game));
         mainStage.setTitle("Sagrada");
         mainStage.show();
-        gameController.loadData(boardDataResponse);
         setCurrentScene(gameController);
+        currentScene.loadData(boardDataResponse);
     }
 
     /**
