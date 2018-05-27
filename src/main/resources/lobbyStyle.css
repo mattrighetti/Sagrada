@@ -7,6 +7,13 @@
 
 
 */
+.progress-indicator  {
+    -fx-padding: 0 0 -16 5;
+}
+
+.progress-indicator .percentage {
+    -fx-fill:null;
+}
 
 .login-button-red {
     -fx-background-color: #a3190f,
