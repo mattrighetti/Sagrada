@@ -21,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -109,7 +110,7 @@ public class LobbyController implements SceneUpdater, Initializable {
         dialog.setContentText("Please enter the match name you'd like to create");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
+        if (result.isPresent() && !StringUtils.isBlank(result.get())) {
             boolean tmpBoolean = false;
             for (DoubleString doubleString : availableMatches) {
                 if (doubleString.getFirstField().equals(result.get())) {
@@ -119,14 +120,20 @@ public class LobbyController implements SceneUpdater, Initializable {
 
             if (!tmpBoolean) networkType.createMatch(result.get());
             else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Warning");
-                alert.setHeaderText("Match has already been taken");
-                alert.setContentText("Choose another match name");
-                alert.showAndWait();
+                popUpInvalidMatchName();
             }
+        } else {
+            popUpInvalidMatchName();
         }
 
+    }
+
+    public void popUpInvalidMatchName() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Warning");
+        alert.setHeaderText("Match has already been taken");
+        alert.setContentText("Choose another match name");
+        alert.showAndWait();
     }
 
     @FXML
