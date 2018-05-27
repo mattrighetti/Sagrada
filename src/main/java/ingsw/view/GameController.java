@@ -155,17 +155,12 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     private void setDiceBox() {
-        Group group = new Group();
         for (int i = 0; i < (players.size() * 2) + 1; i++) {
             Button button = new Button();
-            button.setVisible(true);
-            button.setDisable(false);
             button.setOnMouseClicked(event -> System.out.println("Pressed"));
             diceButton.add(button);
-            group.getChildren().add(button);
+            diceHorizontalBox.getChildren().add(button);
         }
-
-        diceHorizontalBox.getChildren().add(group);
 
         for (int i = 0; i < dice.size(); i++) {
             diceButton.get(i).setText(dice.get(i).toString());
@@ -174,6 +169,7 @@ public class GameController implements SceneUpdater, Initializable {
 
     /**
      * Method that creates a Tab for a Player
+     *
      * @param player player to create the Tab with
      */
     private void createTabOfPlayer(Player player) {
@@ -268,17 +264,26 @@ public class GameController implements SceneUpdater, Initializable {
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
         this.availaiblePosition = startTurnNotification.booleanListGrid;
+        activateDice();
     }
 
     private void activateDice() {
-        for (Button button : diceButton) {
-            button.setDisable(false);
-        }
+        Platform.runLater(
+                () -> {
+                    for (Button button : diceButton) {
+                        button.setDisable(false);
+                    }
+                }
+        );
     }
 
-    private void disableDice(){
-        for (Button button : diceButton) {
-            button.setDisable(true);
-        }
+    private void disableDice() {
+        Platform.runLater(
+                () -> {
+                    for (Button button : diceButton) {
+                        button.setDisable(true);
+                    }
+                }
+        );
     }
 }
