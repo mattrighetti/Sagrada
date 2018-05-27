@@ -131,37 +131,17 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     }
 
     @Override
-    public void sendResponse(CreateMatchResponse createMatchResponse) {
-        respond(createMatchResponse);
+    public void sendResponse(Response response) {
+        respond(response);
     }
 
     @Override
-    public void sendResponse(DiceMoveResponse diceMoveResponse) {
-        respond(diceMoveResponse);
+    public void receiveNotification(Notification notification) {
+        respond(notification);
     }
 
     @Override
     public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
         //TODO
-    }
-
-    @Override
-    public void sendResponse(PatternCardNotification patternCardNotification) {
-        respond(patternCardNotification);
-    }
-
-    @Override
-    public void sendResponse(BoardDataResponse boardDataResponse) throws RemoteException {
-        respond(boardDataResponse);
-    }
-
-    @Override
-    public void receiveNotification(Notification notification) throws RemoteException {
-        respond(notification);
-    }
-
-    @Override
-    public void sendResponse(DraftedDiceResponse draftedDiceResponse) throws RemoteException {
-        respond(draftedDiceResponse);
     }
 }

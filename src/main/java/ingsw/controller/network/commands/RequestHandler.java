@@ -13,4 +13,6 @@ public interface RequestHandler {
     Response handle(LogoutRequest logoutRequest);
 
     Response handle(DraftDiceRequest draftDiceRequest);
+
+    Response handle(Ack ack);
 }

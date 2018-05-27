@@ -73,6 +73,11 @@ public class RMIController implements ResponseHandler, NetworkType {
         new DraftDiceRequest(username).handle(rmiHandler);
     }
 
+    @Override
+    public void sendAck() {
+        new Ack().handle(rmiHandler);
+    }
+
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* HANDLER PART */

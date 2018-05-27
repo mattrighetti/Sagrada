@@ -9,7 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 public class RMIUserObserver extends UnicastRemoteObject implements UserObserver {
-    private ResponseHandler rmiController;
+    private transient ResponseHandler rmiController;
 
     public RMIUserObserver(RMIController rmiController) throws RemoteException {
         super();
@@ -27,28 +27,8 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
-    public void sendResponse(DraftedDiceResponse draftedDiceResponse) {
-        draftedDiceResponse.handle(rmiController);
-    }
-
-    @Override
-    public void sendResponse(CreateMatchResponse createMatchResponse) {
-        createMatchResponse.handle(rmiController);
-    }
-
-    @Override
-    public void sendResponse(DiceMoveResponse diceMoveResponse) {
-        //TODO
-    }
-
-    @Override
-    public void sendResponse(PatternCardNotification patternCardNotification) {
-        patternCardNotification.handle(rmiController);
-    }
-
-    @Override
-    public void sendResponse(BoardDataResponse boardDataResponse) {
-        boardDataResponse.handle(rmiController);
+    public void sendResponse(Response response) {
+        response.handle(rmiController);
     }
 
     @Override

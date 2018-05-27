@@ -96,6 +96,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new DraftDiceRequest(username));
     }
 
+    @Override
+    public void sendAck() {
+        client.request(new Ack());
+    }
+
     /**
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */

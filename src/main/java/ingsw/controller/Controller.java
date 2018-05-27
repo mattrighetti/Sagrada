@@ -45,7 +45,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      */
     public void loginUser(User user) {
         playerList.add(new Player(user));
-        if (playerList.size() == 1) {
+        if (playerList.size() == 2) {
             controllerTimer.startLoginTimer(5);
         }
 
@@ -90,6 +90,11 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     @Override
     public void draftDice(String username) throws RemoteException {
         gameManager.draftDiceFromBoard();
+    }
+
+    @Override
+    public void sendAck() throws RemoteException {
+        gameManager.receiveAck();
     }
 
     public void toolCardMove(Player player, ToolCard toolCard) {

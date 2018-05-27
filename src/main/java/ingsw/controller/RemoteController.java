@@ -11,4 +11,6 @@ public interface RemoteController extends Remote {
     void assignPatternCard(String username, PatternCard patternCard) throws RemoteException;
 
     void draftDice(String username) throws RemoteException;
+
+    void sendAck() throws RemoteException;
 }

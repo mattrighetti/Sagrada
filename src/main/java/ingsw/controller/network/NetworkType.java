@@ -15,4 +15,6 @@ public interface NetworkType {
     void choosePatternCard(PatternCard patternCard);
 
     void draftDice(String username);
+
+    void sendAck();
 }

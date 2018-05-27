@@ -169,7 +169,7 @@ public class GameManager {
         for (Player player : playerList) {
             if (player.getPlayerUsername().equals(username)) {
                 player.setPatternCard(patternCard);
-                ackReceived();
+                receiveAck();
             }
         }
 
@@ -197,7 +197,7 @@ public class GameManager {
      * Method that drafts the dice from the board and sends them to every user view
      */
     public void draftDiceFromBoard() {
-        Broadcaster.broadcastResponseToAll(playerList, board.draftDice(playerList));
+        Broadcaster.broadcastResponseToAll(playerList, board.draftDice(playerList.size()));
         waitForDiceAck();
     }
 
@@ -210,6 +210,7 @@ public class GameManager {
 
             }
             resetAck();
+
         }).start();
     }
 
@@ -266,14 +267,14 @@ public class GameManager {
     /**
      * Method that increments the acks received
      */
-    private void ackReceived() {
+    public synchronized void receiveAck() {
         noOfAck.getAndIncrement();
     }
 
     /**
      * Method that alerts the user to draft, this activates a button "Draft" in the view
      *
-     * @param player
+     * @param player player to be notified
      */
     private void notifyDraftToPlayer(Player player) {
         player.notifyDraft();
@@ -288,6 +289,7 @@ public class GameManager {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
 

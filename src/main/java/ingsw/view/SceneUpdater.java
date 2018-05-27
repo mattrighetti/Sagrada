@@ -11,46 +11,52 @@ import java.util.List;
 
 public interface SceneUpdater {
 
-    void updateConnectedUsers(int usersConnected);
-
-    void setNetworkType(NetworkType clientController);
-
-    void updateExistingMatches(List<DoubleString> matches);
-
-    default void setPatternCards(List<PatternCard> patternCards) {
-
+    default void updateConnectedUsers(int usersConnected) {
+        System.out.println("Not overridden");
     }
 
-     default void launchSecondGui(String username) {
+    default void setNetworkType(NetworkType clientController) {
+        System.out.println("Not overridden");
+    }
 
-     }
+    default void updateExistingMatches(List<DoubleString> matches) {
+        System.out.println("Not overridden");
+    }
+
+    default void setPatternCards(List<PatternCard> patternCards) {
+        System.out.println("Not overridden");
+    }
+
+    default void launchSecondGui(String username) {
+        System.out.println("Not overridden");
+    }
 
     default void launchAlert() {
-
+        System.out.println("Not overridden");
     }
 
     default void closeStage() {
-
+        System.out.println("Not overridden");
     }
 
     default void launchThirdGui(PatternCardNotification patternCardNotification) {
-
+        System.out.println("Not overridden");
     }
 
 
     default void loadData(BoardDataResponse boardDataResponse) {
-        System.out.println("I'm not in GameController");
+        System.out.println("Not overridden");
     }
 
     default void launchFourthGui(BoardDataResponse boardDataResponse) {
-
+        System.out.println("Not overridden");
     }
 
     default void popUpDraftNotification() {
-        System.out.println("Not in controller");
+        System.out.println("Not overridden");
     }
 
     default void setDraftedDice(List<Dice> dice) {
-
+        System.out.println("Not overridden");
     }
 }

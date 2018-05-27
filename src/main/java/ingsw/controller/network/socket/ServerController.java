@@ -93,5 +93,13 @@ public class ServerController implements RequestHandler, Serializable {
 
     }
 
-
+    @Override
+    public Response handle(Ack ack) {
+        try {
+            controller.sendAck();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -31,7 +31,7 @@ class BoardTest {
         int[] counterDice = new int[6];
         for (int i = 0; i < 10; i++){
 
-            List<Dice> draftedDice = board.draftDice(playerlist);
+            List<Dice> draftedDice = board.draftDice(playerlist.size());
 
             for (Dice dice : draftedDice) {
 
@@ -67,7 +67,7 @@ class BoardTest {
 
     @Test
     void draftDice() {
-        List<Dice> draftedDice = board.draftDice(playerlist);
+        List<Dice> draftedDice = board.draftDice(playerlist.size());
         assertEquals( (playerlist.size() * 2) + 1, draftedDice.size());
         for (Dice dice : draftedDice) {
             assertNotEquals(null, dice.getFaceUpValue());

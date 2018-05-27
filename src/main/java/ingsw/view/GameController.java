@@ -1,5 +1,6 @@
 package ingsw.view;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.model.Dice;
@@ -108,33 +109,10 @@ public class GameController implements SceneUpdater, Initializable {
         publicCardsImageViews.add(thirdPublicCardImageView);
     }
 
-    public void setApplication(GUIUpdater application) {
-        this.application = application;
-    }
-
-    @Override
-    public void setNetworkType(NetworkType networkType) {
-        this.networkType = networkType;
-    }
-
-    public void loadImageViews() {
-        int counter = 0;
-        for (ImageView imageView : toolCardsImageViews) {
-            imageView.setImage(new Image("/img/toolcards/" + toolCardList.get(counter).getName() + ".png"));
-            counter++;
-        }
-
-        counter = 0;
-        for (ImageView imageView : publicCardsImageViews) {
-            imageView.setImage(new Image("/img/publicoc/" + publicObjectiveCardList.get(counter).getName() + ".png"));
-            counter++;
-        }
-    }
-
-
     @FXML
     void onDraftDicePressed(ActionEvent event) {
         networkType.draftDice(application.getUsername());
+        draftDiceButton.setDisable(true);
     }
 
     @FXML
@@ -153,43 +131,91 @@ public class GameController implements SceneUpdater, Initializable {
         alert.showAndWait();
     }
 
-    public void setDiceBox() {
+    void setApplication(GUIUpdater application) {
+        this.application = application;
+    }
+
+    @Override
+    public void setNetworkType(NetworkType networkType) {
+        this.networkType = networkType;
+    }
+
+    private void loadImageViews() {
+        int counter = 0;
+        for (ImageView imageView : toolCardsImageViews) {
+            imageView.setImage(new Image("/img/toolcards/" + toolCardList.get(counter).getName() + ".png"));
+            counter++;
+        }
+
+        counter = 0;
+        for (ImageView imageView : publicCardsImageViews) {
+            imageView.setImage(new Image("/img/publicoc/" + publicObjectiveCardList.get(counter).getName() + ".png"));
+            counter++;
+        }
+    }
+
+    private void setDiceBox() {
         for (int i = 0; i < ((players.size() * 2) + 1); i++) {
             diceButton.add(new Button("dice" + i));
             diceHorizontalBox.getChildren().add(diceButton.get(i));
         }
 
+        for (int i = 0; i < dice.size(); i++) {
+            diceButton.get(i).setText(dice.get(i).toString());
+        }
     }
 
-    public void setWindowsTab() throws IOException {
-        for (int i = 0; i < players.size(); i++) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/window.fxml"));
-            AnchorPane windowGrid = fxmlLoader.load();
-            WindowController windowController = fxmlLoader.getController();
-            Tab windowTab = new Tab();
-            windowGrid.setMinSize(633, 666);
-            windowTab.setContent(windowGrid);
+    /**
+     * Method that creates a Tab for a Player
+     * @param player player to create the Tab with
+     */
+    private void createTabOfPlayer(Player player) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/window.fxml"));
+        AnchorPane windowGrid = null;
+
+        try {
+            windowGrid = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        WindowController windowController = fxmlLoader.getController();
+        Tab windowTab = new Tab();
+        windowGrid.setMinSize(633, 666);
+        windowTab.setContent(windowGrid);
+        if (application.getUsername().equals(player.getPlayerUsername())) {
             windowTab.setText("You");
-            tabPane.setPadding(new Insets(0, 0, 0, 0));
-            tabPane.getTabs().add(windowTab);
-            windowController.setPatternCardImageView(new ImageView("/img/patterncards/" + players.get(0).getPatternCard().getName() + ".png"));
+        } else {
+            windowTab.setText(player.getPlayerUsername());
+        }
+        tabPane.setPadding(new Insets(0, 0, 0, 0));
+        tabPane.getTabs().add(windowTab);
+        windowController.setPatternCardImageView(new ImageView("/img/patterncards/" + player.getPatternCard().getName() + ".png"));
+    }
+
+    /**
+     * Creates a tab for every player putting the current User always first
+     */
+    private void setWindowsTab() {
+        for (Player player : players) {
+            if (player.getPlayerUsername().equals(application.getUsername())) {
+                createTabOfPlayer(player);
+            }
+        }
+
+        for (Player player : players) {
+            if (!player.getPlayerUsername().equals(application.getUsername())) {
+                createTabOfPlayer(player);
+            }
         }
     }
 
-    public void setPublicCardVBox(List<String> publicCards) {
-        for (String name : publicCards) {
-            publicCardVBox.getChildren().add(new ImageView("img/" + name + ".png"));
-        }
-    }
-
-    @Override
-    public void updateConnectedUsers(int usersConnected) {
-
-    }
-
-    @Override
-    public void updateExistingMatches(List<DoubleString> matches) {
-
+    private Alert createPopUpWindow(String title, String headerText, String contentText) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        return alert;
     }
 
     @Override
@@ -207,23 +233,19 @@ public class GameController implements SceneUpdater, Initializable {
         }
 
         loadImageViews();
-
-        try {
-            setWindowsTab();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setWindowsTab();
     }
 
+    /**
+     * Method that launches a popup window that notifies the user that it's his turn and he needs to draft the dice
+     */
     @Override
     public void popUpDraftNotification() {
         Platform.runLater(() -> {
             draftDiceButton.setDisable(false);
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Notification");
-            alert.setHeaderText("It's your turn");
-            alert.setContentText("Click on Draft Dice to draft the dice");
-            alert.showAndWait();
+            createPopUpWindow("Notification",
+                    "It's your turn",
+                    "Click on Draft Dice to draft the dice").showAndWait();
         });
     }
 
@@ -232,14 +254,6 @@ public class GameController implements SceneUpdater, Initializable {
         this.dice = diceList;
         System.out.println(diceList.size());
 
-        Platform.runLater(
-                () -> {
-                    setDiceBox();
-                    for (int i = 0; i < diceList.size(); i++) {
-                        diceButton.get(i).setText(diceList.get(i).toString());
-
-                    }
-                }
-        );
+        Platform.runLater(this::setDiceBox);
     }
 }

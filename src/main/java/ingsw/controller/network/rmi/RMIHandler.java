@@ -101,4 +101,15 @@ public class RMIHandler implements RequestHandler {
 
         return null;
     }
+
+    @Override
+    public Response handle(Ack ack) {
+        try {
+            remoteController.sendAck();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
