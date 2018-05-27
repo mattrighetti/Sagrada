@@ -1,7 +1,6 @@
 package ingsw.controller.network.commands;
 
 import ingsw.model.Dice;
-import ingsw.utilities.NotificationType;
 
 import java.util.List;
 

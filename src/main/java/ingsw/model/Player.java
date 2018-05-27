@@ -33,7 +33,9 @@ public class Player implements Serializable {
         this.privateObjectiveCard = privateObjectiveCard;
     }
 
-    public PrivateObjectiveCard getPrivateObjectiveCard() { return privateObjectiveCard; }
+    public PrivateObjectiveCard getPrivateObjectiveCard() {
+        return privateObjectiveCard;
+    }
 
     //Get the User instance of this player
 
@@ -42,9 +44,13 @@ public class Player implements Serializable {
     }
 
 
-    public String getPlayerUsername() { return getUser().getUsername(); }
+    public String getPlayerUsername() {
+        return getUser().getUsername();
+    }
 
-    public UserObserver getUserObserver(){ return user.getUserObserver(); }
+    public UserObserver getUserObserver() {
+        return user.getUserObserver();
+    }
 
     public void notifyDraft() {
         try {

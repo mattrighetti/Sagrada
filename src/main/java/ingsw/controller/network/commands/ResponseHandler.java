@@ -1,7 +1,5 @@
 package ingsw.controller.network.commands;
 
-import java.io.IOException;
-
 public interface ResponseHandler {
 
     void handle(LoginUserResponse loginUserResponse);

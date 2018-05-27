@@ -11,7 +11,6 @@
 
 package ingsw.model;
 
-import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.DiceMoveResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
@@ -206,10 +205,12 @@ public class GameManager {
      * Method that stalls the program until every user has received every dice
      */
     private void waitForDiceAck() {
-        while (noOfAck.get() < playerList.size()) {
-        }
-        resetAck();
+        new Thread(() -> {
+            while (noOfAck.get() < playerList.size()) {
 
+            }
+            resetAck();
+        }).start();
     }
 
     /**

@@ -27,37 +27,37 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
-    public void sendResponse(DraftedDiceResponse draftedDiceResponse) throws RemoteException {
-        rmiController.handle(draftedDiceResponse);
+    public void sendResponse(DraftedDiceResponse draftedDiceResponse) {
+        draftedDiceResponse.handle(rmiController);
     }
 
     @Override
-    public void sendResponse(CreateMatchResponse createMatchResponse) throws RemoteException {
-        rmiController.handle(createMatchResponse);
+    public void sendResponse(CreateMatchResponse createMatchResponse) {
+        createMatchResponse.handle(rmiController);
     }
 
     @Override
-    public void sendResponse(DiceMoveResponse diceMoveResponse) throws RemoteException {
+    public void sendResponse(DiceMoveResponse diceMoveResponse) {
         //TODO
     }
 
     @Override
     public void sendResponse(PatternCardNotification patternCardNotification) {
-        rmiController.handle(patternCardNotification);
+        patternCardNotification.handle(rmiController);
     }
 
     @Override
-    public void sendResponse(BoardDataResponse boardDataResponse) throws RemoteException {
-        rmiController.handle(boardDataResponse);
+    public void sendResponse(BoardDataResponse boardDataResponse) {
+        boardDataResponse.handle(rmiController);
     }
 
     @Override
-    public void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException {
+    public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
         //TODO
     }
 
     @Override
-    public void receiveNotification(Notification notification) throws RemoteException {
-        rmiController.handle(notification);
+    public void receiveNotification(Notification notification) {
+        notification.handle(rmiController);
     }
 }
