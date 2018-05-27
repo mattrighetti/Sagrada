@@ -221,8 +221,12 @@ public class ClientController implements ResponseHandler, NetworkType {
             case DRAFT_DICE:
                 sceneUpdater.popUpDraftNotification();
                 break;
+            case START_TURN:
+                sceneUpdater.setAvailablePosition((StartTurnNotification) notification);
+                break;
         }
     }
+
 
     @Override
     public void handle(DraftedDiceResponse draftedDiceResponse) {

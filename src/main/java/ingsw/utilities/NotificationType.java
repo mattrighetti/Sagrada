@@ -1,5 +1,6 @@
 package ingsw.utilities;
 
 public enum NotificationType {
-    DRAFT_DICE
+    DRAFT_DICE,
+    START_TURN
 }

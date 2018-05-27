@@ -33,7 +33,7 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
 
     @Override
     public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
-        //TODO
+        new StartTurnNotification(booleanListGrid).handle(rmiController);
     }
 
     @Override

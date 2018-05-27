@@ -142,6 +142,6 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
     @Override
     public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
-        //TODO
+        respond(new StartTurnNotification(booleanListGrid));
     }
 }

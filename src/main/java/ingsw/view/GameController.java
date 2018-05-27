@@ -3,18 +3,18 @@ package ingsw.view;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
+import ingsw.controller.network.commands.StartTurnNotification;
 import ingsw.model.Dice;
 import ingsw.model.Player;
-import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
-import ingsw.utilities.DoubleString;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -22,7 +22,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -86,6 +85,7 @@ public class GameController implements SceneUpdater, Initializable {
     private Set<ToolCard> toolCards = new HashSet<>();
     private List<ToolCard> toolCardList;
     private List<Dice> dice;
+    private List<Boolean[][]> availaiblePosition;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -155,10 +155,17 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     private void setDiceBox() {
-        for (int i = 0; i < ((players.size() * 2) + 1); i++) {
-            diceButton.add(new Button("dice" + i));
-            diceHorizontalBox.getChildren().add(diceButton.get(i));
+        Group group = new Group();
+        for (int i = 0; i < (players.size() * 2) + 1; i++) {
+            Button button = new Button();
+            button.setVisible(true);
+            button.setDisable(false);
+            button.setOnMouseClicked(event -> System.out.println("Pressed"));
+            diceButton.add(button);
+            group.getChildren().add(button);
         }
+
+        diceHorizontalBox.getChildren().add(group);
 
         for (int i = 0; i < dice.size(); i++) {
             diceButton.get(i).setText(dice.get(i).toString());
@@ -255,5 +262,23 @@ public class GameController implements SceneUpdater, Initializable {
         System.out.println(diceList.size());
 
         Platform.runLater(this::setDiceBox);
+        networkType.sendAck();
+    }
+
+    @Override
+    public void setAvailablePosition(StartTurnNotification startTurnNotification) {
+        this.availaiblePosition = startTurnNotification.booleanListGrid;
+    }
+
+    private void activateDice() {
+        for (Button button : diceButton) {
+            button.setDisable(false);
+        }
+    }
+
+    private void disableDice(){
+        for (Button button : diceButton) {
+            button.setDisable(true);
+        }
     }
 }

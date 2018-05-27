@@ -155,6 +155,10 @@ public class RMIController implements ResponseHandler, NetworkType {
         switch (notification.notificationType) {
             case DRAFT_DICE:
                 sceneUpdater.popUpDraftNotification();
+                break;
+            case START_TURN:
+                sceneUpdater.setAvailablePosition((StartTurnNotification) notification);
+                break;
         }
     }
 }

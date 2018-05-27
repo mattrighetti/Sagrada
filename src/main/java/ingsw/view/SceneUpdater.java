@@ -2,7 +2,9 @@ package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
+import ingsw.controller.network.commands.Notification;
 import ingsw.controller.network.commands.PatternCardNotification;
+import ingsw.controller.network.commands.StartTurnNotification;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
@@ -57,6 +59,10 @@ public interface SceneUpdater {
     }
 
     default void setDraftedDice(List<Dice> dice) {
+        System.out.println("Not overridden");
+    }
+
+    default void setAvailablePosition(StartTurnNotification startTurnNotification) {
         System.out.println("Not overridden");
     }
 }

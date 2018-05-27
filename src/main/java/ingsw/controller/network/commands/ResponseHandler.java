@@ -23,4 +23,5 @@ public interface ResponseHandler {
     void handle(Notification notification);
 
     void handle(DraftedDiceResponse draftedDiceResponse);
+
 }

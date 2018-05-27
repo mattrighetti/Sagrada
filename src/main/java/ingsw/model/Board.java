@@ -43,6 +43,7 @@ public class Board {
             dice.roll();
             draftedDice.add(dice);
             diceBag.remove(0);
+            System.out.println("Drafted dice");
         }
         return draftedDice;
     }

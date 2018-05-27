@@ -1,5 +1,6 @@
 package ingsw.model.cards.patterncard;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import ingsw.model.Color;
 import ingsw.model.Dice;
 import ingsw.model.cards.Card;
@@ -48,6 +49,15 @@ public abstract class PatternCard extends Card {
         List<Boolean[][]> booleanGridsList = new ArrayList<>();
         for (Dice dice : draftedDice) {
             booleanGridsList.add(computePosition(dice));
+        }
+        for (Boolean[][] booleans: booleanGridsList) {
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 4; j++) {
+                    System.out.print(booleans[j][i] + "  ");
+                }
+                System.out.print("\n");
+            }
+            System.out.print("\n");
         }
         return booleanGridsList;
     }

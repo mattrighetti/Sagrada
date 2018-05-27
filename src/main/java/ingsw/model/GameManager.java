@@ -20,8 +20,11 @@ import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.Broadcaster;
 
+import java.awt.*;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -37,6 +40,7 @@ public class GameManager {
     private List<PatternCard> patternCards;
     private Round currentRound;
     private boolean brokenWindow;
+    private AtomicBoolean endRound;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -46,6 +50,7 @@ public class GameManager {
      */
     public GameManager(List<Player> players) {
         noOfAck = new AtomicInteger(0);
+        endRound = new AtomicBoolean(false);
         brokenWindow = false;
         playerList = players;
         setUpGameManager();
@@ -210,7 +215,7 @@ public class GameManager {
 
             }
             resetAck();
-
+            startRound();
         }).start();
     }
 
@@ -295,7 +300,8 @@ public class GameManager {
 
             for (int i = 0; i < 10; i++) {
                 notifyDraftToPlayer(playerList.get(0));
-                startRound();
+                endRound.set(false);
+                while (!endRound.get()) ;
             }
 
         }).start();
@@ -320,6 +326,7 @@ public class GameManager {
 
             } while (!currentRound.hasPlayerEndedTurn().get());
         }
+        endRound.set(true);
     }
 
     /**
@@ -329,6 +336,7 @@ public class GameManager {
      * @param player
      */
     public List<Boolean[][]> sendAvailablePositions(Player player) {
+        System.out.println("Game Manager" + board.getDraftedDice().size());
         return player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
     }
 
