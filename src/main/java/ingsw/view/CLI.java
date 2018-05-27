@@ -2,16 +2,21 @@ package ingsw.view;
 
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.BoardDataResponse;
+import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
+import ingsw.model.Dice;
+import ingsw.model.Player;
+import ingsw.model.cards.publicoc.PublicObjectiveCard;
+import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.DoubleString;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class CLI implements SceneUpdater {
     private String username;
@@ -23,7 +28,14 @@ public class CLI implements SceneUpdater {
     private List<DoubleString> availableMatches = new ArrayList<>();
     boolean moveNext;
 
+
+    private List<Player> players;
+    private Set<PublicObjectiveCard> publicObjectiveCards;
+    private Set<ToolCard> toolCards;
+    private List<Dice> draftedDice;
+
     CLI() {
+        AnsiConsole.systemInstall();
         this.scanner = new Scanner(System.in);
     }
 
@@ -144,7 +156,6 @@ public class CLI implements SceneUpdater {
                     System.err.println("Wrong input");
                     break;
             }
-
         } while (!moveNext);
 
     }
@@ -180,23 +191,27 @@ public class CLI implements SceneUpdater {
         moveNext = false;
         flushScanner();
 
-        while (!moveNext) {
-            System.out.println("Available matches:\n");
-            for (int i = 0; i < availableMatches.size(); i++) {
-                System.out.println(i + 1 + " - "
-                        + availableMatches.get(i).getFirstField() + "\t players:"
-                        + availableMatches.get(i).getSecondField() + "\n");
+        if (availableMatches.isEmpty()) {
+            while (!moveNext) {
+                System.out.println("Available matches:\n");
+                for (int i = 0; i < availableMatches.size(); i++) {
+                    System.out.println(i + 1 + " - "
+                            + availableMatches.get(i).getFirstField() + "\t players:"
+                            + availableMatches.get(i).getSecondField() + "\n");
+                }
+                selectedMatch = userIntegerInput();
+
+                if (0 < selectedMatch && selectedMatch < (availableMatches.size() + 1)) {
+                    currentConnectionType.joinExistingMatch(availableMatches.get(selectedMatch - 1).getFirstField());
+                    System.out.println("Confirmed\nYou logged in successfully!\nWait for other players");
+                    moveNext();
+                } else System.out.println("Not valid Match selected, choose another match");
             }
-            selectedMatch = userIntegerInput();
 
-            if (0 < selectedMatch && selectedMatch < (availableMatches.size() + 1)) {
-                currentConnectionType.joinExistingMatch(availableMatches.get(selectedMatch - 1).getFirstField());
-                System.out.println("Confirmed\nYou logged in successfully!\nWait for other players");
-                moveNext();
-            } else System.out.println("Not valid Match selected, choose another match");
+            System.out.println("Waiting...");
+        } else {
+            System.out.println("There are no matches. Please create a new one");
         }
-
-        System.out.println("Waiting...");
     }
 
     private void showStatistics() {
@@ -230,6 +245,70 @@ public class CLI implements SceneUpdater {
         rmiController.connect();
     }
 
+    @Override
+    public void launchSecondGui(String username) {
+        //todo Reorganize the code
+    }
+
+    @Override
+    public void launchThirdGui(PatternCardNotification patternCardNotification) {
+        int chosenPatternCard;
+        moveNext = false;
+        flushScanner();
+
+        while (!moveNext) {
+            System.out.println("Now select your Pattern Card:");
+
+
+            for (int i = 0; i < patternCardNotification.patternCards.size(); i++) {
+                System.out.println(i + 1 + " - "
+                        + patternCardNotification.patternCards.get(i).toString());
+            }
+            chosenPatternCard = userIntegerInput();
+
+            if (0 < chosenPatternCard && chosenPatternCard < (patternCardNotification.patternCards.size() + 1)) {
+                currentConnectionType.choosePatternCard(patternCardNotification.patternCards.get(chosenPatternCard));
+                moveNext();
+            } else System.out.println("Not valid Pattern Card selected, choose another one");
+
+        }
+    }
+
+    @Override
+    public void launchFourthGui(BoardDataResponse boardDataResponse) {
+        System.out.println("You're now in the game");
+        loadData(boardDataResponse);
+
+    }
+
+    @Override
+    public void loadData(BoardDataResponse boardDataResponse) {
+        this.players = boardDataResponse.players;
+        this.publicObjectiveCards = boardDataResponse.publicObjectiveCards;
+        this.toolCards = boardDataResponse.toolCards;
+
+    }
+
+    @Override
+    public void popUpDraftNotification() {
+        String ack;
+        moveNext = false;
+        flushScanner();
+
+        while (!moveNext) {
+            System.out.println("It's time to draft the dice: press a key to draft");
+            ack =  userStringInput();
+            currentConnectionType.draftDice(username);
+            moveNext();
+        }
+    }
+
+    @Override
+    public void setDraftedDice(List<Dice> dice) {
+        this.draftedDice = dice;
+
+    }
+
 
     @Override
     public void updateConnectedUsers(int usersConnected) {
@@ -246,19 +325,5 @@ public class CLI implements SceneUpdater {
         availableMatches.clear();
         availableMatches = matches;
     }
-
-    @Override
-    public void launchSecondGui(String username) {
-        this.username = username;
-        moveNext();
-    }
-
-//    @Override
-//    public void launchThirdGui() {
-//        moveNext();
-//     }
-
-
-
 
 }
