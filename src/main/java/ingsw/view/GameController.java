@@ -197,7 +197,7 @@ public class GameController implements SceneUpdater, Initializable {
         }
         tabPane.setPadding(new Insets(0, 0, 0, 0));
         tabPane.getTabs().add(windowTab);
-        windowController.setPatternCardImageView(new ImageView("/img/patterncards/" + player.getPatternCard().getName() + ".png"));
+        windowController.setGridPaneBackground(player.getPatternCard().getName());
     }
 
     /**
