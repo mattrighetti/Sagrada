@@ -18,6 +18,10 @@ public class BoardDataResponse implements Response {
         this.toolCards = toolCards;
     }
 
+    /**
+     * Method that declares by which this response should be handled
+     * @param responseHandler class that handles the Request
+     */
     @Override
     public void handle(ResponseHandler responseHandler) {
         responseHandler.handle(this);

@@ -1,11 +1,6 @@
 package ingsw.controller.network.commands;
 
-public class CreateMatchRequest implements Request {
-    public String matchName;
-
-    public CreateMatchRequest(String matchName) {
-        this.matchName = matchName;
-    }
+public class EndTurnRequest implements Request {
 
     /**
      * Method that returns a Response after the Request has been properly handled

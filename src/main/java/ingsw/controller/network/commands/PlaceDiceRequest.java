@@ -1,10 +1,16 @@
 package ingsw.controller.network.commands;
 
-public class CreateMatchRequest implements Request {
-    public String matchName;
+import ingsw.model.Dice;
 
-    public CreateMatchRequest(String matchName) {
-        this.matchName = matchName;
+public class PlaceDiceRequest implements Request {
+    public Dice dice;
+    public int columnIndex;
+    public int rowIndex;
+
+    public PlaceDiceRequest(Dice dice, int columnIndex, int rowIndex) {
+        this.dice = dice;
+        this.columnIndex = columnIndex;
+        this.rowIndex = rowIndex;
     }
 
     /**

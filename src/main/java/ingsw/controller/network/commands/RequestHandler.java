@@ -15,4 +15,8 @@ public interface RequestHandler {
     Response handle(DraftDiceRequest draftDiceRequest);
 
     Response handle(Ack ack);
+
+    Response handle(PlaceDiceRequest placeDiceRequest);
+
+    Response handle(EndTurnRequest endTurnRequest);
 }
