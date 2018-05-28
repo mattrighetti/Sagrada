@@ -14,7 +14,6 @@ public class Dice implements Serializable {
     /**
      * Draft the dice
      * get a random number between 1 and 6 and set the faceUpValue
-     * @return the value of the launch
      */
     void roll() {
         int value = (new Random()).nextInt(6) + 1;
@@ -31,5 +30,14 @@ public class Dice implements Serializable {
 
     public Color getDiceColor() {
         return diceColor;
+    }
+
+    @Override
+    public String toString() {
+        if (faceUpValue != 0) {
+            return diceColor.toString() + String.valueOf(faceUpValue);
+        } else {
+            return diceColor.toString();
+        }
     }
 }

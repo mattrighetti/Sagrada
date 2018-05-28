@@ -124,3 +124,131 @@
     -fx-background-image: url("/img/patterncards/WaterOfLife.png");
     -fx-background-repeat: no-repeat;
 }
+
+.diceImageSize {
+    -fx-background-size: 70 70;
+}
+
+.Red1 {
+    -fx-background-image: url("/img/dice/Red1.png");
+}
+
+.Red2 {
+    -fx-background-image: url("/img/dice/Red2.png");
+
+}
+
+.Red3 {
+    -fx-background-image: url("/img/dice/Red3.png");
+
+}
+
+.Red4 {
+    -fx-background-image: url("/img/dice/Red4.png");
+
+}
+
+.Red5 {
+    -fx-background-image: url("/img/dice/Red5.png");
+
+}
+
+.Red6 {
+    -fx-background-image: url("/img/dice/Red6.png");
+}
+
+.Yellow1 {
+    -fx-background-image: url("/img/dice/Yellow1.png");
+}
+
+.Yellow2 {
+    -fx-background-image: url("/img/dice/Yellow2.png");
+}
+
+.Yellow3 {
+    -fx-background-image: url("/img/dice/Yellow3.png");
+}
+
+.Yellow4 {
+    -fx-background-image: url("/img/dice/Yellow4.png");
+}
+
+.Yellow5 {
+    -fx-background-image: url("/img/dice/Yellow5.png");
+}
+
+.Yellow6 {
+    -fx-background-image: url("/img/dice/Yellow6.png");
+}
+
+.Purple1 {
+    -fx-background-image: url("/img/dice/Purple1.png");
+}
+
+.Purple2 {
+    -fx-background-image: url("/img/dice/Purple2.png");
+}
+
+.Purple3 {
+    -fx-background-image: url("/img/dice/Purple3.png");
+}
+
+.Purple4 {
+    -fx-background-image: url("/img/dice/Purple4.png");
+}
+
+.Purple5 {
+    -fx-background-image: url("/img/dice/Purple5.png");
+}
+
+.Purple6 {
+    -fx-background-image: url("/img/dice/Purple6.png");
+}
+
+.Blue1 {
+    -fx-background-image: url("/img/dice/Blue1.png");
+}
+
+.Blue2 {
+    -fx-background-image: url("/img/dice/Blue2.png");
+}
+
+.Blue3 {
+    -fx-background-image: url("/img/dice/Blue3.png");
+}
+
+.Blue4 {
+    -fx-background-image: url("/img/dice/Blue4.png");
+}
+
+.Blue5 {
+    -fx-background-image: url("/img/dice/Blue5.png");
+}
+
+.Blue6 {
+    -fx-background-image: url("/img/dice/Blue6.png");
+}
+
+.Green1 {
+    -fx-background-image: url("/img/dice/Green1.png");
+}
+
+.Green2 {
+    -fx-background-image: url("/img/dice/Green2.png");
+}
+
+.Green3 {
+    -fx-background-image: url("/img/dice/Green3.png");
+}
+
+.Green4 {
+    -fx-background-image: url("/img/dice/Green4.png");
+}
+
+.Green5 {
+    -fx-background-image: url("/img/dice/Green5.png");
+}
+
+.Green6 {
+    -fx-background-image: url("/img/dice/Green6.png");
+}

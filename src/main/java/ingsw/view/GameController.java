@@ -7,6 +7,7 @@ import ingsw.model.Dice;
 import ingsw.model.Player;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
+import ingsw.view.nodes.DiceButton;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -153,15 +154,13 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     private void setDiceBox() {
-        for (int i = 0; i < (players.size() * 2) + 1; i++) {
-            Button button = new Button();
-            button.setOnMouseClicked(event -> System.out.println("Pressed"));
-            diceButton.add(button);
-            diceHorizontalBox.getChildren().add(button);
-        }
-
         for (int i = 0; i < dice.size(); i++) {
-            diceButton.get(i).setText(dice.get(i).toString());
+            DiceButton diceButtonToAdd = new DiceButton(dice.get(i));
+            diceButtonToAdd.setOnMouseClicked(event -> System.out.println("Pressed " + diceButtonToAdd.getDice().toString()));
+            diceButtonToAdd.getStyleClass().add(dice.get(i).toString());
+            diceButtonToAdd.getStyleClass().add("diceImageSize");
+            diceButtonToAdd.setMinSize(70,70);
+            diceHorizontalBox.getChildren().add(diceButtonToAdd);
         }
     }
 
@@ -253,7 +252,6 @@ public class GameController implements SceneUpdater, Initializable {
     @Override
     public void setDraftedDice(List<Dice> diceList) {
         this.dice = diceList;
-        System.out.println(diceList.size());
 
         Platform.runLater(this::setDiceBox);
         networkType.sendAck();

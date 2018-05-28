@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="ingsw.view.GameController">
+<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/9.0.4" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.GameController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="323.59283447265625" minWidth="10.0" prefWidth="323.59283447265625" />
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="247.51300048828125" minWidth="10.0" prefWidth="133.40716552734375" />
@@ -26,7 +26,7 @@
       <RowConstraints maxHeight="184.33087158203125" minHeight="10.0" prefHeight="54.78802490234375" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <HBox fx:id="diceHorizontalBox" prefHeight="103.0" prefWidth="632.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
+      <HBox fx:id="diceHorizontalBox" alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="103.0" prefWidth="632.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
       <TabPane fx:id="tabPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="666.0" prefWidth="633.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowSpan="3" />
       <VBox fx:id="toolCardVBox" alignment="CENTER" prefHeight="614.0" prefWidth="326.0" GridPane.columnIndex="4" GridPane.rowSpan="4">
          <children>

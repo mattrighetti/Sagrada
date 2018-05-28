@@ -102,7 +102,7 @@ public class ClientController implements ResponseHandler, NetworkType {
      * Method that drafts dice from the board
      */
     @Override
-    public void draftDice() { //TODO pass the username in the servercontroller or rmihandler
+    public void draftDice() {
         client.request(new DraftDiceRequest());
     }
 

@@ -298,7 +298,7 @@ public class CLI implements SceneUpdater {
         while (!moveNext) {
             System.out.println("It's time to draft the dice: press a key to draft");
             ack =  userStringInput();
-            currentConnectionType.draftDice(username);
+            currentConnectionType.draftDice();
             moveNext();
         }
     }
