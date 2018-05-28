@@ -126,11 +126,11 @@ public class RMIHandler implements RequestHandler {
 
     @Override
     public Response handle(EndTurnRequest endTurnRequest) {
-    /*    try {
-
+        try {
+            remoteController.endTurn();
         } catch (RemoteException e) {
-
-        } */
+            e.printStackTrace();
+        }
 
         return null;
     }

@@ -65,6 +65,11 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
         gameManager.waitForEveryPatternCard();
     }
 
+    @Override
+    public void endTurn() throws RemoteException{
+        gameManager.endTurn();
+    }
+
     /**
      * Assigns PatternCard to specified Player
      * Triggered by Command(PatterCard, String)

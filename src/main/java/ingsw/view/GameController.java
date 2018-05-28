@@ -116,7 +116,8 @@ public class GameController implements SceneUpdater, Initializable {
 
     @FXML
     void onEndTurnPressed(ActionEvent event) {
-
+        networkType.endTurn();
+        disableDice();
     }
 
     @FXML

@@ -117,11 +117,11 @@ public class ServerController implements RequestHandler, Serializable {
 
     @Override
     public Response handle(EndTurnRequest endTurnRequest) {
-    /*    try {
-            // TODO
+        try {
+            controller.endTurn();
         } catch (RemoteException e) {
-
-        } */
+            e.printStackTrace();
+        }
 
         return null;
     }

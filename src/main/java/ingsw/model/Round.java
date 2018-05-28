@@ -43,6 +43,7 @@ public class Round implements Runnable {
     public void hasMadeAMove() {
         hasMadeAMove.set(true);
     }
+
     private void waitForMove() {
         while (!hasMadeAMove.get()) {
 
