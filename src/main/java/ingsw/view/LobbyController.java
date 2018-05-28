@@ -112,22 +112,20 @@ public class LobbyController implements SceneUpdater, Initializable {
         dialog.setContentText("Please enter the match name you'd like to create");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent() && !StringUtils.isBlank(result.get())) {
-            boolean tmpBoolean = false;
-            for (DoubleString doubleString : availableMatches) {
-                if (doubleString.getFirstField().equals(result.get())) {
-                    tmpBoolean = true;
+        if (result.isPresent()) {
+            if (!StringUtils.isBlank(result.get())) {
+                boolean tmpBoolean = false;
+                for (DoubleString doubleString : availableMatches) {
+                    if (doubleString.getFirstField().equals(result.get())) {
+                        tmpBoolean = true;
+                    }
                 }
-            }
 
-            if (!tmpBoolean) networkType.createMatch(result.get());
-            else {
+                if (!tmpBoolean) networkType.createMatch(result.get());
+            } else {
                 popUpInvalidMatchName();
             }
-        } else {
-            popUpInvalidMatchName();
         }
-
     }
 
     public void popUpInvalidMatchName() {
@@ -194,14 +192,14 @@ public class LobbyController implements SceneUpdater, Initializable {
             dialogStage.initStyle(StageStyle.UNDECORATED);
 
             text = new Label("Waiting for other players");
-            text.setPadding(new Insets(10,10,10,10));
+            text.setPadding(new Insets(10, 10, 10, 10));
 
             hBox = new HBox();
             hBox.getChildren().addAll(createProgressBar(), createTimeCircle());
             hBox.getStylesheets().add(getClass().getResource("/lobbyStyle.css").toExternalForm());
 
             vBox = new VBox();
-            vBox.setPadding(new Insets(10,10,10,10));
+            vBox.setPadding(new Insets(10, 10, 10, 10));
             vBox.getChildren().addAll(text, hBox);
 
             Scene scene = new Scene(vBox);
