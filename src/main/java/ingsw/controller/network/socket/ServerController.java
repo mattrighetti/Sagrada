@@ -79,18 +79,19 @@ public class ServerController implements RequestHandler, Serializable {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
     @Override
     public Response handle(DraftDiceRequest draftDiceRequest) {
         try {
-            controller.draftDice(draftDiceRequest.username);
+            controller.draftDice(user.getUsername());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        return null;
 
+        return null;
     }
 
     @Override
@@ -100,6 +101,28 @@ public class ServerController implements RequestHandler, Serializable {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    @Override
+    public Response handle(PlaceDiceRequest placeDiceRequest) {
+    /*    try {
+            // TODO
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }*/
+
+        return null;
+    }
+
+    @Override
+    public Response handle(EndTurnRequest endTurnRequest) {
+    /*    try {
+            // TODO
+        } catch (RemoteException e) {
+
+        } */
+
         return null;
     }
 }

@@ -1,6 +1,7 @@
 package ingsw.controller.network.socket;
 
 import ingsw.controller.network.commands.*;
+import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
@@ -23,7 +24,7 @@ public class ClientController implements ResponseHandler, NetworkType {
         this.sceneUpdater = sceneUpdater;
     }
 
-    public Client getClient() {
+    Client getClient() {
         return client;
     }
 
@@ -34,7 +35,7 @@ public class ClientController implements ResponseHandler, NetworkType {
     /**
      * Method that stops the active receiver thread triggering a null response
      */
-    public void stopBroadcastReceiver() {
+    private void stopBroadcastReceiver() {
         client.stopBroadcastReceiver();
     }
 
@@ -48,7 +49,6 @@ public class ClientController implements ResponseHandler, NetworkType {
      * Method that logs in the user to SagradaGame
      *
      * @param username username chosen by the user
-     * @return boolean value that indicates if the user has been successfully logged in to the game
      */
     @Override
     public void loginUser(String username) {
@@ -56,6 +56,9 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.nextResponse().handle(this);
     }
 
+    /**
+     * Method that logs out the user from SagradaGame and the Match
+     */
     @Override
     public void logoutUser() {
         stopBroadcastReceiver();
@@ -77,7 +80,6 @@ public class ClientController implements ResponseHandler, NetworkType {
      * Method that logs the user into the match
      *
      * @param matchName name of the match to join
-     * @return true if the login was successful or false if not
      */
     @Override
     public void joinExistingMatch(String matchName) {
@@ -86,19 +88,52 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.nextResponse().handle(this);
     }
 
+    /**
+     * Method that sets the chosen pattern card to the game model
+     *
+     * @param patternCard pattern card chosen by the player
+     */
     @Override
     public void choosePatternCard(PatternCard patternCard) {
         client.request(new ChosenPatternCardRequest(patternCard));
     }
 
+    /**
+     * Method that drafts dice from the board
+     */
     @Override
-    public void draftDice(String username) {
-        client.request(new DraftDiceRequest(username));
+    public void draftDice() { //TODO pass the username in the servercontroller or rmihandler
+        client.request(new DraftDiceRequest());
     }
 
+    /**
+     * Method that sends an acknowledgement to the server-side whenever it's needed
+     */
     @Override
     public void sendAck() {
         client.request(new Ack());
+    }
+
+    /**
+     * Method that tells the server to position a dice in the user's pattern card at that column and row indexes.
+     * It's one of the possible move that the player is able to use
+     *
+     * @param dice dice placed in the window
+     * @param columnIndex column index where the die has been placed
+     * @param rowIndex row index where the die has been placed
+     */
+    @Override
+    public void placeDice(Dice dice, int columnIndex, int rowIndex) {
+        client.request(new PlaceDiceRequest(dice, columnIndex, rowIndex));
+    }
+
+    /**
+     * Method that tells the server that the user doesn't want to make a move
+     * and passes the turn to the next player in line
+     */
+    @Override
+    public void endTurn() {
+        client.request(new EndTurnRequest());
     }
 
     /**
@@ -149,7 +184,11 @@ public class ClientController implements ResponseHandler, NetworkType {
             sceneUpdater.launchAlert();
     }
 
-
+    /**
+     * Method that handles the (sudden) logout of a user
+     *
+     * @param logoutResponse response that triggers the user logout
+     */
     @Override
     public void handle(LogoutResponse logoutResponse) {
         client.close();
@@ -190,6 +229,10 @@ public class ClientController implements ResponseHandler, NetworkType {
         listenForResponses();
     }
 
+    /**
+     * Method that updates the view whenever a User placed a die in their window
+     * @param diceMoveResponse
+     */
     @Override
     public void handle(DiceMoveResponse diceMoveResponse) {
         //TODO
@@ -205,16 +248,31 @@ public class ClientController implements ResponseHandler, NetworkType {
     public void handle(MessageResponse messageResponse) {
     }
 
+    /**
+     * Method that passes the four possible pattern cards to the View
+     *
+     * @param patternCardNotification
+     */
     @Override
     public void handle(PatternCardNotification patternCardNotification) {
         sceneUpdater.launchThirdGui(patternCardNotification);
     }
 
+    /**
+     * Method that passes the initial objects needed for the game to the fourth view
+     *
+     * @param boardDataResponse class that holds every object needed for the game to start
+     */
     @Override
     public void handle(BoardDataResponse boardDataResponse) {
         sceneUpdater.launchFourthGui(boardDataResponse);
     }
 
+    /**
+     * Method that handles every Notification and acts differently for every Notification's enumeration element
+     *
+     * @param notification
+     */
     @Override
     public void handle(Notification notification) {
         switch (notification.notificationType) {
@@ -227,7 +285,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         }
     }
 
-
+    /**
+     * Method that handles the drafted dice by passing them to the View
+     *
+     * @param draftedDiceResponse response that holds the dice drafted from the board
+     */
     @Override
     public void handle(DraftedDiceResponse draftedDiceResponse) {
         sceneUpdater.setDraftedDice(draftedDiceResponse.dice);

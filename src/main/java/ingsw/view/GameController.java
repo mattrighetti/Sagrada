@@ -1,6 +1,5 @@
 package ingsw.view;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.StartTurnNotification;
@@ -14,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -75,8 +73,8 @@ public class GameController implements SceneUpdater, Initializable {
     private List<ImageView> toolCardsImageViews;
     private List<ImageView> publicCardsImageViews;
 
-    NetworkType networkType;
-    GUIUpdater application;
+    private NetworkType networkType;
+    private GUIUpdater application;
 
     private List<Player> players;
     private List<Button> diceButton;
@@ -111,7 +109,7 @@ public class GameController implements SceneUpdater, Initializable {
 
     @FXML
     void onDraftDicePressed(ActionEvent event) {
-        networkType.draftDice(application.getUsername());
+        networkType.draftDice();
         draftDiceButton.setDisable(true);
     }
 

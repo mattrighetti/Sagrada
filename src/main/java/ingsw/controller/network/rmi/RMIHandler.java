@@ -94,7 +94,7 @@ public class RMIHandler implements RequestHandler {
     @Override
     public Response handle(DraftDiceRequest draftDiceRequest) {
         try {
-            remoteController.draftDice(draftDiceRequest.username);
+            remoteController.draftDice(user.getUsername());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -109,6 +109,28 @@ public class RMIHandler implements RequestHandler {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
+        return null;
+    }
+
+    @Override
+    public Response handle(PlaceDiceRequest placeDiceRequest) {
+    /*    try {
+
+        } catch (RemoteException e) {
+
+        } */
+
+        return null;
+    }
+
+    @Override
+    public Response handle(EndTurnRequest endTurnRequest) {
+    /*    try {
+
+        } catch (RemoteException e) {
+
+        } */
 
         return null;
     }

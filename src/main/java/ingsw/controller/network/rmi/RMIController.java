@@ -2,6 +2,7 @@ package ingsw.controller.network.rmi;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.*;
+import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.view.SceneUpdater;
 
@@ -69,13 +70,23 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public void draftDice(String username) {
-        new DraftDiceRequest(username).handle(rmiHandler);
+    public void draftDice() {
+        new DraftDiceRequest().handle(rmiHandler);
     }
 
     @Override
     public void sendAck() {
         new Ack().handle(rmiHandler);
+    }
+
+    @Override
+    public void placeDice(Dice dice, int columnIndex, int rowIndex) {
+        new PlaceDiceRequest(dice, columnIndex, rowIndex).handle(rmiHandler);
+    }
+
+    @Override
+    public void endTurn() {
+        new EndTurnRequest().handle(rmiHandler);
     }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

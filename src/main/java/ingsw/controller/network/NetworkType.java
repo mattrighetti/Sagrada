@@ -1,5 +1,6 @@
 package ingsw.controller.network;
 
+import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
 
 public interface NetworkType {
@@ -12,9 +13,13 @@ public interface NetworkType {
 
     void joinExistingMatch(String matchName);
 
-    void choosePatternCard(PatternCard patternCard);
-
-    void draftDice(String username);
+    void draftDice();
 
     void sendAck();
+
+    void placeDice(Dice dice, int columnIndex, int rowIndex);
+
+    void choosePatternCard(PatternCard patternCard);
+
+    void endTurn();
 }

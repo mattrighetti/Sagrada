@@ -120,26 +120,51 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      *
      */
 
+    /**
+     * Method that sends the number of connected Users to the User
+     *
+     * @param numberOfConnectedUsers number of connected Users to the game
+     */
     @Override
     public void onJoin(int numberOfConnectedUsers) {
         respond(new IntegerResponse(numberOfConnectedUsers));
     }
 
+    /**
+     * Method that sends a generic message to the User
+     *
+     * @param message
+     */
     @Override
     public void sendMessage(Message message) {
         respond(new MessageResponse(message));
     }
 
+    /**
+     * Method that sends a Response through the network
+     *
+     * @param response response to be delivered to the Client-side
+     */
     @Override
     public void sendResponse(Response response) {
         respond(response);
     }
 
+    /**
+     * Method that sends a Notification to the User
+     *
+     * @param notification notification to be sent
+     */
     @Override
     public void receiveNotification(Notification notification) {
         respond(notification);
     }
 
+    /**
+     * Method that notifies the User that it's his turn to play
+     *
+     * @param booleanListGrid list of every available position where the die can be placed
+     */
     @Override
     public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
         respond(new StartTurnNotification(booleanListGrid));
