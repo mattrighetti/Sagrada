@@ -7,6 +7,8 @@ import ingsw.exceptions.InvalidUsernameException;
 import ingsw.utilities.Broadcaster;
 import ingsw.utilities.DoubleString;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -97,8 +99,11 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
             controller = new Controller(matchName);
             matchesByName.put(matchName, controller);
 
-            Registry registry = LocateRegistry.getRegistry();
-            registry.rebind(matchName, controller);
+            try {
+                Naming.rebind("rmi://localhost:1099/" + matchName, controller);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
 
             Broadcaster.broadcastResponseToAll(connectedUsers, new CreateMatchResponse(doubleStringBuilder()));
         } else

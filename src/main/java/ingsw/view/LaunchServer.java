@@ -3,18 +3,23 @@ package ingsw.view;
 import ingsw.controller.network.socket.SagradaSocketServer;
 import ingsw.model.SagradaGame;
 
+import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class LaunchServer {
     public static void main(String[] args) throws Exception {
+        String ip = "localhost";
+        int port = 1099;
+
         SagradaGame sagradaGame = SagradaGame.get();
-        System.setProperty("java.security.policy", "stupid.policy");
-        System.setSecurityManager(new SecurityManager());
 
         /* RMI registry connection */
         Registry registry = LocateRegistry.getRegistry();
-        registry.rebind("sagrada", sagradaGame);
+
+        Naming.rebind("rmi://"+ ip + ":" + String.valueOf(port) + "/sagrada", sagradaGame);
+
+        //registry.rebind("sagrada", sagradaGame);
         System.out.println("Sagrada loaded on RMI registry");
 
         /* ServerSocket Connection */

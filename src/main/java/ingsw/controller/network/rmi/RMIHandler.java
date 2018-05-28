@@ -6,6 +6,8 @@ import ingsw.exceptions.InvalidUsernameException;
 import ingsw.model.RemoteSagradaGame;
 import ingsw.model.User;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -25,7 +27,13 @@ public class RMIHandler implements RequestHandler {
      */
     RMIHandler(RMIController rmiController, RMIUserObserver rmiUserObserver) {
         try {
-            this.sagradaGame = (RemoteSagradaGame) LocateRegistry.getRegistry().lookup("sagrada");
+            //this.sagradaGame = (RemoteSagradaGame) LocateRegistry.getRegistry().lookup("sagrada");
+            try {
+                this.sagradaGame = (RemoteSagradaGame) Naming.lookup("rmi://localhost:1099/sagrada");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
         } catch (RemoteException e) {
             System.err.println("Could not retrieve SagradaGame");
             e.printStackTrace();
@@ -72,7 +80,11 @@ public class RMIHandler implements RequestHandler {
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {
             sagradaGame.loginUserToController(joinMatchRequest.matchName, user);
-            remoteController = (RemoteController) LocateRegistry.getRegistry().lookup(joinMatchRequest.matchName);
+            try {
+                remoteController = (RemoteController) Naming.lookup("rmi://192.168.1.106:1099/" + joinMatchRequest.matchName);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
             return new JoinedMatchResponse(true);
         } catch (RemoteException | NotBoundException e) {
             e.printStackTrace();
