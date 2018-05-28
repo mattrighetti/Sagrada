@@ -252,3 +252,8 @@
 .Green6 {
     -fx-background-image: url("/img/dice/Green6.png");
 }
+
+/* COLORS */
+.grey {
+    -fx-background-color: #b8b8b8;
+}
