@@ -12,7 +12,7 @@ public interface ResponseHandler {
 
     void handle(JoinedMatchResponse joinedMatchResponse);
 
-    void handle(DiceMoveResponse diceMoveResponse);
+    void handle(UpdateViewResponse updateViewResponse);
 
     void handle(PatternCardNotification patternCardNotification);
 

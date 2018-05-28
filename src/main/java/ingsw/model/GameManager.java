@@ -12,7 +12,7 @@
 package ingsw.model;
 
 import ingsw.controller.network.commands.BoardDataResponse;
-import ingsw.controller.network.commands.DiceMoveResponse;
+import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
@@ -20,7 +20,6 @@ import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.Broadcaster;
 
-import java.awt.*;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
@@ -229,7 +228,7 @@ public class GameManager {
         //Check if the window is broken (FLAG)
     }
 
-    public void placeDice(Dice dice, int rowIndex, int columnIndex) {
+    public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
         if (!brokenWindow && board.getDraftedDice().contains(dice)){
             currentRound.makeMove(dice, rowIndex, columnIndex);
         }
@@ -344,9 +343,9 @@ public class GameManager {
         if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
-            Broadcaster.broadcastResponseToAll(playerList, new DiceMoveResponse(player,dice,rowIndex,columnIndex));
+            Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player));
             return true;
-            }
-            else return false;
+        } else return false;
+        //TODO Implement negative Response
     }
 }

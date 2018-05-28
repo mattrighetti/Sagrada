@@ -231,11 +231,11 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method that updates the view whenever a User placed a die in their window
-     * @param diceMoveResponse
+     * @param updateViewResponse
      */
     @Override
-    public void handle(DiceMoveResponse diceMoveResponse) {
-        //TODO
+    public void handle(UpdateViewResponse updateViewResponse) {
+        sceneUpdater.updateView(updateViewResponse);
     }
 
     /**

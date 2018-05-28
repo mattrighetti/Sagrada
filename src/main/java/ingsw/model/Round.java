@@ -60,12 +60,12 @@ public class Round implements Runnable {
         return playerEndedTurn;
     }
 
-    public boolean makeMove() {
+/*    public boolean makeMove(Dice dice, int rowIndex, int columnIndex) {
         //TODO ricontrolla se deve ritornare realmente valori
         boolean isMoveAccepted = gameManager.equals("");
         hasMadeAMove.set(isMoveAccepted);
         return isMoveAccepted;
-    }
+    }*/
 
     /**
      * Place-Dice move. Method for the placing dice move

@@ -115,11 +115,11 @@ public class RMIHandler implements RequestHandler {
 
     @Override
     public Response handle(PlaceDiceRequest placeDiceRequest) {
-    /*    try {
-
+        try {
+            remoteController.placeDice(placeDiceRequest.dice, placeDiceRequest.rowIndex, placeDiceRequest.columnIndex);
         } catch (RemoteException e) {
-
-        } */
+            e.printStackTrace();
+        }
 
         return null;
     }

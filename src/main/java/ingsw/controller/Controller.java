@@ -1,5 +1,6 @@
 package ingsw.controller;
 
+import ingsw.model.Dice;
 import ingsw.model.GameManager;
 import ingsw.model.Player;
 import ingsw.model.User;
@@ -100,6 +101,11 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     @Override
     public void sendAck() throws RemoteException {
         gameManager.receiveAck();
+    }
+
+    @Override
+    public void placeDice(Dice dice, int rowIndex, int columnIndex) throws RemoteException {
+        gameManager.placeDiceForPlayer(dice, rowIndex, columnIndex);
     }
 
     public void toolCardMove(Player player, ToolCard toolCard) {

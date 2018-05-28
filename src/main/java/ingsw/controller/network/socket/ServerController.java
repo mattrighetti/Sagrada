@@ -106,11 +106,11 @@ public class ServerController implements RequestHandler, Serializable {
 
     @Override
     public Response handle(PlaceDiceRequest placeDiceRequest) {
-    /*    try {
-            // TODO
+        try {
+            controller.placeDice(placeDiceRequest.dice, placeDiceRequest.rowIndex, placeDiceRequest.columnIndex);
         } catch (RemoteException e) {
             e.printStackTrace();
-        }*/
+        }
 
         return null;
     }

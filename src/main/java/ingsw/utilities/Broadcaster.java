@@ -6,9 +6,7 @@ import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.Dice;
 import ingsw.model.Player;
 import ingsw.model.User;
-import ingsw.model.cards.patterncard.PatternCard;
 
-import javax.jws.soap.SOAPBinding;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,10 +87,10 @@ public final class Broadcaster {
         }
     }
 
-    public static void broadcastResponseToAll(List<Player> playerList, DiceMoveResponse diceMoveResponse) {
+    public static void broadcastResponseToAll(List<Player> playerList, UpdateViewResponse updateViewResponse) {
         for (Player player : playerList) {
             try {
-                player.getUserObserver().sendResponse(diceMoveResponse);
+                player.getUserObserver().sendResponse(updateViewResponse);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

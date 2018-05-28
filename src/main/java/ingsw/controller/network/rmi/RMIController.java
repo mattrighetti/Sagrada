@@ -142,8 +142,8 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public void handle(DiceMoveResponse diceMoveResponse) {
-        //TODO
+    public void handle(UpdateViewResponse updateViewResponse) {
+        sceneUpdater.updateView(updateViewResponse);
     }
 
     @Override

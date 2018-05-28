@@ -2,6 +2,7 @@ package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
+import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.commands.StartTurnNotification;
 import ingsw.model.Dice;
 import ingsw.model.Player;
@@ -76,6 +77,7 @@ public class GameController implements SceneUpdater, Initializable {
 
     private NetworkType networkType;
     private GUIUpdater application;
+    private List<WindowController> windowControllers = new ArrayList<>();
 
     private List<Player> players;
     private List<Button> diceButton;
@@ -155,12 +157,12 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     private void setDiceBox() {
-        for (int i = 0; i < dice.size(); i++) {
-            DiceButton diceButtonToAdd = new DiceButton(dice.get(i));
+        for (Dice dice : dice) {
+            DiceButton diceButtonToAdd = new DiceButton(dice);
             diceButtonToAdd.setOnMouseClicked(event -> System.out.println("Pressed " + diceButtonToAdd.getDice().toString()));
-            diceButtonToAdd.getStyleClass().add(dice.get(i).toString());
+            diceButtonToAdd.getStyleClass().add(dice.toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
-            diceButtonToAdd.setMinSize(70,70);
+            diceButtonToAdd.setMinSize(70, 70);
             diceHorizontalBox.getChildren().add(diceButtonToAdd);
         }
     }
@@ -181,6 +183,8 @@ public class GameController implements SceneUpdater, Initializable {
         }
 
         WindowController windowController = fxmlLoader.getController();
+        windowController.setUsername(player.getPlayerUsername());
+        windowControllers.add(windowController);
         Tab windowTab = new Tab();
         windowGrid.setMinSize(633, 666);
         windowTab.setContent(windowGrid);
@@ -225,13 +229,9 @@ public class GameController implements SceneUpdater, Initializable {
         this.publicObjectiveCards = boardDataResponse.publicObjectiveCards;
         this.toolCards = boardDataResponse.toolCards;
 
-        for (ToolCard toolCard : toolCards) {
-            toolCardList.add(toolCard);
-        }
+        toolCardList.addAll(toolCards);
 
-        for (PublicObjectiveCard publicObjectiveCard : publicObjectiveCards) {
-            publicObjectiveCardList.add(publicObjectiveCard);
-        }
+        publicObjectiveCardList.addAll(publicObjectiveCards);
 
         loadImageViews();
         setWindowsTab();
@@ -282,5 +282,14 @@ public class GameController implements SceneUpdater, Initializable {
                     }
                 }
         );
+    }
+
+    @Override
+    public void updateView(UpdateViewResponse updateViewResponse) {
+        for (WindowController windowController : windowControllers) {
+            if (windowController.getUsername().equals(updateViewResponse.player.getPlayerUsername())) {
+                windowController.updatePatterCard(updateViewResponse.player.getPatternCard());
+            }
+        }
     }
 }
