@@ -13,7 +13,6 @@ import ingsw.model.Player;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.DoubleString;
-import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -37,7 +36,6 @@ public class CLI implements SceneUpdater {
     private List<Boolean[][]> availaiblePosition;
 
     CLI() {
-        AnsiConsole.systemInstall();
         this.scanner = new Scanner(System.in);
     }
 
