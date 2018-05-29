@@ -13,7 +13,6 @@ public class Player implements Serializable {
     private User user;
     private PrivateObjectiveCard privateObjectiveCard;
     private PatternCard patternCard;
-    private Color pedina;
 
     //TODO decide which collection to use for cards sets and add the others methods and the favor tokens(int or class)
 

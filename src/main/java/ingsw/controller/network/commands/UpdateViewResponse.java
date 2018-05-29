@@ -1,13 +1,14 @@
 package ingsw.controller.network.commands;
 
-import ingsw.model.Dice;
 import ingsw.model.Player;
 
 public class UpdateViewResponse implements Response {
     public Player player;
+    public String string;
 
-    public UpdateViewResponse(Player player) {
+    public UpdateViewResponse(Player player, String string) {
         this.player = player;
+        this.string = string;
     }
 
     /**

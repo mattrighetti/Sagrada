@@ -11,6 +11,7 @@
 
 package ingsw.model;
 
+import com.google.gson.Gson;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
@@ -350,8 +351,10 @@ public class GameManager {
             System.out.println("Placing the dice");
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
+            Gson gson = new Gson();
+            String string = gson.toJson(player.getPatternCard());
             board.getDraftedDice().remove(dice);
-            Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player));
+            Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player, string));
             return true;
         } else {
             return false;

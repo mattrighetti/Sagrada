@@ -1,11 +1,16 @@
 package ingsw.view;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.commands.StartTurnNotification;
 import ingsw.model.Dice;
 import ingsw.model.Player;
+import ingsw.model.cards.patterncard.Box;
+import ingsw.model.cards.patterncard.LuxAstram;
+import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.view.nodes.DiceButton;
@@ -272,7 +277,8 @@ public class GameController implements SceneUpdater, Initializable {
     public void updateView(UpdateViewResponse updateViewResponse) {
         for (WindowController windowController : windowControllers) {
             if (windowController.getUsername().equals(updateViewResponse.player.getPlayerUsername())) {
-                windowController.updatePatternCard(updateViewResponse.player.getPatternCard());
+                Gson gson = new Gson();
+                windowController.updatePatternCard(gson.fromJson(updateViewResponse.string, updateViewResponse.player.getPatternCard().getClass()));
             }
         }
     }

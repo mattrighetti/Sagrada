@@ -88,6 +88,7 @@ public class WindowController implements Initializable {
                 if (patternCard.getGrid().get(j).get(k).getDice() != null) {
                     System.out.println(patternCard.getGrid().get(j).get(k).getDice());
                     (dicePanes[j][k]).getStyleClass().add(patternCard.getGrid().get(j).get(k).getDice().toString());
+                    (dicePanes[j][k]).getStyleClass().add("dicePaneImageSize");
                 }
             }
         }
