@@ -126,6 +126,7 @@ public class GameController implements SceneUpdater, Initializable {
     void onEndTurnPressed(ActionEvent event) {
         networkType.endTurn();
         disableDice();
+        endTurnButton.setDisable(true);
     }
 
     /**
@@ -278,7 +279,7 @@ public class GameController implements SceneUpdater, Initializable {
     private void activateToolCard(){
         Platform.runLater(
                 () -> {
-                    for (Node toolCard : toolCardVBox.getChildren()) {
+                    for (ImageView toolCard : toolCardsImageViews) {
                         toolCard.setDisable(false);
                     }
                 }
@@ -288,7 +289,7 @@ public class GameController implements SceneUpdater, Initializable {
     private void disableToolCard(){
         Platform.runLater(
                 () -> {
-                    for (Node toolCard : toolCardVBox.getChildren()) {
+                    for (ImageView toolCard : toolCardsImageViews) {
                         toolCard.setDisable(true);
                     }
                 }
@@ -323,13 +324,21 @@ public class GameController implements SceneUpdater, Initializable {
         this.dice = diceList;
 
         Platform.runLater(this::setDiceBox);
+        draftDiceButton.setDisable(true);
         networkType.sendAck();
     }
 
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
         windowControllers.get(0).setAvailablePosition(startTurnNotification.booleanListGrid);
+        Platform.runLater(() -> {
+            draftDiceButton.setDisable(false);
+            createPopUpWindow("Notification",
+                    "It's your turn",
+                    "Make a move").showAndWait();
+        });
         activateDice();
+        activateToolCard();
         endTurnButton.setDisable(false);
     }
 }
