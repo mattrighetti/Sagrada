@@ -21,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -257,8 +258,8 @@ public class GameController implements SceneUpdater, Initializable {
     private void activateDice() {
         Platform.runLater(
                 () -> {
-                    for (Button button : diceButton) {
-                        button.setDisable(false);
+                    for (Node diceButton: diceHorizontalBox.getChildren()) {
+                        diceButton.setDisable(false);
                     }
                 }
         );
@@ -267,8 +268,28 @@ public class GameController implements SceneUpdater, Initializable {
     private void disableDice() {
         Platform.runLater(
                 () -> {
-                    for (Button button : diceButton) {
-                        button.setDisable(true);
+                    for (Node diceButton: diceHorizontalBox.getChildren()) {
+                        diceButton.setDisable(true);
+                    }
+                }
+        );
+    }
+
+    private void activateToolCard(){
+        Platform.runLater(
+                () -> {
+                    for (Node toolCard : toolCardVBox.getChildren()) {
+                        toolCard.setDisable(false);
+                    }
+                }
+        );
+    }
+
+    private void disableToolCard(){
+        Platform.runLater(
+                () -> {
+                    for (Node toolCard : toolCardVBox.getChildren()) {
+                        toolCard.setDisable(true);
                     }
                 }
         );
@@ -281,6 +302,7 @@ public class GameController implements SceneUpdater, Initializable {
                 windowController.updatePatternCard(updateViewResponse.deserializePatternCard());
             }
         }
+        disableDice();
     }
 
     /**
@@ -308,5 +330,6 @@ public class GameController implements SceneUpdater, Initializable {
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
         windowControllers.get(0).setAvailablePosition(startTurnNotification.booleanListGrid);
         activateDice();
+        endTurnButton.setDisable(false);
     }
 }

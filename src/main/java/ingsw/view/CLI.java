@@ -55,8 +55,7 @@ public class CLI implements SceneUpdater {
         }
 
         askForTypeOfConnection();
-        chooseUsernameAndLogin();
-        showLobbyCommandsAndWait();
+
     }
 
     private void flushScanner() {
@@ -93,10 +92,12 @@ public class CLI implements SceneUpdater {
                 moveNext();
                 setNetworkType(rmiController);
                 System.out.println("Alright! You selected RMI");
+                chooseUsernameAndLogin();
             } else if (selectedConnection == 2) {
                 moveNext();
                 setNetworkType(clientController);
                 System.out.println("Alright! You selected Socket");
+                chooseUsernameAndLogin();
             } else {
                 System.out.println("Incorrect input, try again");
             }
@@ -193,7 +194,7 @@ public class CLI implements SceneUpdater {
         moveNext = false;
         flushScanner();
 
-        if (availableMatches.isEmpty()) {
+        if (!availableMatches.isEmpty()) {
             while (!moveNext) {
                 System.out.println("Available matches:\n");
                 for (int i = 0; i < availableMatches.size(); i++) {
@@ -249,7 +250,7 @@ public class CLI implements SceneUpdater {
 
     @Override
     public void launchSecondGui(String username) {
-        //todo Reorganize the code
+        showLobbyCommandsAndWait();
     }
 
     @Override
@@ -313,7 +314,7 @@ public class CLI implements SceneUpdater {
 
     private void chooseMove() {
         int selectedMove;
-        System.out.println("Choose what move you want to do:" +
+        System.out.println("\nChoose what move you want to do:\n" +
 
                 "1 - Place dice\n" +
                 "2 - Use tool card\n" +

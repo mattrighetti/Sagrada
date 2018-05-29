@@ -331,6 +331,9 @@ public class GameManager {
 
             } while (!currentRound.hasPlayerEndedTurn().get());
         }
+        Player tmp = playerList.get(0);
+        playerList.remove(0);
+        playerList.add(tmp);
         endRound.set(true);
     }
 
