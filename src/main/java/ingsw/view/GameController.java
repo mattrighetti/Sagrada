@@ -77,8 +77,8 @@ public class GameController implements SceneUpdater, Initializable {
 
     private NetworkType networkType;
     private GUIUpdater application;
-    private List<WindowController> windowControllers = new ArrayList<>();
 
+    private List<WindowController> windowControllers = new ArrayList<>();
     private List<Player> players;
     private List<Button> diceButton;
     private Set<PublicObjectiveCard> publicObjectiveCards;
@@ -86,7 +86,6 @@ public class GameController implements SceneUpdater, Initializable {
     private Set<ToolCard> toolCards = new HashSet<>();
     private List<ToolCard> toolCardList;
     private List<Dice> dice;
-    private List<Boolean[][]> availaiblePosition;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -122,6 +121,10 @@ public class GameController implements SceneUpdater, Initializable {
         disableDice();
     }
 
+    /**
+     * Method that pops up a widow showing the Player PatternCard
+     * @param event event that triggers the window
+     */
     @FXML
     void onShowPrivateCardPressed(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -135,11 +138,6 @@ public class GameController implements SceneUpdater, Initializable {
 
     void setApplication(GUIUpdater application) {
         this.application = application;
-    }
-
-    @Override
-    public void setNetworkType(NetworkType networkType) {
-        this.networkType = networkType;
     }
 
     private void loadImageViews() {
@@ -157,10 +155,10 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     private void setDiceBox() {
-        for (Dice dice : dice) {
-            DiceButton diceButtonToAdd = new DiceButton(dice);
-            diceButtonToAdd.setOnMouseClicked(event -> System.out.println("Pressed " + diceButtonToAdd.getDice().toString()));
-            diceButtonToAdd.getStyleClass().add(dice.toString());
+        for (int i = 0; i < dice.size(); i++) {
+            DiceButton diceButtonToAdd = new DiceButton(dice.get(i), i);
+            diceButtonToAdd.setOnMouseClicked(event -> windowControllers.get(0).updateAvailablePositions(diceButtonToAdd.getButtonIndex()));
+            diceButtonToAdd.getStyleClass().add(dice.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
             diceButtonToAdd.setMinSize(70, 70);
             diceHorizontalBox.getChildren().add(diceButtonToAdd);
@@ -224,6 +222,11 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     @Override
+    public void setNetworkType(NetworkType networkType) {
+        this.networkType = networkType;
+    }
+
+    @Override
     public void loadData(BoardDataResponse boardDataResponse) {
         this.players = boardDataResponse.players;
         this.publicObjectiveCards = boardDataResponse.publicObjectiveCards;
@@ -237,32 +240,7 @@ public class GameController implements SceneUpdater, Initializable {
         setWindowsTab();
     }
 
-    /**
-     * Method that launches a popup window that notifies the user that it's his turn and he needs to draft the dice
-     */
-    @Override
-    public void popUpDraftNotification() {
-        Platform.runLater(() -> {
-            draftDiceButton.setDisable(false);
-            createPopUpWindow("Notification",
-                    "It's your turn",
-                    "Click on Draft Dice to draft the dice").showAndWait();
-        });
-    }
 
-    @Override
-    public void setDraftedDice(List<Dice> diceList) {
-        this.dice = diceList;
-
-        Platform.runLater(this::setDiceBox);
-        networkType.sendAck();
-    }
-
-    @Override
-    public void setAvailablePosition(StartTurnNotification startTurnNotification) {
-        this.availaiblePosition = startTurnNotification.booleanListGrid;
-        activateDice();
-    }
 
     private void activateDice() {
         Platform.runLater(
@@ -288,8 +266,35 @@ public class GameController implements SceneUpdater, Initializable {
     public void updateView(UpdateViewResponse updateViewResponse) {
         for (WindowController windowController : windowControllers) {
             if (windowController.getUsername().equals(updateViewResponse.player.getPlayerUsername())) {
-                windowController.updatePatterCard(updateViewResponse.player.getPatternCard());
+                windowController.updatePatternCard(updateViewResponse.player.getPatternCard());
             }
         }
+    }
+
+    /**
+     * Method that launches a popup window that notifies the user that it's his turn and he needs to draft the dice
+     */
+    @Override
+    public void popUpDraftNotification() {
+        Platform.runLater(() -> {
+            draftDiceButton.setDisable(false);
+            createPopUpWindow("Notification",
+                    "It's your turn",
+                    "Click on Draft Dice to draft the dice").showAndWait();
+        });
+    }
+
+    @Override
+    public void setDraftedDice(List<Dice> diceList) {
+        this.dice = diceList;
+
+        Platform.runLater(this::setDiceBox);
+        networkType.sendAck();
+    }
+
+    @Override
+    public void setAvailablePosition(StartTurnNotification startTurnNotification) {
+        windowControllers.get(0).setAvailablePosition(startTurnNotification.booleanListGrid);
+        activateDice();
     }
 }

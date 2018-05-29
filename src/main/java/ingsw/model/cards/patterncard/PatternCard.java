@@ -1,6 +1,5 @@
 package ingsw.model.cards.patterncard;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import ingsw.model.Color;
 import ingsw.model.Dice;
 import ingsw.model.cards.Card;
@@ -38,7 +37,7 @@ public abstract class PatternCard extends Card {
     }
 
     private void fillGrid() {
-        this.grid = new ArrayList<List<Box>>(4);
+        this.grid = new ArrayList<>(4);
         this.grid.add(new ArrayList<>(5));
         this.grid.add(new ArrayList<>(5));
         this.grid.add(new ArrayList<>(5));
@@ -50,15 +49,18 @@ public abstract class PatternCard extends Card {
         for (Dice dice : draftedDice) {
             booleanGridsList.add(computePosition(dice));
         }
+        /* Uncomment this to print the pattern card available positions*/
+        /*
         for (Boolean[][] booleans: booleanGridsList) {
-            for (int i = 0; i < 5; i++) {
-                for (int j = 0; j < 4; j++) {
-                    System.out.print(booleans[j][i] + "  ");
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 5; j++) {
+                    System.out.print(booleans[i][j] + "\t");
                 }
                 System.out.print("\n");
             }
             System.out.print("\n");
         }
+        */
         return booleanGridsList;
     }
 

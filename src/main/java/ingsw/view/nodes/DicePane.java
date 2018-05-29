@@ -3,8 +3,8 @@ package ingsw.view.nodes;
 import javafx.scene.layout.Pane;
 
 public class DicePane extends Pane {
-    int rowIndex;
-    int columnIndex;
+    private int rowIndex;
+    private int columnIndex;
 
     public DicePane(int rowIndex, int columnIndex) {
         super();
