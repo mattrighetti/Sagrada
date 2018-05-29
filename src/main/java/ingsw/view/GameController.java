@@ -155,9 +155,13 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     private void setDiceBox() {
+
         for (int i = 0; i < dice.size(); i++) {
             DiceButton diceButtonToAdd = new DiceButton(dice.get(i), i);
-            diceButtonToAdd.setOnMouseClicked(event -> windowControllers.get(0).updateAvailablePositions(diceButtonToAdd.getButtonIndex()));
+            diceButtonToAdd.setOnMouseClicked(event ->  {
+                windowControllers.get(0).setSelectedDice(diceButtonToAdd.getDice());
+                windowControllers.get(0).updateAvailablePositions(diceButtonToAdd.getButtonIndex());
+            });
             diceButtonToAdd.getStyleClass().add(dice.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
             diceButtonToAdd.setMinSize(70, 70);
@@ -193,6 +197,7 @@ public class GameController implements SceneUpdater, Initializable {
         }
         tabPane.setPadding(new Insets(0, 0, 0, 0));
         tabPane.getTabs().add(windowTab);
+        windowController.setNetworkType(networkType);
         windowController.setGridPaneBackground(player.getPatternCard().getName());
     }
 
@@ -203,6 +208,7 @@ public class GameController implements SceneUpdater, Initializable {
         for (Player player : players) {
             if (player.getPlayerUsername().equals(application.getUsername())) {
                 createTabOfPlayer(player);
+
             }
         }
 

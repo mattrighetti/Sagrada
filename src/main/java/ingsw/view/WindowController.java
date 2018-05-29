@@ -1,5 +1,7 @@
 package ingsw.view;
 
+import ingsw.controller.network.NetworkType;
+import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.view.nodes.DicePane;
 import javafx.event.ActionEvent;
@@ -26,6 +28,8 @@ public class WindowController implements Initializable {
     private String username;
     private List<Boolean[][]> availablePosition;
     private DicePane[][] dicePanes = new DicePane[4][5];
+    private Dice selectedDice;
+    private NetworkType networkType;
 
 
     @Override
@@ -35,7 +39,10 @@ public class WindowController implements Initializable {
                 DicePane dicePane = new DicePane(i, j);
                 dicePane.getStyleClass().add("grey");
                 dicePane.setOpacity(0.8);
-                dicePane.setOnMouseClicked(event -> System.out.println("Pressed pane at row: " + dicePane.getRowIndex() + " and at col: " + dicePane.getColumnIndex()));
+                dicePane.setOnMouseClicked(event -> {
+                    System.out.println("clicked");
+                    networkType.placeDice( selectedDice ,dicePane.getColumnIndex(), dicePane.getRowIndex());
+                });
                 patternCardGridPane.add(dicePane, j, i);
                 dicePanes[i][j] = dicePane;
             }
@@ -44,6 +51,10 @@ public class WindowController implements Initializable {
 
     void setAvailablePosition(List<Boolean[][]> availablePosition) {
         this.availablePosition = availablePosition;
+    }
+
+    public void setNetworkType(NetworkType networkType) {
+        this.networkType = networkType;
     }
 
     @FXML
@@ -55,6 +66,10 @@ public class WindowController implements Initializable {
         patternCardGridPane.getStyleClass().add(patternCardName);
     }
 
+    public void setSelectedDice(Dice dice) {
+        this.selectedDice = dice;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -64,10 +79,16 @@ public class WindowController implements Initializable {
     }
 
     void updatePatternCard(PatternCard patternCard) {
-        for (int i = 1; i < 5; i++) {
-            for (int j = 1; j < 6; j++) {
-                patternCardGridPane.getChildren().get((j * i) + j).getStyleClass().clear();
-                patternCardGridPane.getChildren().get((j * i) + j).getStyleClass().add(patternCard.getGrid().get(i).get(j).getDice().toString());
+
+        System.out.println("ciao");
+
+        for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < 5; k++) {
+                (dicePanes[j][k]).getStyleClass().clear();
+                if (patternCard.getGrid().get(j).get(k).getDice() != null) {
+                    System.out.println(patternCard.getGrid().get(j).get(k).getDice());
+                    (dicePanes[j][k]).getStyleClass().add(patternCard.getGrid().get(j).get(k).getDice().toString());
+                }
             }
         }
     }

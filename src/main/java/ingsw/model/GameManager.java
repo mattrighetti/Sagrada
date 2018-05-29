@@ -229,8 +229,13 @@ public class GameManager {
     }
 
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
-        if (!brokenWindow && board.getDraftedDice().contains(dice)){
-            currentRound.makeMove(dice, rowIndex, columnIndex);
+        if (!brokenWindow){
+            for (Dice dice1 : board.getDraftedDice()){
+                if (dice1.getDiceColor().equals(dice.getDiceColor()) && ( dice1.getFaceUpValue() == dice.getFaceUpValue())) {
+                    currentRound.makeMove(dice, rowIndex, columnIndex);
+                    break;
+                }
+            }
         }
     }
 
@@ -341,11 +346,16 @@ public class GameManager {
 
     public boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
         if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
+
+            System.out.println("Placing the dice");
+
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
             Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player));
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
         //TODO Implement negative Response
     }
 }

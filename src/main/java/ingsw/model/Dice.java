@@ -11,6 +11,11 @@ public class Dice implements Serializable {
         this.diceColor = diceColor;
     }
 
+    public Dice(int faceUpValue, Color diceColor) {
+        this.faceUpValue = faceUpValue;
+        this.diceColor = diceColor;
+    }
+
     /**
      * Draft the dice
      * get a random number between 1 and 6 and set the faceUpValue
