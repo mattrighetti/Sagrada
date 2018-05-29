@@ -4,6 +4,7 @@ package ingsw.view;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
+import ingsw.controller.network.commands.StartTurnNotification;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
@@ -33,6 +34,7 @@ public class CLI implements SceneUpdater {
     private Set<PublicObjectiveCard> publicObjectiveCards;
     private Set<ToolCard> toolCards;
     private List<Dice> draftedDice;
+    private List<Boolean[][]> availaiblePosition;
 
     CLI() {
         AnsiConsole.systemInstall();
@@ -304,9 +306,64 @@ public class CLI implements SceneUpdater {
     }
 
     @Override
+    public void setAvailablePosition(StartTurnNotification startTurnNotification) {
+        availaiblePosition = startTurnNotification.booleanListGrid;
+        chooseMove();
+    }
+
+    private void chooseMove() {
+        int selectedMove;
+        System.out.println("Choose what move you want to do:" +
+
+                "1 - Place dice\n" +
+                "2 - Use tool card\n" +
+                "3 - End turn\n");
+
+        selectedMove = userIntegerInput();
+
+        switch (selectedMove){
+            case 1 :
+                placeDice();
+                break;
+            case 2 :
+                toolCardMove();
+                break;
+            case 3 :
+                endTurnMove();
+                break;
+            default :
+                System.err.println("Wrong input");
+        }
+    }
+
+    private void placeDice() {
+        int selectedDice;
+        do {
+            System.out.println("Select a dice");
+            for (int i = 0; i < draftedDice.size(); i++) {
+                System.out.println(i + " - " + draftedDice.get(i).toString() + "\n");
+            }
+            selectedDice = userIntegerInput();
+            if (0 < selectedDice && selectedDice < draftedDice.size()){
+                System.out.println("Select the position in the pattern card: \n");
+                //TODO show patern card
+            } else System.out.println("Wrong input\n");
+
+        } while ( 0 > selectedDice && selectedDice > draftedDice.size() );
+    }
+
+    private void endTurnMove(){
+        currentConnectionType.endTurn();
+    }
+
+    private void toolCardMove(){
+        //TODO
+    }
+
+    @Override
     public void setDraftedDice(List<Dice> dice) {
         this.draftedDice = dice;
-
+        currentConnectionType.sendAck();
     }
 
 
