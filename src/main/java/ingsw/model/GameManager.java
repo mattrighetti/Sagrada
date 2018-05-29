@@ -351,10 +351,8 @@ public class GameManager {
             System.out.println("Placing the dice");
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
-            Gson gson = new Gson();
-            String string = gson.toJson(player.getPatternCard());
             board.getDraftedDice().remove(dice);
-            Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player, string));
+            Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player));
             return true;
         } else {
             return false;

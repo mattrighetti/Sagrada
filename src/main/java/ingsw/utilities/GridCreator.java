@@ -3,11 +3,12 @@ package ingsw.utilities;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import ingsw.model.Player;
 import ingsw.model.cards.patterncard.Box;
+import ingsw.model.cards.patterncard.PatternCard;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,9 @@ public final class GridCreator {
     }
 
     /**
-     * Reads a patter card's grid from JSON file passed as parameter
-     * @param path
-     * @return
+     * Reads a pattern card's grid from JSON file passed as parameter
+     * @param path path of the JSON file of the PatternCard
+     * @return PatternCard grid
      */
     public static List<List<Box>> fromFile(GridJSONPath path) {
         try {
@@ -36,5 +37,13 @@ public final class GridCreator {
             System.err.println("Couldn't find file");
         }
         return gson.fromJson(jsonReader, GRID_TYPE);
+    }
+
+    public static PatternCard fromString(String string, PatternCard patternCard) {
+        return gson.fromJson(string, patternCard.getClass());
+    }
+
+    public static String serializePatternCard(Player player) {
+        return gson.toJson(player.getPatternCard());
     }
 }

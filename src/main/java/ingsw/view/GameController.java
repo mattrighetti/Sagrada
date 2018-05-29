@@ -13,6 +13,7 @@ import ingsw.model.cards.patterncard.LuxAstram;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
+import ingsw.utilities.GridCreator;
 import ingsw.view.nodes.DiceButton;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -277,8 +278,7 @@ public class GameController implements SceneUpdater, Initializable {
     public void updateView(UpdateViewResponse updateViewResponse) {
         for (WindowController windowController : windowControllers) {
             if (windowController.getUsername().equals(updateViewResponse.player.getPlayerUsername())) {
-                Gson gson = new Gson();
-                windowController.updatePatternCard(gson.fromJson(updateViewResponse.string, updateViewResponse.player.getPatternCard().getClass()));
+                windowController.updatePatternCard(updateViewResponse.deserializePatternCard());
             }
         }
     }
