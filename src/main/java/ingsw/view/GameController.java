@@ -131,6 +131,7 @@ public class GameController implements SceneUpdater, Initializable {
 
     /**
      * Method that pops up a widow showing the Player PatternCard
+     *
      * @param event event that triggers the window
      */
     @FXML
@@ -144,9 +145,13 @@ public class GameController implements SceneUpdater, Initializable {
         alert.showAndWait();
     }
 
+    /* SETUP METHODS */
+
     void setApplication(GUIUpdater application) {
         this.application = application;
     }
+
+    /* UPDATE VIEWS METHODS */
 
     private void loadImageViews() {
         int counter = 0;
@@ -164,9 +169,13 @@ public class GameController implements SceneUpdater, Initializable {
 
     private void setDiceBox() {
 
+        if (diceHorizontalBox.getChildren().size() > 0) {
+            diceHorizontalBox.getChildren().removeAll(diceHorizontalBox.getChildren());
+        }
+
         for (int i = 0; i < dice.size(); i++) {
             DiceButton diceButtonToAdd = new DiceButton(dice.get(i), i);
-            diceButtonToAdd.setOnMouseClicked(event ->  {
+            diceButtonToAdd.setOnMouseClicked(event -> {
                 windowControllers.get(0).setSelectedDice(diceButtonToAdd.getDice());
                 windowControllers.get(0).updateAvailablePositions(diceButtonToAdd.getButtonIndex());
             });
@@ -255,11 +264,10 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
 
-
     private void activateDice() {
         Platform.runLater(
                 () -> {
-                    for (Node diceButton: diceHorizontalBox.getChildren()) {
+                    for (Node diceButton : diceHorizontalBox.getChildren()) {
                         diceButton.setDisable(false);
                     }
                 }
@@ -269,14 +277,14 @@ public class GameController implements SceneUpdater, Initializable {
     private void disableDice() {
         Platform.runLater(
                 () -> {
-                    for (Node diceButton: diceHorizontalBox.getChildren()) {
+                    for (Node diceButton : diceHorizontalBox.getChildren()) {
                         diceButton.setDisable(true);
                     }
                 }
         );
     }
 
-    private void activateToolCard(){
+    private void activateToolCard() {
         Platform.runLater(
                 () -> {
                     for (ImageView toolCard : toolCardsImageViews) {
@@ -286,7 +294,7 @@ public class GameController implements SceneUpdater, Initializable {
         );
     }
 
-    private void disableToolCard(){
+    private void disableToolCard() {
         Platform.runLater(
                 () -> {
                     for (ImageView toolCard : toolCardsImageViews) {

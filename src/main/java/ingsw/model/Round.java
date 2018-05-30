@@ -7,17 +7,17 @@ public class Round implements Runnable {
     private Thread playerMoves;
     private Player player;
 
-    private AtomicBoolean hasMadeAMove;
+    private final AtomicBoolean hasMadeAMove;
     private GameManager gameManager;
-    private AtomicBoolean playerEndedTurn;
+    private final AtomicBoolean playerEndedTurn;
 
-    public Round(GameManager gameManager) {
+    Round(GameManager gameManager) {
         this.gameManager = gameManager;
         hasMadeAMove = new AtomicBoolean();
         playerEndedTurn = new AtomicBoolean();
     }
 
-    public void startForPlayer(Player player) {
+    void startForPlayer(Player player) {
         this.player = player;
         hasMadeAMove.set(false);
         playerEndedTurn.set(false);
@@ -49,7 +49,7 @@ public class Round implements Runnable {
         playerMoves.start();
     }
 
-    public void hasMadeAMove() {
+    void hasMadeAMove() {
         hasMadeAMove.set(true);
 
         //wake up the Thread of round class
@@ -74,7 +74,7 @@ public class Round implements Runnable {
         }
     }
 
-    public void setPlayerEndedTurn(boolean hasPlayerEndedTurn) {
+    void setPlayerEndedTurn(boolean hasPlayerEndedTurn) {
         System.out.println("End the turn");
         playerEndedTurn.set(hasPlayerEndedTurn);
 
@@ -84,7 +84,7 @@ public class Round implements Runnable {
         }
     }
 
-    public AtomicBoolean hasPlayerEndedTurn() {
+    AtomicBoolean hasPlayerEndedTurn() {
         return playerEndedTurn;
     }
 
@@ -101,7 +101,7 @@ public class Round implements Runnable {
      * @param rowIndex index of the row where to place dice in the pattern card
      * @param columnIndex index of the column where to place dice in pattern card
      */
-    public void makeMove(Dice dice, int rowIndex, int columnIndex) {
+    void makeMove(Dice dice, int rowIndex, int columnIndex) {
         if (gameManager.makeMove(player, dice, rowIndex, columnIndex)) {
             System.out.println("Move made");
             hasMadeAMove();

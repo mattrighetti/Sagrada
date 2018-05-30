@@ -81,7 +81,7 @@ public class RMIHandler implements RequestHandler {
         try {
             sagradaGame.loginUserToController(joinMatchRequest.matchName, user);
             try {
-                remoteController = (RemoteController) Naming.lookup("rmi://192.168.1.106:1099/" + joinMatchRequest.matchName);
+                remoteController = (RemoteController) Naming.lookup("rmi://localhost:1099/" + joinMatchRequest.matchName);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

@@ -11,7 +11,6 @@
 
 package ingsw.model;
 
-import com.google.gson.Gson;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
@@ -167,7 +166,7 @@ public class GameManager {
         }
     }
 
-    public List<Player> getPlayerList() {
+    List<Player> getPlayerList() {
         return playerList;
     }
 
@@ -237,9 +236,10 @@ public class GameManager {
 
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
         if (!brokenWindow){
-            for (Dice dice1 : board.getDraftedDice()){
-                if (dice1.getDiceColor().equals(dice.getDiceColor()) && ( dice1.getFaceUpValue() == dice.getFaceUpValue())) {
-                    currentRound.makeMove(dice, rowIndex, columnIndex);
+            for (Dice diceInDraftedDice : board.getDraftedDice()){
+                if (diceInDraftedDice.getDiceColor().equals(dice.getDiceColor())
+                        && (diceInDraftedDice.getFaceUpValue() == dice.getFaceUpValue())) {
+                    currentRound.makeMove(diceInDraftedDice, rowIndex, columnIndex);
                     break;
                 }
             }
@@ -333,7 +333,7 @@ public class GameManager {
     }
 
     /**
-     * Method that starts the single round
+     * Method that starts a single round
      */
     private void startRound() {
         currentRound = new Round(this);
@@ -387,17 +387,28 @@ public class GameManager {
      *
      * @param player
      */
-    public List<Boolean[][]> sendAvailablePositions(Player player) {
+    List<Boolean[][]> sendAvailablePositions(Player player) {
         return player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
     }
 
-    public boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
+    /*
+    *
+    *
+    * GAME MOVES
+    *
+    *
+    */
+
+    boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
         if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
             System.out.println("Placing the dice");
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
+            // Send updated draftedDice
+            Broadcaster.broadcastResponseToAll(playerList, board.getDraftedDice());
+            // UpdateView response
             Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player));
             return true;
         } else {
