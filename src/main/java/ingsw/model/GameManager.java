@@ -41,6 +41,8 @@ public class GameManager {
     private Round currentRound;
     private boolean brokenWindow;
     private AtomicBoolean endRound;
+    private Thread diceAckThread;
+    private Thread matchThread;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -210,13 +212,17 @@ public class GameManager {
      * Method that stalls the program until every user has received every dice
      */
     private void waitForDiceAck() {
-        new Thread(() -> {
+        diceAckThread = new Thread(() -> {
+            System.out.println("Waiting Dice Ack");
             while (noOfAck.get() < playerList.size()) {
 
             }
             resetAck();
             startRound();
-        }).start();
+        });
+
+        diceAckThread.setName("diceAck and round");
+        diceAckThread.start();
     }
 
     /**
@@ -294,7 +300,7 @@ public class GameManager {
      * Method that opens a thread dedicated to the match
      */
     private void startMatch() {
-        new Thread(() -> {
+        matchThread = new Thread(() -> {
 
             try {
                 Thread.sleep(500);
@@ -306,10 +312,24 @@ public class GameManager {
             for (int i = 0; i < 10; i++) {
                 notifyDraftToPlayer(playerList.get(0));
                 endRound.set(false);
-                while (!endRound.get()) ;
+
+                System.out.println("Round " + i);
+                //wait until the end of the round
+                synchronized (endRound) {
+                    while (!endRound.get()) {
+                        try {
+                            endRound.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
 
-        }).start();
+        });
+
+        matchThread.setName("match");
+        matchThread.start();
     }
 
     /**
@@ -319,22 +339,46 @@ public class GameManager {
         currentRound = new Round(this);
         //Rounds going forward
         for (int i = 0; i < playerList.size(); i++) {
-            currentRound.startForPlayer(playerList.get(i));
-            do {
 
-            } while (!currentRound.hasPlayerEndedTurn().get());
+            System.out.println("Turn forward " + i + " player " + playerList.get(i));
+
+            currentRound.startForPlayer(playerList.get(i));
+
+            //wait until turn has ended
+            waitEndTurn();
         }
 
         for (int i = playerList.size() - 1; i >= 0; i--) {
-            currentRound.startForPlayer(playerList.get(i));
-            do {
 
-            } while (!currentRound.hasPlayerEndedTurn().get());
+            System.out.println("Turn backward " + i + " player " + playerList.get(i));
+
+            currentRound.startForPlayer(playerList.get(i));
+
+            //wait until turn has ended
+            waitEndTurn();
         }
+
         Player tmp = playerList.get(0);
         playerList.remove(0);
         playerList.add(tmp);
         endRound.set(true);
+
+        //wake up the match thread
+        synchronized (endRound) {
+            endRound.notify();
+        }
+    }
+
+    private void waitEndTurn() {
+        synchronized (currentRound.hasPlayerEndedTurn()) {
+            while (!currentRound.hasPlayerEndedTurn().get()) {
+                try {
+                    currentRound.hasPlayerEndedTurn().wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
@@ -344,7 +388,6 @@ public class GameManager {
      * @param player
      */
     public List<Boolean[][]> sendAvailablePositions(Player player) {
-        System.out.println("Game Manager" + board.getDraftedDice().size());
         return player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
     }
 

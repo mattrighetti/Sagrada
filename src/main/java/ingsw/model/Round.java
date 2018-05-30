@@ -34,26 +34,54 @@ public class Round implements Runnable {
                 e.printStackTrace();
             }
             waitForMove();
+            System.out.println("First move done");
             waitForMove();
+            System.out.println("Second move done");
             playerEndedTurn.set(true);
+
+            //wake up the round thread
+            synchronized (playerEndedTurn){
+                playerEndedTurn.notify();
+            }
+
         });
+        playerMoves.setName("Turn");
         playerMoves.start();
     }
 
     public void hasMadeAMove() {
         hasMadeAMove.set(true);
+
+        //wake up the Thread of round class
+        synchronized (hasMadeAMove) {
+            hasMadeAMove.notify();
+        }
     }
 
     private void waitForMove() {
-        while (!hasMadeAMove.get()) {
+        System.out.println("Wait for the move");
+        synchronized (hasMadeAMove) {
+            while (!hasMadeAMove.get()) {
+                //wait until the move is done
+                try {
+                    hasMadeAMove.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
+            }
+            hasMadeAMove.set(false);
         }
-        hasMadeAMove.set(false);
     }
 
     public void setPlayerEndedTurn(boolean hasPlayerEndedTurn) {
+        System.out.println("End the turn");
         playerEndedTurn.set(hasPlayerEndedTurn);
-        playerMoves.interrupt();
+
+        //Wake up the round thread
+        synchronized (playerEndedTurn) {
+            playerEndedTurn.notify();
+        }
     }
 
     public AtomicBoolean hasPlayerEndedTurn() {
@@ -74,11 +102,15 @@ public class Round implements Runnable {
      * @param columnIndex index of the column where to place dice in pattern card
      */
     public void makeMove(Dice dice, int rowIndex, int columnIndex) {
-        if (gameManager.makeMove(player, dice, rowIndex, columnIndex)) hasMadeAMove.set(true);
+        if (gameManager.makeMove(player, dice, rowIndex, columnIndex)) {
+            System.out.println("Move made");
+            hasMadeAMove();
+
+        }
     }
 
     public void skipMove() {
-       hasMadeAMove.set(true);
+       hasMadeAMove();
     }
 
     public Player getCurrentPlayer() {
