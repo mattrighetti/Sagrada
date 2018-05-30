@@ -10,6 +10,7 @@ import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
 import ingsw.model.Dice;
 import ingsw.model.Player;
+import ingsw.model.cards.patterncard.Box;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.DoubleString;
@@ -17,6 +18,7 @@ import ingsw.utilities.DoubleString;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CLI implements SceneUpdater {
     private String username;
@@ -26,7 +28,8 @@ public class CLI implements SceneUpdater {
     private SceneUpdater currentScene;
     private Scanner scanner;
     private List<DoubleString> availableMatches = new ArrayList<>();
-    boolean moveNext;
+    AtomicBoolean moveNext = new AtomicBoolean(false);
+    AtomicBoolean gamePhase = new AtomicBoolean(false);
 
 
     private List<Player> players;
@@ -57,7 +60,8 @@ public class CLI implements SceneUpdater {
     }
 
     private void flushScanner() {
-        scanner.nextLine();
+        //scanner.next();
+        System.out.flush();
     }
 
     private String userStringInput() {
@@ -65,110 +69,135 @@ public class CLI implements SceneUpdater {
     }
 
     private int userIntegerInput() {
-        return scanner.nextInt();
+        return Integer.parseInt(scanner.nextLine());
     }
 
     public void notMoveNext() {
-        moveNext = false;
+        moveNext.set(false);
     }
 
     public void moveNext() {
-        moveNext = true;
+        moveNext.set(true);
     }
 
     private void askForTypeOfConnection() {
         int selectedConnection;
-        moveNext = false;
+        notMoveNext();
 
-        System.out.println("You're now connected!\nChoose a type of connection: ");
+        System.out.print("You're now connected!\nChoose a type of connection: \n");
 
         do {
-            System.out.println("1 - RMI\n2 - Socket");
+            System.out.print("1 - RMI\n2 - Socket\n");
             selectedConnection = userIntegerInput();
 
             if (selectedConnection == 1) {
                 moveNext();
                 setNetworkType(rmiController);
-                System.out.println("Alright! You selected RMI");
-                chooseUsernameAndLogin();
+                System.out.print("Alright! You selected RMI\n");
             } else if (selectedConnection == 2) {
                 moveNext();
                 setNetworkType(clientController);
-                System.out.println("Alright! You selected Socket");
-                chooseUsernameAndLogin();
+                System.out.print("Alright! You selected Socket\n");
             } else {
-                System.out.println("Incorrect input, try again");
+                System.out.print("Incorrect input, try again\n");
             }
 
-        } while (!moveNext);
+        } while (!moveNext.get());
+
+        chooseUsernameAndLogin();
     }
 
     private void chooseUsernameAndLogin() {
         String username;
-        moveNext = false;
+        notMoveNext();
 
-        System.out.println("We need to log you in now");
+        System.out.print("We need to log you in now\n");
         flushScanner();
-
-        do {
-            System.out.println("Username: ");
-            username = userStringInput();
-
+        System.out.print("Username:\n");
+        username = scanner.nextLine();
+        if (username != null) {
+            System.out.print("Ok! Your username is: " + username + "\n");
             currentConnectionType.loginUser(username);
-            System.out.println("Ok! Your username is: " + username);
-            moveNext();
-        } while (!moveNext);
 
+        }
+    }
+
+    @Override
+    public void launchSecondGui(String username) {
+        this.username = username;
+        showLobbyCommandsAndWait();
     }
 
     private void showLobbyCommandsAndWait() {
-        int selectedCommand;
-        moveNext = false;
+        new Thread(() -> {
+            int selectedCommand;
+            notMoveNext();
+            do {
+                System.out.println("You're finally logged to SagradaGame");
+                flushScanner();
 
-        System.out.println("You're finally logged to SagradaGame");
-        flushScanner();
 
-        do {
-            System.out.println("Choose a command:\n" +
-                    "1 - Create a match\n" +
-                    "2 - Join an existing match\n" +
-                    "3 - Show my statistics" +
-                    "\n4 - Show Ranking");
+                System.out.println("Choose a command:\n" +
+                        "1 - Create a match\n" +
+                        "2 - Join an existing match\n" +
+                        "3 - Show my statistics" +
+                        "\n4 - Show Ranking");
 
-            selectedCommand = userIntegerInput();
+                selectedCommand = userIntegerInput();
 
-            switch (selectedCommand) {
-                case 1:
-                    createMatch();
-                    notMoveNext();
-                    break;
-                case 2:
-                    joinMatch();
-                    break;
-                case 3:
-                    showStatistics();
-                    notMoveNext();
-                    break;
-                case 4:
-                    showRanking();
-                    notMoveNext();
-                    break;
-                default:
-                    System.err.println("Wrong input");
-                    break;
-            }
-        } while (!moveNext);
+                switch (selectedCommand) {
+                    case 1:
+                        createMatch();
+                        synchronized (gamePhase) {
+                            try {
+                                gamePhase.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                    case 2:
+                        joinMatch();
+                        moveNext();
+                        break;
+                    case 3:
+                        showStatistics();
+                        synchronized (gamePhase) {
+                            try {
+                                gamePhase.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                    case 4:
+                        showRanking();
+                        synchronized (gamePhase) {
+                            try {
+                                gamePhase.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                    default:
+                        System.err.println("Wrong input");
+                        break;
+                }
+
+            } while (!moveNext.get());
+
+        }).start();
 
     }
 
     public void createMatch() {
         String matchName;
-        moveNext = false;
-
-        System.out.println("Insert Match Name: ");
-        flushScanner();
+        notMoveNext();
 
         do {
+            System.out.println("Insert Match Name: ");
+            flushScanner();
             matchName = userStringInput();
 
             boolean tmpBoolean = false;
@@ -184,16 +213,17 @@ public class CLI implements SceneUpdater {
                 System.err.println("Match name has already been taken, choose another one");
             }
 
-        } while (!moveNext);
+        } while (!moveNext.get());
+        notMoveNext();
     }
 
     private void joinMatch() {
         int selectedMatch;
-        moveNext = false;
-        flushScanner();
+        notMoveNext();
+        //flushScanner();
 
         if (!availableMatches.isEmpty()) {
-            while (!moveNext) {
+            while (!moveNext.get()) {
                 System.out.println("Available matches:\n");
                 for (int i = 0; i < availableMatches.size(); i++) {
                     System.out.println(i + 1 + " - "
@@ -208,8 +238,6 @@ public class CLI implements SceneUpdater {
                     moveNext();
                 } else System.out.println("Not valid Match selected, choose another match");
             }
-
-            System.out.println("Waiting...");
         } else {
             System.out.println("There are no matches. Please create a new one");
         }
@@ -218,11 +246,17 @@ public class CLI implements SceneUpdater {
     private void showStatistics() {
         flushScanner();
         // TODO da implementare
+        synchronized (gamePhase) {
+            gamePhase.notify();
+        }
     }
 
     private void showRanking() {
         flushScanner();
         // TODO da implementare
+        synchronized (gamePhase) {
+            gamePhase.notify();
+        }
     }
 
     /**
@@ -246,18 +280,14 @@ public class CLI implements SceneUpdater {
         rmiController.connect();
     }
 
-    @Override
-    public void launchSecondGui(String username) {
-        showLobbyCommandsAndWait();
-    }
 
     @Override
     public void launchThirdGui(PatternCardNotification patternCardNotification) {
         int chosenPatternCard;
-        moveNext = false;
-        flushScanner();
+        notMoveNext();
+        //flushScanner();
 
-        while (!moveNext) {
+        while (!moveNext.get()) {
             System.out.println("Now select your Pattern Card:");
 
 
@@ -274,6 +304,7 @@ public class CLI implements SceneUpdater {
 
         }
     }
+
 
     @Override
     public void launchFourthGui(BoardDataResponse boardDataResponse) {
@@ -293,12 +324,12 @@ public class CLI implements SceneUpdater {
     @Override
     public void popUpDraftNotification() {
         String ack;
-        moveNext = false;
+        notMoveNext();
         flushScanner();
 
-        while (!moveNext) {
-            System.out.println("It's time to draft the dice: press a key to draft");
-            ack =  userStringInput();
+        while (!moveNext.get()) {
+            System.out.println("It's time to draft the dice: press Enter to draft");
+            ack = userStringInput();
             currentConnectionType.draftDice();
             moveNext();
         }
@@ -312,6 +343,7 @@ public class CLI implements SceneUpdater {
 
     private void chooseMove() {
         int selectedMove;
+        displayPatternCard();
         System.out.println("\nChoose what move you want to do:\n" +
 
                 "1 - Place dice\n" +
@@ -320,20 +352,45 @@ public class CLI implements SceneUpdater {
 
         selectedMove = userIntegerInput();
 
-        switch (selectedMove){
-            case 1 :
+        switch (selectedMove) {
+            case 1:
                 placeDice();
                 break;
-            case 2 :
+            case 2:
                 toolCardMove();
                 break;
-            case 3 :
+            case 3:
                 endTurnMove();
                 break;
-            default :
+            default:
                 System.err.println("Wrong input");
         }
     }
+
+    private void displayPatternCard() {
+
+        for (Player player : players) {
+            if (player.getPlayerUsername().equals(username)) {
+                System.out.print("\t\tYou\t\tC");
+            } else {
+                System.out.print("\t" + player.getPlayerUsername());
+            }
+        }
+
+        System.out.print("\n\n");
+
+        for (int i = 0; i < 4; i++) {
+            for (Player player : players) {
+                for (int j = 0; j < 5; j++) {
+                    System.out.print(player.getPatternCard().getGrid().get(i).get(j).toString() + "\t");
+                }
+                System.out.print("\t\t");
+            }
+            System.out.print("\n");
+        }
+
+    }
+
 
     private void placeDice() {
         int selectedDice;
@@ -343,19 +400,19 @@ public class CLI implements SceneUpdater {
                 System.out.println(i + " - " + draftedDice.get(i).toString() + "\n");
             }
             selectedDice = userIntegerInput();
-            if (0 < selectedDice && selectedDice < draftedDice.size()){
+            if (0 < selectedDice && selectedDice < draftedDice.size()) {
                 System.out.println("Select the position in the pattern card: \n");
                 //TODO show patern card
             } else System.out.println("Wrong input\n");
 
-        } while ( 0 > selectedDice && selectedDice > draftedDice.size() );
+        } while (0 > selectedDice && selectedDice > draftedDice.size());
     }
 
-    private void endTurnMove(){
+    private void endTurnMove() {
         currentConnectionType.endTurn();
     }
 
-    private void toolCardMove(){
+    private void toolCardMove() {
         //TODO
     }
 
@@ -380,6 +437,9 @@ public class CLI implements SceneUpdater {
     public void updateExistingMatches(List<DoubleString> matches) {
         availableMatches.clear();
         availableMatches = matches;
+        synchronized (gamePhase) {
+            gamePhase.notify();
+        }
     }
 
 }
