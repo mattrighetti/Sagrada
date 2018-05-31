@@ -5,6 +5,7 @@ import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.controller.network.commands.StartTurnNotification;
+import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
@@ -33,6 +34,7 @@ public class CLI implements SceneUpdater {
 
 
     private List<Player> players;
+    int you;
     private Set<PublicObjectiveCard> publicObjectiveCards;
     private Set<ToolCard> toolCards;
     private List<Dice> draftedDice;
@@ -83,6 +85,15 @@ public class CLI implements SceneUpdater {
     private void askForTypeOfConnection() {
         int selectedConnection;
         notMoveNext();
+        System.out.println("\n" +
+                "                                _       \n" +
+                "                               | |      \n" +
+                "  ___  __ _  __ _ _ __ __ _  __| | __ _ \n" +
+                " / __|/ _` |/ _` | '__/ _` |/ _` |/ _` |\n" +
+                " \\__ \\ (_| | (_| | | | (_| | (_| | (_| |\n" +
+                " |___/\\__,_|\\__, |_|  \\__,_|\\__,_|\\__,_|\n" +
+                "             __/ |                      \n" +
+                "            |___/                       \n");
 
         System.out.print("You're now connected!\nChoose a type of connection: \n");
 
@@ -343,7 +354,7 @@ public class CLI implements SceneUpdater {
 
     private void chooseMove() {
         int selectedMove;
-        displayPatternCard();
+        displayPatternCards();
         System.out.println("\nChoose what move you want to do:\n" +
 
                 "1 - Place dice\n" +
@@ -367,13 +378,14 @@ public class CLI implements SceneUpdater {
         }
     }
 
-    private void displayPatternCard() {
+    private void displayPatternCards() {
 
-        for (Player player : players) {
-            if (player.getPlayerUsername().equals(username)) {
-                System.out.print("\t\tYou\t\tC");
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getPlayerUsername().equals(username)) {
+                you = i;
+                System.out.print("\t\tYou\t\t");
             } else {
-                System.out.print("\t" + player.getPlayerUsername());
+                System.out.print("\t\t" + players.get(i).getPlayerUsername() + "\t\t");
             }
         }
 
@@ -391,21 +403,52 @@ public class CLI implements SceneUpdater {
 
     }
 
+    private void displayPatternCardPlayer(Player player) {
+        System.out.println("\tplayer: " + player.getPlayerUsername());
+        for (int i = 0; i < player.getPatternCard().getGrid().size(); i++) {
+            for (Box box : player.getPatternCard().getGrid().get(i)) {
+                System.out.print(box.toString() + "\t");
+            }
+            System.out.print("\n\n");
+        }
+    }
 
     private void placeDice() {
         int selectedDice;
+        boolean moveDone= false;
         do {
+            selectedDice = 0;
             System.out.println("Select a dice");
             for (int i = 0; i < draftedDice.size(); i++) {
-                System.out.println(i + " - " + draftedDice.get(i).toString() + "\n");
+                System.out.print((i + 1) + " - " + draftedDice.get(i).toString() + "\n");
             }
             selectedDice = userIntegerInput();
             if (0 < selectedDice && selectedDice < draftedDice.size()) {
-                System.out.println("Select the position in the pattern card: \n");
-                //TODO show patern card
-            } else System.out.println("Wrong input\n");
+                System.out.println("Select a position in the pattern card: \n");
+                displayPatternCardPlayer(players.get(you));
+                System.out.println("These are the positions where you can place the dice selected:");
+                int selectedColumn;
+                int selectedRow;
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (availaiblePosition.get(selectedDice)[i][j].equals(true))
+                            System.out.println("[" + i + "," + j + "]");
+                    }
+                }
 
-        } while (0 > selectedDice && selectedDice > draftedDice.size());
+                    System.out.println("Insert row index:");
+                    selectedRow = userIntegerInput();
+                    System.out.println("Insert column index:");
+                    selectedColumn = userIntegerInput();
+
+                    if (availaiblePosition.get(selectedDice)[selectedRow][selectedColumn].equals(true)) {
+                        currentConnectionType.placeDice(draftedDice.get(selectedDice), selectedColumn, selectedRow);
+                        moveDone = true;
+                    } else System.out.println("Wrong position input");
+
+            } else System.out.println("Wrong dice input\n");
+
+        } while (!moveDone);
     }
 
     private void endTurnMove() {
@@ -422,6 +465,17 @@ public class CLI implements SceneUpdater {
         currentConnectionType.sendAck();
     }
 
+
+    @Override
+    public void updateView(UpdateViewResponse updateViewResponse) {
+        for (Player player : players) {
+            if (player.equals(updateViewResponse.player)){
+                //TODO update pattern card
+                System.out.println(player.getPlayerUsername() + " has placed a dice:\n");
+                displayPatternCardPlayer(player);
+            }
+        }
+    }
 
     @Override
     public void updateConnectedUsers(int usersConnected) {

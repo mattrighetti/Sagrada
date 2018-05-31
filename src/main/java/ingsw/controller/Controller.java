@@ -46,7 +46,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      */
     public void loginUser(User user) {
         playerList.add(new Player(user));
-        if (playerList.size() == 3) {
+        if (playerList.size() == 1) {
             controllerTimer.startLoginTimer(2);
         }
 
