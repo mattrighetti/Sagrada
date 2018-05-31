@@ -361,7 +361,6 @@ public class GameController implements SceneUpdater, Initializable {
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
         windowControllers.get(0).setAvailablePosition(startTurnNotification.booleanListGrid);
         Platform.runLater(() -> {
-            draftDiceButton.setDisable(false);
             createPopUpWindow("Notification",
                     "It's your turn",
                     "Make a move").showAndWait();
