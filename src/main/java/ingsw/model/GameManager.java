@@ -141,14 +141,14 @@ public class GameManager {
         Collections.shuffle(privateObjectiveCards);
     }
 
-    private Set<ToolCard> chooseToolCards() {
+    private List<ToolCard> chooseToolCards() {
         Collections.shuffle(toolCards);
-        return new HashSet<>(toolCards.subList(0, 3));
+        return new ArrayList<>(toolCards.subList(0, 3));
     }
 
-    private Set<PublicObjectiveCard> choosePublicObjectiveCards() {
+    private List<PublicObjectiveCard> choosePublicObjectiveCards() {
         Collections.shuffle(publicObjectiveCards);
-        return new HashSet<>(publicObjectiveCards.subList(0, 3));
+        return new ArrayList<>(publicObjectiveCards.subList(0, 3));
     }
 
     public void pickPatternCards() {
@@ -176,6 +176,9 @@ public class GameManager {
             if (player.getPlayerUsername().equals(username)) {
                 player.setPatternCard(patternCard);
                 receiveAck();
+                synchronized (noOfAck) {
+                    noOfAck.notify();
+                }
             }
         }
 
@@ -187,9 +190,7 @@ public class GameManager {
      */
     public void waitForEveryPatternCard() {
         new Thread(() -> {
-            while (noOfAck.get() < playerList.size()) {
-
-            }
+            waitAck();
             resetAck();
             BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
             Broadcaster.broadcastResponseToAll(playerList, boardDataResponse);
@@ -213,15 +214,25 @@ public class GameManager {
     private void waitForDiceAck() {
         diceAckThread = new Thread(() -> {
             System.out.println("Waiting Dice Ack");
-            while (noOfAck.get() < playerList.size()) {
-
-            }
+            waitAck();
             resetAck();
             startRound();
         });
 
         diceAckThread.setName("diceAck and round");
         diceAckThread.start();
+    }
+
+    private void waitAck() {
+        synchronized (noOfAck) {
+            while (noOfAck.get() < playerList.size()) {
+                try {
+                    noOfAck.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
@@ -285,6 +296,9 @@ public class GameManager {
      */
     public synchronized void receiveAck() {
         noOfAck.getAndIncrement();
+        synchronized (noOfAck) {
+            noOfAck.notify();
+        }
     }
 
     /**

@@ -16,8 +16,8 @@ class BoardTest {
 
     @BeforeEach
     void setUp(){
-        HashSet publicObjectiveCards = new HashSet();
-        HashSet toolCards = new HashSet();
+        ArrayList publicObjectiveCards = new ArrayList();
+        ArrayList toolCards = new ArrayList();
         playerlist = new ArrayList<>();
         for (int i = 0; i < 4; i++){
             User user = new User("player" + i);

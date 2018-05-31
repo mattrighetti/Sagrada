@@ -31,8 +31,8 @@ public class CLI implements SceneUpdater {
 
 
     private List<Player> players;
-    private Set<PublicObjectiveCard> publicObjectiveCards;
-    private Set<ToolCard> toolCards;
+    private List<PublicObjectiveCard> publicObjectiveCards;
+    private List<ToolCard> toolCards;
     private List<Dice> draftedDice;
     private List<Boolean[][]> availaiblePosition;
 
