@@ -294,4 +294,9 @@ public class ClientController implements ResponseHandler, NetworkType {
     public void handle(DraftedDiceResponse draftedDiceResponse) {
         sceneUpdater.setDraftedDice(draftedDiceResponse.dice);
     }
+
+    @Override
+    public void handle(UseToolCardResponse useToolCardResponse) {
+        // TODO
+    }
 }

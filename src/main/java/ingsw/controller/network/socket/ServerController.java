@@ -116,6 +116,17 @@ public class ServerController implements RequestHandler, Serializable {
     }
 
     @Override
+    public Response handle(UseToolCardRequest useToolCardRequest) {
+        try {
+            controller.useToolCard();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
     public Response handle(EndTurnRequest endTurnRequest) {
         try {
             controller.endTurn();

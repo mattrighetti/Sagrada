@@ -18,4 +18,6 @@ public interface RemoteController extends Remote {
     void endTurn() throws RemoteException;
 
     void placeDice(Dice dice, int rowIndex, int columnIndex) throws RemoteException;
+
+    void useToolCard() throws RemoteException;
 }

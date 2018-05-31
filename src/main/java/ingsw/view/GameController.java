@@ -1,21 +1,16 @@
 package ingsw.view;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.commands.StartTurnNotification;
 import ingsw.model.Dice;
 import ingsw.model.Player;
-import ingsw.model.cards.patterncard.Box;
-import ingsw.model.cards.patterncard.LuxAstram;
-import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
-import ingsw.utilities.GridCreator;
 import ingsw.view.nodes.DiceButton;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -79,12 +74,17 @@ public class GameController implements SceneUpdater, Initializable {
     @FXML
     private Button endTurnButton;
 
+    /* View Elements */
     private List<ImageView> toolCardsImageViews;
     private List<ImageView> publicCardsImageViews;
 
+    /* Network Elements */
     private NetworkType networkType;
+
+    /* Application Interface */
     private GUIUpdater application;
 
+    /* Panes */
     private List<WindowController> windowControllers = new ArrayList<>();
     private List<Player> players;
     private List<Button> diceButton;
@@ -92,12 +92,12 @@ public class GameController implements SceneUpdater, Initializable {
     private List<PublicObjectiveCard> publicObjectiveCardList;
     private Set<ToolCard> toolCards = new HashSet<>();
     private List<ToolCard> toolCardList;
-    private List<Dice> dice;
+    private List<Dice> diceList;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         diceButton = new ArrayList<>();
-        dice = new ArrayList<>();
+        diceList = new ArrayList<>();
         publicObjectiveCardList = new ArrayList<>();
         toolCardList = new ArrayList<>();
         publicCardsImageViews = new ArrayList<>();
@@ -153,16 +153,18 @@ public class GameController implements SceneUpdater, Initializable {
 
     /* UPDATE VIEWS METHODS */
 
-    private void loadImageViews() {
+    private void displayPublicObjectiveCards() {
+        int counter = 0;
+        for (ImageView imageView : publicCardsImageViews) {
+            imageView.setImage(new Image("/img/publicoc/" + publicObjectiveCardList.get(counter).getName() + ".png"));
+            counter++;
+        }
+    }
+
+    private void displayToolCards() {
         int counter = 0;
         for (ImageView imageView : toolCardsImageViews) {
             imageView.setImage(new Image("/img/toolcards/" + toolCardList.get(counter).getName() + ".png"));
-            counter++;
-        }
-
-        counter = 0;
-        for (ImageView imageView : publicCardsImageViews) {
-            imageView.setImage(new Image("/img/publicoc/" + publicObjectiveCardList.get(counter).getName() + ".png"));
             counter++;
         }
     }
@@ -170,16 +172,17 @@ public class GameController implements SceneUpdater, Initializable {
     private void setDiceBox() {
 
         if (diceHorizontalBox.getChildren().size() > 0) {
-            diceHorizontalBox.getChildren().removeAll(diceHorizontalBox.getChildren());
+            ObservableList<Node> nodes = diceHorizontalBox.getChildren();
+            diceHorizontalBox.getChildren().removeAll(nodes);
         }
 
-        for (int i = 0; i < dice.size(); i++) {
-            DiceButton diceButtonToAdd = new DiceButton(dice.get(i), i);
+        for (int i = 0; i < diceList.size(); i++) {
+            DiceButton diceButtonToAdd = new DiceButton(diceList.get(i), i);
             diceButtonToAdd.setOnMouseClicked(event -> {
                 windowControllers.get(0).setSelectedDice(diceButtonToAdd.getDice());
                 windowControllers.get(0).updateAvailablePositions(diceButtonToAdd.getButtonIndex());
             });
-            diceButtonToAdd.getStyleClass().add(dice.get(i).toString());
+            diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
             diceButtonToAdd.setMinSize(70, 70);
             diceHorizontalBox.getChildren().add(diceButtonToAdd);
@@ -207,11 +210,13 @@ public class GameController implements SceneUpdater, Initializable {
         Tab windowTab = new Tab();
         windowGrid.setMinSize(633, 666);
         windowTab.setContent(windowGrid);
+
         if (application.getUsername().equals(player.getPlayerUsername())) {
             windowTab.setText("You");
         } else {
             windowTab.setText(player.getPlayerUsername());
         }
+
         tabPane.setPadding(new Insets(0, 0, 0, 0));
         tabPane.getTabs().add(windowTab);
         windowController.setNetworkType(networkType);
@@ -259,11 +264,14 @@ public class GameController implements SceneUpdater, Initializable {
 
         publicObjectiveCardList.addAll(publicObjectiveCards);
 
-        loadImageViews();
+        displayPublicObjectiveCards();
+        displayToolCards();
         setWindowsTab();
     }
 
-
+    /**
+     * Method that activates every Dice in the view
+     */
     private void activateDice() {
         Platform.runLater(
                 () -> {
@@ -274,6 +282,9 @@ public class GameController implements SceneUpdater, Initializable {
         );
     }
 
+    /**
+     * Method that disables every Dice in the view
+     */
     private void disableDice() {
         Platform.runLater(
                 () -> {
@@ -284,10 +295,16 @@ public class GameController implements SceneUpdater, Initializable {
         );
     }
 
+    /**
+     * Method that disables every ToolCard
+     */
     private void activateToolCard() {
         Platform.runLater(
                 () -> {
                     for (ImageView toolCard : toolCardsImageViews) {
+                        toolCard.setOnMouseClicked(event -> {
+                            // TODO
+                        });
                         toolCard.setDisable(false);
                     }
                 }
@@ -304,6 +321,10 @@ public class GameController implements SceneUpdater, Initializable {
         );
     }
 
+    /**
+     * Method that updates the pattern card of the user who's playing on every view
+     * @param updateViewResponse
+     */
     @Override
     public void updateView(UpdateViewResponse updateViewResponse) {
         for (WindowController windowController : windowControllers) {
@@ -315,7 +336,7 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     /**
-     * Method that launches a popup window that notifies the user that it's his turn and he needs to draft the dice
+     * Method that launches a popup window that notifies the user that it's his turn and he needs to draft the diceList
      */
     @Override
     public void popUpDraftNotification() {
@@ -323,13 +344,13 @@ public class GameController implements SceneUpdater, Initializable {
             draftDiceButton.setDisable(false);
             createPopUpWindow("Notification",
                     "It's your turn",
-                    "Click on Draft Dice to draft the dice").showAndWait();
+                    "Click on Draft Dice to draft the diceList").showAndWait();
         });
     }
 
     @Override
     public void setDraftedDice(List<Dice> diceList) {
-        this.dice = diceList;
+        this.diceList = diceList;
 
         Platform.runLater(this::setDiceBox);
         draftDiceButton.setDisable(true);

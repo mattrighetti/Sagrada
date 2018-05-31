@@ -24,4 +24,5 @@ public interface ResponseHandler {
 
     void handle(DraftedDiceResponse draftedDiceResponse);
 
+    void handle(UseToolCardResponse useToolCardResponse);
 }

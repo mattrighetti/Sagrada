@@ -137,6 +137,17 @@ public class RMIHandler implements RequestHandler {
     }
 
     @Override
+    public Response handle(UseToolCardRequest useToolCardRequest) {
+        try {
+            remoteController.useToolCard();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
     public Response handle(EndTurnRequest endTurnRequest) {
         try {
             remoteController.endTurn();
