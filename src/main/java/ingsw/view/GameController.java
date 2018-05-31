@@ -136,13 +136,7 @@ public class GameController implements SceneUpdater, Initializable {
      */
     @FXML
     void onShowPrivateCardPressed(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Private Objective Card");
-        ImageView imageView = new ImageView("/img/privateoc/" + players.get(0).getPrivateObjectiveCard().getName() + ".png");
-        imageView.setFitHeight(193);
-        imageView.setFitWidth(137.5);
-        alert.setGraphic(imageView);
-        alert.showAndWait();
+
     }
 
     /* SETUP METHODS */
