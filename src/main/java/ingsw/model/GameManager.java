@@ -414,6 +414,5 @@ public class GameManager {
         } else {
             return false;
         }
-        //TODO Implement negative Response
     }
 }

@@ -329,7 +329,7 @@ public class GameController implements SceneUpdater, Initializable {
     public void updateView(UpdateViewResponse updateViewResponse) {
         for (WindowController windowController : windowControllers) {
             if (windowController.getUsername().equals(updateViewResponse.player.getPlayerUsername())) {
-                windowController.updatePatternCard(updateViewResponse.deserializePatternCard());
+                windowController.updatePatternCard(updateViewResponse.player.getPatternCard());
             }
         }
         disableDice();

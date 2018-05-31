@@ -76,7 +76,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     private void respond(Response response) {
         try {
             objectOutputStream.reset();
-  //          objectOutputStream.writeUnshared(response);
+            objectOutputStream.writeObject(response);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
@@ -149,11 +149,6 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     @Override
     public void sendResponse(Response response) {
        respond(response);
-    }
-
-    @Override
-    public void sendResponse(DraftedDiceResponse draftedDiceResponse) throws RemoteException {
-        respond(draftedDiceResponse);
     }
 
     /**
