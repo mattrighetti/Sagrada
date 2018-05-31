@@ -223,6 +223,9 @@ public class GameManager {
         diceAckThread.start();
     }
 
+    /**
+     * Method that is used to keep track of how many users chose their pattern card
+     */
     private void waitAck() {
         synchronized (noOfAck) {
             while (noOfAck.get() < playerList.size()) {
@@ -238,10 +241,9 @@ public class GameManager {
     /**
      * Method called when an user selected a patternCard from the view
      *
-     * @param player
-     * @param toolCard
+     * @param toolCardName name of the ToolCard to use
      */
-    public void useToolCard(Player player, ToolCard toolCard) {
+    public void useToolCard(String toolCardName) {
         //Check if the window is broken (FLAG)
     }
 

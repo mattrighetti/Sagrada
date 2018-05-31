@@ -139,7 +139,7 @@ public class RMIHandler implements RequestHandler {
     @Override
     public Response handle(UseToolCardRequest useToolCardRequest) {
         try {
-            remoteController.useToolCard();
+            remoteController.useToolCard(useToolCardRequest.toolCardName);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

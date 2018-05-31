@@ -82,8 +82,9 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     public synchronized void assignPatternCard(String username, PatternCard patternCard) throws RemoteException {
         gameManager.setPatternCardForPlayer(username, patternCard);
         for (Player player : playerList) {
-            if(player.getPlayerUsername().equals(username))
-                if (player.getPatternCard() != null && !player.getPatternCard().equals(patternCard))
+            if(player.getPlayerUsername().equals(username) &&
+                    player.getPatternCard() != null &&
+                    !player.getPatternCard().equals(patternCard))
                     throw new RemoteException("Pattern card not assigned correctly");
         }
     }
@@ -108,12 +109,8 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
         gameManager.placeDiceForPlayer(dice, rowIndex, columnIndex);
     }
 
-    public void toolCardMove(Player player, ToolCard toolCard) {
-        gameManager.useToolCard(player, toolCard);
-    }
-
     @Override
-    public void useToolCard() throws RemoteException {
-
+    public void useToolCard(String toolCardName) throws RemoteException {
+        gameManager.useToolCard(toolCardName);
     }
 }

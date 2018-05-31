@@ -19,6 +19,8 @@ public interface NetworkType {
 
     void placeDice(Dice dice, int columnIndex, int rowIndex);
 
+    void useToolCard(String string);
+
     void choosePatternCard(PatternCard patternCard);
 
     void endTurn();

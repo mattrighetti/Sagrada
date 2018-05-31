@@ -127,6 +127,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new PlaceDiceRequest(dice, columnIndex, rowIndex));
     }
 
+    @Override
+    public void useToolCard(String toolCardName) {
+        client.request(new UseToolCardRequest(toolCardName));
+    }
+
     /**
      * Method that tells the server that the user doesn't want to make a move
      * and passes the turn to the next player in line

@@ -85,6 +85,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void useToolCard(String toolCardName) {
+        new UseToolCardRequest(toolCardName).handle(rmiHandler);
+    }
+
+    @Override
     public void endTurn() {
         new EndTurnRequest().handle(rmiHandler);
     }

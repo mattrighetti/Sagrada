@@ -212,7 +212,12 @@ public class GameController implements SceneUpdater, Initializable {
     private void displayToolCards(List<ToolCard> toolCards) {
         int counter = 0;
         for (ImageView imageView : toolCardsImageViewsList) {
+            imageView.setId(toolCards.get(counter).getName());
             imageView.setImage(new Image("/img/toolcards/" + toolCards.get(counter).getName() + ".png"));
+            imageView.setOnMouseClicked(event -> {
+                //networkType.useToolCard(imageView.getId());
+                System.out.println(imageView.getId());
+            });
             counter++;
         }
     }

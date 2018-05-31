@@ -1,12 +1,10 @@
 package ingsw.controller.network.commands;
 
-import ingsw.model.cards.toolcards.ToolCard;
-
 public class UseToolCardRequest implements Request {
-    public ToolCard toolCard;
+    public String toolCardName;
 
-    public UseToolCardRequest(ToolCard toolCard) {
-        this.toolCard = toolCard;
+    public UseToolCardRequest(String toolCardName) {
+        this.toolCardName = toolCardName;
     }
 
     @Override
