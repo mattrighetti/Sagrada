@@ -5,6 +5,7 @@ import ingsw.controller.network.commands.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
@@ -74,7 +75,8 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      */
     private void respond(Response response) {
         try {
-            objectOutputStream.writeObject(response);
+            objectOutputStream.reset();
+  //          objectOutputStream.writeUnshared(response);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
@@ -146,7 +148,12 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      */
     @Override
     public void sendResponse(Response response) {
-        respond(response);
+       respond(response);
+    }
+
+    @Override
+    public void sendResponse(DraftedDiceResponse draftedDiceResponse) throws RemoteException {
+        respond(draftedDiceResponse);
     }
 
     /**
