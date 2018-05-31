@@ -22,6 +22,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CLI implements SceneUpdater {
+    AtomicBoolean moveNext = new AtomicBoolean(false);
+    AtomicBoolean gamePhase = new AtomicBoolean(false);
+    int you;
     private String username;
     private RMIController rmiController;
     private ClientController clientController;
@@ -29,12 +32,7 @@ public class CLI implements SceneUpdater {
     private SceneUpdater currentScene;
     private Scanner scanner;
     private List<DoubleString> availableMatches = new ArrayList<>();
-    AtomicBoolean moveNext = new AtomicBoolean(false);
-    AtomicBoolean gamePhase = new AtomicBoolean(false);
-
-
     private List<Player> players;
-    int you;
     private Set<PublicObjectiveCard> publicObjectiveCards;
     private Set<ToolCard> toolCards;
     private List<Dice> draftedDice;
@@ -71,7 +69,14 @@ public class CLI implements SceneUpdater {
     }
 
     private int userIntegerInput() {
-        return Integer.parseInt(scanner.nextLine());
+        int input;
+        try {
+            input = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.err.println("Type again");
+            return 10;
+        }
+        return input;
     }
 
     public void notMoveNext() {
@@ -353,30 +358,67 @@ public class CLI implements SceneUpdater {
     }
 
     private void chooseMove() {
-        int selectedMove;
-        displayPatternCards();
-        System.out.println("\nChoose what move you want to do:\n" +
+        new Thread(() -> {
+            boolean placeDiceMove = false;
+            boolean toolCardMove = false;
 
-                "1 - Place dice\n" +
-                "2 - Use tool card\n" +
-                "3 - End turn\n");
+            notMoveNext();
+            do {
+                int selectedMove;
+                displayPatternCards();
+                System.out.println("It's your turn!\nChoose what move you want to do:\n" );
 
-        selectedMove = userIntegerInput();
+                if(!placeDiceMove)
+                    System.out.println("1 - Place dice");
 
-        switch (selectedMove) {
-            case 1:
-                placeDice();
-                break;
-            case 2:
-                toolCardMove();
-                break;
-            case 3:
-                endTurnMove();
-                break;
-            default:
-                System.err.println("Wrong input");
-        }
+                if(!toolCardMove)
+                    System.out.println("2 - Use tool card");
+
+                System.out.println("3 - End turn");
+
+
+                selectedMove = userIntegerInput();
+
+                switch (selectedMove) {
+                    case 1:
+                        if(!placeDiceMove) {
+                            placeDice();
+                            placeDiceMove = true;
+                            synchronized (gamePhase) {
+                                try {
+                                    gamePhase.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        else System.out.println("You have already done this move in the turn");
+                        break;
+                    case 2:
+                        if(!toolCardMove) {
+                            toolCardMove();
+                            toolCardMove = true;
+                            synchronized (gamePhase) {
+                                try {
+                                    gamePhase.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        else System.out.println("You have already done this move in the turn");
+                        break;
+                    case 3:
+                        endTurnMove();
+                        moveNext();
+                        break;
+                    default:
+                        System.err.println("Wrong input");
+                }
+            } while(!moveNext.get());
+        }).start();
     }
+
 
     private void displayPatternCards() {
 
@@ -415,7 +457,7 @@ public class CLI implements SceneUpdater {
 
     private void placeDice() {
         int selectedDice;
-        boolean moveDone= false;
+        boolean moveDone = false;
         do {
             selectedDice = 0;
             System.out.println("Select a dice");
@@ -429,13 +471,16 @@ public class CLI implements SceneUpdater {
                 System.out.println("These are the positions where you can place the dice selected:");
                 int selectedColumn;
                 int selectedRow;
+                boolean noAvailable = true;
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 5; j++) {
-                        if (availaiblePosition.get(selectedDice)[i][j].equals(true))
+                        if (availaiblePosition.get(selectedDice)[i][j].equals(true)) {
                             System.out.println("[" + i + "," + j + "]");
+                            noAvailable = false;
+                        }
                     }
                 }
-
+                if (!noAvailable) {
                     System.out.println("Insert row index:");
                     selectedRow = userIntegerInput();
                     System.out.println("Insert column index:");
@@ -445,6 +490,7 @@ public class CLI implements SceneUpdater {
                         currentConnectionType.placeDice(draftedDice.get(selectedDice), selectedColumn, selectedRow);
                         moveDone = true;
                     } else System.out.println("Wrong position input");
+                } else System.out.println("There are not available positions to place this dice\n Choose another move");
 
             } else System.out.println("Wrong dice input\n");
 
@@ -452,7 +498,9 @@ public class CLI implements SceneUpdater {
     }
 
     private void endTurnMove() {
+
         currentConnectionType.endTurn();
+        System.out.println("\nNext turn...");
     }
 
     private void toolCardMove() {
@@ -469,11 +517,14 @@ public class CLI implements SceneUpdater {
     @Override
     public void updateView(UpdateViewResponse updateViewResponse) {
         for (Player player : players) {
-            if (player.equals(updateViewResponse.player)){
+            if (player.equals(updateViewResponse.player)) {
                 //TODO update pattern card
                 System.out.println(player.getPlayerUsername() + " has placed a dice:\n");
                 displayPatternCardPlayer(player);
             }
+        }
+        synchronized (gamePhase){
+            gamePhase.notify();
         }
     }
 
