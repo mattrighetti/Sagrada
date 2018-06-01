@@ -46,8 +46,13 @@ public class Box implements Serializable {
 
     @Override
     public String toString() {
-        if (isValueSet()) return "[" + String.valueOf(value) + "]";
-        else return "[" + color.toString() + "]";
+        if (dice == null) {
+            if (isValueSet()) return "[" + String.valueOf(value) + "]";
+            else return "[" + color.toString() + "]";
+        } else {
+            if (isValueSet()) return "[" + String.valueOf(value) + " -> " + dice.toString() + "]" ;
+            else return "[" + color.toString() +  " -> " + dice.toString() + "]";
+        }
     }
 
     Boolean isDiceSet(){ return dice != null; }
