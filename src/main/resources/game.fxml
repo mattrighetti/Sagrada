@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TabPane?>
@@ -13,9 +14,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<SplitPane dividerPositions="0.7926447574334898" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/9.0.4" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.GameController">
+<SplitPane dividerPositions="0.7926447574334898" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.GameController">
   <items>
-      <GridPane prefHeight="718.0" prefWidth="948.0">
+      <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.0" prefWidth="1009.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="257.5442657470703" minWidth="10.0" prefWidth="257.5442657470703" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="195.99522399902344" minWidth="10.0" prefWidth="146.4557342529297" />
@@ -33,32 +34,50 @@
          <children>
             <VBox fx:id="toolCardVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.rowSpan="4">
                <children>
-                  <ImageView fx:id="firstToolCardImageView" fitHeight="232.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="secondToolCardImageView" fitHeight="227.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="thirdToolCardImageView" fitHeight="206.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="firstToolCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin></ImageView>
+                  <ImageView fx:id="secondToolCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets bottom="3.0" top="3.0" />
+                     </VBox.margin></ImageView>
+                  <ImageView fx:id="thirdToolCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin></ImageView>
                </children></VBox>
             <VBox fx:id="publicCardVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowSpan="4">
                <children>
-                  <ImageView fx:id="firstPublicCardImageView" fitHeight="208.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="secondPublicCardImageView" fitHeight="206.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="thirdPublicCardImageView" fitHeight="246.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="firstPublicCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin></ImageView>
+                  <ImageView fx:id="secondPublicCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets bottom="3.0" top="3.0" />
+                     </VBox.margin></ImageView>
+                  <ImageView fx:id="thirdPublicCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin></ImageView>
                </children>
             </VBox>
             <HBox fx:id="diceHorizontalBox" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
-            <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowSpan="3" />
+            <TabPane fx:id="tabPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="587.0" prefWidth="487.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowSpan="3" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
-                  <Button fx:id="draftDiceButton" mnemonicParsing="false" onAction="#onDraftDicePressed" text="Draft Dice" />
+                  <Button fx:id="draftDiceButton" mnemonicParsing="false" onAction="#onDraftDicePressed" styleClass="login-button-red" text="Draft Dice" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
                <children>
-                  <Button fx:id="endTurnButton" mnemonicParsing="false" onAction="#onEndTurnPressed" text="End Turn" />
+                  <Button fx:id="endTurnButton" mnemonicParsing="false" onAction="#onEndTurnPressed" styleClass="login-button-red" text="End Turn" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="4">
                <children>
-                  <Button fx:id="showPrivateCardButton" mnemonicParsing="false" onAction="#onShowPrivateCardPressed" text="Show Private Card" />
+                  <Button fx:id="showPrivateCardButton" mnemonicParsing="false" onAction="#onShowPrivateCardPressed" styleClass="login-button-red" text="Show Private Card" />
                </children>
             </HBox>
          </children>
@@ -67,7 +86,7 @@
          <children>
             <TableView layoutX="14.0" layoutY="-1.0" prefHeight="720.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columns>
-                <TableColumn fx:id="storyTable" prefWidth="75.0" text="Match Story" />
+                <TableColumn fx:id="storyTable" prefWidth="260.0" text="Match Story" />
               </columns>
             </TableView>
          </children></AnchorPane>

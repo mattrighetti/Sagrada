@@ -9,14 +9,14 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="801.5" prefWidth="633.0" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="ingsw.view.WindowController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.0" prefWidth="487.0" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.WindowController">
    <children>
-      <VBox fx:id="windowFrameVBox" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="794.0" prefWidth="633.0">
+      <VBox fx:id="windowFrameVBox" alignment="CENTER" layoutY="10.0" prefHeight="583.0" prefWidth="487.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="157.0" prefWidth="633.0" visible="false" />
-            <HBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="399.0" prefWidth="633.0">
+            <Pane prefHeight="70.0" prefWidth="487.0" visible="false" />
+            <HBox alignment="CENTER" prefHeight="375.0" prefWidth="487.0">
                <children>
-                  <GridPane fx:id="patternCardGridPane" gridLinesVisible="true" minHeight="-Infinity" minWidth="-Infinity" prefHeight="399.0" prefWidth="501.0" stylesheets="@gameStyle.css">
+                  <GridPane fx:id="patternCardGridPane" alignment="CENTER" gridLinesVisible="true" prefHeight="375.0" prefWidth="487.0" stylesheets="@gameStyle.css">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -33,9 +33,9 @@
                   </GridPane>
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="487.0">
                <children>
-                  <Button fx:id="breakWindowButton" disable="true" mnemonicParsing="false" onAction="#onBreakWindowPressed" text="Break Window" />
+                  <Button fx:id="breakWindowButton" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onBreakWindowPressed" text="Break Window" />
                </children>
             </HBox>
          </children>

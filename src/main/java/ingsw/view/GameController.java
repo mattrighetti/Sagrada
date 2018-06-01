@@ -251,6 +251,7 @@ public class GameController implements SceneUpdater, Initializable {
             diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
             diceButtonToAdd.setMinSize(70, 70);
+            diceHorizontalBox.setSpacing(5);
             diceHorizontalBox.getChildren().add(diceButtonToAdd);
         }
     }
@@ -310,6 +311,7 @@ public class GameController implements SceneUpdater, Initializable {
     @Override
     public void popUpDraftNotification() {
         Platform.runLater(() -> {
+            endTurnButton.setDisable(true);
             draftDiceButton.setDisable(false);
             createPopUpWindow("Notification",
                     "It's your turn",
