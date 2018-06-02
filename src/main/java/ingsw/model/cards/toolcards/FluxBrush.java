@@ -1,5 +1,7 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.model.GameManager;
+
 public class FluxBrush extends ToolCard {
 
     public FluxBrush() {
@@ -11,7 +13,7 @@ public class FluxBrush extends ToolCard {
      * if it cannot be placed, return it to the Draft pool.
      */
     @Override
-    public void action() {
+    public void action(GameManager gameManager) {
 
     }
 }

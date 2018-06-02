@@ -21,7 +21,6 @@ class RunningPliersTest {
 
     @Test
     void onActionTest() {
-        runningPliers.action();
         //TODO test
     }
 }

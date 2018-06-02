@@ -9,6 +9,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
+    private String ERROR_IN = "Errors in closing - ";
+
     private transient Socket clientSocket;
     private transient final ObjectInputStream objectInputStream;
     private transient final ObjectOutputStream objectOutputStream;
@@ -49,16 +51,10 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
                 if (response instanceof LogoutResponse) {
                     respond(response);
                     close();
-                }
-                else
+                } else
                     respond(response);
             }
 
-        } catch (NullPointerException e) {
-            System.err.println("Catching null");
-            respond(null);
-        } catch (EOFException e) {
-          close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -90,13 +86,13 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     /**
      * Method that closes ClientHandler connection
      */
-    public void close() {
+    void close() {
         stop = true;
         if (objectInputStream != null) {
             try {
                 objectInputStream.close();
             } catch (IOException e) {
-                System.err.println("Errors in closing - " + e.getMessage());
+                System.err.println(ERROR_IN + e.getMessage());
             }
         }
 
@@ -104,14 +100,14 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             try {
                 objectOutputStream.close();
             } catch (IOException e) {
-                System.err.println("Errors in closing - " + e.getMessage());
+                System.err.println(ERROR_IN + e.getMessage());
             }
         }
 
         try {
             clientSocket.close();
         } catch (IOException e) {
-            System.err.println("Errors in closing - " + e.getMessage());
+            System.err.println(ERROR_IN + e.getMessage());
         }
     }
 

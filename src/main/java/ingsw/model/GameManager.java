@@ -37,6 +37,7 @@ public class GameManager {
     private List<PublicObjectiveCard> publicObjectiveCards;
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
+    private List<List<Dice>> roundTrack;
     private Round currentRound;
     private boolean brokenWindow;
     private AtomicBoolean endRound;
@@ -54,6 +55,7 @@ public class GameManager {
         endRound = new AtomicBoolean(false);
         brokenWindow = false;
         playerList = players;
+        roundTrack = new ArrayList<>();
         setUpGameManager();
     }
 
@@ -238,15 +240,6 @@ public class GameManager {
         }
     }
 
-    /**
-     * Method called when an user selected a patternCard from the view
-     *
-     * @param toolCardName name of the ToolCard to use
-     */
-    public void useToolCard(String toolCardName) {
-        //Check if the window is broken (FLAG)
-    }
-
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
         if (!brokenWindow){
             for (Dice diceInDraftedDice : board.getDraftedDice()){
@@ -374,6 +367,10 @@ public class GameManager {
             waitEndTurn();
         }
 
+        if (!board.getDraftedDice().isEmpty()) {
+            roundTrack.add(board.getDraftedDice());
+        }
+
         Player tmp = playerList.get(0);
         playerList.remove(0);
         playerList.add(tmp);
@@ -429,6 +426,19 @@ public class GameManager {
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Method called when an user selected a patternCard from the view
+     *
+     * @param toolCardName name of the ToolCard to use
+     */
+    public void useToolCard(String toolCardName) {
+        for (ToolCard toolCard : toolCards) {
+            if (toolCard.getName().equals(toolCardName)) {
+                toolCard.action(this);
+            }
         }
     }
 }

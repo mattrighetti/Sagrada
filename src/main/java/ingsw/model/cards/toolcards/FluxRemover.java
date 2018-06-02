@@ -1,5 +1,7 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.model.GameManager;
+
 public class FluxRemover extends ToolCard {
 
     public FluxRemover() {
@@ -11,7 +13,7 @@ public class FluxRemover extends ToolCard {
      * Choose a value and place the new dice, obeying all the placement restrictions, or return it to the Draft pool.
      */
     @Override
-    public void action() {
+    public void action(GameManager gameManager) {
 
     }
 }

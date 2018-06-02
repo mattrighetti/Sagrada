@@ -22,7 +22,6 @@ class FluxRemoverTest {
 
     @Test
     void onActionTest() {
-        fluxRemover.action();
         //TODO test
     }
 }

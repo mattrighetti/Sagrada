@@ -22,7 +22,6 @@ class CopperFoilBurnisherTest {
 
     @Test
     void onActionTest() {
-        copperFoilBurnisher.action();
         //TODO test
     }
 }

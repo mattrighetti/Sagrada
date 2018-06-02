@@ -1,5 +1,7 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.model.GameManager;
+
 public class EglomiseBrush extends ToolCard {
 
     public EglomiseBrush() {
@@ -11,7 +13,7 @@ public class EglomiseBrush extends ToolCard {
      * You must obey all other placement restrictions.
      */
     @Override
-    public void action() {
+    public void action(GameManager gameManager) {
 
     }
 }

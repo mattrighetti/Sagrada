@@ -21,7 +21,6 @@ class EglomiseBrushTest {
 
     @Test
     void onActionTest() {
-        eglomiseBrush.action();
         //TODO test
     }
 }

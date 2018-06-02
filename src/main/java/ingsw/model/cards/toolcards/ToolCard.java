@@ -1,5 +1,6 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.model.GameManager;
 import ingsw.model.cards.Card;
 
 public abstract class ToolCard extends Card {
@@ -24,5 +25,5 @@ public abstract class ToolCard extends Card {
         price = 2;
     }
 
-    public abstract void action();
+    public abstract void action(GameManager gameManager);
 }

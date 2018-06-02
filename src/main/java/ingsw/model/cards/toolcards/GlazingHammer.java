@@ -1,5 +1,7 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.model.GameManager;
+
 public class GlazingHammer extends ToolCard {
 
     public GlazingHammer() {
@@ -11,7 +13,7 @@ public class GlazingHammer extends ToolCard {
      * This may only be used on your second turn before drafting.
      */
     @Override
-    public void action() {
+    public void action(GameManager gameManager) {
 
     }
 }
