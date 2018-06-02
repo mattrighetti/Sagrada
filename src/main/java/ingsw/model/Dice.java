@@ -33,6 +33,13 @@ public class Dice implements Serializable {
         this.faceUpValue = faceUpValue;
     }
 
+    public void increasesByOneValue(){
+        faceUpValue ++;
+    }
+    public void decreasesByOneValue(){
+        faceUpValue--;
+    }
+
     public Color getDiceColor() {
         return diceColor;
     }

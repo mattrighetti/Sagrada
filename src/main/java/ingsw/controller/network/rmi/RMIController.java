@@ -172,6 +172,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void handle(RoundTrackNotification roundTrackNotification) {
+        sceneUpdater.updateRoundTrack(roundTrackNotification);
+    }
+
+    @Override
     public void handle(Notification notification) {
         switch (notification.notificationType) {
             case DRAFT_DICE:

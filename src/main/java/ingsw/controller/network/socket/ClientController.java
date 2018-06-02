@@ -300,6 +300,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void handle(RoundTrackNotification roundTrackNotification) {
+        sceneUpdater.updateRoundTrack(roundTrackNotification);
+    }
+
+    @Override
     public void handle(UseToolCardResponse useToolCardResponse) {
         // TODO
     }

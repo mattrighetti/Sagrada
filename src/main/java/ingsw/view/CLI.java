@@ -4,6 +4,7 @@ package ingsw.view;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
+import ingsw.controller.network.commands.RoundTrackNotification;
 import ingsw.controller.network.commands.StartTurnNotification;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
@@ -35,6 +36,8 @@ public class CLI implements SceneUpdater {
     private List<ToolCard> toolCards;
     private List<Dice> draftedDice;
     private List<Boolean[][]> availaiblePosition;
+    private List<List<Dice>> roundTrack = new ArrayList<>();
+
 
     CLI() {
         AnsiConsole.systemInstall();
@@ -306,6 +309,10 @@ public class CLI implements SceneUpdater {
         }
     }
 
+    @Override
+    public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
+        roundTrack = roundTrackNotification.roundTrack;
+    }
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
         availaiblePosition = startTurnNotification.booleanListGrid;

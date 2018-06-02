@@ -119,4 +119,10 @@ public interface SceneUpdater {
     default void updateView(UpdateViewResponse updateViewResponse) {
         System.out.println("Not overridden");
     }
+
+    /**
+     * Method that update the round track with the turn remaining dice at the end of the round
+     * @param roundTrackNotification class that contains the updated Round Track List
+     */
+    default void updateRoundTrack(RoundTrackNotification roundTrackNotification){ System.out.println("Not overriden"); }
 }

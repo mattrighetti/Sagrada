@@ -12,6 +12,7 @@
 package ingsw.model;
 
 import ingsw.controller.network.commands.BoardDataResponse;
+import ingsw.controller.network.commands.RoundTrackNotification;
 import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.model.cards.patterncard.*;
@@ -369,6 +370,7 @@ public class GameManager {
 
         if (!board.getDraftedDice().isEmpty()) {
             roundTrack.add(board.getDraftedDice());
+            notifyUpdatedRoundTrack();
         }
 
         Player tmp = playerList.get(0);
@@ -380,6 +382,10 @@ public class GameManager {
         synchronized (endRound) {
             endRound.notify();
         }
+    }
+
+    private void notifyUpdatedRoundTrack() {
+        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack));
     }
 
     private void waitEndTurn() {

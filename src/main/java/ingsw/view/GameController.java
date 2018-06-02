@@ -2,6 +2,7 @@ package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
+import ingsw.controller.network.commands.RoundTrackNotification;
 import ingsw.controller.network.commands.StartTurnNotification;
 import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.model.Dice;
@@ -348,6 +349,11 @@ public class GameController implements SceneUpdater, Initializable {
             }
         }
         disableDice();
+    }
+
+    @Override
+    public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
+        //TODO
     }
 }
 
