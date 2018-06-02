@@ -311,7 +311,7 @@ public class CLI implements SceneUpdater {
 
     @Override
     public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
-        roundTrack = roundTrackNotification.roundTrack;
+        roundTrack.add(roundTrackNotification.roundTrack);
     }
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {

@@ -10,6 +10,7 @@ import ingsw.model.Player;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.view.nodes.DiceButton;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,6 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -75,6 +77,9 @@ public class GameController implements SceneUpdater, Initializable {
     @FXML
     private TableColumn<?, ?> storyTable;
 
+    @FXML
+    private HBox roundTrackHBox;
+
     /* Network Elements */
     private NetworkType networkType;
 
@@ -90,12 +95,16 @@ public class GameController implements SceneUpdater, Initializable {
 
     /* Panes */
     private List<WindowController> windowControllerList;
+    private List<Button> roundButtonList;
+    private List<VBox> roundDiceVBoxList;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         publicCardsImageViewsList = new ArrayList<>();
         toolCardsImageViewsList = new ArrayList<>();
         windowControllerList = new ArrayList<>();
+        roundButtonList = new ArrayList<>();
+        roundDiceVBoxList = new ArrayList<>();
 
         /* Every button must be disabled at first launch */
         draftDiceButton.setDisable(true);
@@ -108,6 +117,8 @@ public class GameController implements SceneUpdater, Initializable {
         toolCardsImageViewsList.add(firstToolCardImageView);
         toolCardsImageViewsList.add(secondToolCardImageView);
         toolCardsImageViewsList.add(thirdToolCardImageView);
+
+
     }
 
     @FXML
@@ -353,7 +364,69 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
-        //TODO
+        addRoundInRoundTrack(roundTrackNotification.roundTrack);
+
     }
+
+    private void addRoundInRoundTrack(List<Dice> diceToAdd){
+        int round = roundTrackHBox.getChildren().size() + 1;
+        Button buttonRound = new Button("Round" + round);
+        buttonRound.setId(String.valueOf(round));
+        roundButtonList.add(buttonRound);
+        buttonRound.setOnMouseClicked(event -> {
+            int id = 0;
+            if (buttonRound.getId() != null) {
+                id = Integer.parseInt(buttonRound.getId()) - 1;
+                FadeTransition fade = new FadeTransition(Duration.millis(1000));
+
+                if (id <= roundDiceVBoxList.size()) {
+                    if (roundDiceVBoxList.get(id).isVisible()) {
+                        roundDiceVBoxList.get(id).setVisible(false);
+
+                    } else {
+                        fade.setNode(roundDiceVBoxList.get(id));
+                        fade.setFromValue(0.0);
+                        fade.setToValue(1.0);
+                        fade.setCycleCount(1);
+                        fade.setAutoReverse(false);
+                        roundDiceVBoxList.get(id).setVisible(true);
+                        fade.playFromStart();
+                    }
+                }
+            } else System.err.println("Dice has no id");
+        });
+
+        VBox vBox = new VBox();
+        roundDiceVBoxList.add(vBox);
+        addDiceToRoundTrack(vBox, diceToAdd);
+        vBox.setVisible(false);
+
+        VBox containerVBox = new VBox();
+        containerVBox.setSpacing(10);
+        containerVBox.getChildren().addAll(buttonRound, vBox);
+
+        Platform.runLater(
+                () -> {
+                    roundTrackHBox.getChildren().add(containerVBox);
+                }
+        );
+    }
+
+    private  void addDiceToRoundTrack(VBox roundVBox,List<Dice> diceToAdd){
+        for (int i = 0; i < diceToAdd.size(); i++) {
+            DiceButton diceButtonToAdd = new DiceButton(diceToAdd.get(i), i);
+            diceButtonToAdd.setOnMouseClicked(event -> {
+
+            });
+            diceButtonToAdd.getStyleClass().add(diceToAdd.get(i).toString());
+            diceButtonToAdd.getStyleClass().add("diceImageSize");
+            diceButtonToAdd.setMinSize(70, 70);
+            roundVBox.setSpacing(5);
+            roundVBox.getChildren().add(diceButtonToAdd);
+        }
+    }
+
+
+
 }
 

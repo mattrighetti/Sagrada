@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.SplitPane?>
@@ -14,7 +19,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<SplitPane dividerPositions="0.7926447574334898" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.GameController">
+<SplitPane dividerPositions="0.7926447574334898" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.GameController">
   <items>
       <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.0" prefWidth="1009.0">
         <columnConstraints>
@@ -25,8 +30,8 @@
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="263.06219482421875" minWidth="10.0" prefWidth="263.06219482421875" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints maxHeight="220.6058464050293" minHeight="10.0" prefHeight="188.10573959350586" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="380.00042724609375" minHeight="10.0" prefHeight="202.89426040649414" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="220.6058464050293" minHeight="10.0" prefHeight="135.6829071044922" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="380.00042724609375" minHeight="10.0" prefHeight="256.3170928955078" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="388.369384765625" minHeight="10.0" prefHeight="179.55233764648438" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="290.1578674316406" minHeight="9.630615234375" prefHeight="69.26312255859375" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="61.657958984375" minHeight="10.0" prefHeight="58.23687744140625" vgrow="SOMETIMES" />
@@ -64,7 +69,7 @@
                </children>
             </VBox>
             <HBox fx:id="diceHorizontalBox" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
-            <TabPane fx:id="tabPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="587.0" prefWidth="487.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowSpan="3" />
+            <TabPane fx:id="tabPane" prefHeight="587.0" prefWidth="487.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
                   <Button fx:id="draftDiceButton" mnemonicParsing="false" onAction="#onDraftDicePressed" styleClass="login-button-red" text="Draft Dice" />
@@ -80,6 +85,7 @@
                   <Button fx:id="showPrivateCardButton" mnemonicParsing="false" onAction="#onShowPrivateCardPressed" styleClass="login-button-red" text="Show Private Card" />
                </children>
             </HBox>
+            <HBox fx:id="roundTrackHBox" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" />
          </children>
       </GridPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="718.0" prefWidth="283.0">

@@ -385,7 +385,9 @@ public class GameManager {
     }
 
     private void notifyUpdatedRoundTrack() {
-        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack));
+        int round = 0;
+        if (roundTrack.size() > 0) round = roundTrack.size() -1;
+        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack.get(round)) );
     }
 
     private void waitEndTurn() {

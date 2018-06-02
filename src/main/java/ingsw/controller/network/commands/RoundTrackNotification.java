@@ -6,9 +6,9 @@ import java.util.List;
 
 public class RoundTrackNotification implements Response {
 
-    public List<List<Dice>> roundTrack;
+    public List<Dice> roundTrack;
 
-    public RoundTrackNotification(List<List<Dice>> roundTrack) {
+    public RoundTrackNotification(List<Dice> roundTrack) {
         this.roundTrack = roundTrack;
     }
 
