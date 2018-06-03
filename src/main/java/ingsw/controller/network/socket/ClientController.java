@@ -286,6 +286,8 @@ public class ClientController implements ResponseHandler, NetworkType {
             case START_TURN:
                 sceneUpdater.setAvailablePosition((StartTurnNotification) notification);
                 break;
+            case HISTORY_UPDATE:
+                sceneUpdater.updateMovesHistory((MoveStatusNotification) notification);
         }
     }
 

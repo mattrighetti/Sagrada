@@ -1,17 +1,16 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
-import ingsw.controller.network.commands.BoardDataResponse;
-import ingsw.controller.network.commands.RoundTrackNotification;
-import ingsw.controller.network.commands.StartTurnNotification;
-import ingsw.controller.network.commands.UpdateViewResponse;
+import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.Player;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
+import ingsw.utilities.MoveStatus;
 import ingsw.view.nodes.DiceButton;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +19,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -75,7 +75,10 @@ public class GameController implements SceneUpdater, Initializable {
     private Button showPrivateCardButton;
 
     @FXML
-    private TableColumn<?, ?> storyTable;
+    private TableView<MoveStatus> movesHistoryTableView;
+
+    @FXML
+    private TableColumn<MoveStatus, String> storyTableColumn;
 
     @FXML
     private HBox roundTrackHBox;
@@ -97,6 +100,7 @@ public class GameController implements SceneUpdater, Initializable {
     private List<WindowController> windowControllerList;
     private List<Button> roundButtonList;
     private List<VBox> roundDiceVBoxList;
+    private ObservableList<MoveStatus> playersMoves;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -105,6 +109,11 @@ public class GameController implements SceneUpdater, Initializable {
         windowControllerList = new ArrayList<>();
         roundButtonList = new ArrayList<>();
         roundDiceVBoxList = new ArrayList<>();
+
+        /* Setup moves tableView */
+        playersMoves = FXCollections.observableArrayList();
+        movesHistoryTableView.setItems(playersMoves);
+        storyTableColumn.setCellValueFactory(new PropertyValueFactory<>("move"));
 
         /* Every button must be disabled at first launch */
         draftDiceButton.setDisable(true);
@@ -366,6 +375,12 @@ public class GameController implements SceneUpdater, Initializable {
     public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
         addRoundInRoundTrack(roundTrackNotification.roundTrack);
 
+    }
+
+    @Override
+    public void updateMovesHistory(MoveStatusNotification notification) {
+        playersMoves.clear();
+        playersMoves.addAll(notification.moveStatuses);
     }
 
     private void addRoundInRoundTrack(List<Dice> diceToAdd){

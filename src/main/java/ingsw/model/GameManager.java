@@ -20,6 +20,7 @@ import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.Broadcaster;
+import ingsw.utilities.MoveStatus;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -32,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GameManager {
     private Board board;
+    private List<MoveStatus> movesHistory;
     private AtomicInteger noOfAck;
     private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
@@ -49,7 +51,7 @@ public class GameManager {
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
      * assigning to each of them a PrivateObjectiveCard and asking them to choose a PatternCard.
      *
-     * @param players
+     * @param players players that joined the match
      */
     public GameManager(List<Player> players) {
         noOfAck = new AtomicInteger(0);
@@ -57,6 +59,7 @@ public class GameManager {
         brokenWindow = false;
         playerList = players;
         roundTrack = new ArrayList<>();
+        movesHistory = new LinkedList<>();
         setUpGameManager();
     }
 
@@ -386,7 +389,7 @@ public class GameManager {
 
     private void notifyUpdatedRoundTrack() {
         int round = 0;
-        if (roundTrack.size() > 0) round = roundTrack.size() -1;
+        if (!roundTrack.isEmpty()) round = roundTrack.size() -1;
         Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack.get(round)) );
     }
 
@@ -406,10 +409,17 @@ public class GameManager {
      * Method that notifies the player with a patternCard's mask which indicates the available positions in which
      * a dice can be placed
      *
-     * @param player
+     * @param player player who's playing at the current time
      */
     List<Boolean[][]> sendAvailablePositions(Player player) {
         return player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
+    }
+
+    /**
+     * Method that updates the Move's History in Every View
+     */
+    void updateMovesHistory() {
+        Broadcaster.updateMovesHistory(playerList, movesHistory);
     }
 
     /*
@@ -423,12 +433,16 @@ public class GameManager {
     boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
         if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
-            System.out.println("Placing the dice");
+            movesHistory.add(new MoveStatus(player.getPlayerUsername(),
+                    "Placed dice" + dice + " in [" + rowIndex + "," + columnIndex + "]",
+                    "OK"));
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
             // Send updated draftedDice
             Broadcaster.broadcastResponseToAll(playerList, board.getDraftedDice());
+            // Update MovesHistory
+            Broadcaster.updateMovesHistory(playerList, movesHistory);
             // UpdateView response
             Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player));
             return true;
@@ -446,6 +460,10 @@ public class GameManager {
         for (ToolCard toolCard : toolCards) {
             if (toolCard.getName().equals(toolCardName)) {
                 toolCard.action(this);
+                movesHistory.add(new MoveStatus("Get the name",
+                        "Used toolcard " + toolCardName,
+                        "OK"));
+                Broadcaster.updateMovesHistory(playerList, movesHistory);
             }
         }
     }

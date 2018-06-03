@@ -4,8 +4,6 @@ import ingsw.controller.network.socket.SagradaSocketServer;
 import ingsw.model.SagradaGame;
 
 import java.rmi.Naming;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
 public class LaunchServer {
     public static void main(String[] args) throws Exception {

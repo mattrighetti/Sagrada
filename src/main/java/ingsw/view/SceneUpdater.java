@@ -124,5 +124,9 @@ public interface SceneUpdater {
      * Method that update the round track with the turn remaining dice at the end of the round
      * @param roundTrackNotification class that contains the updated Round Track List
      */
-    default void updateRoundTrack(RoundTrackNotification roundTrackNotification){ System.out.println("Not overriden"); }
+    default void updateRoundTrack(RoundTrackNotification roundTrackNotification){ System.out.println("Not overridden"); }
+
+    default void updateMovesHistory(MoveStatusNotification notification) {
+        System.out.println("Not overridden");
+    }
 }
