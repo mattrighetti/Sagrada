@@ -434,7 +434,7 @@ public class GameManager {
         if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
             movesHistory.add(new MoveStatus(player.getPlayerUsername(),
-                    "Placed dice" + dice + " in [" + rowIndex + "," + columnIndex + "]",
+                    "Placed dice" + dice + " in [" + rowIndex + ", " + columnIndex + "]",
                     "OK"));
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);

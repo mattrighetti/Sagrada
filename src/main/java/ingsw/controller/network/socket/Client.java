@@ -59,6 +59,7 @@ public class Client {
         try {
             return ((Response) objectInputStream.readObject());
         } catch (EOFException e) {
+            System.err.println("Server not reachable, closing connection");
             close();
         } catch (IOException e) {
             e.printStackTrace();

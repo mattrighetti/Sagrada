@@ -5,7 +5,7 @@ import ingsw.controller.network.commands.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.rmi.RemoteException;
+import java.net.SocketException;
 import java.util.List;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
@@ -18,7 +18,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
     private ServerController serverController;
 
-    public ClientHandler(Socket clientSocket) throws IOException {
+    ClientHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
         this.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
@@ -55,6 +55,9 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
                     respond(response);
             }
 
+        } catch (EOFException | SocketException e) {
+            System.err.println("Client has disconnected from server, closing the connection");
+            close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -144,7 +147,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      */
     @Override
     public void sendResponse(Response response) {
-       respond(response);
+        respond(response);
     }
 
     /**
