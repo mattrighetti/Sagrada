@@ -113,7 +113,7 @@ public class GameController implements SceneUpdater, Initializable {
         /* Setup moves tableView */
         playersMoves = FXCollections.observableArrayList();
         movesHistoryTableView.setItems(playersMoves);
-        storyTableColumn.setCellValueFactory(new PropertyValueFactory<>("move"));
+        storyTableColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         /* Every button must be disabled at first launch */
         draftDiceButton.setDisable(true);
@@ -440,8 +440,6 @@ public class GameController implements SceneUpdater, Initializable {
             roundVBox.getChildren().add(diceButtonToAdd);
         }
     }
-
-
 
 }
 

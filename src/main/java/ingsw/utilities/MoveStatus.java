@@ -7,10 +7,10 @@ public class MoveStatus implements Serializable {
     private String move;
     private String status;
 
-    public MoveStatus(String username, String move, String status) {
+    public MoveStatus(String username, String move) {
         this.username = username;
         this.move = move;
-        this.status = status;
+        this.status = username + " " + move;
     }
 
     public String getUsername() {

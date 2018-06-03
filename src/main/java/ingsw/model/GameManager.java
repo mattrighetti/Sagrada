@@ -211,6 +211,7 @@ public class GameManager {
      */
     public void draftDiceFromBoard() {
         Broadcaster.broadcastResponseToAll(playerList, board.draftDice(playerList.size()));
+        addMoveToHistoryAndNotify(new MoveStatus(playerList.get(0).getPlayerUsername(), "Drafted dice"));
         waitForDiceAck();
     }
 
@@ -280,6 +281,7 @@ public class GameManager {
     }
 
     public void endTurn() {
+        addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
     }
 
@@ -415,13 +417,6 @@ public class GameManager {
         return player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
     }
 
-    /**
-     * Method that updates the Move's History in Every View
-     */
-    void updateMovesHistory() {
-        Broadcaster.updateMovesHistory(playerList, movesHistory);
-    }
-
     /*
     *
     *
@@ -433,16 +428,13 @@ public class GameManager {
     boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
         if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
-            movesHistory.add(new MoveStatus(player.getPlayerUsername(),
-                    "Placed dice" + dice + " in [" + rowIndex + ", " + columnIndex + "]",
-                    "OK"));
-
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
             // Send updated draftedDice
             Broadcaster.broadcastResponseToAll(playerList, board.getDraftedDice());
             // Update MovesHistory
-            Broadcaster.updateMovesHistory(playerList, movesHistory);
+            addMoveToHistoryAndNotify(new MoveStatus(player.getPlayerUsername(),
+                    "Placed dice" + dice + " in [" + rowIndex + ", " + columnIndex + "]"));
             // UpdateView response
             Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player));
             return true;
@@ -460,11 +452,13 @@ public class GameManager {
         for (ToolCard toolCard : toolCards) {
             if (toolCard.getName().equals(toolCardName)) {
                 toolCard.action(this);
-                movesHistory.add(new MoveStatus("Get the name",
-                        "Used toolcard " + toolCardName,
-                        "OK"));
-                Broadcaster.updateMovesHistory(playerList, movesHistory);
+                addMoveToHistoryAndNotify(new MoveStatus("Get the name", "Used toolcard " + toolCardName));
             }
         }
+    }
+
+    void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
+        movesHistory.add(moveStatus);
+        Broadcaster.updateMovesHistory(playerList, movesHistory);
     }
 }

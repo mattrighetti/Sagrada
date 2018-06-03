@@ -14,6 +14,8 @@ public interface RemoteController extends Remote {
 
     void sendAck() throws RemoteException;
 
+    /* THESE METHODS HAVE TO PASS THE USERNAME OF THE PLAYER WHO CALLED THEM */
+
     void endTurn() throws RemoteException;
 
     void placeDice(Dice dice, int rowIndex, int columnIndex) throws RemoteException;
