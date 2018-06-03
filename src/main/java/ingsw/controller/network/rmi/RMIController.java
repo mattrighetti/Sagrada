@@ -14,13 +14,13 @@ public class RMIController implements ResponseHandler, NetworkType {
     private Response response;
     private SceneUpdater sceneUpdater;
 
-    public void connect() {
+    public void connect(String ipAddress) {
         try {
             rmiUserObserver = new RMIUserObserver(this);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        rmiHandler = new RMIHandler(this, rmiUserObserver);
+        rmiHandler = new RMIHandler(this, rmiUserObserver, ipAddress);
     }
 
     public void setSceneUpdater(SceneUpdater sceneUpdater) {

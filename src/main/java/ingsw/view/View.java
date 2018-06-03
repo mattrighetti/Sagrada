@@ -41,10 +41,10 @@ public class View extends Application implements GUIUpdater {
      */
     @Override
     public void start(Stage primaryStage) {
-        System.setProperty("java.security.policy", "stupid.policy");
-        System.setSecurityManager(new SecurityManager());
-        deploySocketClient();
-        deployRMIClient();
+        if (getParameters() != null) {
+            deploySocketClient(getParameters().getRaw().get(0));
+            deployRMIClient(getParameters().getRaw().get(0));
+        }
         this.mainStage = primaryStage;
         launchFirstGUI();
     }
@@ -52,8 +52,8 @@ public class View extends Application implements GUIUpdater {
     /**
      * Method that creates a client connection to the previously opened server socket
      */
-    private void deploySocketClient() {
-        Client client = new Client("localhost", 8000);
+    private void deploySocketClient(String ipAddress) {
+        Client client = new Client(ipAddress, 8000);
 
         try {
             client.connect();
@@ -68,9 +68,9 @@ public class View extends Application implements GUIUpdater {
     /**
      * Method that creates a RMI connection to SagradaGame which resides in the RMIHandler
      */
-    private void deployRMIClient() {
+    private void deployRMIClient(String ipAddress) {
         rmiController = new RMIController();
-        rmiController.connect();
+        rmiController.connect(ipAddress);
     }
 
     /**
@@ -183,6 +183,7 @@ public class View extends Application implements GUIUpdater {
 
     /**
      * Fourth GUI launcher
+     *
      * @param boardDataResponse
      */
     @Override

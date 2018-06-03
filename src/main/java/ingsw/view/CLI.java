@@ -22,6 +22,7 @@ import java.util.*;
 
 public class CLI implements SceneUpdater {
     private String username;
+    private String ipAddress;
     private RMIController rmiController;
     private ClientController clientController;
     private NetworkType currentConnectionType;
@@ -39,17 +40,18 @@ public class CLI implements SceneUpdater {
     private List<List<Dice>> roundTrack = new ArrayList<>();
 
 
-    CLI() {
+    CLI(String ipAddress) {
         AnsiConsole.systemInstall();
         this.scanner = new Scanner(System.in);
+        this.ipAddress = ipAddress;
     }
 
     void startCLI() {
         System.out.println("Deploying Socket & RMI");
 
         try {
-            deploySocketClient();
-            deployRMIClient();
+            deploySocketClient(ipAddress);
+            deployRMIClient(ipAddress);
             rmiController.setSceneUpdater(this);
             clientController.setSceneUpdater(this);
         } catch (IOException e) {
@@ -235,8 +237,8 @@ public class CLI implements SceneUpdater {
      *
      * @throws IOException
      */
-    public void deploySocketClient() throws IOException {
-        Client client = new Client("localhost", 8000);
+    public void deploySocketClient(String ipAddress) throws IOException {
+        Client client = new Client(ipAddress, 8000);
         client.connect();
         this.clientController = new ClientController(client);
     }
@@ -246,9 +248,9 @@ public class CLI implements SceneUpdater {
      *
      * @throws RemoteException
      */
-    public void deployRMIClient() throws RemoteException {
+    public void deployRMIClient(String ipAddress) throws RemoteException {
         rmiController = new RMIController();
-        rmiController.connect();
+        rmiController.connect(ipAddress);
     }
 
     @Override
