@@ -2,11 +2,7 @@ package ingsw.view;
 
 
 import ingsw.controller.network.NetworkType;
-import ingsw.controller.network.commands.BoardDataResponse;
-import ingsw.controller.network.commands.PatternCardNotification;
-import ingsw.controller.network.commands.RoundTrackNotification;
-import ingsw.controller.network.commands.StartTurnNotification;
-import ingsw.controller.network.commands.UpdateViewResponse;
+import ingsw.controller.network.commands.*;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
@@ -16,10 +12,12 @@ import ingsw.model.cards.patterncard.Box;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.DoubleString;
+import ingsw.utilities.MoveStatus;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -41,6 +39,7 @@ public class CLI implements SceneUpdater {
     private List<Dice> draftedDice;
     private List<Boolean[][]> availaiblePosition;
     private List<List<Dice>> roundTrack = new ArrayList<>();
+    private List<MoveStatus> moveHistory = new ArrayList<>();
 
 
     CLI(String ipAddress) {
@@ -75,13 +74,15 @@ public class CLI implements SceneUpdater {
      * <h1>String input scanner </h1>
      * <p>Read from the System in what the user types
      * </p>
+     *
      * @return the String typed by the user
      */
     private String userStringInput() {
         return scanner.nextLine();
     }
+
     /*
-    * *
+     * *
      * <h1>Integer input scanner </h1>
      * <p>Read from the System in what number the user types
      * </p>
@@ -155,11 +156,12 @@ public class CLI implements SceneUpdater {
     }
 
     /**
-     *<h1>Set Network Type</h1>
+     * <h1>Set Network Type</h1>
      * <p>
-     *     After the user has chosen the connection he wants to use
-     *     setNetworkType save to the attribute currentConnectionType the rmiController or the clientController
+     * After the user has chosen the connection he wants to use
+     * setNetworkType save to the attribute currentConnectionType the rmiController or the clientController
      * </p>
+     *
      * @param currentConnectionType the instance of the subclass of networkType chosen by the user
      */
     @Override
@@ -170,8 +172,8 @@ public class CLI implements SceneUpdater {
     /**
      * <h1>Login view</h1>
      * <p>
-     *     Asks the user to insert the username to login.
-     *     Send the login request to the Server.
+     * Asks the user to insert the username to login.
+     * Send the login request to the Server.
      * </p>
      */
     private void chooseUsernameAndLogin() {
@@ -186,7 +188,7 @@ public class CLI implements SceneUpdater {
                 rightUsername = true;
                 currentConnectionType.loginUser(username);
             } else System.out.println("Wrong input");
-        } while(!rightUsername);
+        } while (!rightUsername);
     }
 
     /**
@@ -194,6 +196,7 @@ public class CLI implements SceneUpdater {
      * <p>Triggered from the Server
      * Launch the lobby view after the login
      * </p>
+     *
      * @param username the username of the user who logged in
      */
     @Override
@@ -282,7 +285,7 @@ public class CLI implements SceneUpdater {
             String matchName;
             System.out.println("Insert Match Name: ");
             matchName = userStringInput();
-            if(!matchName.isEmpty()) {
+            if (!matchName.isEmpty()) {
                 boolean existingMatch = false;
                 for (DoubleString doubleString : availableMatches) {
                     if (doubleString.getFirstField().equals(matchName)) {
@@ -324,7 +327,7 @@ public class CLI implements SceneUpdater {
 
                 if (0 < selectedMatch && selectedMatch < (availableMatches.size() + 1)) {
                     currentConnectionType.joinExistingMatch(availableMatches.get(selectedMatch - 1).getFirstField());
-                    System.out.println("Confirmed\nYou logged in successfully!\nWait for other players");
+                    System.out.println("Confirmed\nYou logged in successfully!\nWait for other players...");
                     moveNext();
                 } else System.out.println("Not valid Match selected, choose another match");
             }
@@ -352,7 +355,8 @@ public class CLI implements SceneUpdater {
     /**
      * <h1>Deploy Socket Client</h1>
      * <p>Method that creates a client connection to the previously opened server socket
-     *</p>
+     * </p>
+     *
      * @throws IOException
      */
     private void deploySocketClient(String ipAddress) throws IOException {
@@ -364,7 +368,7 @@ public class CLI implements SceneUpdater {
     /**
      * <h1>Deploy RMI Client</h1>
      * <p>Method that creates a RMI connection to SagradaGame which resides in the RMIHandler
-     *</p>
+     * </p>
      *
      * @throws RemoteException if the RMI connection is not established correctly
      */
@@ -405,6 +409,7 @@ public class CLI implements SceneUpdater {
      * <p> call the method loadData that save the data sent by the server
      * after every player has chosen his pattern card
      * </p>
+     *
      * @param boardDataResponse the response that contains the public cards, the tool cards and the players
      */
     @Override
@@ -416,8 +421,9 @@ public class CLI implements SceneUpdater {
 
     /**
      * <h1>Loader of data from the model</h1>
-     *<p>loadData save the data sent from the server
-     *</p>
+     * <p>loadData save the data sent from the server
+     * </p>
+     *
      * @param boardDataResponse the response that contains the public cards, the tool cards and the players
      */
     @Override
@@ -437,7 +443,6 @@ public class CLI implements SceneUpdater {
     public void popUpDraftNotification() {
         String ack;
         notMoveNext();
-        flushScanner();
 
         while (!moveNext.get()) {
             System.out.println("It's time to draft the dice: press Enter to draft");
@@ -451,6 +456,7 @@ public class CLI implements SceneUpdater {
     public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
         roundTrack.add(roundTrackNotification.roundTrack);
     }
+
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
         availaiblePosition = startTurnNotification.booleanListGrid;
@@ -461,7 +467,7 @@ public class CLI implements SceneUpdater {
      * <h1>Turn manager</h1>
      * <p>chooseMove show to the player the moves he can do, call the moves methods
      * and and manage the turn progress
-     *</p>
+     * </p>
      */
     private void chooseMove() {
         new Thread(() -> {
@@ -472,22 +478,25 @@ public class CLI implements SceneUpdater {
             do {
                 int selectedMove;
                 displayPatternCards();
-                System.out.println("It's your turn!\nChoose what move you want to do:\n" );
+                System.out.println("It's your turn!\nChoose what move you want to do:\n");
 
-                if(!placeDiceMove)
+                if (!placeDiceMove)
                     System.out.println("1 - Place dice");
 
-                if(!toolCardMove)
+                if (!toolCardMove)
                     System.out.println("2 - Use tool card");
 
-                System.out.println("3 - End turn");
+                System.out.println("3 - Show Match Story"
+                );
+
+                System.out.println("4 - End turn");
 
 
                 selectedMove = userIntegerInput();
 
                 switch (selectedMove) {
                     case 1:
-                        if(!placeDiceMove) {
+                        if (!placeDiceMove) {
                             placeDiceMove = placeDice();
                             if (placeDiceMove) {
                                 synchronized (gamePhase) {
@@ -501,7 +510,7 @@ public class CLI implements SceneUpdater {
                         } else System.out.println("You have already done this move in this turn");
                         break;
                     case 2:
-                        if(!toolCardMove) {
+                        if (!toolCardMove) {
                             toolCardMove();
                             toolCardMove = true;
                             synchronized (gamePhase) {
@@ -511,19 +520,44 @@ public class CLI implements SceneUpdater {
                                     e.printStackTrace();
                                 }
                             }
-                        }
-                        else System.out.println("You have already done this move in the turn");
+                        } else System.out.println("You have already done this move in the turn");
                         break;
                     case 3:
+                        showMoveHistory();
+                        break;
+                    case 4:
                         endTurnMove();
                         moveNext();
                         break;
                     default:
                         System.err.println("Wrong input");
                 }
-            } while(!moveNext.get());
+            } while (!moveNext.get());
         }).start();
     }
+
+    /**
+     * Update the list of the moves history
+     * Triggered by the server
+     * @param notification the notification that contains the updated list of moves status
+     */
+    @Override
+    public void updateMovesHistory(MoveStatusNotification notification) {
+        moveHistory = notification.moveStatuses;
+    }
+
+    /**
+     * Method that show to the user the moves history
+     */
+    private void showMoveHistory() {
+        for (MoveStatus move : moveHistory) {
+            System.out.println(move.toString());
+        }
+        String backConferm;
+        System.out.println("\n Press Enter to go back to the match");
+        backConferm = userStringInput();
+    }
+
 
     /**
      * <h1>Display pattern card</h1>
@@ -556,9 +590,10 @@ public class CLI implements SceneUpdater {
     }
 
     /**
-     <h1>Display pattern card</h1>
+     * <h1>Display pattern card</h1>
      * <p>displayPatternCards prints the Pattern cards of the player selected
      * </p>
+     *
      * @param player the pattern card that has to be shown belongs to this player
      */
     private void displayPatternCardPlayer(Player player) {
@@ -578,6 +613,7 @@ public class CLI implements SceneUpdater {
      * Show the pattern card and the available positions in which the player can place the dice
      * Finally asks the player where he wants to place the dice
      * </p>
+     *
      * @return true if the dice has been placed, false if not
      */
     private boolean placeDice() {
@@ -606,7 +642,7 @@ public class CLI implements SceneUpdater {
                         System.out.println("Insert row index:");
                         selectedRow = userIntegerInput();
                         if (selectedRow < 0 || selectedRow >= 4) System.out.println("Wrong input\n");
-                    } while(selectedRow < 0 || selectedRow >= 4);
+                    } while (selectedRow < 0 || selectedRow >= 4);
                     do {
                         System.out.println("Insert column index:");
                         selectedColumn = userIntegerInput();
@@ -625,11 +661,11 @@ public class CLI implements SceneUpdater {
         } while (true);
     }
 
-    private boolean checkAndShowAvailablePositions(int selectedDice){
+    private boolean checkAndShowAvailablePositions(int selectedDice) {
         boolean anyAvailablePosition = false;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                if (availaiblePosition.get(selectedDice -1 )[i][j].equals(true)) {
+                if (availaiblePosition.get(selectedDice - 1)[i][j].equals(true)) {
                     System.out.println("[" + i + "," + j + "]");
                     anyAvailablePosition = true;
                 }
@@ -640,7 +676,7 @@ public class CLI implements SceneUpdater {
 
     /**
      * <h1>End turn move</h1>
-     *  endTurnMove calls the endTurn method that send the endTurn Request to the server
+     * endTurnMove calls the endTurn method that send the endTurn Request to the server
      */
     private void endTurnMove() {
 
@@ -661,10 +697,11 @@ public class CLI implements SceneUpdater {
     /**
      * <h1>Update the pattern cards</h1>
      * <p>
-     *     Triggered from the server
-     *     After every turn the server sends the updateViewResponse to update the pattern cards in every client
-     *     and show the news
+     * Triggered from the server
+     * After every turn the server sends the updateViewResponse to update the pattern cards in every client
+     * and show the news
      * </p>
+     *
      * @param updateViewResponse the response that contains the updated pattern card
      */
     @Override
@@ -676,7 +713,7 @@ public class CLI implements SceneUpdater {
                 displayPatternCardPlayer(player);
             }
         }
-        synchronized (gamePhase){
+        synchronized (gamePhase) {
             gamePhase.notify();
         }
     }
@@ -688,10 +725,11 @@ public class CLI implements SceneUpdater {
 
     /**
      * <h1>List of matches updater</h1>
-     *<p>
+     * <p>
      * Triggered by the server.
      * Update the list of the matches in the lobby
-     *</p>
+     * </p>
+     *
      * @param matches the list of the updated matches sent by the server
      */
     @Override

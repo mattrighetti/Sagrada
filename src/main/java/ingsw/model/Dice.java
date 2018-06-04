@@ -33,11 +33,36 @@ public class Dice implements Serializable {
         this.faceUpValue = faceUpValue;
     }
 
+    /**
+     * Increases the face up value by one
+     * Used by a tool card
+     */
     public void increasesByOneValue(){
+        if (faceUpValue < 6)
         faceUpValue ++;
     }
+    /**
+     * Decreases the face up value by one
+     * Used by a tool card
+     */
     public void decreasesByOneValue(){
+        if(faceUpValue > 1)
         faceUpValue--;
+    }
+
+    /**
+     * Set the face up value opposite to the one the dice has before
+     * Used for a tool card
+     */
+    public void setOppositeFace(){
+        switch (faceUpValue){
+            case 1: faceUpValue = 6;
+            case 2: faceUpValue = 5;
+            case 3: faceUpValue = 4;
+            case 4: faceUpValue = 3;
+            case 5: faceUpValue = 2;
+            case 6: faceUpValue = 1;
+        }
     }
 
     public Color getDiceColor() {

@@ -24,4 +24,9 @@ public class MoveStatus implements Serializable {
     public String getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return  " - " + username + " " + move + "\n";
+    }
 }
