@@ -39,7 +39,7 @@ public class Dice implements Serializable {
      */
     public void increasesByOneValue(){
         if (faceUpValue < 6)
-        faceUpValue ++;
+        faceUpValue++;
     }
     /**
      * Decreases the face up value by one
@@ -56,12 +56,23 @@ public class Dice implements Serializable {
      */
     public void setOppositeFace(){
         switch (faceUpValue){
-            case 1: faceUpValue = 6;
-            case 2: faceUpValue = 5;
-            case 3: faceUpValue = 4;
-            case 4: faceUpValue = 3;
-            case 5: faceUpValue = 2;
-            case 6: faceUpValue = 1;
+            case 1:
+                faceUpValue = 6;
+                break;
+            case 2:
+                faceUpValue = 5;
+                break;
+            case 3:
+                faceUpValue = 4;
+                break;
+            case 4:
+                faceUpValue = 3;
+                break;
+            case 5:
+                faceUpValue = 2;
+                break;
+            case 6:
+                faceUpValue = 1;
         }
     }
 

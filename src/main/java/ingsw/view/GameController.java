@@ -2,7 +2,6 @@ package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.*;
-import ingsw.model.Color;
 import ingsw.model.Dice;
 import ingsw.model.Player;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
@@ -357,40 +356,71 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
-        ButtonType increase = new ButtonType("Increase");
-        ButtonType decrease = new ButtonType("Decrease");
-        Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do you want to increase or decrease the dice value?", increase, decrease);
-        alert.setTitle("Use Tool card");
-        alert.setHeaderText("Flux Brush");
-        Optional<ButtonType> result = alert.showAndWait();
+        Platform.runLater(
+                () -> {
+                    ButtonType increase = new ButtonType("Increase");
+                    ButtonType decrease = new ButtonType("Decrease");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you want to increase or decrease the dice value?", increase, decrease);
+                    alert.setTitle("Use Tool card");
+                    alert.setHeaderText("Flux Brush");
+                    Optional<ButtonType> result = alert.showAndWait();
 
-        if (!result.isPresent()) {
-            System.out.println("no button pressed");
-        } else if((increase == result.get())) {
-            System.out.println("increase pressed");
-            for (Node button : diceHorizontalBox.getChildren()){
-                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if(button.getId().indexOf('6') >= 0) {
-                            System.out.println(button.getId());
-                            networkType.grozingPliersMove(new Dice(Color.BLUE), true);
-                        } else {
-                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value can't be increased");
-                            ErrAlert.showAndWait();
+                    if (!result.isPresent()) {
+                        System.out.println("no button pressed");
+                    } else {
+                        activateDice();
+
+                        if ((increase == result.get())) {
+                            System.out.println("increase pressed");
+                            ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                            for (Node button : diceHorizontalBox.getChildren()) {
+                                diceButtons.add((DiceButton) button);
+                            }
+
+                            for (DiceButton button : diceButtons) {
+                                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent event) {
+                                        if (button.getDice().toString().indexOf('6') < 0) {
+                                            System.out.println(button.getDice().toString());
+                                            networkType.grozingPliersMove(button.getDice(), true);
+                                        } else {
+                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value can't be increased");
+                                            ErrAlert.showAndWait();
+                                        }
+
+                                    }
+                                });
+                            }
+
+
+                        } else if ((decrease == result.get())) {
+                            System.out.println("decrease pressed");
+                            ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                            for (Node button : diceHorizontalBox.getChildren()) {
+                                diceButtons.add((DiceButton) button);
+                            }
+
+                            for (DiceButton button : diceButtons) {
+                                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent event) {
+                                        if (button.getDice().toString().indexOf('1') < 0) {
+                                            System.out.println(button.getDice());
+                                            networkType.grozingPliersMove(button.getDice(), false);
+                                        } else {
+                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value can't be decreased");
+                                            ErrAlert.showAndWait();
+                                        }
+
+                                    }
+                                });
+
+                            }
                         }
-
                     }
+
                 });
-            }
-
-
-        } else if((decrease == result.get())){
-            System.out.println("decrease pressed");
-
-
-        }
-
     }
 
     @Override
@@ -440,7 +470,7 @@ public class GameController implements SceneUpdater, Initializable {
         playersMoves.addAll(notification.moveStatuses);
     }
 
-    private void addRoundInRoundTrack(List<Dice> diceToAdd){
+    private void addRoundInRoundTrack(List<Dice> diceToAdd) {
         int round = roundTrackHBox.getChildren().size() + 1;
         Button buttonRound = new Button("Round" + round);
         buttonRound.setId(String.valueOf(round));
@@ -484,7 +514,7 @@ public class GameController implements SceneUpdater, Initializable {
         );
     }
 
-    private  void addDiceToRoundTrack(VBox roundVBox,List<Dice> diceToAdd){
+    private void addDiceToRoundTrack(VBox roundVBox, List<Dice> diceToAdd) {
         for (int i = 0; i < diceToAdd.size(); i++) {
             DiceButton diceButtonToAdd = new DiceButton(diceToAdd.get(i), i);
             diceButtonToAdd.setOnMouseClicked(event -> {

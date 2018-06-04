@@ -14,6 +14,6 @@ public class MoveToolCardRequest implements Request {
 
     @Override
     public Response handle(RequestHandler requestHandler) {
-        return null;
+        return requestHandler.handle(this);
     }
 }

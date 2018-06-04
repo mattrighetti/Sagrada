@@ -22,10 +22,13 @@ public class GrozingPliers extends ToolCard {
             e.printStackTrace();
         }
 
-        try {
-            wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        synchronized (gameManager.toolCardLock) {
+            try {
+                gameManager.toolCardLock.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
         gameManager.grozingPliersResponse();
     }

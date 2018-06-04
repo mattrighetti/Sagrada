@@ -41,6 +41,7 @@ public class GameManager {
     private Round currentRound;
     private boolean brokenWindow;
     private AtomicBoolean endRound;
+    public final Object toolCardLock = new Object();
     private Thread diceAckThread;
     private Thread matchThread;
     private Thread toolCardThread;
@@ -485,12 +486,14 @@ public class GameManager {
 
     public void grozingPliersMove(Dice dice, Boolean increase){
         for (Dice diceInPool : board.getDraftedDice()) {
-            if (dice.equals(diceInPool)) {
+            if (dice.toString().equals(diceInPool.toString())) {
                 if (increase) diceInPool.increasesByOneValue();
                 else diceInPool.decreasesByOneValue();
             }
         }
-        toolCardThread.notify();
+        synchronized (toolCardLock) {
+            toolCardLock.notify();
+        }
     }
 
     public void grozingPliersResponse(){

@@ -9,7 +9,7 @@ public class GrozingPliersRequest extends MoveToolCardRequest {
     public Boolean increase;
 
     public GrozingPliersRequest(Dice selectedDice, Boolean increase) {
-        super(ToolCardType.FLUX_BRUSH);
+        super(ToolCardType.GROZING_PLIERS);
         this.selectedDice = selectedDice;
         this.increase = increase;
     }
