@@ -25,6 +25,8 @@ public interface NetworkType {
 
     void fluxBrushMove (Dice dice);
 
+    void fluxRemoverMove(Dice dice);
+
     void choosePatternCard(PatternCard patternCard);
 
     void endTurn();

@@ -457,6 +457,34 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     @Override
+    public void toolCardAction(FluxRemoverResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose which dice has to be removed");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Flux Remover");
+            alert.showAndWait();
+
+            ArrayList<DiceButton> diceButtons = new ArrayList<>();
+            for (Node button : diceHorizontalBox.getChildren()) {
+                diceButtons.add((DiceButton) button);
+            }
+
+            for (DiceButton button : diceButtons) {
+                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+
+                        System.out.println(button.getDice().toString());
+                        networkType.fluxRemoverMove(button.getDice());
+
+                    }
+                });
+            }
+
+        });
+    }
+
+    @Override
     public void setDraftedDice(List<Dice> dice) {
         Platform.runLater(() -> {
             displayDraftedDice(dice);

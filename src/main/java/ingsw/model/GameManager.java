@@ -152,7 +152,7 @@ public class GameManager {
         ArrayList<ToolCard> list = new ArrayList<>();
         list.add(new FluxBrush());
         list.add(new GrozingPliers());
-        list.add(new GlazingHammer());
+        list.add(new FluxRemover());
         return list;
     }
 
@@ -259,29 +259,6 @@ public class GameManager {
                 }
             }
         }
-    }
-
-    public void removeDice() {
-        if (brokenWindow) {
-            /*
-            * 1 - rimuovi dado
-            * 2 - if getPatternCard().isBreakable()
-            *       notifica rimozione
-            *     else
-            *         brokenWindow = false;
-            *         notifica mossa
-             */
-        }
-
-    }
-
-    public void breakWindow(Player player){
-        /*
-         * if getPatternCard().isBreakable()
-         *      brokenWindow = true
-         *      disattiva tasti breakWindow di tutti gli utenti
-         *      notifica rimozione
-         */
     }
 
     public void endTurn() {
@@ -516,4 +493,18 @@ public class GameManager {
         Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
     }
 
+    public void fluxRemoverMove(Dice selectedDice) {
+        for (int i = 0; i < board.getDraftedDice().size(); i++) {
+            if(board.getDraftedDice().get(i).toString().equals(selectedDice.toString()))
+                board.getDraftedDice().remove(i);
+        }
+        board.draftOneDice();
+        synchronized (toolCardLock) {
+            toolCardLock.notify();
+        }
+    }
+
+    public void fluxRemoverResponse() {
+        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+    }
 }

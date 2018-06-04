@@ -82,6 +82,12 @@ public class RMIHandler implements RequestHandler {
                     e.printStackTrace();
                 }
                 break;
+            case FLUX_REMOVER:
+                try {
+                    remoteController.toolCardMove((FluxRemoverRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
         }
         return null;
     }

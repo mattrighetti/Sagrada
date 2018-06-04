@@ -2,9 +2,9 @@ package ingsw.controller.network.commands;
 
 import ingsw.utilities.ToolCardType;
 
-public class FluxBrushResponse extends UseToolCardResponse {
+public class FluxRemoverResponse extends UseToolCardResponse {
 
-    public FluxBrushResponse() {
+    public FluxRemoverResponse() {
         super(ToolCardType.FLUX_REMOVER);
     }
 }

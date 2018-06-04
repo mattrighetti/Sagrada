@@ -1,6 +1,7 @@
 package ingsw.controller;
 
 import ingsw.controller.network.commands.FluxBrushRequest;
+import ingsw.controller.network.commands.FluxRemoverRequest;
 import ingsw.controller.network.commands.GrozingPliersRequest;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
@@ -27,4 +28,6 @@ public interface RemoteController extends Remote {
     void toolCardMove(GrozingPliersRequest grozingPliersRequest) throws RemoteException;
 
     void toolCardMove(FluxBrushRequest moveToolCardRequest) throws RemoteException;
+
+    void toolCardMove(FluxRemoverRequest moveToolCardRequest) throws RemoteException;
 }

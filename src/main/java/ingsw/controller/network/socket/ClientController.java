@@ -4,6 +4,7 @@ import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.toolcards.FluxBrush;
+import ingsw.model.cards.toolcards.FluxRemover;
 import ingsw.model.cards.toolcards.GrozingPliers;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
@@ -151,6 +152,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void fluxBrushMove(Dice dice) {
         client.request(new FluxBrushRequest(dice));
+    }
+
+    @Override
+    public void fluxRemoverMove(Dice dice) {
+        client.request(new FluxRemoverRequest(dice));
     }
 
     /**
@@ -336,6 +342,8 @@ public class ClientController implements ResponseHandler, NetworkType {
             case GROZING_PLIERS:
                 sceneUpdater.toolCardAction((GrozingPliersResponse) useToolCardResponse);
                 break;
+            case FLUX_REMOVER:
+                sceneUpdater.toolCardAction((FluxRemoverResponse) useToolCardResponse);
         }
     }
 }

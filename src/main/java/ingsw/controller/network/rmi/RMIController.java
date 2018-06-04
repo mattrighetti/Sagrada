@@ -100,6 +100,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void fluxRemoverMove(Dice dice) {
+        new FluxRemoverRequest(dice).handle(rmiHandler);
+    }
+
+    @Override
     public void endTurn() {
         new EndTurnRequest().handle(rmiHandler);
     }
@@ -178,7 +183,20 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(UseToolCardResponse useToolCardResponse) {
-        // TODO
+        switch (useToolCardResponse.toolCardType){
+            case FLUX_REMOVER:
+                sceneUpdater.toolCardAction((FluxRemoverResponse) useToolCardResponse);
+                break;
+            case GROZING_PLIERS:
+                sceneUpdater.toolCardAction((GrozingPliersResponse) useToolCardResponse);
+                break;
+            case FLUX_BRUSH:
+                sceneUpdater.toolCardAction((FluxBrushResponse) useToolCardResponse);
+                break;
+            case DRAFT_POOL:
+                sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
+                break;
+        }
     }
 
     @Override

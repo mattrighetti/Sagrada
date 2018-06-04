@@ -1,6 +1,7 @@
 package ingsw.controller;
 
 import ingsw.controller.network.commands.FluxBrushRequest;
+import ingsw.controller.network.commands.FluxRemoverRequest;
 import ingsw.controller.network.commands.GrozingPliersRequest;
 import ingsw.model.Dice;
 import ingsw.model.GameManager;
@@ -123,5 +124,10 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     @Override
     public void toolCardMove(FluxBrushRequest fluxBrushRequest) throws RemoteException {
         gameManager.fluxBrushMove(fluxBrushRequest.selectedDice);
+    }
+
+    @Override
+    public void toolCardMove(FluxRemoverRequest fluxRemoverRequest) throws RemoteException {
+        gameManager.fluxRemoverMove(fluxRemoverRequest.selectedDice);
     }
 }

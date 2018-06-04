@@ -48,6 +48,15 @@ public class Board {
         return draftedDice;
     }
 
+    public Dice draftOneDice(){
+        Collections.shuffle(diceBag);
+        Dice dice = diceBag.get(0);
+        diceBag.remove(0);
+        dice.roll();
+        draftedDice.add(dice);
+        return dice;
+    }
+
     public List<Dice> getDraftedDice() {
         return draftedDice;
     }
