@@ -13,6 +13,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -22,6 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -31,6 +34,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class GameController implements SceneUpdater, Initializable {
@@ -349,6 +353,44 @@ public class GameController implements SceneUpdater, Initializable {
             disableToolCard();
         });
         System.out.println("Tool card used");
+    }
+
+    @Override
+    public void toolCardAction(FluxBrushResponse useToolCardResponse) {
+        ButtonType increase = new ButtonType("Increase");
+        ButtonType decrease = new ButtonType("Decrease");
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do you want to increase or decrease the dice value?", increase, decrease);
+        alert.setTitle("Use Tool card");
+        alert.setHeaderText("Flux Brush");
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (!result.isPresent()) {
+            System.out.println("no button pressed");
+        } else if((increase == result.get())) {
+            System.out.println("increase pressed");
+            for (Node button : diceHorizontalBox.getChildren()){
+                EventHandler<Event> oldEvent= (EventHandler<Event>) button.getOnMouseClicked();
+                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if(button.getId().indexOf('6') >= 0) {
+                            System.out.println(button.getId());
+                        } else {
+                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value can't be increased");
+                            ErrAlert.showAndWait();
+                        }
+
+                    }
+                });
+            }
+
+
+        } else if((decrease == result.get())){
+            System.out.println("decrease pressed");
+
+
+        }
+
     }
 
     @Override

@@ -311,6 +311,9 @@ public class ClientController implements ResponseHandler, NetworkType {
         switch (useToolCardResponse.toolCardType) {
             case DRAFT_POOL:
                 sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
+                break;
+            case FLUX_BRUSH:
+                sceneUpdater.toolCardAction((FluxBrushResponse) useToolCardResponse);
         }
     }
 }

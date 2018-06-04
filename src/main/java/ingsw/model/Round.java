@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Round implements Runnable {
     private Thread playerMoves;
+    private Thread toolCardThread;
     private Player player;
 
     private final AtomicBoolean hasMadeAMove;
@@ -112,8 +113,11 @@ public class Round implements Runnable {
     }
 
     void makeMove (ToolCard toolCard){
-        toolCard.action(gameManager);
-        hasMadeAMove();
+        toolCardThread = new Thread(
+                () -> {
+                    toolCard.action(gameManager);
+                    hasMadeAMove();
+                });
     }
 
     public void skipMove() {

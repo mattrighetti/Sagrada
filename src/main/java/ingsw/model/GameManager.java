@@ -461,6 +461,10 @@ public class GameManager {
         Broadcaster.updateMovesHistory(playerList, movesHistory);
     }
 
+    public Round getCurrentRound() {
+        return currentRound;
+    }
+
     //TOOL CARDS METHODS
 
     public void glazingHammer(){
