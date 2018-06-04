@@ -153,6 +153,7 @@ public class GameManager {
         list.add(new FluxBrush());
         list.add(new GrozingPliers());
         list.add(new FluxRemover());
+
         return list;
     }
 
@@ -495,7 +496,7 @@ public class GameManager {
 
     public void fluxRemoverMove(Dice selectedDice) {
         for (int i = 0; i < board.getDraftedDice().size(); i++) {
-            if(board.getDraftedDice().get(i).toString().equals(selectedDice.toString()))
+            if (board.getDraftedDice().get(i).toString().equals(selectedDice.toString()))
                 board.getDraftedDice().remove(i);
         }
         board.draftOneDice();
@@ -505,6 +506,21 @@ public class GameManager {
     }
 
     public void fluxRemoverResponse() {
+        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+    }
+
+    public void grindingStoneMove(Dice selectedDice) {
+        for (Dice diceInPool : board.getDraftedDice()) {
+            if (selectedDice.toString().equals(diceInPool.toString())) {
+                diceInPool.setOppositeFace();
+            }
+        }
+        synchronized (toolCardLock) {
+            toolCardLock.notify();
+        }
+    }
+
+    public void grindingStoneResponse(){
         Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
     }
 }

@@ -476,6 +476,34 @@ public class GameController implements SceneUpdater, Initializable {
 
                         System.out.println(button.getDice().toString());
                         networkType.fluxRemoverMove(button.getDice());
+                    }
+                });
+            }
+
+        });
+    }
+
+
+    public void toolCardAction(GrindingStoneResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose which dice has to be flipped\nto the opposite side");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Grinding Stone");
+            alert.showAndWait();
+
+            ArrayList<DiceButton> diceButtons = new ArrayList<>();
+            for (Node button : diceHorizontalBox.getChildren()) {
+                diceButtons.add((DiceButton) button);
+            }
+
+            for (DiceButton button : diceButtons) {
+                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+
+                        System.out.println(button.getDice().toString());
+
+                        networkType.grindingStoneMove(button.getDice());
 
                     }
                 });

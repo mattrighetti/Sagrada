@@ -5,6 +5,7 @@ import ingsw.controller.network.commands.*;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.model.SagradaGame;
 import ingsw.model.User;
+import ingsw.model.cards.toolcards.GrindingStone;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -114,6 +115,13 @@ public class ServerController implements RequestHandler, Serializable {
             case FLUX_REMOVER:
                 try {
                     controller.toolCardMove((FluxRemoverRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case GRINDING_STONE:
+                try {
+                    controller.toolCardMove((GrindingStoneRequest) moveToolCardRequest);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

@@ -105,6 +105,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void grindingStoneMove(Dice dice) {
+        new GrindingStoneRequest(dice).handle(rmiHandler);
+    }
+
+    @Override
     public void endTurn() {
         new EndTurnRequest().handle(rmiHandler);
     }
@@ -192,6 +197,9 @@ public class RMIController implements ResponseHandler, NetworkType {
                 break;
             case FLUX_BRUSH:
                 sceneUpdater.toolCardAction((FluxBrushResponse) useToolCardResponse);
+                break;
+            case GRINDING_STONE:
+                sceneUpdater.toolCardAction((GrindingStoneResponse) useToolCardResponse);
                 break;
             case DRAFT_POOL:
                 sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);

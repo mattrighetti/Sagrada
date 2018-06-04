@@ -30,4 +30,6 @@ public interface NetworkType {
     void choosePatternCard(PatternCard patternCard);
 
     void endTurn();
+
+    void grindingStoneMove(Dice dice);
 }

@@ -75,7 +75,7 @@ public class RMIHandler implements RequestHandler {
     @Override
     public Response handle(MoveToolCardRequest moveToolCardRequest) {
         switch (moveToolCardRequest.toolCardType){
-            case FLUX_BRUSH:
+            case GROZING_PLIERS:
                 try {
                     remoteController.toolCardMove(((GrozingPliersRequest) moveToolCardRequest));
                 } catch (RemoteException e) {
@@ -85,6 +85,20 @@ public class RMIHandler implements RequestHandler {
             case FLUX_REMOVER:
                 try {
                     remoteController.toolCardMove((FluxRemoverRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case FLUX_BRUSH:
+                try {
+                    remoteController.toolCardMove((FluxBrushRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case GRINDING_STONE:
+                try {
+                    remoteController.toolCardMove((GrindingStoneRequest) moveToolCardRequest);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

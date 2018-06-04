@@ -3,9 +3,6 @@ package ingsw.controller.network.socket;
 import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.model.cards.toolcards.FluxBrush;
-import ingsw.model.cards.toolcards.FluxRemover;
-import ingsw.model.cards.toolcards.GrozingPliers;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
@@ -142,6 +139,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void endTurn() {
         client.request(new EndTurnRequest());
+    }
+
+    @Override
+    public void grindingStoneMove(Dice dice) {
+        client.request(new GrindingStoneRequest(dice));
     }
 
     @Override
@@ -344,6 +346,10 @@ public class ClientController implements ResponseHandler, NetworkType {
                 break;
             case FLUX_REMOVER:
                 sceneUpdater.toolCardAction((FluxRemoverResponse) useToolCardResponse);
+                break;
+            case GRINDING_STONE:
+                sceneUpdater.toolCardAction((GrindingStoneResponse) useToolCardResponse);
+                break;
         }
     }
 }
