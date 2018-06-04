@@ -71,6 +71,21 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+
+    @Override
+    public Response handle(MoveToolCardRequest moveToolCardRequest) {
+        switch (moveToolCardRequest.toolCardType){
+            case FLUX_BRUSH:
+                try {
+                    remoteController.toolCardMove(((GrozingPliersRequest) moveToolCardRequest));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+        return null;
+    }
+
     @Override
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {

@@ -1,6 +1,9 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.controller.network.commands.GrozingPliersResponse;
 import ingsw.model.GameManager;
+
+import java.rmi.RemoteException;
 
 public class GrozingPliers extends ToolCard {
 
@@ -13,6 +16,17 @@ public class GrozingPliers extends ToolCard {
      */
     @Override
     public void action(GameManager gameManager) {
+        try {
+            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new GrozingPliersResponse());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
+        try {
+            wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        gameManager.grozingPliersResponse();
     }
 }

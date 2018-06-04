@@ -1,11 +1,11 @@
 package ingsw.controller;
 
+import ingsw.controller.network.commands.GrozingPliersRequest;
 import ingsw.model.Dice;
 import ingsw.model.GameManager;
 import ingsw.model.Player;
 import ingsw.model.User;
 import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.ControllerTimer;
 
 import java.rmi.RemoteException;
@@ -112,5 +112,10 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     @Override
     public void useToolCard(String toolCardName) throws RemoteException {
         gameManager.useToolCard(toolCardName);
+    }
+
+    @Override
+    public void toolCardMove(GrozingPliersRequest grozingPliersRequest) throws RemoteException {
+        gameManager.grozingPliersMove(grozingPliersRequest.selectedDice, grozingPliersRequest.increase);
     }
 }

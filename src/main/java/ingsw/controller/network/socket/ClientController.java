@@ -3,6 +3,7 @@ package ingsw.controller.network.socket;
 import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.model.cards.toolcards.GrozingPliers;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
@@ -139,6 +140,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void endTurn() {
         client.request(new EndTurnRequest());
+    }
+
+    @Override
+    public void grozingPliersMove(Dice dice, boolean increase) {
+        client.request(new GrozingPliersRequest(dice, increase));
     }
 
     /**
@@ -313,7 +319,10 @@ public class ClientController implements ResponseHandler, NetworkType {
                 sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
                 break;
             case FLUX_BRUSH:
-                sceneUpdater.toolCardAction((FluxBrushResponse) useToolCardResponse);
+                sceneUpdater.toolCardAction((GrozingPliersResponse) useToolCardResponse);
+                break;
+            case GROZING_PLIERS:
+                sceneUpdater.toolCardAction((GrozingPliersResponse) useToolCardResponse);
         }
     }
 }

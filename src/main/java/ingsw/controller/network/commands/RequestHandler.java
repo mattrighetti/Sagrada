@@ -21,4 +21,6 @@ public interface RequestHandler {
     Response handle(EndTurnRequest endTurnRequest);
 
     Response handle(UseToolCardRequest useToolCardRequest);
+
+    Response handle(MoveToolCardRequest moveToolCardRequest);
 }

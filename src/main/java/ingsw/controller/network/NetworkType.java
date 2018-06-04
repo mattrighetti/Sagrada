@@ -21,6 +21,8 @@ public interface NetworkType {
 
     void useToolCard(String string);
 
+    void grozingPliersMove(Dice dice, boolean increase);
+
     void choosePatternCard(PatternCard patternCard);
 
     void endTurn();

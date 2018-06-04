@@ -90,6 +90,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void grozingPliersMove(Dice dice, boolean increase) {
+        new GrozingPliersRequest(dice, increase).handle(rmiHandler);
+    }
+
+    @Override
     public void endTurn() {
         new EndTurnRequest().handle(rmiHandler);
     }

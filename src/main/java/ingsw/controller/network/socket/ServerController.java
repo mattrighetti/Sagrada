@@ -95,6 +95,20 @@ public class ServerController implements RequestHandler, Serializable {
     }
 
     @Override
+    public Response handle(MoveToolCardRequest moveToolCardRequest) {
+        switch (moveToolCardRequest.toolCardType){
+            case GROZING_PLIERS:
+                try {
+                    controller.toolCardMove(((GrozingPliersRequest) moveToolCardRequest));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+        return null;
+    }
+
+    @Override
     public Response handle(Ack ack) {
         try {
             controller.sendAck();

@@ -134,7 +134,7 @@ public interface SceneUpdater {
         System.out.println("Not overridden");
     }
 
-    default void toolCardAction(FluxBrushResponse useToolCardResponse) {
+    default void toolCardAction(GrozingPliersResponse useToolCardResponse) {
 
     }
 }

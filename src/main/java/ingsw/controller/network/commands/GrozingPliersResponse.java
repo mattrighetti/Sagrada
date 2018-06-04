@@ -2,9 +2,9 @@ package ingsw.controller.network.commands;
 
 import ingsw.utilities.ToolCardType;
 
-public class FluxBrushResponse extends UseToolCardResponse {
+public class GrozingPliersResponse extends UseToolCardResponse {
 
-    public FluxBrushResponse() {
+    public GrozingPliersResponse() {
         super(ToolCardType.FLUX_BRUSH);
     }
 }

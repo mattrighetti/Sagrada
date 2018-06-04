@@ -1,5 +1,6 @@
 package ingsw.controller;
 
+import ingsw.controller.network.commands.GrozingPliersRequest;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
 
@@ -21,4 +22,6 @@ public interface RemoteController extends Remote {
     void placeDice(Dice dice, int rowIndex, int columnIndex) throws RemoteException;
 
     void useToolCard(String toolCardName) throws RemoteException;
+
+    void toolCardMove(GrozingPliersRequest grozingPliersRequest) throws RemoteException;
 }

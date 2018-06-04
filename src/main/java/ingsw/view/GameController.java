@@ -2,6 +2,7 @@ package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.*;
+import ingsw.model.Color;
 import ingsw.model.Dice;
 import ingsw.model.Player;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
@@ -13,7 +14,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -356,7 +356,7 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     @Override
-    public void toolCardAction(FluxBrushResponse useToolCardResponse) {
+    public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
         ButtonType increase = new ButtonType("Increase");
         ButtonType decrease = new ButtonType("Decrease");
         Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do you want to increase or decrease the dice value?", increase, decrease);
@@ -369,12 +369,12 @@ public class GameController implements SceneUpdater, Initializable {
         } else if((increase == result.get())) {
             System.out.println("increase pressed");
             for (Node button : diceHorizontalBox.getChildren()){
-                EventHandler<Event> oldEvent= (EventHandler<Event>) button.getOnMouseClicked();
                 button.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
                         if(button.getId().indexOf('6') >= 0) {
                             System.out.println(button.getId());
+                            networkType.grozingPliersMove(new Dice(Color.BLUE), true);
                         } else {
                             Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value can't be increased");
                             ErrAlert.showAndWait();
@@ -396,6 +396,8 @@ public class GameController implements SceneUpdater, Initializable {
     @Override
     public void setDraftedDice(List<Dice> dice) {
         Platform.runLater(() -> displayDraftedDice(dice));
+
+        //set onMouseClicked for tool cards
         for (ImageView toolCard : toolCardsImageViewsList) {
             toolCard.setOnMouseClicked(event -> {
                 networkType.useToolCard(toolCard.getId());
@@ -495,6 +497,5 @@ public class GameController implements SceneUpdater, Initializable {
             roundVBox.getChildren().add(diceButtonToAdd);
         }
     }
-
 }
 

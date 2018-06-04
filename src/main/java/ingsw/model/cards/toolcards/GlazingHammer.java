@@ -14,6 +14,6 @@ public class GlazingHammer extends ToolCard {
      */
     @Override
     public void action(GameManager gameManager) {
-        gameManager.glazingHammer();
+        gameManager.glazingHammerResponse();
     }
 }

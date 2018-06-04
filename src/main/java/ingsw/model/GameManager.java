@@ -43,6 +43,7 @@ public class GameManager {
     private AtomicBoolean endRound;
     private Thread diceAckThread;
     private Thread matchThread;
+    private Thread toolCardThread;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -145,8 +146,13 @@ public class GameManager {
     }
 
     private List<ToolCard> chooseToolCards() {
-        Collections.shuffle(toolCards);
-        return new ArrayList<>(this.toolCards.subList(0, 3));
+        //Collections.shuffle(toolCards);
+        //return new ArrayList<>(this.toolCards.subList(0, 3));
+        ArrayList<ToolCard> list = new ArrayList<>();
+        list.add(new GrozingPliers());
+        list.add(new GrozingPliers());
+        list.add(new GlazingHammer());
+        return list;
     }
 
     private List<PublicObjectiveCard> choosePublicObjectiveCards() {
@@ -446,14 +452,17 @@ public class GameManager {
      * @param toolCardName name of the ToolCard to use
      */
     public void useToolCard(String toolCardName) {
-        for (ToolCard toolCard : toolCards) {
-            if (toolCard.getName().equals(toolCardName)) {
-                addMoveToHistoryAndNotify(new MoveStatus("Get the name", "Used toolcard " + toolCardName));
-                currentRound.makeMove(toolCard);
+        toolCardThread = new Thread(
+                () -> {
+                    for (ToolCard toolCard : toolCards) {
+                        if (toolCard.getName().equals(toolCardName)) {
+                            addMoveToHistoryAndNotify(new MoveStatus("Get the name", "Used toolcard " + toolCardName));
+                            currentRound.makeMove(toolCard);
 
-
-            }
-        }
+                        }
+                    }
+                });
+        toolCardThread.start();
     }
 
     void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
@@ -467,10 +476,26 @@ public class GameManager {
 
     //TOOL CARDS METHODS
 
-    public void glazingHammer(){
+    public void glazingHammerResponse(){
         for (Dice dice: board.getDraftedDice()) {
             dice.roll();
         }
         Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
     }
+
+    public void grozingPliersMove(Dice dice, Boolean increase){
+        for (Dice diceInPool : board.getDraftedDice()) {
+            if (dice.equals(diceInPool)) {
+                if (increase) diceInPool.increasesByOneValue();
+                else diceInPool.decreasesByOneValue();
+            }
+        }
+        toolCardThread.notify();
+    }
+
+    public void grozingPliersResponse(){
+        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+    }
+
+
 }
