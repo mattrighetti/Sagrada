@@ -3,6 +3,7 @@ package ingsw.controller.network.socket;
 import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.model.cards.toolcards.FluxBrush;
 import ingsw.model.cards.toolcards.GrozingPliers;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
@@ -145,6 +146,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void grozingPliersMove(Dice dice, boolean increase) {
         client.request(new GrozingPliersRequest(dice, increase));
+    }
+
+    @Override
+    public void fluxBrushMove(Dice dice) {
+        client.request(new FluxBrushRequest(dice));
     }
 
     /**
@@ -312,6 +318,12 @@ public class ClientController implements ResponseHandler, NetworkType {
         sceneUpdater.updateRoundTrack(roundTrackNotification);
     }
 
+    /**
+     * Method that handle the responses from the server after the user send his move for a ToolCard
+     * Depending on the ToolCard Type, the switch-case calls the relative interface method, throws overloading,
+     * to the SceneUpdater
+     * @param useToolCardResponse response from the Server that contains information about the toolCard move
+     */
     @Override
     public void handle(UseToolCardResponse useToolCardResponse) {
         switch (useToolCardResponse.toolCardType) {
@@ -319,10 +331,11 @@ public class ClientController implements ResponseHandler, NetworkType {
                 sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
                 break;
             case FLUX_BRUSH:
-                sceneUpdater.toolCardAction((GrozingPliersResponse) useToolCardResponse);
+                sceneUpdater.toolCardAction((FluxBrushResponse) useToolCardResponse);
                 break;
             case GROZING_PLIERS:
                 sceneUpdater.toolCardAction((GrozingPliersResponse) useToolCardResponse);
+                break;
         }
     }
 }

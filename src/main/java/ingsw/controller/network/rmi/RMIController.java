@@ -95,6 +95,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void fluxBrushMove(Dice dice) {
+        new FluxBrushRequest(dice).handle(rmiHandler);
+    }
+
+    @Override
     public void endTurn() {
         new EndTurnRequest().handle(rmiHandler);
     }

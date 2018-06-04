@@ -104,6 +104,12 @@ public class ServerController implements RequestHandler, Serializable {
                     e.printStackTrace();
                 }
                 break;
+            case FLUX_BRUSH:
+                try {
+                    controller.toolCardMove((FluxBrushRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
         }
         return null;
     }

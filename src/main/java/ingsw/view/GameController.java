@@ -94,6 +94,7 @@ public class GameController implements SceneUpdater, Initializable {
 
     /* Model Elements */
     private List<Player> players;
+    private List<DiceButton> draftPool;
 
     /* View Elements */
     private List<ImageView> publicCardsImageViewsList;
@@ -112,6 +113,7 @@ public class GameController implements SceneUpdater, Initializable {
         windowControllerList = new ArrayList<>();
         roundButtonList = new ArrayList<>();
         roundDiceVBoxList = new ArrayList<>();
+        draftPool = new ArrayList<>();
 
         /* Setup moves tableView */
         playersMoves = FXCollections.observableArrayList();
@@ -206,9 +208,6 @@ public class GameController implements SceneUpdater, Initializable {
         Platform.runLater(
                 () -> {
                     for (ImageView toolCard : toolCardsImageViewsList) {
-                        toolCard.setOnMouseClicked(event -> {
-                            // TODO
-                        });
                         toolCard.setDisable(false);
                     }
                 }
@@ -238,6 +237,11 @@ public class GameController implements SceneUpdater, Initializable {
         for (ImageView imageView : toolCardsImageViewsList) {
             imageView.setId(toolCards.get(counter).getName());
             imageView.setImage(new Image("/img/toolcards/" + toolCards.get(counter).getName() + ".png"));
+
+            imageView.setOnMouseClicked(event -> {
+                networkType.useToolCard(imageView.getId());
+                System.out.println(imageView.getId());
+            });
             imageView.setDisable(true);
             counter++;
         }
@@ -277,6 +281,7 @@ public class GameController implements SceneUpdater, Initializable {
             diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
             diceButtonToAdd.setMinSize(70, 70);
+            draftPool.add(diceButtonToAdd);
             diceHorizontalBox.setSpacing(5);
             diceHorizontalBox.getChildren().add(diceButtonToAdd);
         }
@@ -360,9 +365,9 @@ public class GameController implements SceneUpdater, Initializable {
                 () -> {
                     ButtonType increase = new ButtonType("Increase");
                     ButtonType decrease = new ButtonType("Decrease");
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you want to increase or decrease the dice value?", increase, decrease);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you want to increase \nor decrease the dice value?", increase, decrease);
                     alert.setTitle("Use Tool card");
-                    alert.setHeaderText("Flux Brush");
+                    alert.setHeaderText("Grozing Pliers");
                     Optional<ButtonType> result = alert.showAndWait();
 
                     if (!result.isPresent()) {
@@ -385,7 +390,7 @@ public class GameController implements SceneUpdater, Initializable {
                                             System.out.println(button.getDice().toString());
                                             networkType.grozingPliersMove(button.getDice(), true);
                                         } else {
-                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value can't be increased");
+                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value SIX can't be increased");
                                             ErrAlert.showAndWait();
                                         }
 
@@ -409,7 +414,7 @@ public class GameController implements SceneUpdater, Initializable {
                                             System.out.println(button.getDice());
                                             networkType.grozingPliersMove(button.getDice(), false);
                                         } else {
-                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value can't be decreased");
+                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value ONE can't be decreased");
                                             ErrAlert.showAndWait();
                                         }
 
@@ -424,18 +429,40 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     @Override
-    public void setDraftedDice(List<Dice> dice) {
-        Platform.runLater(() -> displayDraftedDice(dice));
+    public void toolCardAction(FluxBrushResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose which dice has to be rolled again");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Flux Brush");
+            alert.showAndWait();
 
-        //set onMouseClicked for tool cards
-        for (ImageView toolCard : toolCardsImageViewsList) {
-            toolCard.setOnMouseClicked(event -> {
-                networkType.useToolCard(toolCard.getId());
-                System.out.println(toolCard.getId());
-            });
-            toolCard.setDisable(false);
-        }
+            ArrayList<DiceButton> diceButtons = new ArrayList<>();
+            for (Node button : diceHorizontalBox.getChildren()) {
+                diceButtons.add((DiceButton) button);
+            }
+
+            for (DiceButton button : diceButtons) {
+                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+
+                        System.out.println(button.getDice().toString());
+                        networkType.fluxBrushMove(button.getDice());
+
+                    }
+                });
+            }
+
+        });
+    }
+
+    @Override
+    public void setDraftedDice(List<Dice> dice) {
+        Platform.runLater(() -> {
+            displayDraftedDice(dice);
+        });
         draftDiceButton.setDisable(true);
+        activateToolCard();
         networkType.sendAck();
     }
 

@@ -150,7 +150,7 @@ public class GameManager {
         //Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> list = new ArrayList<>();
-        list.add(new GrozingPliers());
+        list.add(new FluxBrush());
         list.add(new GrozingPliers());
         list.add(new GlazingHammer());
         return list;
@@ -500,5 +500,20 @@ public class GameManager {
         Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
     }
 
+
+    public void fluxBrushMove(Dice selectedDice) {
+        for (Dice diceInPool : board.getDraftedDice()) {
+            if (selectedDice.toString().equals(diceInPool.toString())) {
+                diceInPool.roll();
+            }
+        }
+        synchronized (toolCardLock) {
+            toolCardLock.notify();
+        }
+    }
+
+    public void fluxBrushResponse(){
+        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+    }
 
 }

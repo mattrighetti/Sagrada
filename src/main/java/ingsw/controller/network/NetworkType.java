@@ -23,6 +23,8 @@ public interface NetworkType {
 
     void grozingPliersMove(Dice dice, boolean increase);
 
+    void fluxBrushMove (Dice dice);
+
     void choosePatternCard(PatternCard patternCard);
 
     void endTurn();

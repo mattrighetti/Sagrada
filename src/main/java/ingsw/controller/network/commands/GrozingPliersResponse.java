@@ -5,6 +5,6 @@ import ingsw.utilities.ToolCardType;
 public class GrozingPliersResponse extends UseToolCardResponse {
 
     public GrozingPliersResponse() {
-        super(ToolCardType.FLUX_BRUSH);
+        super(ToolCardType.GROZING_PLIERS);
     }
 }
