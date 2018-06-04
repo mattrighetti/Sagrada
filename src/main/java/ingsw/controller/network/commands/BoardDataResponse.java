@@ -9,10 +9,10 @@ import java.util.Set;
 
 public class BoardDataResponse implements Response {
     public List<Player> players;
-    public Set<PublicObjectiveCard> publicObjectiveCards;
-    public Set<ToolCard> toolCards;
+    public List<PublicObjectiveCard> publicObjectiveCards;
+    public List<ToolCard> toolCards;
 
-    public BoardDataResponse(List<Player> players, Set<PublicObjectiveCard> publicObjectiveCards, Set<ToolCard> toolCards) {
+    public BoardDataResponse(List<Player> players, List<PublicObjectiveCard> publicObjectiveCards, List<ToolCard> toolCards) {
         this.players = players;
         this.publicObjectiveCards = publicObjectiveCards;
         this.toolCards = toolCards;

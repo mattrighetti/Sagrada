@@ -11,8 +11,8 @@
 
 package ingsw.model;
 
-import com.google.gson.Gson;
 import ingsw.controller.network.commands.BoardDataResponse;
+import ingsw.controller.network.commands.RoundTrackNotification;
 import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.model.cards.patterncard.*;
@@ -20,6 +20,7 @@ import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.Broadcaster;
+import ingsw.utilities.MoveStatus;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -32,27 +33,33 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GameManager {
     private Board board;
+    private List<MoveStatus> movesHistory;
     private AtomicInteger noOfAck;
     private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
+    private List<List<Dice>> roundTrack;
     private Round currentRound;
     private boolean brokenWindow;
     private AtomicBoolean endRound;
+    private Thread diceAckThread;
+    private Thread matchThread;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
      * assigning to each of them a PrivateObjectiveCard and asking them to choose a PatternCard.
      *
-     * @param players
+     * @param players players that joined the match
      */
     public GameManager(List<Player> players) {
         noOfAck = new AtomicInteger(0);
         endRound = new AtomicBoolean(false);
         brokenWindow = false;
         playerList = players;
+        roundTrack = new ArrayList<>();
+        movesHistory = new LinkedList<>();
         setUpGameManager();
     }
 
@@ -140,14 +147,14 @@ public class GameManager {
         Collections.shuffle(privateObjectiveCards);
     }
 
-    private Set<ToolCard> chooseToolCards() {
+    private List<ToolCard> chooseToolCards() {
         Collections.shuffle(toolCards);
-        return new HashSet<>(toolCards.subList(0, 3));
+        return new ArrayList<>(toolCards.subList(0, 3));
     }
 
-    private Set<PublicObjectiveCard> choosePublicObjectiveCards() {
+    private List<PublicObjectiveCard> choosePublicObjectiveCards() {
         Collections.shuffle(publicObjectiveCards);
-        return new HashSet<>(publicObjectiveCards.subList(0, 3));
+        return new ArrayList<>(publicObjectiveCards.subList(0, 3));
     }
 
     public void pickPatternCards() {
@@ -165,7 +172,7 @@ public class GameManager {
         }
     }
 
-    public List<Player> getPlayerList() {
+    List<Player> getPlayerList() {
         return playerList;
     }
 
@@ -175,6 +182,9 @@ public class GameManager {
             if (player.getPlayerUsername().equals(username)) {
                 player.setPatternCard(patternCard);
                 receiveAck();
+                synchronized (noOfAck) {
+                    noOfAck.notify();
+                }
             }
         }
 
@@ -186,9 +196,7 @@ public class GameManager {
      */
     public void waitForEveryPatternCard() {
         new Thread(() -> {
-            while (noOfAck.get() < playerList.size()) {
-
-            }
+            waitAck();
             resetAck();
             BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
             Broadcaster.broadcastResponseToAll(playerList, boardDataResponse);
@@ -203,6 +211,7 @@ public class GameManager {
      */
     public void draftDiceFromBoard() {
         Broadcaster.broadcastResponseToAll(playerList, board.draftDice(playerList.size()));
+        addMoveToHistoryAndNotify(new MoveStatus(playerList.get(0).getPlayerUsername(), "Drafted dice"));
         waitForDiceAck();
     }
 
@@ -210,30 +219,38 @@ public class GameManager {
      * Method that stalls the program until every user has received every dice
      */
     private void waitForDiceAck() {
-        new Thread(() -> {
-            while (noOfAck.get() < playerList.size()) {
-
-            }
+        diceAckThread = new Thread(() -> {
+            System.out.println("Waiting Dice Ack");
+            waitAck();
             resetAck();
             startRound();
-        }).start();
+        });
+
+        diceAckThread.setName("diceAck and round");
+        diceAckThread.start();
     }
 
     /**
-     * Method called when an user selected a patternCard from the view
-     *
-     * @param player
-     * @param toolCard
+     * Method that is used to keep track of how many users chose their pattern card
      */
-    public void useToolCard(Player player, ToolCard toolCard) {
-        //Check if the window is broken (FLAG)
+    private void waitAck() {
+        synchronized (noOfAck) {
+            while (noOfAck.get() < playerList.size()) {
+                try {
+                    noOfAck.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
         if (!brokenWindow){
-            for (Dice dice1 : board.getDraftedDice()){
-                if (dice1.getDiceColor().equals(dice.getDiceColor()) && ( dice1.getFaceUpValue() == dice.getFaceUpValue())) {
-                    currentRound.makeMove(dice, rowIndex, columnIndex);
+            for (Dice diceInDraftedDice : board.getDraftedDice()){
+                if (diceInDraftedDice.getDiceColor().equals(dice.getDiceColor())
+                        && (diceInDraftedDice.getFaceUpValue() == dice.getFaceUpValue())) {
+                    currentRound.makeMove(diceInDraftedDice, rowIndex, columnIndex);
                     break;
                 }
             }
@@ -264,6 +281,7 @@ public class GameManager {
     }
 
     public void endTurn() {
+        addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
     }
 
@@ -279,6 +297,9 @@ public class GameManager {
      */
     public synchronized void receiveAck() {
         noOfAck.getAndIncrement();
+        synchronized (noOfAck) {
+            noOfAck.notify();
+        }
     }
 
     /**
@@ -294,7 +315,7 @@ public class GameManager {
      * Method that opens a thread dedicated to the match
      */
     private void startMatch() {
-        new Thread(() -> {
+        matchThread = new Thread(() -> {
 
             try {
                 Thread.sleep(500);
@@ -306,60 +327,138 @@ public class GameManager {
             for (int i = 0; i < 10; i++) {
                 notifyDraftToPlayer(playerList.get(0));
                 endRound.set(false);
-                while (!endRound.get()) ;
+
+                System.out.println("Round " + i);
+                //wait until the end of the round
+                synchronized (endRound) {
+                    while (!endRound.get()) {
+                        try {
+                            endRound.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
 
-        }).start();
+        });
+
+        matchThread.setName("match");
+        matchThread.start();
     }
 
     /**
-     * Method that starts the single round
+     * Method that starts a single round
      */
     private void startRound() {
         currentRound = new Round(this);
         //Rounds going forward
         for (int i = 0; i < playerList.size(); i++) {
-            currentRound.startForPlayer(playerList.get(i));
-            do {
 
-            } while (!currentRound.hasPlayerEndedTurn().get());
+            System.out.println("Turn forward " + i + " player " + playerList.get(i));
+
+            currentRound.startForPlayer(playerList.get(i));
+
+            //wait until turn has ended
+            waitEndTurn();
         }
 
         for (int i = playerList.size() - 1; i >= 0; i--) {
-            currentRound.startForPlayer(playerList.get(i));
-            do {
 
-            } while (!currentRound.hasPlayerEndedTurn().get());
+            System.out.println("Turn backward " + i + " player " + playerList.get(i));
+
+            currentRound.startForPlayer(playerList.get(i));
+
+            //wait until turn has ended
+            waitEndTurn();
         }
+
+        if (!board.getDraftedDice().isEmpty()) {
+            roundTrack.add(board.getDraftedDice());
+            notifyUpdatedRoundTrack();
+        }
+
         Player tmp = playerList.get(0);
         playerList.remove(0);
         playerList.add(tmp);
         endRound.set(true);
+
+        //wake up the match thread
+        synchronized (endRound) {
+            endRound.notify();
+        }
+    }
+
+    private void notifyUpdatedRoundTrack() {
+        int round = 0;
+        if (!roundTrack.isEmpty()) round = roundTrack.size() -1;
+        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack.get(round)) );
+    }
+
+    private void waitEndTurn() {
+        synchronized (currentRound.hasPlayerEndedTurn()) {
+            while (!currentRound.hasPlayerEndedTurn().get()) {
+                try {
+                    currentRound.hasPlayerEndedTurn().wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
      * Method that notifies the player with a patternCard's mask which indicates the available positions in which
      * a dice can be placed
      *
-     * @param player
+     * @param player player who's playing at the current time
      */
-    public List<Boolean[][]> sendAvailablePositions(Player player) {
-        System.out.println("Game Manager" + board.getDraftedDice().size());
+    List<Boolean[][]> sendAvailablePositions(Player player) {
         return player.getPatternCard().computeAvailablePositions(board.getDraftedDice());
     }
 
-    public boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
-        if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
+    /*
+    *
+    *
+    * GAME MOVES
+    *
+    *
+    */
 
-            System.out.println("Placing the dice");
+    boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
+        if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
+            // Send updated draftedDice
+            Broadcaster.broadcastResponseToAll(playerList, board.getDraftedDice());
+            // Update MovesHistory
+            addMoveToHistoryAndNotify(new MoveStatus(player.getPlayerUsername(),
+                    "Placed dice" + dice + " in [" + rowIndex + ", " + columnIndex + "]"));
+            // UpdateView response
             Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player));
             return true;
         } else {
             return false;
         }
-        //TODO Implement negative Response
+    }
+
+    /**
+     * Method called when an user selected a patternCard from the view
+     *
+     * @param toolCardName name of the ToolCard to use
+     */
+    public void useToolCard(String toolCardName) {
+        for (ToolCard toolCard : toolCards) {
+            if (toolCard.getName().equals(toolCardName)) {
+                toolCard.action(this);
+                addMoveToHistoryAndNotify(new MoveStatus("Get the name", "Used toolcard " + toolCardName));
+            }
+        }
+    }
+
+    void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
+        movesHistory.add(moveStatus);
+        Broadcaster.updateMovesHistory(playerList, movesHistory);
     }
 }

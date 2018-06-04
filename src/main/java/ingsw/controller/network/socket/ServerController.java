@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
 
 public class ServerController implements RequestHandler, Serializable {
     private transient ClientHandler clientHandler;
-    private transient final SagradaGame sagradaGame;
+    private final transient SagradaGame sagradaGame;
     private transient Controller controller;
     private User user;
 
@@ -108,6 +108,17 @@ public class ServerController implements RequestHandler, Serializable {
     public Response handle(PlaceDiceRequest placeDiceRequest) {
         try {
             controller.placeDice(placeDiceRequest.dice, placeDiceRequest.rowIndex, placeDiceRequest.columnIndex);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public Response handle(UseToolCardRequest useToolCardRequest) {
+        try {
+            controller.useToolCard(useToolCardRequest.toolCardName);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

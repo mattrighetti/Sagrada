@@ -21,7 +21,6 @@ class FluxBrushTest {
 
     @Test
     void onActionTest() {
-        fluxBrush.action();
         //TODO test
     }
 }

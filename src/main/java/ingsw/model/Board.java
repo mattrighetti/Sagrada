@@ -6,12 +6,12 @@ import ingsw.model.cards.toolcards.ToolCard;
 import java.util.*;
 
 public class Board {
-    private Set<PublicObjectiveCard> publicObjectiveCards;
-    private Set<ToolCard> toolCards;
+    private List<PublicObjectiveCard> publicObjectiveCards;
+    private List<ToolCard> toolCards;
     private List<Dice> diceBag;
     private List<Dice> draftedDice;
 
-    public Board(Set<PublicObjectiveCard> publicObjectiveCards, Set<ToolCard> toolCards, List<Player> playerList) {
+    public Board(List<PublicObjectiveCard> publicObjectiveCards, List<ToolCard> toolCards, List<Player> playerList) {
         this.publicObjectiveCards = publicObjectiveCards;
         this.toolCards = toolCards;
         setupDiceBag();

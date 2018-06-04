@@ -21,7 +21,6 @@ class TapWheelTest {
 
     @Test
     void onActionTest() {
-        tapWheel.action();
         //TODO test
     }
 }

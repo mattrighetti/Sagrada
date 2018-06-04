@@ -21,7 +21,6 @@ class LensCutterTest {
 
     @Test
     void onActionTest() {
-    lensCutter.action();
     //TODO test
     }
 }

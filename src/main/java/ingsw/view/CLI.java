@@ -4,6 +4,7 @@ package ingsw.view;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
+import ingsw.controller.network.commands.RoundTrackNotification;
 import ingsw.controller.network.commands.StartTurnNotification;
 import ingsw.controller.network.commands.UpdateViewResponse;
 import ingsw.controller.network.rmi.RMIController;
@@ -15,6 +16,7 @@ import ingsw.model.cards.patterncard.Box;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.DoubleString;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -22,10 +24,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CLI implements SceneUpdater {
-    AtomicBoolean moveNext = new AtomicBoolean(false);
-    AtomicBoolean gamePhase = new AtomicBoolean(false);
+    private AtomicBoolean moveNext = new AtomicBoolean(false);
+    private AtomicBoolean gamePhase = new AtomicBoolean(false);
     int you;
     private String username;
+    private String ipAddress;
     private RMIController rmiController;
     private ClientController clientController;
     private NetworkType currentConnectionType;
@@ -33,45 +36,25 @@ public class CLI implements SceneUpdater {
     private Scanner scanner;
     private List<DoubleString> availableMatches = new ArrayList<>();
     private List<Player> players;
-    private Set<PublicObjectiveCard> publicObjectiveCards;
-    private Set<ToolCard> toolCards;
+    private List<PublicObjectiveCard> publicObjectiveCards;
+    private List<ToolCard> toolCards;
     private List<Dice> draftedDice;
     private List<Boolean[][]> availaiblePosition;
+    private List<List<Dice>> roundTrack = new ArrayList<>();
 
-    CLI() {
+
+    CLI(String ipAddress) {
+        AnsiConsole.systemInstall();
         this.scanner = new Scanner(System.in);
-    }
-
-    /**
-     * <h1>Deploy RMI Client</h1>
-     * <p>Method that creates a client connection to the previously opened server socket
-     *</p>
-     * @throws IOException
-     */
-    public void deploySocketClient() throws IOException {
-        Client client = new Client("localhost", 8000);
-        client.connect();
-        this.clientController = new ClientController(client);
-    }
-
-    /**
-     * <h1>Deploy RMI Client</h1>
-     * <p>Method that creates a RMI connection to SagradaGame which resides in the RMIHandler
-     *</p>
-     *
-     * @throws RemoteException
-     */
-    public void deployRMIClient() throws RemoteException {
-        rmiController = new RMIController();
-        rmiController.connect();
+        this.ipAddress = ipAddress;
     }
 
     void startCLI() {
         System.out.println("Deploying Socket & RMI");
 
         try {
-            deploySocketClient();
-            deployRMIClient();
+            deploySocketClient(ipAddress);
+            deployRMIClient(ipAddress);
             rmiController.setSceneUpdater(this);
             clientController.setSceneUpdater(this);
         } catch (IOException e) {
@@ -118,7 +101,7 @@ public class CLI implements SceneUpdater {
     /**
      * Set the AtomicBoolean moveNext to false
      */
-    public void notMoveNext() {
+    private void notMoveNext() {
         moveNext.set(false);
     }
 
@@ -367,10 +350,31 @@ public class CLI implements SceneUpdater {
     }
 
     /**
-     * Choose Pattern Card view
-     * Triggered from the Server after a user joined a match
-     * Receive four pattern cards and asks the user to choose one
-     * Send a notification to the server with the chosen pattern card
+     * <h1>Deploy Socket Client</h1>
+     * <p>Method that creates a client connection to the previously opened server socket
+     *</p>
+     * @throws IOException
+     */
+    private void deploySocketClient(String ipAddress) throws IOException {
+        Client client = new Client(ipAddress, 8000);
+        client.connect();
+        this.clientController = new ClientController(client);
+    }
+
+    /**
+     * <h1>Deploy RMI Client</h1>
+     * <p>Method that creates a RMI connection to SagradaGame which resides in the RMIHandler
+     *</p>
+     *
+     * @throws RemoteException if the RMI connection is not established correctly
+     */
+    private void deployRMIClient(String ipAddress) throws RemoteException {
+        rmiController = new RMIController();
+        rmiController.connect(ipAddress);
+    }
+
+    /**
+     * Method that creates a RMI connection to SagradaGame which resides in the RMIHandler
      *
      * @param patternCardNotification Notification containing the four pattern cards sent by the Server
      */
@@ -443,6 +447,10 @@ public class CLI implements SceneUpdater {
         }
     }
 
+    @Override
+    public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
+        roundTrack.add(roundTrackNotification.roundTrack);
+    }
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
         availaiblePosition = startTurnNotification.booleanListGrid;

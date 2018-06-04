@@ -15,7 +15,6 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,26 +37,23 @@ public class View extends Application implements GUIUpdater {
      * GUI starter which, in order, does create a Socket connection followed by an RMI connection and ultimately
      * launches the first GUI
      *
-     * @param primaryStage
-     * @throws IOException
+     * @param primaryStage primary stage of the application
      */
     @Override
     public void start(Stage primaryStage) {
-        System.setProperty("java.security.policy", "stupid.policy");
-        System.setSecurityManager(new SecurityManager());
-        deploySocketClient();
-        deployRMIClient();
+        if (getParameters() != null) {
+            deploySocketClient(getParameters().getRaw().get(0));
+            deployRMIClient(getParameters().getRaw().get(0));
+        }
         this.mainStage = primaryStage;
         launchFirstGUI();
     }
 
     /**
      * Method that creates a client connection to the previously opened server socket
-     *
-     * @throws IOException
      */
-    public void deploySocketClient() {
-        Client client = new Client("localhost", 8000);
+    private void deploySocketClient(String ipAddress) {
+        Client client = new Client(ipAddress, 8000);
 
         try {
             client.connect();
@@ -71,29 +67,25 @@ public class View extends Application implements GUIUpdater {
 
     /**
      * Method that creates a RMI connection to SagradaGame which resides in the RMIHandler
-     *
-     * @throws RemoteException
      */
-    private void deployRMIClient() {
+    private void deployRMIClient(String ipAddress) {
         rmiController = new RMIController();
-        rmiController.connect();
+        rmiController.connect(ipAddress);
     }
 
     /**
      * Method that sets the current scene. Used to keep track of the current scene and exchanging data with it
      *
-     * @param currentScene
+     * @param currentScene scene currently displayed
      */
-    public void setCurrentScene(SceneUpdater currentScene) {
+    private void setCurrentScene(SceneUpdater currentScene) {
         this.currentScene = currentScene;
     }
 
     /**
      * First GUI launcher
-     *
-     * @throws IOException
      */
-    public void launchFirstGUI() {
+    private void launchFirstGUI() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login.fxml"));
         GridPane login = null;
 
@@ -126,8 +118,6 @@ public class View extends Application implements GUIUpdater {
 
     /**
      * Second GUI launcher
-     *
-     * @throws IOException
      */
     @Override
     public void launchSecondGUI(String username) {
@@ -167,8 +157,6 @@ public class View extends Application implements GUIUpdater {
 
     /**
      * Third GUI launcher
-     *
-     * @throws IOException
      */
     @Override
     public void launchThirdGUI(PatternCardNotification patternCardNotification) {
@@ -193,6 +181,11 @@ public class View extends Application implements GUIUpdater {
         setCurrentScene(patternCardController);
     }
 
+    /**
+     * Fourth GUI launcher
+     *
+     * @param boardDataResponse
+     */
     @Override
     public void launchFourthGUI(BoardDataResponse boardDataResponse) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
@@ -218,7 +211,7 @@ public class View extends Application implements GUIUpdater {
     }
 
     /**
-     * Switch to RMI connection
+     * Method that switches to RMI connection
      */
     @Override
     public void changeToRMI() {
@@ -227,7 +220,7 @@ public class View extends Application implements GUIUpdater {
     }
 
     /**
-     * Switch to Socket connection
+     * Method that switches to Socket connection
      */
     @Override
     public void changeToSocket() {
@@ -239,28 +232,36 @@ public class View extends Application implements GUIUpdater {
     /**
      * Update the connected users to the game (not the match)
      *
-     * @param connectedUsers
+     * @param connectedUsers number of users connected to the game
      */
     @Override
     public void updateConnectedUsers(int connectedUsers) {
         this.connectedUsers = connectedUsers;
     }
 
+    /**
+     * Method that adds a match to the TabView if a match is created by a user
+     *
+     * @param matches list of matches currently active
+     */
     @Override
     public void updateExistingMatches(List<DoubleString> matches) {
         this.matches = matches;
     }
 
     /**
-     * Username getter
+     * Method that returns the player's username
      *
-     * @return
+     * @return player's username
      */
     @Override
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Method that closes the application
+     */
     @Override
     public void closeApplication() {
         mainStage.close();

@@ -1,5 +1,7 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.model.GameManager;
+
 public class TapWheel extends ToolCard {
 
     public TapWheel() {
@@ -11,7 +13,7 @@ public class TapWheel extends ToolCard {
      * You must obey all the placement restrictions.
      */
     @Override
-    public void action() {
+    public void action(GameManager gameManager) {
 
     }
 }

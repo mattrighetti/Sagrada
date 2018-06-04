@@ -21,7 +21,6 @@ class GlazingHammerTest {
 
     @Test
     void onActionTest() {
-        glazingHammer.action();
         //TODO test
     }
 }

@@ -19,4 +19,6 @@ public interface RequestHandler {
     Response handle(PlaceDiceRequest placeDiceRequest);
 
     Response handle(EndTurnRequest endTurnRequest);
+
+    Response handle(UseToolCardRequest useToolCardRequest);
 }

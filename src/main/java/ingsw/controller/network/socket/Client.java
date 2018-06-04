@@ -27,12 +27,12 @@ public class Client {
         objectInputStream = new ObjectInputStream(connection.getInputStream());
     }
 
-    public void close() {
+    void close() {
         try {
             objectInputStream.close();
             objectOutputStream.close();
             connection.close();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -58,7 +58,8 @@ public class Client {
     Response nextResponse() {
         try {
             return ((Response) objectInputStream.readObject());
-        } catch (EOFException e){
+        } catch (EOFException e) {
+            System.err.println("Server not reachable, closing connection");
             close();
         } catch (IOException e) {
             e.printStackTrace();

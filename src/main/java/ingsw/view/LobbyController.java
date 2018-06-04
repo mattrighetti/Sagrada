@@ -95,7 +95,7 @@ public class LobbyController implements SceneUpdater, Initializable {
         matchConnectedUsersColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, Integer>("secondField"));
     }
 
-    public void setApplication(View application) {
+    void setApplication(View application) {
         this.application = application;
     }
 
@@ -128,7 +128,7 @@ public class LobbyController implements SceneUpdater, Initializable {
         }
     }
 
-    public void popUpInvalidMatchName() {
+    private void popUpInvalidMatchName() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Warning");
         alert.setHeaderText("Match has already been taken");
@@ -186,7 +186,7 @@ public class LobbyController implements SceneUpdater, Initializable {
         private final Label text;
         final Timeline timeline = new Timeline();
 
-        public ProgressForm() {
+        ProgressForm() {
             dialogStage = new Stage();
             dialogStage.setResizable(false);
             dialogStage.initStyle(StageStyle.UNDECORATED);
@@ -207,7 +207,7 @@ public class LobbyController implements SceneUpdater, Initializable {
             dialogStage.show();
         }
 
-        public Parent createProgressBar() {
+        Parent createProgressBar() {
             ProgressBar progressBar = new ProgressBar();
             progressBar.setPrefWidth(200);
             progressBar.setLayoutY(45);
@@ -215,7 +215,7 @@ public class LobbyController implements SceneUpdater, Initializable {
             return progressBar;
         }
 
-        public Parent createTimeCircle() {
+        Parent createTimeCircle() {
             ProgressIndicator progressIndicator = new ProgressIndicator();
             progressIndicator.setPrefSize(25, 25);
             timeline.setCycleCount(1);
@@ -244,6 +244,8 @@ public class LobbyController implements SceneUpdater, Initializable {
                                 g = 255;
                                 b = 0;
                                 break;
+                            default:
+                                break;
                         }
 
                         return String.format("-fx-progress-color: rgb(%d,%d,%d)", r, g, b);
@@ -262,7 +264,7 @@ public class LobbyController implements SceneUpdater, Initializable {
             timeline.play();
         }
 
-        public Stage getDialogStage() {
+        Stage getDialogStage() {
             return dialogStage;
         }
 

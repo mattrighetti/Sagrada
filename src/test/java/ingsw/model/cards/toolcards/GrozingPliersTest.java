@@ -21,7 +21,6 @@ class GrozingPliersTest {
 
     @Test
     void onActionTest() {
-        grozingPliers.action();
         //TODO test
     }
 }

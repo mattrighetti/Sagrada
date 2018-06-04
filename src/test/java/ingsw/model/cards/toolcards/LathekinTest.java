@@ -21,7 +21,6 @@ class LathekinTest {
 
     @Test
     void onActionTest() {
-        lathekin.action();
         //TODO test
     }
 }

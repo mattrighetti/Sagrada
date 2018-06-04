@@ -41,7 +41,12 @@ public class WindowController implements Initializable {
                 dicePane.setOpacity(0.8);
                 dicePane.setOnMouseClicked(event -> {
                     System.out.println("clicked");
-                    networkType.placeDice( selectedDice ,dicePane.getColumnIndex(), dicePane.getRowIndex());
+                    if (selectedDice != null) {
+                        networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                    } else {
+                        System.out.println("No dice selected");
+                    }
+                    selectedDice = null;
                 });
                 patternCardGridPane.add(dicePane, j, i);
                 dicePanes[i][j] = dicePane;
@@ -53,7 +58,7 @@ public class WindowController implements Initializable {
         this.availablePosition = availablePosition;
     }
 
-    public void setNetworkType(NetworkType networkType) {
+    void setNetworkType(NetworkType networkType) {
         this.networkType = networkType;
     }
 
@@ -66,7 +71,7 @@ public class WindowController implements Initializable {
         patternCardGridPane.getStyleClass().add(patternCardName);
     }
 
-    public void setSelectedDice(Dice dice) {
+    void setSelectedDice(Dice dice) {
         this.selectedDice = dice;
     }
 
@@ -79,8 +84,6 @@ public class WindowController implements Initializable {
     }
 
     void updatePatternCard(PatternCard patternCard) {
-
-        System.out.println("ciao");
 
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {

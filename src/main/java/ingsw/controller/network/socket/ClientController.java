@@ -83,9 +83,9 @@ public class ClientController implements ResponseHandler, NetworkType {
      */
     @Override
     public void joinExistingMatch(String matchName) {
-        stopBroadcastReceiver();
+        //stopBroadcastReceiver();
         client.request(new JoinMatchRequest(matchName));
-        client.nextResponse().handle(this);
+        //client.nextResponse().handle(this);
     }
 
     /**
@@ -127,6 +127,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new PlaceDiceRequest(dice, columnIndex, rowIndex));
     }
 
+    @Override
+    public void useToolCard(String toolCardName) {
+        client.request(new UseToolCardRequest(toolCardName));
+    }
+
     /**
      * Method that tells the server that the user doesn't want to make a move
      * and passes the turn to the next player in line
@@ -139,7 +144,7 @@ public class ClientController implements ResponseHandler, NetworkType {
     /**
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */
-    public void listenForResponses() {
+    private void listenForResponses() {
         thread = new Thread(
                 () -> {
                     System.out.println("Opening the Thread");
@@ -154,7 +159,6 @@ public class ClientController implements ResponseHandler, NetworkType {
                             break;
                         }
                     } while (true);
-                    System.out.println("Closing thread");
                 }
         );
         thread.start();
@@ -226,7 +230,7 @@ public class ClientController implements ResponseHandler, NetworkType {
      */
     @Override
     public void handle(JoinedMatchResponse joinedMatchResponse) {
-        listenForResponses();
+        System.out.println("Received logintomatch");
     }
 
     /**
@@ -282,6 +286,8 @@ public class ClientController implements ResponseHandler, NetworkType {
             case START_TURN:
                 sceneUpdater.setAvailablePosition((StartTurnNotification) notification);
                 break;
+            case HISTORY_UPDATE:
+                sceneUpdater.updateMovesHistory((MoveStatusNotification) notification);
         }
     }
 
@@ -293,5 +299,15 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(DraftedDiceResponse draftedDiceResponse) {
         sceneUpdater.setDraftedDice(draftedDiceResponse.dice);
+    }
+
+    @Override
+    public void handle(RoundTrackNotification roundTrackNotification) {
+        sceneUpdater.updateRoundTrack(roundTrackNotification);
+    }
+
+    @Override
+    public void handle(UseToolCardResponse useToolCardResponse) {
+        // TODO
     }
 }

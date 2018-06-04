@@ -2,82 +2,94 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="ingsw.view.GameController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="323.59283447265625" minWidth="10.0" prefWidth="323.59283447265625" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="247.51300048828125" minWidth="10.0" prefWidth="133.40716552734375" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="413.7221374511719" minWidth="10.0" prefWidth="371.5650329589844" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.21746826171875" minWidth="10.0" prefWidth="125.57598876953125" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.42401123046875" minWidth="10.0" prefWidth="325.42401123046875" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints maxHeight="336.72210693359375" minHeight="10.0" prefHeight="245.3545379638672" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="341.83551025390625" minHeight="10.0" prefHeight="237.6454620361328" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="290.09393310546875" minHeight="10.0" prefHeight="211.98895263671875" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="240.21197509765625" minHeight="10.0" prefHeight="98.01104736328125" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="184.33087158203125" minHeight="10.0" prefHeight="54.78802490234375" vgrow="SOMETIMES" />
-  </rowConstraints>
-   <children>
-      <HBox fx:id="diceHorizontalBox" alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="103.0" prefWidth="632.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
-      <TabPane fx:id="tabPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="666.0" prefWidth="633.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowSpan="3" />
-      <VBox fx:id="toolCardVBox" alignment="CENTER" prefHeight="614.0" prefWidth="326.0" GridPane.columnIndex="4" GridPane.rowSpan="4">
+<SplitPane dividerPositions="0.7926447574334898" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="gameGridPane" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.GameController">
+  <items>
+      <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.0" prefWidth="1009.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="257.5442657470703" minWidth="10.0" prefWidth="257.5442657470703" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="195.99522399902344" minWidth="10.0" prefWidth="146.4557342529297" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="178.9952392578125" minWidth="10.0" prefWidth="106.93780517578125" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="263.06219482421875" minWidth="10.0" prefWidth="263.06219482421875" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="220.6058464050293" minHeight="10.0" prefHeight="135.6829071044922" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="380.00042724609375" minHeight="10.0" prefHeight="256.3170928955078" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="388.369384765625" minHeight="10.0" prefHeight="179.55233764648438" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="290.1578674316406" minHeight="9.630615234375" prefHeight="69.26312255859375" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="61.657958984375" minHeight="10.0" prefHeight="58.23687744140625" vgrow="SOMETIMES" />
+        </rowConstraints>
          <children>
-            <ImageView fx:id="firstToolCardImageView" fitHeight="234.0" fitWidth="228.0" pickOnBounds="true" preserveRatio="true">
-               <VBox.margin>
-                  <Insets bottom="3.0" top="3.0" />
-               </VBox.margin></ImageView>
-            <ImageView fx:id="secondToolCardImageView" fitHeight="234.0" fitWidth="228.0" pickOnBounds="true" preserveRatio="true">
-               <VBox.margin>
-                  <Insets bottom="3.0" top="3.0" />
-               </VBox.margin></ImageView>
-            <ImageView fx:id="thirdToolCardImageView" fitHeight="234.0" fitWidth="228.0" pickOnBounds="true" preserveRatio="true">
-               <VBox.margin>
-                  <Insets bottom="3.0" top="3.0" />
-               </VBox.margin></ImageView>
+            <VBox fx:id="toolCardVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.rowSpan="4">
+               <children>
+                  <ImageView fx:id="firstToolCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin></ImageView>
+                  <ImageView fx:id="secondToolCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets bottom="3.0" top="3.0" />
+                     </VBox.margin></ImageView>
+                  <ImageView fx:id="thirdToolCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin></ImageView>
+               </children></VBox>
+            <VBox fx:id="publicCardVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowSpan="4">
+               <children>
+                  <ImageView fx:id="firstPublicCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin></ImageView>
+                  <ImageView fx:id="secondPublicCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets bottom="3.0" top="3.0" />
+                     </VBox.margin></ImageView>
+                  <ImageView fx:id="thirdPublicCardImageView" fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin></ImageView>
+               </children>
+            </VBox>
+            <HBox fx:id="diceHorizontalBox" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
+            <TabPane fx:id="tabPane" prefHeight="587.0" prefWidth="487.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <children>
+                  <Button fx:id="draftDiceButton" mnemonicParsing="false" onAction="#onDraftDicePressed" styleClass="login-button-red" text="Draft Dice" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+               <children>
+                  <Button fx:id="endTurnButton" mnemonicParsing="false" onAction="#onEndTurnPressed" styleClass="login-button-red" text="End Turn" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="4">
+               <children>
+                  <Button fx:id="showPrivateCardButton" mnemonicParsing="false" onAction="#onShowPrivateCardPressed" styleClass="login-button-red" text="Show Private Card" />
+               </children>
+            </HBox>
+            <HBox fx:id="roundTrackHBox" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" />
          </children>
-         <padding>
-            <Insets bottom="6.0" top="6.0" />
-         </padding></VBox>
-      <VBox fx:id="publicCardVBox" alignment="CENTER" prefHeight="200.0" prefWidth="323.0" GridPane.rowSpan="4">
+      </GridPane>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="718.0" prefWidth="283.0">
          <children>
-            <ImageView fx:id="firstPublicCardImageView" fitHeight="234.0" fitWidth="228.0" pickOnBounds="true" preserveRatio="true">
-               <VBox.margin>
-                  <Insets bottom="3.0" top="3.0" />
-               </VBox.margin></ImageView>
-            <ImageView fx:id="secondPublicCardImageView" fitHeight="234.0" fitWidth="228.0" pickOnBounds="true" preserveRatio="true">
-               <VBox.margin>
-                  <Insets bottom="3.0" top="3.0" />
-               </VBox.margin></ImageView>
-            <ImageView fx:id="thirdPublicCardImageView" fitHeight="234.0" fitWidth="228.0" pickOnBounds="true" preserveRatio="true">
-               <VBox.margin>
-                  <Insets bottom="3.0" top="3.0" />
-               </VBox.margin></ImageView>
-         </children>
-         <padding>
-            <Insets bottom="6.0" top="6.0" />
-         </padding></VBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="4">
-         <children>
-            <Button fx:id="showPrivateCardButton" mnemonicParsing="false" onAction="#onShowPrivateCardPressed" text="Show Private Card" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-         <children>
-            <Button fx:id="draftDiceButton" mnemonicParsing="false" onAction="#onDraftDicePressed" text="Draft Dice" textAlignment="CENTER" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
-         <children>
-            <Button fx:id="endTurnButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onEndTurnPressed" text="End Turn" textAlignment="CENTER" />
-         </children>
-      </HBox>
-   </children>
-</GridPane>
+            <TableView fx:id="movesHistoryTableView" layoutX="14.0" layoutY="-1.0" prefHeight="720.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columns>
+                <TableColumn fx:id="storyTableColumn" prefWidth="260.0" text="Match Story" />
+              </columns>
+            </TableView>
+         </children></AnchorPane>
+  </items>
+</SplitPane>

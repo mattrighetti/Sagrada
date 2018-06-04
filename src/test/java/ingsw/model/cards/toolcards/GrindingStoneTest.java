@@ -21,7 +21,6 @@ class GrindingStoneTest {
 
     @Test
     void onActionTest() {
-        grindingStone.action();
         //TODO test
     }
 }

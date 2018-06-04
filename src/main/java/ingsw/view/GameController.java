@@ -1,50 +1,39 @@
 package ingsw.view;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import ingsw.controller.network.NetworkType;
-import ingsw.controller.network.commands.BoardDataResponse;
-import ingsw.controller.network.commands.UpdateViewResponse;
-import ingsw.controller.network.commands.StartTurnNotification;
+import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.Player;
-import ingsw.model.cards.patterncard.Box;
-import ingsw.model.cards.patterncard.LuxAstram;
-import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
-import ingsw.utilities.GridCreator;
+import ingsw.utilities.MoveStatus;
 import ingsw.view.nodes.DiceButton;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.ResourceBundle;
 
 public class GameController implements SceneUpdater, Initializable {
-
-    @FXML
-    private HBox diceHorizontalBox;
-
-    @FXML
-    private TabPane tabPane;
 
     @FXML
     private VBox toolCardVBox;
@@ -71,7 +60,10 @@ public class GameController implements SceneUpdater, Initializable {
     private ImageView thirdPublicCardImageView;
 
     @FXML
-    private Button showPrivateCardButton;
+    private HBox diceHorizontalBox;
+
+    @FXML
+    private TabPane tabPane;
 
     @FXML
     private Button draftDiceButton;
@@ -79,41 +71,63 @@ public class GameController implements SceneUpdater, Initializable {
     @FXML
     private Button endTurnButton;
 
-    private List<ImageView> toolCardsImageViews;
-    private List<ImageView> publicCardsImageViews;
+    @FXML
+    private Button showPrivateCardButton;
 
+    @FXML
+    private TableView<MoveStatus> movesHistoryTableView;
+
+    @FXML
+    private TableColumn<MoveStatus, String> storyTableColumn;
+
+    @FXML
+    private HBox roundTrackHBox;
+
+    /* Network Elements */
     private NetworkType networkType;
+
+    /* Application Interface */
     private GUIUpdater application;
 
-    private List<WindowController> windowControllers = new ArrayList<>();
+    /* Model Elements */
     private List<Player> players;
-    private List<Button> diceButton;
-    private Set<PublicObjectiveCard> publicObjectiveCards;
-    private List<PublicObjectiveCard> publicObjectiveCardList;
-    private Set<ToolCard> toolCards = new HashSet<>();
-    private List<ToolCard> toolCardList;
-    private List<Dice> dice;
+
+    /* View Elements */
+    private List<ImageView> publicCardsImageViewsList;
+    private List<ImageView> toolCardsImageViewsList;
+
+    /* Panes */
+    private List<WindowController> windowControllerList;
+    private List<Button> roundButtonList;
+    private List<VBox> roundDiceVBoxList;
+    private ObservableList<MoveStatus> playersMoves;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        diceButton = new ArrayList<>();
-        dice = new ArrayList<>();
-        publicObjectiveCardList = new ArrayList<>();
-        toolCardList = new ArrayList<>();
-        publicCardsImageViews = new ArrayList<>();
-        toolCardsImageViews = new ArrayList<>();
+        publicCardsImageViewsList = new ArrayList<>();
+        toolCardsImageViewsList = new ArrayList<>();
+        windowControllerList = new ArrayList<>();
+        roundButtonList = new ArrayList<>();
+        roundDiceVBoxList = new ArrayList<>();
 
-        /* Every button must be disables at the first launch */
+        /* Setup moves tableView */
+        playersMoves = FXCollections.observableArrayList();
+        movesHistoryTableView.setItems(playersMoves);
+        storyTableColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        /* Every button must be disabled at first launch */
         draftDiceButton.setDisable(true);
         endTurnButton.setDisable(true);
 
-        /* Create a list used to iterate through ImageViews */
-        toolCardsImageViews.add(firstToolCardImageView);
-        toolCardsImageViews.add(secondToolCardImageView);
-        toolCardsImageViews.add(thirdToolCardImageView);
-        publicCardsImageViews.add(firstPublicCardImageView);
-        publicCardsImageViews.add(secondPublicCardImageView);
-        publicCardsImageViews.add(thirdPublicCardImageView);
+        /* Create a list used to iterate through PublicOC */
+        publicCardsImageViewsList.add(firstPublicCardImageView);
+        publicCardsImageViewsList.add(secondPublicCardImageView);
+        publicCardsImageViewsList.add(thirdPublicCardImageView);
+        toolCardsImageViewsList.add(firstToolCardImageView);
+        toolCardsImageViewsList.add(secondToolCardImageView);
+        toolCardsImageViewsList.add(thirdToolCardImageView);
+
+
     }
 
     @FXML
@@ -126,10 +140,12 @@ public class GameController implements SceneUpdater, Initializable {
     void onEndTurnPressed(ActionEvent event) {
         networkType.endTurn();
         disableDice();
+        endTurnButton.setDisable(true);
     }
 
     /**
      * Method that pops up a widow showing the Player PatternCard
+     *
      * @param event event that triggers the window
      */
     @FXML
@@ -143,35 +159,125 @@ public class GameController implements SceneUpdater, Initializable {
         alert.showAndWait();
     }
 
+    /* SETUP METHODS */
+
+    @Override
+    public void setNetworkType(NetworkType clientController) {
+        this.networkType = clientController;
+    }
+
     void setApplication(GUIUpdater application) {
         this.application = application;
     }
 
-    private void loadImageViews() {
-        int counter = 0;
-        for (ImageView imageView : toolCardsImageViews) {
-            imageView.setImage(new Image("/img/toolcards/" + toolCardList.get(counter).getName() + ".png"));
-            counter++;
-        }
+    /**
+     * Method that activates every Dice in the view
+     */
+    private void activateDice() {
+        Platform.runLater(
+                () -> {
+                    for (Node diceButton : diceHorizontalBox.getChildren()) {
+                        diceButton.setDisable(false);
+                    }
+                }
+        );
+    }
 
-        counter = 0;
-        for (ImageView imageView : publicCardsImageViews) {
-            imageView.setImage(new Image("/img/publicoc/" + publicObjectiveCardList.get(counter).getName() + ".png"));
+    /**
+     * Method that disables every Dice in the view
+     */
+    private void disableDice() {
+        Platform.runLater(
+                () -> {
+                    for (Node diceButton : diceHorizontalBox.getChildren()) {
+                        diceButton.setDisable(true);
+                    }
+                }
+        );
+    }
+
+    /**
+     * Method that disables every ToolCard
+     */
+    private void activateToolCard() {
+        Platform.runLater(
+                () -> {
+                    for (ImageView toolCard : toolCardsImageViewsList) {
+                        toolCard.setOnMouseClicked(event -> {
+                            // TODO
+                        });
+                        toolCard.setDisable(false);
+                    }
+                }
+        );
+    }
+
+    private void disableToolCard() {
+        Platform.runLater(
+                () -> {
+                    for (ImageView toolCard : toolCardsImageViewsList) {
+                        toolCard.setDisable(true);
+                    }
+                }
+        );
+    }
+
+    private Alert createPopUpWindow(String title, String headerText, String contentText) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        return alert;
+    }
+
+    private void displayToolCards(List<ToolCard> toolCards) {
+        int counter = 0;
+        for (ImageView imageView : toolCardsImageViewsList) {
+            imageView.setId(toolCards.get(counter).getName());
+            imageView.setImage(new Image("/img/toolcards/" + toolCards.get(counter).getName() + ".png"));
+            imageView.setOnMouseClicked(event -> {
+                //networkType.useToolCard(imageView.getId());
+                System.out.println(imageView.getId());
+            });
             counter++;
         }
     }
 
-    private void setDiceBox() {
+    /**
+     * Creates a tab for every player putting the current User always first
+     */
+    private void setWindowsTab() {
+        for (Player player : players) {
+            if (player.getPlayerUsername().equals(application.getUsername())) {
+                createTabOfPlayer(player);
 
-        for (int i = 0; i < dice.size(); i++) {
-            DiceButton diceButtonToAdd = new DiceButton(dice.get(i), i);
-            diceButtonToAdd.setOnMouseClicked(event ->  {
-                windowControllers.get(0).setSelectedDice(diceButtonToAdd.getDice());
-                windowControllers.get(0).updateAvailablePositions(diceButtonToAdd.getButtonIndex());
+            }
+        }
+
+        for (Player player : players) {
+            if (!player.getPlayerUsername().equals(application.getUsername())) {
+                createTabOfPlayer(player);
+            }
+        }
+    }
+
+    private void displayDraftedDice(List<Dice> diceList) {
+
+        if (diceHorizontalBox.getChildren().size() > 0) {
+            ObservableList<Node> nodes = diceHorizontalBox.getChildren();
+            diceHorizontalBox.getChildren().removeAll(nodes);
+        }
+
+        for (int i = 0; i < diceList.size(); i++) {
+            DiceButton diceButtonToAdd = new DiceButton(diceList.get(i), i);
+            diceButtonToAdd.setOnMouseClicked(event -> {
+                windowControllerList.get(0).setSelectedDice(diceButtonToAdd.getDice());
+                windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getButtonIndex());
             });
-            diceButtonToAdd.getStyleClass().add(dice.get(i).toString());
+            diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
             diceButtonToAdd.setMinSize(70, 70);
+            diceHorizontalBox.setSpacing(5);
             diceHorizontalBox.getChildren().add(diceButtonToAdd);
         }
     }
@@ -193,143 +299,147 @@ public class GameController implements SceneUpdater, Initializable {
 
         WindowController windowController = fxmlLoader.getController();
         windowController.setUsername(player.getPlayerUsername());
-        windowControllers.add(windowController);
+        windowControllerList.add(windowController);
         Tab windowTab = new Tab();
-        windowGrid.setMinSize(633, 666);
         windowTab.setContent(windowGrid);
+
         if (application.getUsername().equals(player.getPlayerUsername())) {
             windowTab.setText("You");
         } else {
             windowTab.setText(player.getPlayerUsername());
         }
+
         tabPane.setPadding(new Insets(0, 0, 0, 0));
         tabPane.getTabs().add(windowTab);
         windowController.setNetworkType(networkType);
         windowController.setGridPaneBackground(player.getPatternCard().getName());
     }
 
-    /**
-     * Creates a tab for every player putting the current User always first
-     */
-    private void setWindowsTab() {
-        for (Player player : players) {
-            if (player.getPlayerUsername().equals(application.getUsername())) {
-                createTabOfPlayer(player);
-
-            }
-        }
-
-        for (Player player : players) {
-            if (!player.getPlayerUsername().equals(application.getUsername())) {
-                createTabOfPlayer(player);
-            }
-        }
-    }
-
-    private Alert createPopUpWindow(String title, String headerText, String contentText) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(headerText);
-        alert.setContentText(contentText);
-        return alert;
-    }
-
-    @Override
-    public void setNetworkType(NetworkType networkType) {
-        this.networkType = networkType;
-    }
+    /* UPDATE VIEWS METHODS */
 
     @Override
     public void loadData(BoardDataResponse boardDataResponse) {
         this.players = boardDataResponse.players;
-        this.publicObjectiveCards = boardDataResponse.publicObjectiveCards;
-        this.toolCards = boardDataResponse.toolCards;
 
-        toolCardList.addAll(toolCards);
-
-        publicObjectiveCardList.addAll(publicObjectiveCards);
-
-        loadImageViews();
+        displayPublicObjectiveCards(boardDataResponse.publicObjectiveCards);
+        displayToolCards(boardDataResponse.toolCards);
         setWindowsTab();
     }
 
-
-
-    private void activateDice() {
-        Platform.runLater(
-                () -> {
-                    for (Node diceButton: diceHorizontalBox.getChildren()) {
-                        diceButton.setDisable(false);
-                    }
-                }
-        );
-    }
-
-    private void disableDice() {
-        Platform.runLater(
-                () -> {
-                    for (Node diceButton: diceHorizontalBox.getChildren()) {
-                        diceButton.setDisable(true);
-                    }
-                }
-        );
-    }
-
-    private void activateToolCard(){
-        Platform.runLater(
-                () -> {
-                    for (Node toolCard : toolCardVBox.getChildren()) {
-                        toolCard.setDisable(false);
-                    }
-                }
-        );
-    }
-
-    private void disableToolCard(){
-        Platform.runLater(
-                () -> {
-                    for (Node toolCard : toolCardVBox.getChildren()) {
-                        toolCard.setDisable(true);
-                    }
-                }
-        );
-    }
-
-    @Override
-    public void updateView(UpdateViewResponse updateViewResponse) {
-        for (WindowController windowController : windowControllers) {
-            if (windowController.getUsername().equals(updateViewResponse.player.getPlayerUsername())) {
-                windowController.updatePatternCard(updateViewResponse.deserializePatternCard());
-            }
+    private void displayPublicObjectiveCards(List<PublicObjectiveCard> publicObjectiveCards) {
+        int counter = 0;
+        for (ImageView imageView : publicCardsImageViewsList) {
+            imageView.setImage(new Image("/img/publicoc/" + publicObjectiveCards.get(counter).getName() + ".png"));
+            counter++;
         }
-        disableDice();
     }
 
-    /**
-     * Method that launches a popup window that notifies the user that it's his turn and he needs to draft the dice
-     */
     @Override
     public void popUpDraftNotification() {
         Platform.runLater(() -> {
+            endTurnButton.setDisable(true);
             draftDiceButton.setDisable(false);
             createPopUpWindow("Notification",
                     "It's your turn",
-                    "Click on Draft Dice to draft the dice").showAndWait();
+                    "Click on Draft Dice to draft the diceList").showAndWait();
         });
     }
 
     @Override
-    public void setDraftedDice(List<Dice> diceList) {
-        this.dice = diceList;
-
-        Platform.runLater(this::setDiceBox);
+    public void setDraftedDice(List<Dice> dice) {
+        Platform.runLater(() -> displayDraftedDice(dice));
+        draftDiceButton.setDisable(true);
         networkType.sendAck();
     }
 
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
-        windowControllers.get(0).setAvailablePosition(startTurnNotification.booleanListGrid);
+        windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanListGrid);
+        Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
         activateDice();
+        activateToolCard();
         endTurnButton.setDisable(false);
     }
+
+    @Override
+    public void updateView(UpdateViewResponse updateViewResponse) {
+        for (WindowController windowController : windowControllerList) {
+            if (windowController.getUsername().equals(updateViewResponse.player.getPlayerUsername())) {
+                windowController.updatePatternCard(updateViewResponse.player.getPatternCard());
+            }
+        }
+        disableDice();
+    }
+
+    @Override
+    public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
+        addRoundInRoundTrack(roundTrackNotification.roundTrack);
+
+    }
+
+    @Override
+    public void updateMovesHistory(MoveStatusNotification notification) {
+        playersMoves.clear();
+        playersMoves.addAll(notification.moveStatuses);
+    }
+
+    private void addRoundInRoundTrack(List<Dice> diceToAdd){
+        int round = roundTrackHBox.getChildren().size() + 1;
+        Button buttonRound = new Button("Round" + round);
+        buttonRound.setId(String.valueOf(round));
+        roundButtonList.add(buttonRound);
+        buttonRound.setOnMouseClicked(event -> {
+            int id = 0;
+            if (buttonRound.getId() != null) {
+                id = Integer.parseInt(buttonRound.getId()) - 1;
+                FadeTransition fade = new FadeTransition(Duration.millis(1000));
+
+                if (id <= roundDiceVBoxList.size()) {
+                    if (roundDiceVBoxList.get(id).isVisible()) {
+                        roundDiceVBoxList.get(id).setVisible(false);
+
+                    } else {
+                        fade.setNode(roundDiceVBoxList.get(id));
+                        fade.setFromValue(0.0);
+                        fade.setToValue(1.0);
+                        fade.setCycleCount(1);
+                        fade.setAutoReverse(false);
+                        roundDiceVBoxList.get(id).setVisible(true);
+                        fade.playFromStart();
+                    }
+                }
+            } else System.err.println("Dice has no id");
+        });
+
+        VBox vBox = new VBox();
+        roundDiceVBoxList.add(vBox);
+        addDiceToRoundTrack(vBox, diceToAdd);
+        vBox.setVisible(false);
+
+        VBox containerVBox = new VBox();
+        containerVBox.setSpacing(10);
+        containerVBox.getChildren().addAll(buttonRound, vBox);
+
+        Platform.runLater(
+                () -> {
+                    roundTrackHBox.getChildren().add(containerVBox);
+                }
+        );
+    }
+
+    private  void addDiceToRoundTrack(VBox roundVBox,List<Dice> diceToAdd){
+        for (int i = 0; i < diceToAdd.size(); i++) {
+            DiceButton diceButtonToAdd = new DiceButton(diceToAdd.get(i), i);
+            diceButtonToAdd.setOnMouseClicked(event -> {
+
+            });
+            diceButtonToAdd.getStyleClass().add(diceToAdd.get(i).toString());
+            diceButtonToAdd.getStyleClass().add("diceImageSize");
+            diceButtonToAdd.setMinSize(70, 70);
+            roundVBox.setSpacing(5);
+            roundVBox.getChildren().add(diceButtonToAdd);
+        }
+    }
+
 }
+

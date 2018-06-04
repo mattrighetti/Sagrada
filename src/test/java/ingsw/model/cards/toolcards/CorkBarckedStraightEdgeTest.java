@@ -21,7 +21,6 @@ class CorkBarckedStraightEdgeTest {
 
     @Test
     void onActionTest() {
-        corkBarckedStraightEdge.action();
         //TODO test
     }
 }

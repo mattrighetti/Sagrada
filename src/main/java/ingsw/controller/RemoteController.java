@@ -6,7 +6,6 @@ import ingsw.model.cards.patterncard.PatternCard;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-/* INTERFACCIA DELLE CHIAMATE AL CONTROLLER CHE VERRANNO EFFETTUATE DA SAGRADAGAME */
 public interface RemoteController extends Remote {
 
     void assignPatternCard(String username, PatternCard patternCard) throws RemoteException;
@@ -15,7 +14,11 @@ public interface RemoteController extends Remote {
 
     void sendAck() throws RemoteException;
 
+    /* THESE METHODS HAVE TO PASS THE USERNAME OF THE PLAYER WHO CALLED THEM */
+
     void endTurn() throws RemoteException;
 
     void placeDice(Dice dice, int rowIndex, int columnIndex) throws RemoteException;
+
+    void useToolCard(String toolCardName) throws RemoteException;
 }

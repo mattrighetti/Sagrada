@@ -1,5 +1,7 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.model.GameManager;
+
 public class RunningPliers extends ToolCard {
 
     public RunningPliers() {
@@ -11,7 +13,7 @@ public class RunningPliers extends ToolCard {
      * Skip your next turn this round.
      */
     @Override
-    public void action() {
+    public void action(GameManager gameManager) {
 
     }
 }

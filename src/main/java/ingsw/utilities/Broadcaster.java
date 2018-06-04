@@ -127,6 +127,16 @@ public final class Broadcaster {
         }
     }
 
+    public static void broadcastResponseToAll(List<Player> playerList, RoundTrackNotification roundTrackNotification){
+        for (UserObserver userObserver : playerToBroadcast(playerList)) {
+            try {
+                userObserver.sendResponse(roundTrackNotification);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void broadcastMessageToAll(List<Player> playerList, Message message) {
         for (UserObserver userObserver : playerToBroadcast(playerList)) {
             try {
@@ -141,6 +151,16 @@ public final class Broadcaster {
         for (UserObserver userObserver : playerToBroadcast(playerList)) {
             try {
                 userObserver.sendResponse(boardDataResponse);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void updateMovesHistory(List<Player> playerList, List<MoveStatus> movesHistory) {
+        for (UserObserver userObserver : playerToBroadcast(playerList)) {
+            try {
+                userObserver.sendResponse(new MoveStatusNotification(movesHistory));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

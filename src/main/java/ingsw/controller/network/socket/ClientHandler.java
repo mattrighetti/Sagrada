@@ -5,9 +5,12 @@ import ingsw.controller.network.commands.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.List;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
+    private String ERROR_IN = "Errors in closing - ";
+
     private transient Socket clientSocket;
     private transient final ObjectInputStream objectInputStream;
     private transient final ObjectOutputStream objectOutputStream;
@@ -15,7 +18,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
     private ServerController serverController;
 
-    public ClientHandler(Socket clientSocket) throws IOException {
+    ClientHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
         this.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
@@ -48,16 +51,13 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
                 if (response instanceof LogoutResponse) {
                     respond(response);
                     close();
-                }
-                else
+                } else
                     respond(response);
             }
 
-        } catch (NullPointerException e) {
-            System.err.println("Catching null");
-            respond(null);
-        } catch (EOFException e) {
-          close();
+        } catch (EOFException | SocketException e) {
+            System.err.println("Client has disconnected from server, closing the connection");
+            close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -74,6 +74,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      */
     private void respond(Response response) {
         try {
+            objectOutputStream.reset();
             objectOutputStream.writeObject(response);
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,13 +89,13 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     /**
      * Method that closes ClientHandler connection
      */
-    public void close() {
+    void close() {
         stop = true;
         if (objectInputStream != null) {
             try {
                 objectInputStream.close();
             } catch (IOException e) {
-                System.err.println("Errors in closing - " + e.getMessage());
+                System.err.println(ERROR_IN + e.getMessage());
             }
         }
 
@@ -102,14 +103,14 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             try {
                 objectOutputStream.close();
             } catch (IOException e) {
-                System.err.println("Errors in closing - " + e.getMessage());
+                System.err.println(ERROR_IN + e.getMessage());
             }
         }
 
         try {
             clientSocket.close();
         } catch (IOException e) {
-            System.err.println("Errors in closing - " + e.getMessage());
+            System.err.println(ERROR_IN + e.getMessage());
         }
     }
 
