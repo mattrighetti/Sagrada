@@ -129,4 +129,8 @@ public interface SceneUpdater {
     default void updateMovesHistory(MoveStatusNotification notification) {
         System.out.println("Not overridden");
     }
+
+    default void toolCardAction(DraftPoolResponse draftPoolResponse) {
+        System.out.println("Not overridden");
+    }
 }

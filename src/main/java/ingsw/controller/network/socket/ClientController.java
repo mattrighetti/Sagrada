@@ -308,6 +308,9 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(UseToolCardResponse useToolCardResponse) {
-        // TODO
+        switch (useToolCardResponse.toolCardType) {
+            case DRAFT_POOL:
+                sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
+        }
     }
 }

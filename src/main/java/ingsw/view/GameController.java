@@ -235,10 +235,7 @@ public class GameController implements SceneUpdater, Initializable {
         for (ImageView imageView : toolCardsImageViewsList) {
             imageView.setId(toolCards.get(counter).getName());
             imageView.setImage(new Image("/img/toolcards/" + toolCards.get(counter).getName() + ".png"));
-            imageView.setOnMouseClicked(event -> {
-                //networkType.useToolCard(imageView.getId());
-                System.out.println(imageView.getId());
-            });
+            imageView.setDisable(true);
             counter++;
         }
     }
@@ -346,8 +343,24 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     @Override
+    public void toolCardAction(DraftPoolResponse draftPoolResponse) {
+        Platform.runLater(() -> {
+            displayDraftedDice(draftPoolResponse.draftedDice);
+            disableToolCard();
+        });
+        System.out.println("Tool card used");
+    }
+
+    @Override
     public void setDraftedDice(List<Dice> dice) {
         Platform.runLater(() -> displayDraftedDice(dice));
+        for (ImageView toolCard : toolCardsImageViewsList) {
+            toolCard.setOnMouseClicked(event -> {
+                networkType.useToolCard(toolCard.getId());
+                System.out.println(toolCard.getId());
+            });
+            toolCard.setDisable(false);
+        }
         draftDiceButton.setDisable(true);
         networkType.sendAck();
     }

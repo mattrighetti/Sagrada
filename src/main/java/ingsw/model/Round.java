@@ -1,5 +1,7 @@
 package ingsw.model;
 
+import ingsw.model.cards.toolcards.ToolCard;
+
 import java.rmi.RemoteException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -107,6 +109,11 @@ public class Round implements Runnable {
             hasMadeAMove();
 
         }
+    }
+
+    void makeMove (ToolCard toolCard){
+        toolCard.action(gameManager);
+        hasMadeAMove();
     }
 
     public void skipMove() {

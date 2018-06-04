@@ -9,8 +9,6 @@ public enum Color {
     BLANK;
 
     @Override
-    public String toString() { return String.valueOf(name().charAt(0));
+    public String toString() { return String.valueOf(name().charAt(0) + name().substring(1).toLowerCase());
     }
 }
-
-// + name().substring(1).toLowerCase()

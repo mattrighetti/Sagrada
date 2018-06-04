@@ -11,10 +11,7 @@
 
 package ingsw.model;
 
-import ingsw.controller.network.commands.BoardDataResponse;
-import ingsw.controller.network.commands.RoundTrackNotification;
-import ingsw.controller.network.commands.UpdateViewResponse;
-import ingsw.controller.network.commands.PatternCardNotification;
+import ingsw.controller.network.commands.*;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
@@ -149,7 +146,7 @@ public class GameManager {
 
     private List<ToolCard> chooseToolCards() {
         Collections.shuffle(toolCards);
-        return new ArrayList<>(toolCards.subList(0, 3));
+        return new ArrayList<>(this.toolCards.subList(0, 3));
     }
 
     private List<PublicObjectiveCard> choosePublicObjectiveCards() {
@@ -451,8 +448,10 @@ public class GameManager {
     public void useToolCard(String toolCardName) {
         for (ToolCard toolCard : toolCards) {
             if (toolCard.getName().equals(toolCardName)) {
-                toolCard.action(this);
                 addMoveToHistoryAndNotify(new MoveStatus("Get the name", "Used toolcard " + toolCardName));
+                currentRound.makeMove(toolCard);
+
+
             }
         }
     }
@@ -460,5 +459,14 @@ public class GameManager {
     void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
         movesHistory.add(moveStatus);
         Broadcaster.updateMovesHistory(playerList, movesHistory);
+    }
+
+    //TOOL CARDS METHODS
+
+    public void glazingHammer(){
+        for (Dice dice: board.getDraftedDice()) {
+            dice.roll();
+        }
+        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
     }
 }

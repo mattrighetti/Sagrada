@@ -157,6 +157,16 @@ public final class Broadcaster {
         }
     }
 
+    public static void broadcastResponseToAll(List<Player> playerList, UseToolCardResponse useToolCardResponse) {
+        for (UserObserver userObserver : playerToBroadcast(playerList)) {
+            try {
+                userObserver.sendResponse(useToolCardResponse);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void updateMovesHistory(List<Player> playerList, List<MoveStatus> movesHistory) {
         for (UserObserver userObserver : playerToBroadcast(playerList)) {
             try {
