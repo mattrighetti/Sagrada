@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,11 +23,11 @@ class PatternCardTest {
         List<Dice> diceList = new ArrayList<>();
         Dice dice = new Dice(Color.RED);
         dice.setFaceUpValue(4);
-        List<Boolean[][]> resultList;
+        Map<String,Boolean[][]> resultMap;
 
         //empty grid test
         diceList.add(dice);
-        resultList = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositions(diceList);
 
         Boolean[][] resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -46,7 +47,7 @@ class PatternCardTest {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                assertEquals(resultGrid[i][j], resultList.get(0)[i][j]);
+                assertEquals(resultGrid[i][j], resultMap.get(diceList.get(0).toString())[i][j]);
             }
         }
     }
@@ -58,7 +59,7 @@ class PatternCardTest {
         List<Dice> diceList = new ArrayList<>();
         Dice dice = new Dice(Color.BLUE);
         dice.setFaceUpValue(4);
-        List<Boolean[][]> resultList;
+        Map<String,Boolean[][]> resultMap;
 
         //empty grid test
         diceList.add(dice);
@@ -87,7 +88,7 @@ class PatternCardTest {
         dice.setFaceUpValue(3);
         patternCard.grid.get(2).get(3).insertDice(dice);
 
-        resultList = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositions(diceList);
 
         resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -102,7 +103,7 @@ class PatternCardTest {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                assertEquals(resultGrid[i][j], resultList.get(0)[i][j]);
+                assertEquals(resultGrid[i][j], resultMap.get(diceList.get(0).toString())[i][j]);
             }
         }
 
@@ -115,11 +116,11 @@ class PatternCardTest {
         List<Dice> diceList = new ArrayList<>();
         Dice dice = new Dice(Color.PURPLE);
         dice.setFaceUpValue(5);
-        List<Boolean[][]> resultList;
+        Map<String,Boolean[][]> resultMap;
 
         //empty grid test
         diceList.add(dice);
-        resultList = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositions(diceList);
 
         Boolean[][] resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -134,7 +135,7 @@ class PatternCardTest {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                assertEquals(resultGrid[i][j], resultList.get(0)[i][j]);
+                assertEquals(resultGrid[i][j], resultMap.get(diceList.get(0).toString())[i][j]);
             }
         }
     }
@@ -146,7 +147,7 @@ class PatternCardTest {
         List<Dice> diceList = new ArrayList<>();
         Dice dice = new Dice(Color.PURPLE);
         dice.setFaceUpValue(5);
-        List<Boolean[][]> resultList;
+        Map<String,Boolean[][]> resultMap;
 
         //empty grid test
         diceList.add(dice);
@@ -186,7 +187,7 @@ class PatternCardTest {
         dice.setFaceUpValue(3);
         patternCard.grid.get(1).get(1).insertDice(dice);
 
-        resultList = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositions(diceList);
 
         resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -203,7 +204,7 @@ class PatternCardTest {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                assertEquals(resultGrid[i][j], resultList.get(0)[i][j]);
+                assertEquals(resultGrid[i][j], resultMap.get(diceList.get(0).toString())[i][j]);
             }
         }
 
@@ -217,11 +218,11 @@ class PatternCardTest {
         List<Dice> diceList = new ArrayList<>();
         Dice dice = new Dice(Color.PURPLE);
         dice.setFaceUpValue(5);
-        List<Boolean[][]> resultList;
+        Map<String,Boolean[][]> resultMap;
 
         //empty grid test
         diceList.add(dice);
-        resultList = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositions(diceList);
 
         Boolean[][] resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -240,7 +241,7 @@ class PatternCardTest {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                assertEquals(resultGrid[i][j], resultList.get(0)[i][j]);
+                assertEquals(resultGrid[i][j], resultMap.get(diceList.get(0).toString())[i][j]);
             }
         }
     }
@@ -252,8 +253,7 @@ class PatternCardTest {
         List<Dice> diceList = new ArrayList<>();
         Dice dice = new Dice(Color.PURPLE);
         dice.setFaceUpValue(5);
-        List<Boolean[][]> resultList;
-
+        Map<String,Boolean[][]> resultMap;
 
         Boolean[][] resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -264,11 +264,11 @@ class PatternCardTest {
         }
         //empty grid test
         diceList.add(dice);
-        resultList = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositions(diceList);
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                assertEquals(resultGrid[i][j], resultList.get(0)[i][j]);
+                assertEquals(resultGrid[i][j], resultMap.get(diceList.get(0).toString())[i][j]);
             }
         }
     }

@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.List;
+import java.util.Map;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
     private String ERROR_IN = "Errors in closing - ";
@@ -163,10 +164,10 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     /**
      * Method that notifies the User that it's his turn to play
      *
-     * @param booleanListGrid list of every available position where the die can be placed
+     * @param booleanMapGrid list of every available position where the die can be placed
      */
     @Override
-    public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
-        respond(new StartTurnNotification(booleanListGrid));
+    public void activateTurnNotification(Map<String,Boolean[][]> booleanMapGrid) {
+        respond(new StartTurnNotification(booleanMapGrid));
     }
 }

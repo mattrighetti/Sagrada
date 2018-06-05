@@ -2,16 +2,16 @@ package ingsw.controller.network.commands;
 
 import ingsw.utilities.NotificationType;
 
-import java.util.List;
+import java.util.Map;
 
 public class StartTurnNotification extends Notification {
 
-    public List<Boolean[][]> booleanListGrid;
+    public Map<String,Boolean[][]> booleanMapGrid;
 
-    public StartTurnNotification(List<Boolean[][]> booleanListGrid) {
+    public StartTurnNotification(Map<String,Boolean[][]> booleanMapGrid) {
         super(NotificationType.START_TURN);
 
-        this.booleanListGrid = booleanListGrid;
+        this.booleanMapGrid = booleanMapGrid;
     }
 
     /**

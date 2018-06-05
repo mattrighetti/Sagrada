@@ -276,7 +276,7 @@ public class GameController implements SceneUpdater, Initializable {
             DiceButton diceButtonToAdd = new DiceButton(diceList.get(i), i);
             diceButtonToAdd.setOnMouseClicked(event -> {
                 windowControllerList.get(0).setSelectedDice(diceButtonToAdd.getDice());
-                windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getButtonIndex());
+                windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getDice().toString());
             });
             diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
@@ -525,6 +525,15 @@ public class GameController implements SceneUpdater, Initializable {
         });
     }
 
+    public void toolCardAction(LathekinResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move the dice.\nYou must pay attention to all restrictions");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Lathekin");
+            alert.showAndWait();
+        });
+    }
+
     @Override
     public void setDraftedDice(List<Dice> dice) {
         Platform.runLater(() -> {
@@ -537,7 +546,7 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
-        windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanListGrid);
+        windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
         Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
         activateDice();
         activateToolCard();

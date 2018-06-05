@@ -356,9 +356,11 @@ public class ClientController implements ResponseHandler, NetworkType {
             case GRINDING_STONE:
                 sceneUpdater.toolCardAction((GrindingStoneResponse) useToolCardResponse);
                 break;
+            case LATHEKIN:
+                sceneUpdater.toolCardAction((LathekinResponse) useToolCardResponse);
+                break;
             case COPPER_FOIL_BURNISHER:
                 sceneUpdater.toolCardAction((CopperFoilBurnisherResponse) useToolCardResponse);
-                break;
         }
     }
 }

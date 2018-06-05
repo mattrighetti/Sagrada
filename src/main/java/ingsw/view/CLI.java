@@ -36,7 +36,7 @@ public class CLI implements SceneUpdater {
     private List<PublicObjectiveCard> publicObjectiveCards;
     private List<String> toolCards;
     private List<Dice> draftedDice;
-    private List<Boolean[][]> availaiblePosition;
+    private Map<String,Boolean[][]> availaiblePosition;
     private List<List<Dice>> roundTrack = new ArrayList<>();
     private List<MoveStatus> moveHistory = new ArrayList<>();
 
@@ -460,7 +460,7 @@ public class CLI implements SceneUpdater {
 
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
-        availaiblePosition = startTurnNotification.booleanListGrid;
+        availaiblePosition = startTurnNotification.booleanMapGrid;
         chooseMove();
     }
 

@@ -155,4 +155,8 @@ public interface SceneUpdater {
     default void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
         System.out.println("Not overridden");
     }
+
+    default void toolCardAction(LathekinResponse useToolCardResponse) {
+        System.out.println("Not overridden");
+    }
 }

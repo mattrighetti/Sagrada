@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class WindowController implements Initializable {
@@ -29,7 +30,7 @@ public class WindowController implements Initializable {
     private Button breakWindowButton;
 
     private String username;
-    private List<Boolean[][]> availablePosition;
+    private Map<String,Boolean[][]> availablePosition;
     private DicePane[][] dicePanes = new DicePane[4][5];
     private Dice selectedDice;
     private NetworkType networkType;
@@ -59,7 +60,7 @@ public class WindowController implements Initializable {
         }
     }
 
-    void setAvailablePosition(List<Boolean[][]> availablePosition) {
+    void setAvailablePosition(Map<String,Boolean[][]> availablePosition) {
         this.availablePosition = availablePosition;
     }
 
@@ -111,10 +112,10 @@ public class WindowController implements Initializable {
         }
     }
 
-    void updateAvailablePositions(int i) {
+    void updateAvailablePositions(String diceString) {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
-                if (!availablePosition.get(i)[j][k]) {
+                if (!availablePosition.get(diceString)[j][k]) {
                     (dicePanes[j][k]).getStyleClass().add("grey");
                 } else {
                     (dicePanes[j][k]).getStyleClass().clear();

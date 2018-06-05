@@ -5,7 +5,7 @@ import ingsw.controller.network.commands.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
+import java.util.Map;
 
 public interface UserObserver extends Remote {
 
@@ -15,7 +15,7 @@ public interface UserObserver extends Remote {
 
     void receiveNotification(Notification notification) throws RemoteException;
 
-    void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException;
+    void activateTurnNotification(Map<String,Boolean[][]> booleanMapGrid) throws RemoteException;
 
     void sendResponse(Response response) throws RemoteException;
 }

@@ -5,7 +5,9 @@ import ingsw.model.Dice;
 import ingsw.model.cards.Card;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class PatternCard extends Card {
     private int difficulty;
@@ -44,104 +46,54 @@ public abstract class PatternCard extends Card {
         this.grid.add(new ArrayList<>(5));
     }
 
-    public List<Boolean[][]> computeAvailablePositions(List<Dice> draftedDice) {
-        List<Boolean[][]> booleanGridsList = new ArrayList<>();
+    public Map<String,Boolean[][]> computeAvailablePositions(List<Dice> draftedDice) {
+        HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
-            booleanGridsList.add(computePosition(dice, true, true,true));
-        }
-        /* Uncomment this to print the pattern card available positions*/
-        /*
-        for (Boolean[][] booleans: booleanGridsList) {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 5; j++) {
-                    System.out.print(booleans[i][j] + "\t");
-                }
-                System.out.print("\n");
+            if(!hashMapGrid.containsKey(dice.toString())) {
+                hashMapGrid.put(dice.toString(), computePosition(dice, true, true,true));
             }
-            System.out.print("\n");
         }
-        */
-        return booleanGridsList;
+        return hashMapGrid;
     }
 
-    public List<Boolean[][]> computeAvailablePositionsNoValue(List<Dice> draftedDice) {
-        List<Boolean[][]> booleanGridsList = new ArrayList<>();
+    public Map<String,Boolean[][]> computeAvailablePositionsNoValue(List<Dice> draftedDice) {
+        HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
-            booleanGridsList.add(computePosition(dice, true, false,true));
-        }
-        /* Uncomment this to print the pattern card available positions*/
-        /*
-        for (Boolean[][] booleans: booleanGridsList) {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 5; j++) {
-                    System.out.print(booleans[i][j] + "\t");
-                }
-                System.out.print("\n");
+            if(!hashMapGrid.containsKey(dice.toString())) {
+                hashMapGrid.put(dice.toString(), computePosition(dice, true, false,true));
             }
-            System.out.print("\n");
         }
-        */
-        return booleanGridsList;
+        return hashMapGrid;
     }
 
-    public List<Boolean[][]> computeAvailablePositionsNoColor(List<Dice> draftedDice) {
-        List<Boolean[][]> booleanGridsList = new ArrayList<>();
+    public Map<String,Boolean[][]> computeAvailablePositionsNoColor(List<Dice> draftedDice) {
+        HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
-            booleanGridsList.add(computePosition(dice, false, true,true));
-        }
-        /* Uncomment this to print the pattern card available positions*/
-        /*
-        for (Boolean[][] booleans: booleanGridsList) {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 5; j++) {
-                    System.out.print(booleans[i][j] + "\t");
-                }
-                System.out.print("\n");
+            if(!hashMapGrid.containsKey(dice.toString())) {
+                hashMapGrid.put(dice.toString(), computePosition(dice, false, true,true));
             }
-            System.out.print("\n");
         }
-        */
-        return booleanGridsList;
+        return hashMapGrid;
     }
 
-    public List<Boolean[][]> computeAvailablePositionsNoDiceAround(List<Dice> draftedDice) {
-        List<Boolean[][]> booleanGridsList = new ArrayList<>();
+    public Map<String,Boolean[][]> computeAvailablePositionsNoDiceAround(List<Dice> draftedDice) {
+        HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
-            booleanGridsList.add(computePosition(dice, true, true,false));
-        }
-        /* Uncomment this to print the pattern card available positions*/
-        /*
-        for (Boolean[][] booleans: booleanGridsList) {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 5; j++) {
-                    System.out.print(booleans[i][j] + "\t");
-                }
-                System.out.print("\n");
+            if(!hashMapGrid.containsKey(dice.toString())) {
+                hashMapGrid.put(dice.toString(), computePosition(dice, true, true,false));
             }
-            System.out.print("\n");
         }
-        */
-        return booleanGridsList;
+        return hashMapGrid;
     }
 
-    public List<Boolean[][]> computeAvailablePositionsNoColorNoValue(List<Dice> draftedDice) {
-        List<Boolean[][]> booleanGridsList = new ArrayList<>();
+    public Map<String,Boolean[][]> computeAvailablePositionsNoColorNoValue(List<Dice> draftedDice) {
+        HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
-            booleanGridsList.add(computePosition(dice, false, false,false));
-        }
-        /* Uncomment this to print the pattern card available positions*/
-        /*
-        for (Boolean[][] booleans: booleanGridsList) {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 5; j++) {
-                    System.out.print(booleans[i][j] + "\t");
-                }
-                System.out.print("\n");
+            if(!hashMapGrid.containsKey(dice.toString())) {
+                hashMapGrid.put(dice.toString(), computePosition(dice, false, false,true));
             }
-            System.out.print("\n");
         }
-        */
-        return booleanGridsList;
+        return hashMapGrid;
     }
 
     private Boolean[][] computePosition(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction) {

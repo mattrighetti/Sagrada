@@ -6,7 +6,7 @@ import ingsw.controller.network.socket.UserObserver;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
+import java.util.Map;
 
 public class RMIUserObserver extends UnicastRemoteObject implements UserObserver {
     private transient ResponseHandler rmiController;
@@ -32,8 +32,8 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
-    public void activateTurnNotification(List<Boolean[][]> booleanListGrid) {
-        new StartTurnNotification(booleanListGrid).handle(rmiController);
+    public void activateTurnNotification(Map<String,Boolean[][]> booleanMapGrid) {
+        new StartTurnNotification(booleanMapGrid).handle(rmiController);
     }
 
     @Override
