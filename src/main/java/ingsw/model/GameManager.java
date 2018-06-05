@@ -197,6 +197,10 @@ public class GameManager {
         return patternCard;
     }
 
+    public List<Dice> getDraftedDice(){
+        return board.getDraftedDice();
+    }
+
     /**
      * Method that waits for every users to choose a patternCard
      */
@@ -419,7 +423,7 @@ public class GameManager {
             addMoveToHistoryAndNotify(new MoveStatus(player.getPlayerUsername(),
                     "Placed dice" + dice + " in [" + rowIndex + ", " + columnIndex + "]"));
             // UpdateView response
-            Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player));
+            Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player, sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
             return true;
         } else {
             return false;
@@ -534,6 +538,6 @@ public class GameManager {
     }
 
     public void copperFoilBurnisherResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(currentRound.getCurrentPlayer()));
+        Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
     }
 }

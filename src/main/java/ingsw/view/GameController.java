@@ -519,6 +519,8 @@ public class GameController implements SceneUpdater, Initializable {
             alert.setTitle("Use Tool card");
             alert.setHeaderText("Copper Foil Burnisher");
             alert.showAndWait();
+            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+
             windowControllerList.get(0).copperFoilBurnisher();
         });
     }
@@ -547,6 +549,7 @@ public class GameController implements SceneUpdater, Initializable {
         for (WindowController windowController : windowControllerList) {
             if (windowController.getUsername().equals(updateViewResponse.player.getPlayerUsername())) {
                 windowController.updatePatternCard(updateViewResponse.player.getPatternCard());
+                windowController.setAvailablePosition(updateViewResponse.availablePositions);
             }
         }
         disableDice();

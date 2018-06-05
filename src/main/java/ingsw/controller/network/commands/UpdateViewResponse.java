@@ -4,11 +4,16 @@ import ingsw.model.Player;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.GridCreator;
 
+import java.util.List;
+
 public class UpdateViewResponse implements Response {
     public Player player;
+    public List<Boolean[][]> availablePositions;
 
-    public UpdateViewResponse(Player player) {
+    public UpdateViewResponse(Player player, List<Boolean[][]> availablePositions) {
+
         this.player = player;
+        this.availablePositions = availablePositions;
     }
 
     /**
