@@ -46,7 +46,8 @@ public class RMIHandler implements RequestHandler {
             user = sagradaGame.loginUser(loginUserRequest.username, rmiUserObserver);
             return new LoginUserResponse(user, sagradaGame.getConnectedUsers(), sagradaGame.doubleStringBuilder());
         } catch (InvalidUsernameException | RemoteException e) {
-            return new LoginUserResponse(null, -1, null);
+            new LoginUserResponse(null, -1, null).handle(rmiController);
+            return null;
         }
     }
 

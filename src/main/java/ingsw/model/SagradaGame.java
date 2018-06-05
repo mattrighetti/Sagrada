@@ -2,6 +2,7 @@ package ingsw.model;
 
 import ingsw.controller.Controller;
 import ingsw.controller.network.commands.CreateMatchResponse;
+import ingsw.controller.network.commands.LoginUserResponse;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.utilities.Broadcaster;
@@ -70,6 +71,8 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         if (!connectedUsers.containsKey(username)) {
             currentUser.addListener(userObserver);
             connectedUsers.put(username, currentUser);
+            connectedUsers.get(username).getUserObserver()
+                    .sendResponse(new LoginUserResponse(currentUser, getConnectedUsers(), doubleStringBuilder()));
             broadcastUsersConnected(username);
             return connectedUsers.get(username);
         }

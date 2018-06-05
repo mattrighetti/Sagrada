@@ -82,11 +82,13 @@ public class LoginController implements SceneUpdater {
 
     @Override
     public void launchAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Warning");
-        alert.setHeaderText("Username has already been taken");
-        alert.setContentText("Choose another username");
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Username has already been taken");
+            alert.setContentText("Choose another username");
+            alert.showAndWait();
+        });
     }
 
 }

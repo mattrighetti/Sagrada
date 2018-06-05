@@ -15,7 +15,7 @@ public class ServerController implements RequestHandler, Serializable {
     private transient Controller controller;
     private User user;
 
-    public ServerController(ClientHandler clientHandler) throws RemoteException {
+    ServerController(ClientHandler clientHandler) throws RemoteException {
         this.clientHandler = clientHandler;
         sagradaGame = SagradaGame.get();
     }
@@ -31,10 +31,11 @@ public class ServerController implements RequestHandler, Serializable {
     public Response handle(LoginUserRequest loginUserRequest) {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, clientHandler);
-            return new LoginUserResponse(user, sagradaGame.getConnectedUsers(), sagradaGame.doubleStringBuilder());
         } catch (InvalidUsernameException | RemoteException e) {
             return new LoginUserResponse(null, -1, null);
         }
+
+        return null;
     }
 
     @Override

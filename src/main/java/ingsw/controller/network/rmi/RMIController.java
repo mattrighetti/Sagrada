@@ -38,13 +38,10 @@ public class RMIController implements ResponseHandler, NetworkType {
      * Method that logs in the user to SagradaGame
      *
      * @param username username chosen by the user
-     * @return boolean value that indicates if the user has been successfully logged in to the game
-     * @throws RemoteException throws RemoteException
      */
     @Override
     public void loginUser(String username) {
-        response = new LoginUserRequest(username).handle(rmiHandler);
-        response.handle(this);
+        new LoginUserRequest(username).handle(rmiHandler);
     }
 
     @Override

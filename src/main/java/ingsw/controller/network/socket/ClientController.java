@@ -12,8 +12,7 @@ import ingsw.controller.network.NetworkType;
 public class ClientController implements ResponseHandler, NetworkType {
     private Client client;
     private Thread thread;
-    private boolean generalPurposeBoolean = false;
-    private boolean hasMatchBeenCreated = false;
+    private boolean listenerActive = false;
     private SceneUpdater sceneUpdater;
 
     public ClientController(Client client) {
@@ -53,7 +52,9 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void loginUser(String username) {
         client.request(new LoginUserRequest(username));
-        client.nextResponse().handle(this);
+        if (!listenerActive) {
+            listenForResponses();
+        }
     }
 
     /**
@@ -83,9 +84,7 @@ public class ClientController implements ResponseHandler, NetworkType {
      */
     @Override
     public void joinExistingMatch(String matchName) {
-        //stopBroadcastReceiver();
         client.request(new JoinMatchRequest(matchName));
-        //client.nextResponse().handle(this);
     }
 
     /**
@@ -147,6 +146,7 @@ public class ClientController implements ResponseHandler, NetworkType {
     private void listenForResponses() {
         thread = new Thread(
                 () -> {
+                    listenerActive = true;
                     System.out.println("Opening the Thread");
                     Response response;
                     do {
@@ -159,6 +159,7 @@ public class ClientController implements ResponseHandler, NetworkType {
                             break;
                         }
                     } while (true);
+                    listenerActive = false;
                 }
         );
         thread.start();
@@ -183,7 +184,6 @@ public class ClientController implements ResponseHandler, NetworkType {
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
             sceneUpdater.launchSecondGui(loginUserResponse.user.getUsername());
-            listenForResponses();
         } else
             sceneUpdater.launchAlert();
     }
