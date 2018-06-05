@@ -27,4 +27,6 @@ public interface ResponseHandler {
     void handle(UseToolCardResponse useToolCardResponse);
 
     void handle(RoundTrackNotification roundTrackNotification);
+
+    void handle(ReJoinResponse reJoinResponse);
 }

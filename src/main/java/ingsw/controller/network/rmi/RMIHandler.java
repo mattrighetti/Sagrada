@@ -89,6 +89,20 @@ public class RMIHandler implements RequestHandler {
     }
 
     @Override
+    public Response handle(ReJoinMatchRequest reJoinMatchRequest) {
+        try {
+            sagradaGame.loginPrexistentPlayer(reJoinMatchRequest.matchName, user);
+            remoteController = (RemoteController) Naming.lookup("rmi://" + ipAddress + ":1099/" + reJoinMatchRequest.matchName);
+        } catch (NotBoundException | RemoteException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            System.err.println("Error in URL String");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCardRequest) {
         try {
             remoteController.assignPatternCard(user.getUsername(), chosenPatternCardRequest.patternCard);

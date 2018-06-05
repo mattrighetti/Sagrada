@@ -14,8 +14,6 @@ public class Player implements Serializable {
     private PrivateObjectiveCard privateObjectiveCard;
     private PatternCard patternCard;
 
-    //TODO decide which collection to use for cards sets and add the others methods and the favor tokens(int or class)
-
     public Player(User user) {
         this.user = user;
     }
@@ -28,7 +26,7 @@ public class Player implements Serializable {
         return patternCard;
     }
 
-    public void setPrivateObjectiveCard(PrivateObjectiveCard privateObjectiveCard) {
+    void setPrivateObjectiveCard(PrivateObjectiveCard privateObjectiveCard) {
         this.privateObjectiveCard = privateObjectiveCard;
     }
 
@@ -51,12 +49,16 @@ public class Player implements Serializable {
         return user.getUserObserver();
     }
 
-    public void notifyDraft() {
+    void notifyDraft() {
         try {
             getUserObserver().receiveNotification(new Notification(NotificationType.DRAFT_DICE));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    void updateUser(User user) {
+        this.user = user;
     }
 
     //Get a Private Card of this player

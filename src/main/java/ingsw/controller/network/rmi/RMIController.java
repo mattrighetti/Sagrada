@@ -139,6 +139,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void handle(ReJoinResponse reJoinResponse) {
+        new ReJoinMatchRequest(reJoinResponse.matchName).handle(rmiHandler);
+    }
+
+    @Override
     public void handle(JoinedMatchResponse joinedMatchResponse) {
 
     }

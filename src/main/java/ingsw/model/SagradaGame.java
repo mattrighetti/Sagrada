@@ -3,6 +3,7 @@ package ingsw.model;
 import ingsw.controller.Controller;
 import ingsw.controller.network.commands.CreateMatchResponse;
 import ingsw.controller.network.commands.LoginUserResponse;
+import ingsw.controller.network.commands.ReJoinResponse;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.utilities.Broadcaster;
@@ -11,8 +12,6 @@ import ingsw.utilities.DoubleString;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
@@ -67,6 +66,25 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
      */
     @Override
     public synchronized User loginUser(String username, UserObserver userObserver) throws InvalidUsernameException, RemoteException {
+
+        // Check if the username is present and inactive
+        if (connectedUsers.containsKey(username) && !connectedUsers.get(username).isActive()) {
+            // Update the UserObserver
+            connectedUsers.get(username).addListener(userObserver);
+            //Check in which match the user was playing before disconnecting
+            for (Controller controller : matchesByName.values()) {
+                for (Player player : controller.getPlayerList()) {
+                    if (player.getPlayerUsername().equals(username)) {
+
+                        player.getUserObserver().sendResponse(new ReJoinResponse(controller.getMatchName()));
+                    }
+                }
+            }
+            // Return the same user with the updated UserObserver
+            return connectedUsers.get(username);
+        }
+
+        // In case there is no username | the username is active
         User currentUser = new User(username);
         if (!connectedUsers.containsKey(username)) {
             currentUser.addListener(userObserver);
@@ -76,6 +94,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
             broadcastUsersConnected(username);
             return connectedUsers.get(username);
         }
+
         throw new InvalidUsernameException("Username has been taken already");
     }
 
@@ -115,8 +134,19 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
 
     @Override
     public void loginUserToController(String matchName, User user) throws RemoteException {
+        user.setActive(true);
         matchesByName.get(matchName).loginUser(user);
         Broadcaster.broadcastResponse(connectedUsers, user.getUsername(), new CreateMatchResponse(doubleStringBuilder()));
+    }
+
+    @Override
+    public void loginPrexistentPlayer(String matchName, User user) throws RemoteException {
+        user.setActive(true);
+        for (Player player : matchesByName.get(matchName).getPlayerList()) {
+            if (player.getPlayerUsername().equals(user.getUsername()) && !player.getUser().isActive()) {
+                player.updateUser(user);
+            }
+        }
     }
 
     public Controller getMatchController(String matchName) {

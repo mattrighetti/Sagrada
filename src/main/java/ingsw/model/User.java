@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class User implements Serializable {
     private String username;
+    private boolean active;
     private UserObserver userObserver;
     private int noOfWins;
     private int noOfLose;
@@ -21,6 +22,7 @@ public class User implements Serializable {
 
     public User(String username) {
         this.username = username;
+        this.active = false;
         matchesPlayed = new LinkedList<>();
     }
 
@@ -28,19 +30,19 @@ public class User implements Serializable {
         return username;
     }
 
-    public int getNoOfWins() {
+    int getNoOfWins() {
         return noOfWins;
     }
 
-    public int getNoOfLose() {
+    int getNoOfLose() {
         return noOfLose;
     }
 
-    public int getNoOfDraws() {
+    int getNoOfDraws() {
         return noOfDraws;
     }
 
-    public List<String> getMatchesPlayed() {
+    List<String> getMatchesPlayed() {
         return matchesPlayed;
     }
 
@@ -52,7 +54,15 @@ public class User implements Serializable {
         return userObserver;
     }
 
-    public void updateUserConnected(int numberOfConnectedUsers) throws RemoteException {
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    void updateUserConnected(int numberOfConnectedUsers) throws RemoteException {
         userObserver.onJoin(numberOfConnectedUsers);
     }
 }

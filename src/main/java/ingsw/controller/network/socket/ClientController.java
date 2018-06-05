@@ -11,7 +11,6 @@ import ingsw.controller.network.NetworkType;
  */
 public class ClientController implements ResponseHandler, NetworkType {
     private Client client;
-    private Thread thread;
     private boolean listenerActive = false;
     private SceneUpdater sceneUpdater;
 
@@ -144,7 +143,7 @@ public class ClientController implements ResponseHandler, NetworkType {
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */
     private void listenForResponses() {
-        thread = new Thread(
+        new Thread(
                 () -> {
                     listenerActive = true;
                     System.out.println("Opening the Thread");
@@ -161,8 +160,7 @@ public class ClientController implements ResponseHandler, NetworkType {
                     } while (true);
                     listenerActive = false;
                 }
-        );
-        thread.start();
+        ).start();
     }
 
 
@@ -235,7 +233,7 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method that updates the view whenever a User placed a die in their window
-     * @param updateViewResponse
+     * @param updateViewResponse response that's going to trigger the view update
      */
     @Override
     public void handle(UpdateViewResponse updateViewResponse) {
@@ -275,7 +273,7 @@ public class ClientController implements ResponseHandler, NetworkType {
     /**
      * Method that handles every Notification and acts differently for every Notification's enumeration element
      *
-     * @param notification
+     * @param notification notification received by the ClientController
      */
     @Override
     public void handle(Notification notification) {
@@ -312,5 +310,10 @@ public class ClientController implements ResponseHandler, NetworkType {
             case DRAFT_POOL:
                 sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
         }
+    }
+
+    @Override
+    public void handle(ReJoinResponse reJoinResponse) {
+        client.request(new ReJoinMatchRequest(reJoinResponse.matchName));
     }
 }

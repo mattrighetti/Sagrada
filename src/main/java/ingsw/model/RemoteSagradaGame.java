@@ -19,6 +19,8 @@ public interface RemoteSagradaGame extends Remote {
 
     void createMatch(String matchName) throws RemoteException;
 
+    void loginPrexistentPlayer(String matchName, User user) throws RemoteException;
+
     Controller joinMatch(String matchName) throws RemoteException;
 
     void broadcastUsersConnected(String string) throws RemoteException;
