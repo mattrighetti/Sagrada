@@ -5,12 +5,13 @@ import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.GridCreator;
 
 import java.util.List;
+import java.util.Map;
 
 public class UpdateViewResponse implements Response {
     public Player player;
-    public List<Boolean[][]> availablePositions;
+    public Map<String,Boolean[][]> availablePositions;
 
-    public UpdateViewResponse(Player player, List<Boolean[][]> availablePositions) {
+    public UpdateViewResponse(Player player, Map<String,Boolean[][]> availablePositions) {
 
         this.player = player;
         this.availablePositions = availablePositions;
