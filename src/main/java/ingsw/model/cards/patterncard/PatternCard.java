@@ -47,7 +47,7 @@ public abstract class PatternCard extends Card {
     public List<Boolean[][]> computeAvailablePositions(List<Dice> draftedDice) {
         List<Boolean[][]> booleanGridsList = new ArrayList<>();
         for (Dice dice : draftedDice) {
-            booleanGridsList.add(computePosition(dice));
+            booleanGridsList.add(computePosition(dice, true, true,true));
         }
         /* Uncomment this to print the pattern card available positions*/
         /*
@@ -64,7 +64,87 @@ public abstract class PatternCard extends Card {
         return booleanGridsList;
     }
 
-    private Boolean[][] computePosition(Dice dice) {
+    public List<Boolean[][]> computeAvailablePositionsNoValue(List<Dice> draftedDice) {
+        List<Boolean[][]> booleanGridsList = new ArrayList<>();
+        for (Dice dice : draftedDice) {
+            booleanGridsList.add(computePosition(dice, true, false,true));
+        }
+        /* Uncomment this to print the pattern card available positions*/
+        /*
+        for (Boolean[][] booleans: booleanGridsList) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 5; j++) {
+                    System.out.print(booleans[i][j] + "\t");
+                }
+                System.out.print("\n");
+            }
+            System.out.print("\n");
+        }
+        */
+        return booleanGridsList;
+    }
+
+    public List<Boolean[][]> computeAvailablePositionsNoColor(List<Dice> draftedDice) {
+        List<Boolean[][]> booleanGridsList = new ArrayList<>();
+        for (Dice dice : draftedDice) {
+            booleanGridsList.add(computePosition(dice, false, true,true));
+        }
+        /* Uncomment this to print the pattern card available positions*/
+        /*
+        for (Boolean[][] booleans: booleanGridsList) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 5; j++) {
+                    System.out.print(booleans[i][j] + "\t");
+                }
+                System.out.print("\n");
+            }
+            System.out.print("\n");
+        }
+        */
+        return booleanGridsList;
+    }
+
+    public List<Boolean[][]> computeAvailablePositionsNoDiceAround(List<Dice> draftedDice) {
+        List<Boolean[][]> booleanGridsList = new ArrayList<>();
+        for (Dice dice : draftedDice) {
+            booleanGridsList.add(computePosition(dice, true, true,false));
+        }
+        /* Uncomment this to print the pattern card available positions*/
+        /*
+        for (Boolean[][] booleans: booleanGridsList) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 5; j++) {
+                    System.out.print(booleans[i][j] + "\t");
+                }
+                System.out.print("\n");
+            }
+            System.out.print("\n");
+        }
+        */
+        return booleanGridsList;
+    }
+
+    public List<Boolean[][]> computeAvailablePositionsNoColorNoValue(List<Dice> draftedDice) {
+        List<Boolean[][]> booleanGridsList = new ArrayList<>();
+        for (Dice dice : draftedDice) {
+            booleanGridsList.add(computePosition(dice, false, false,false));
+        }
+        /* Uncomment this to print the pattern card available positions*/
+        /*
+        for (Boolean[][] booleans: booleanGridsList) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 5; j++) {
+                    System.out.print(booleans[i][j] + "\t");
+                }
+                System.out.print("\n");
+            }
+            System.out.print("\n");
+        }
+        */
+        return booleanGridsList;
+    }
+
+    private Boolean[][] computePosition(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction) {
         Boolean[][] booleanGrid = new Boolean[4][5];
 
         //initialize booleanGrid
@@ -84,9 +164,9 @@ public abstract class PatternCard extends Card {
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 5; j++) {
                     if (hasValue(i, j)) {
-                        if (sameGridValue(i, j, dice))
+                        if (sameGridValue(valueRestrictions, i, j, dice))
                             booleanGrid[i][j] = true;
-                    } else if (grid.get(i).get(j).getColor().equals(dice.getDiceColor()))
+                    } else if (sameGridColor(colorRestrictions, i, j, dice))
                         booleanGrid[i][j] = true;
                 }
             }
@@ -120,7 +200,7 @@ public abstract class PatternCard extends Card {
                 for (int j = 0; j < 5; j++) {
                     if (noDice(i, j)) {
 
-                        if (!hasDicesAround(i, j)) {
+                        if (!hasDicesAround(diceAroundRestriction,i, j)) {
                             booleanGrid[i][j] = false;
                             continue;
                         }
@@ -128,68 +208,33 @@ public abstract class PatternCard extends Card {
 
 
                         if (hasValue(i, j)) {
-                            if (!sameGridValue(i, j, dice)) {
+                            if (!sameGridValue(valueRestrictions, i, j, dice)) {
                                 booleanGrid[i][j] = false;
                                 continue;
                             }
-                        } else if (!sameGridColor(i, j, dice) && !isBlank(i, j)) {
+                        } else if (!sameGridColor(colorRestrictions, i, j, dice) && !isBlank(i, j)) {
                             booleanGrid[i][j] = false;
                             continue;
                         }
 
                         //Check dices around
 
-                        if (i < 3) {
-                            if (!noDice(i + 1, j)) {
-                                if (!sameDiceValue(i + 1, j, dice) && !sameDiceColor(i + 1, j, dice)) {
-                                    booleanGrid[i][j] = true;
-                                }
-                                else {
-                                    booleanGrid[i][j] = false;
-                                    continue;
-                                }
-                            } else
-                                booleanGrid[i][j] = true;
-                        }
-
-                        if (i > 0) {
-                            if (!noDice(i - 1, j)) {
-                                if (!sameDiceValue(i - 1, j, dice) && !sameDiceColor(i - 1, j, dice)) {
-                                    booleanGrid[i][j] = true;
-                                }
-                                else {
-                                    booleanGrid[i][j] = false;
-                                    continue;
-                                }
-                            } else
-                                booleanGrid[i][j] = true;
-                        }
+                        if (i < 3)
+                            if (checkAround(dice, i + 1, j, j, booleanGrid[i], booleanGrid)) continue;
 
 
-                        if (j < 4) {
-                            if (!noDice(i, j + 1)) {
-                                if (!sameDiceValue(i, j + 1, dice) && !sameDiceColor(i, j + 1, dice)) {
-                                    booleanGrid[i][j] = true;
-                                }
-                                else {
-                                    booleanGrid[i][j] = false;
-                                    continue;
-                                }
-                            } else
-                                booleanGrid[i][j] = true;
-                        }
+                        if (i > 0)
+                            if (checkAround(dice, i - 1, j, j, booleanGrid[i], booleanGrid)) continue;
+
+
+
+                        if (j < 4)
+                            if (checkAround(dice, i, j, j + 1, booleanGrid[i], booleanGrid)) continue;
+
 
 
                         if (j > 0) {
-                            if (!noDice(i, j - 1)) {
-                                if (!sameDiceValue(i, j - 1, dice) && !sameDiceColor(i, j - 1, dice)) {
-                                    booleanGrid[i][j] = true;
-                                } else {
-                                    booleanGrid[i][j] = false;
-                                    continue;
-                                }
-                            } else
-                                booleanGrid[i][j] = true;
+                            checkAround(dice, i, j, j - 1, booleanGrid[i], booleanGrid);
                         }
                     }
                 }
@@ -198,41 +243,57 @@ public abstract class PatternCard extends Card {
         return booleanGrid;
     }
 
-    private boolean hasDicesAround(int i, int j) {
-
-        if (j > 0) {
-            if (!noDice(i, j - 1))
-                return !noDice(i,j - 1);
-        }
-        if (j < 4) {
-            if (!noDice(i,j + 1))
-                return !noDice(i,j + 1);
-        }
-        if (i < 3) {
-            if (!noDice(i + 1,j))
-                return !noDice(i + 1,j);
-        }
-        if (i > 0) {
-            if (!noDice(i - 1,j))
-                return !noDice(i - 1,j);
-        }
-        if (j > 0 && i < 3) {
-            if (!noDice(i + 1,j - 1))
-                return !noDice(i + 1,j - 1);
-        }
-        if (j > 0 && i > 0) {
-            if (!noDice(i - 1,j - 1))
-                return !noDice(i - 1,j - 1);
-        }
-        if (j < 4 && i < 3) {
-            if (!noDice(i + 1,j + 1))
-                return !noDice(i + 1,j + 1);
-        }
-        if (j < 4 && i > 0) {
-            if (!noDice(i - 1,j + 1))
-                return !noDice(i - 1,j + 1);
-        }
+    private boolean checkAround(Dice dice, int i, int j, int i2, Boolean[] booleans, Boolean[][] booleanGrid) {
+        if (!noDice(i, i2)) {
+            if (!sameDiceValue(i, i2, dice) && !sameDiceColor(i, i2, dice)) {
+                booleans[j] = true;
+            }
+            else {
+                booleans[j] = false;
+                return true;
+            }
+        } else
+            booleans[j] = true;
         return false;
+    }
+
+    private boolean hasDicesAround(boolean diceAroundRestriction, int i, int j) {
+        if (diceAroundRestriction){
+            if (j > 0) {
+                if (!noDice(i, j - 1))
+                    return !noDice(i,j - 1);
+            }
+            if (j < 4) {
+                if (!noDice(i,j + 1))
+                    return !noDice(i,j + 1);
+            }
+            if (i < 3) {
+                if (!noDice(i + 1,j))
+                    return !noDice(i + 1,j);
+            }
+            if (i > 0) {
+                if (!noDice(i - 1,j))
+                    return !noDice(i - 1,j);
+            }
+            if (j > 0 && i < 3) {
+                if (!noDice(i + 1,j - 1))
+                    return !noDice(i + 1,j - 1);
+            }
+            if (j > 0 && i > 0) {
+                if (!noDice(i - 1,j - 1))
+                    return !noDice(i - 1,j - 1);
+            }
+            if (j < 4 && i < 3) {
+                if (!noDice(i + 1,j + 1))
+                    return !noDice(i + 1,j + 1);
+            }
+            if (j < 4 && i > 0) {
+                if (!noDice(i - 1,j + 1))
+                    return !noDice(i - 1,j + 1);
+            }
+            return false;
+        }
+        return true;
     }
 
     private boolean sameDiceColor(int i, int j, Dice dice) {
@@ -243,13 +304,17 @@ public abstract class PatternCard extends Card {
         return grid.get(i).get(j).getDice().getFaceUpValue() == dice.getFaceUpValue();
     }
 
-    private boolean sameGridColor(int i, int j, Dice dice) {
-        return grid.get(i).get(j).getColor().equals(dice.getDiceColor());
+    private boolean sameGridColor(boolean colorRestrictions, int i, int j, Dice dice) {
+        if (colorRestrictions)
+            return grid.get(i).get(j).getColor().equals(dice.getDiceColor());
+        return true;
     }
 
 
-    private boolean sameGridValue(int i, int j, Dice dice) {
-        return grid.get(i).get(j).getValue().equals(dice.getFaceUpValue());
+    private boolean sameGridValue(boolean valueRestrictions, int i, int j, Dice dice) {
+        if (valueRestrictions)
+            return grid.get(i).get(j).getValue().equals(dice.getFaceUpValue());
+        return true;
     }
 
     private boolean noDice(int i, int j) {
