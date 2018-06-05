@@ -167,6 +167,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new CopperFoilBurnisherRequest(dicePosition, position));
     }
 
+    @Override
+    public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
+        client.request((new CorkBackedStraightedgeRequest(selectedDice, row, column)));
+    }
+
     /**
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */
@@ -361,6 +366,16 @@ public class ClientController implements ResponseHandler, NetworkType {
                 break;
             case COPPER_FOIL_BURNISHER:
                 sceneUpdater.toolCardAction((CopperFoilBurnisherResponse) useToolCardResponse);
+                break;
+            case CORK_BACKED_STRAIGHT_EDGE:
+                sceneUpdater.toolCardAction((CorkBackedStraightedgeResponse) useToolCardResponse);
+                break;
+            case LENS_CUTTER:
+                sceneUpdater.toolCardAction((LensCutterResponse) useToolCardResponse);
+                break;
+            case EGLOMISE_BRUSH:
+                sceneUpdater.toolCardAction((EglomiseBrushResponse) useToolCardResponse);
+                break;
         }
     }
 }

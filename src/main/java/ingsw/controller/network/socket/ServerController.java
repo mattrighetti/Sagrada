@@ -133,6 +133,12 @@ public class ServerController implements RequestHandler, Serializable {
                     e.printStackTrace();
                 }
                 break;
+            case CORK_BACKED_STRAIGHT_EDGE:
+                try {
+                    controller.toolCardMove((CorkBackedStraightedgeRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
         }
         return null;
     }

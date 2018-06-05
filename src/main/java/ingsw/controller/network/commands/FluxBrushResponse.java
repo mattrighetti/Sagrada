@@ -5,6 +5,6 @@ import ingsw.utilities.ToolCardType;
 public class FluxBrushResponse extends UseToolCardResponse {
 
     public FluxBrushResponse() {
-        super(ToolCardType.FLUX_REMOVER);
+        super(ToolCardType.FLUX_BRUSH);
     }
 }

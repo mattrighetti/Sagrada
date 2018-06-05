@@ -159,4 +159,16 @@ public interface SceneUpdater {
     default void toolCardAction(LathekinResponse useToolCardResponse) {
         System.out.println("Not overridden");
     }
+
+    default void toolCardAction(CorkBackedStraightedgeResponse useToolCardResponse){
+        System.out.println("Not overridden");
+    }
+
+    default void toolCardAction(LensCutterResponse useToolCardResponse){
+        System.out.println("Not overridden");
+    }
+
+    default void toolCardAction(EglomiseBrushResponse useToolCardResponse){
+        System.out.println("Not overridden");
+    }
 }

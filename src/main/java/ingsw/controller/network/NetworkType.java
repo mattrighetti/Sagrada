@@ -30,6 +30,8 @@ public interface NetworkType {
 
     void copperFoilBurnisherMove(Tuple dicePosition, Tuple position);
 
+    void corkBackedStraightedgeMove(Dice selectedDice, int row, int column);
+
     void choosePatternCard(PatternCard patternCard);
 
     void endTurn();

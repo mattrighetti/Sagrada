@@ -1,24 +1,24 @@
 package ingsw.model.cards.toolcards;
 
-import ingsw.controller.network.commands.EglomiseBrushResponse;
+import ingsw.controller.network.commands.CorkBackedStraightedgeResponse;
 import ingsw.model.GameManager;
 
 import java.rmi.RemoteException;
 
-public class EglomiseBrush extends ToolCard {
+public class CorkBackedStraightEdge extends ToolCard {
 
-    public EglomiseBrush() {
-        super("EglomiseBrush");
+    public CorkBackedStraightEdge() {
+        super("CorkBackedStraightEdge");
     }
 
     /**
-     * Move any one die your window ignoring the color restrictions.
+     * After drafting, place the dice in a spot that is not adjacent to another dice.
      * You must obey all other placement restrictions.
      */
     @Override
     public void action(GameManager gameManager) {
         try {
-            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new EglomiseBrushResponse());
+            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new CorkBackedStraightedgeResponse());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -31,6 +31,6 @@ public class EglomiseBrush extends ToolCard {
             }
         }
 
-        gameManager.eglomiseBrushResponse();
+        gameManager.corkBackedStraightedgeResponse();
     }
 }

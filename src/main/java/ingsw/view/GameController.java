@@ -535,6 +535,21 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     @Override
+    public void toolCardAction(CorkBackedStraightedgeResponse useToolCardResponse) {
+        //TODO
+    }
+
+    @Override
+    public void toolCardAction(LensCutterResponse useToolCardResponse) {
+        //TODO
+    }
+
+    @Override
+    public void toolCardAction(EglomiseBrushResponse useToolCardResponse) {
+        //TODO
+    }
+
+    @Override
     public void setDraftedDice(List<Dice> dice) {
         Platform.runLater(() -> {
             displayDraftedDice(dice);

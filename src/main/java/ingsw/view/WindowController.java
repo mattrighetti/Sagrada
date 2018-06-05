@@ -98,16 +98,17 @@ public class WindowController implements Initializable {
                 if (patternCard.getGrid().get(j).get(k).getDice() != null) {
                     dicePane.getStyleClass().add(patternCard.getGrid().get(j).get(k).getDice().toString());
                     dicePane.getStyleClass().add("dicePaneImageSize");
-                    dicePane.setOnMouseClicked(event -> {
-                        System.out.println("clicked");
-                        if (selectedDice != null) {
-                            networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
-                        } else {
-                            System.out.println("No dice selected");
-                        }
-                        selectedDice = null;
-                    });
+
                 }
+                dicePane.setOnMouseClicked(event -> {
+                    System.out.println("clicked");
+                    if (selectedDice != null) {
+                        networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                    } else {
+                        System.out.println("No dice selected");
+                    }
+                    selectedDice = null;
+                });
             }
         }
     }
@@ -115,11 +116,13 @@ public class WindowController implements Initializable {
     void updateAvailablePositions(String diceString) {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
-                if (!availablePosition.get(diceString)[j][k]) {
-                    (dicePanes[j][k]).getStyleClass().add("grey");
-                } else {
-                    (dicePanes[j][k]).getStyleClass().clear();
-                }
+                if (availablePosition.get(diceString) != null) {
+                    if (!availablePosition.get(diceString)[j][k]) {
+                        (dicePanes[j][k]).getStyleClass().add("grey");
+                    } else {
+                        (dicePanes[j][k]).getStyleClass().clear();
+                    }
+                } else System.err.println("Erron hashmap available positions");
             }
         }
     }
@@ -130,25 +133,22 @@ public class WindowController implements Initializable {
                 DicePane thisDicePane = dicePanes[j][k];
 
                 thisDicePane.setOnMouseClicked(event -> {
-                    if (selectedPositions.size() == 0) {
+                    if (selectedPositions.isEmpty()) {
                         if (!thisDicePane.getStyleClass().isEmpty())
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
+                            System.out.println(thisDicePane.getStyleClass().toString());
+                            updateAvailablePositions(thisDicePane.getStyleClass().get(0).toString());
                     }
                     else if (selectedPositions.size() == 1) {
                         if (thisDicePane.getStyleClass().isEmpty()) {
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
                             networkType.copperFoilBurnisherMove(selectedPositions.get(0), selectedPositions.get(1));
 
-                            for (Tuple position : selectedPositions) {
-                                selectedPositions.remove(position);
-                            }
+                            selectedPositions.removeAll(selectedPositions);
                         }
                     }
-                    else if (selectedPositions.size() > 1){
-                        for (Tuple position : selectedPositions) {
-                            selectedPositions.remove(position);
-                        }
-                    }
+                    else
+                        selectedPositions.removeAll(selectedPositions);
                 });
 
             }

@@ -110,6 +110,27 @@ public class RMIHandler implements RequestHandler {
                     e.printStackTrace();
                 }
                 break;
+            case CORK_BACKED_STRAIGHT_EDGE:
+                try {
+                    remoteController.toolCardMove((CorkBackedStraightedgeRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case LENS_CUTTER:
+                try {
+                    remoteController.toolCardMove((LensCutterRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case EGLOMISE_BRUSH:
+                try {
+                    remoteController.toolCardMove((EglomiseBrushRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         return null;
     }

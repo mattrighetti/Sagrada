@@ -108,7 +108,7 @@ public class GameManager {
     private void setUpToolCards() {
         toolCards = new LinkedList<>();
         this.toolCards.add(new CopperFoilBurnisher());
-        this.toolCards.add(new CorkBarckedStraightEdge());
+        this.toolCards.add(new CorkBackedStraightEdge());
         this.toolCards.add(new EglomiseBrush());
         this.toolCards.add(new FluxBrush());
         this.toolCards.add(new FluxRemover());
@@ -536,9 +536,10 @@ public class GameManager {
         Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
     }
 
-    public void copperFoilBurnisherRequest(Tuple dicePosition, Tuple position) {
+    public void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
         List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
         patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+        patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
         synchronized (toolCardLock){
             toolCardLock.notify();
         }
@@ -546,5 +547,29 @@ public class GameManager {
 
     public void copperFoilBurnisherResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+    }
+
+    public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
+        //TODO
+    }
+
+    public void corkBackedStraightedgeResponse() {
+        //TODO
+    }
+
+    public void lensCutterMove() {
+        //TODO
+    }
+
+    public void lensCutterResponse(){
+        //TODO
+    }
+
+    public void eglomiseBrushMove() {
+        //TODO
+    }
+
+    public void eglomiseBrushResponse(){
+        //TODO
     }
 }

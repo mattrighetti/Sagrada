@@ -32,4 +32,10 @@ public interface RemoteController extends Remote {
     void toolCardMove(GrindingStoneRequest moveToolCardRequest) throws RemoteException;
 
     void toolCardMove(CopperFoilBurnisherRequest moveToolCardRequest) throws RemoteException;
+
+    void toolCardMove(CorkBackedStraightedgeRequest moveToolCardRequest) throws RemoteException;
+
+    void toolCardMove(LensCutterRequest moveToolCardRequest) throws RemoteException;
+
+    void toolCardMove(EglomiseBrushRequest moveToolCardRequest) throws RemoteException;
 }

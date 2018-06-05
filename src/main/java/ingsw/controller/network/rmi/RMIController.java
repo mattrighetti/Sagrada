@@ -4,6 +4,7 @@ import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.model.cards.toolcards.EglomiseBrush;
 import ingsw.utilities.Tuple;
 import ingsw.view.SceneUpdater;
 
@@ -111,6 +112,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
+        new CorkBackedStraightedgeRequest(selectedDice,row,column).handle(rmiHandler);
+    }
+
+    @Override
     public void grindingStoneMove(Dice dice) {
         new GrindingStoneRequest(dice).handle(rmiHandler);
     }
@@ -212,6 +218,12 @@ public class RMIController implements ResponseHandler, NetworkType {
                 break;
             case COPPER_FOIL_BURNISHER:
                 sceneUpdater.toolCardAction((CopperFoilBurnisherResponse) useToolCardResponse);
+                break;
+            case CORK_BACKED_STRAIGHT_EDGE:
+                sceneUpdater.toolCardAction((CorkBackedStraightedgeResponse) useToolCardResponse);
+                break;
+            case EGLOMISE_BRUSH:
+                sceneUpdater.toolCardAction((EglomiseBrushResponse) useToolCardResponse);
                 break;
         }
     }

@@ -135,6 +135,21 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
 
     @Override
     public void toolCardMove(CopperFoilBurnisherRequest moveToolCardRequest) throws RemoteException {
-        gameManager.copperFoilBurnisherRequest(moveToolCardRequest.dicePosition, moveToolCardRequest.position);
+        gameManager.copperFoilBurnisherMove(moveToolCardRequest.dicePosition, moveToolCardRequest.position);
+    }
+
+    @Override
+    public void toolCardMove(CorkBackedStraightedgeRequest moveToolCardRequest) throws RemoteException{
+        gameManager.corkBackedStraightedgeMove(moveToolCardRequest.selectedDice, moveToolCardRequest.row, moveToolCardRequest.column);
+    }
+
+    @Override
+    public void toolCardMove(LensCutterRequest moveToolCardRequest) throws RemoteException {
+        gameManager.lensCutterMove();
+    }
+
+    @Override
+    public void toolCardMove(EglomiseBrushRequest moveToolCardRequest) throws RemoteException {
+        gameManager.eglomiseBrushMove();
     }
 }
