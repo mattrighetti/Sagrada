@@ -125,6 +125,14 @@ public class ServerController implements RequestHandler, Serializable {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+                break;
+            case COPPER_FOIL_BURNISHER:
+                try {
+                    controller.toolCardMove((CopperFoilBurnisherRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         return null;
     }

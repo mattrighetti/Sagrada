@@ -4,6 +4,7 @@ import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.utilities.Tuple;
 import ingsw.view.SceneUpdater;
 
 import java.rmi.RemoteException;
@@ -105,6 +106,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
+        new CopperFoilBurnisherRequest(dicePosition, position).handle(rmiHandler);
+    }
+
+    @Override
     public void grindingStoneMove(Dice dice) {
         new GrindingStoneRequest(dice).handle(rmiHandler);
     }
@@ -203,6 +209,9 @@ public class RMIController implements ResponseHandler, NetworkType {
                 break;
             case DRAFT_POOL:
                 sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
+                break;
+            case COPPER_FOIL_BURNISHER:
+                sceneUpdater.toolCardAction((CopperFoilBurnisherResponse) useToolCardResponse);
                 break;
         }
     }

@@ -3,14 +3,17 @@ package ingsw.view;
 import ingsw.controller.network.NetworkType;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.utilities.Tuple;
 import ingsw.view.nodes.DicePane;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -30,10 +33,12 @@ public class WindowController implements Initializable {
     private DicePane[][] dicePanes = new DicePane[4][5];
     private Dice selectedDice;
     private NetworkType networkType;
+    private List<Tuple> selectedPositions = new ArrayList<>();
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 DicePane dicePane = new DicePane(i, j);
@@ -87,11 +92,20 @@ public class WindowController implements Initializable {
 
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
-                (dicePanes[j][k]).getStyleClass().clear();
+                DicePane dicePane = dicePanes[j][k];
+                dicePane.getStyleClass().clear();
                 if (patternCard.getGrid().get(j).get(k).getDice() != null) {
-                    System.out.println(patternCard.getGrid().get(j).get(k).getDice());
-                    (dicePanes[j][k]).getStyleClass().add(patternCard.getGrid().get(j).get(k).getDice().toString());
-                    (dicePanes[j][k]).getStyleClass().add("dicePaneImageSize");
+                    dicePane.getStyleClass().add(patternCard.getGrid().get(j).get(k).getDice().toString());
+                    dicePane.getStyleClass().add("dicePaneImageSize");
+                    dicePane.setOnMouseClicked(event -> {
+                        System.out.println("clicked");
+                        if (selectedDice != null) {
+                            networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                        } else {
+                            System.out.println("No dice selected");
+                        }
+                        selectedDice = null;
+                    });
                 }
             }
         }
@@ -108,4 +122,39 @@ public class WindowController implements Initializable {
             }
         }
     }
+
+    public void copperFoilBurnisher(){
+        for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < 5; k++) {
+                DicePane thisDicePane = dicePanes[j][k];
+
+                thisDicePane.setOnMouseClicked(event -> {
+                    if (selectedPositions.size() == 0) {
+                        if (!thisDicePane.getStyleClass().isEmpty())
+                            selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
+                    }
+                    else if (selectedPositions.size() == 1) {
+                        if (thisDicePane.getStyleClass().isEmpty()) {
+                            selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
+                            networkType.copperFoilBurnisherMove(selectedPositions.get(0), selectedPositions.get(1));
+
+                            for (Tuple position : selectedPositions) {
+                                selectedPositions.remove(position);
+                            }
+                        }
+                    }
+                    else if (selectedPositions.size() > 1){
+                        for (Tuple position : selectedPositions) {
+                            selectedPositions.remove(position);
+                        }
+                    }
+                });
+
+            }
+        }
+
+    }
+
+
+
 }

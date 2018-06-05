@@ -513,6 +513,17 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     @Override
+    public void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\n ignoring shade restrictions");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Copper Foil Burnisher");
+            alert.showAndWait();
+            windowControllerList.get(0).copperFoilBurnisher();
+        });
+    }
+
+    @Override
     public void setDraftedDice(List<Dice> dice) {
         Platform.runLater(() -> {
             displayDraftedDice(dice);

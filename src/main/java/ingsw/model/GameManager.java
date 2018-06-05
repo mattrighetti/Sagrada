@@ -18,6 +18,7 @@ import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.Broadcaster;
 import ingsw.utilities.MoveStatus;
+import ingsw.utilities.Tuple;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -151,7 +152,7 @@ public class GameManager {
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> list = new ArrayList<>();
         list.add(new FluxBrush());
-        list.add(new GrozingPliers());
+        list.add(new CopperFoilBurnisher());
         list.add(new FluxRemover());
 
         return list;
@@ -522,5 +523,17 @@ public class GameManager {
 
     public void grindingStoneResponse(){
         Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+    }
+
+    public void copperFoilBurnisherRequest(Tuple dicePosition, Tuple position) {
+        List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
+        patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+        synchronized (toolCardLock){
+            toolCardLock.notify();
+        }
+    }
+
+    public void copperFoilBurnisherResponse() {
+        Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(currentRound.getCurrentPlayer()));
     }
 }

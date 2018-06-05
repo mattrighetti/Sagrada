@@ -1,9 +1,6 @@
 package ingsw.controller;
 
-import ingsw.controller.network.commands.FluxBrushRequest;
-import ingsw.controller.network.commands.FluxRemoverRequest;
-import ingsw.controller.network.commands.GrindingStoneRequest;
-import ingsw.controller.network.commands.GrozingPliersRequest;
+import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.GameManager;
 import ingsw.model.Player;
@@ -134,5 +131,10 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
 
     public void toolCardMove(GrindingStoneRequest grindingStoneRequest) throws RemoteException {
         gameManager.grindingStoneMove(grindingStoneRequest.selectedDice);
+    }
+
+    @Override
+    public void toolCardMove(CopperFoilBurnisherRequest moveToolCardRequest) throws RemoteException {
+        gameManager.copperFoilBurnisherRequest(moveToolCardRequest.dicePosition, moveToolCardRequest.position);
     }
 }

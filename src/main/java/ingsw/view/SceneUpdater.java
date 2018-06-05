@@ -4,6 +4,7 @@ import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.model.cards.toolcards.CopperFoilBurnisher;
 import ingsw.model.cards.toolcards.GrindingStone;
 import ingsw.utilities.DoubleString;
 
@@ -148,6 +149,10 @@ public interface SceneUpdater {
     }
 
     default void toolCardAction(GrindingStoneResponse useToolCardResponse) {
+        System.out.println("Not overridden");
+    }
+
+    default void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
         System.out.println("Not overridden");
     }
 }

@@ -102,6 +102,14 @@ public class RMIHandler implements RequestHandler {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+                break;
+            case COPPER_FOIL_BURNISHER:
+                try {
+                    remoteController.toolCardMove((CopperFoilBurnisherRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         return null;
     }

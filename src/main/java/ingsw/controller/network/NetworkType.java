@@ -2,6 +2,7 @@ package ingsw.controller.network;
 
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.utilities.Tuple;
 
 public interface NetworkType {
 
@@ -26,6 +27,8 @@ public interface NetworkType {
     void fluxBrushMove (Dice dice);
 
     void fluxRemoverMove(Dice dice);
+
+    void copperFoilBurnisherMove(Tuple dicePosition, Tuple position);
 
     void choosePatternCard(PatternCard patternCard);
 

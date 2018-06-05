@@ -3,6 +3,7 @@ package ingsw.controller.network.socket;
 import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.utilities.Tuple;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
@@ -159,6 +160,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void fluxRemoverMove(Dice dice) {
         client.request(new FluxRemoverRequest(dice));
+    }
+
+    @Override
+    public void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
+        client.request(new CopperFoilBurnisherRequest(dicePosition, position));
     }
 
     /**
@@ -349,6 +355,9 @@ public class ClientController implements ResponseHandler, NetworkType {
                 break;
             case GRINDING_STONE:
                 sceneUpdater.toolCardAction((GrindingStoneResponse) useToolCardResponse);
+                break;
+            case COPPER_FOIL_BURNISHER:
+                sceneUpdater.toolCardAction((CopperFoilBurnisherResponse) useToolCardResponse);
                 break;
         }
     }

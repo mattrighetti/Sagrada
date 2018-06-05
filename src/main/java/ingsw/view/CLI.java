@@ -17,7 +17,6 @@ import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -35,7 +34,7 @@ public class CLI implements SceneUpdater {
     private List<DoubleString> availableMatches = new ArrayList<>();
     private List<Player> players;
     private List<PublicObjectiveCard> publicObjectiveCards;
-    private List<ToolCard> toolCards;
+    private List<String> toolCards;
     private List<Dice> draftedDice;
     private List<Boolean[][]> availaiblePosition;
     private List<List<Dice>> roundTrack = new ArrayList<>();
@@ -430,7 +429,9 @@ public class CLI implements SceneUpdater {
     public void loadData(BoardDataResponse boardDataResponse) {
         this.players = boardDataResponse.players;
         this.publicObjectiveCards = boardDataResponse.publicObjectiveCards;
-        this.toolCards = boardDataResponse.toolCards;
+        for (ToolCard toolCard : boardDataResponse.toolCards) {
+            toolCards.add((toolCard.getName()));
+        }
 
     }
 
@@ -621,9 +622,7 @@ public class CLI implements SceneUpdater {
         do {
             selectedDice = 0;
             System.out.println("Select a dice");
-            for (int i = 0; i < draftedDice.size(); i++) {
-                System.out.print((i + 1) + " - " + draftedDice.get(i).toString() + "\n");
-            }
+            showDraftedDice();
             System.out.println("\n" + (draftedDice.size() + 1) + " - exit");
             selectedDice = userIntegerInput();
 
@@ -661,6 +660,12 @@ public class CLI implements SceneUpdater {
         } while (true);
     }
 
+    private void showDraftedDice() {
+        for (int i = 0; i < draftedDice.size(); i++) {
+            System.out.print((i + 1) + " - " + draftedDice.get(i).toString() + "\n");
+        }
+    }
+
     private boolean checkAndShowAvailablePositions(int selectedDice) {
         boolean anyAvailablePosition = false;
         for (int i = 0; i < 4; i++) {
@@ -684,14 +689,39 @@ public class CLI implements SceneUpdater {
         System.out.println("\nNext turn...\n");
     }
 
+    /**
+     * Show available Tool Cards and makes the user choose one to use
+     */
     private void toolCardMove() {
-        //TODO
+        int chosenToolCard;
+        do {
+            System.out.println("Choose a Pattern Card:\n");
+            for (int i = 0; i < toolCards.size(); i++) {
+                System.out.println(i + " - " + toolCards.get(i) + "\n");
+            }
+            chosenToolCard = userIntegerInput();
+
+            if (chosenToolCard > 0 && chosenToolCard < toolCards.size())
+                currentConnectionType.useToolCard(toolCards.get(chosenToolCard));
+            else if (chosenToolCard == 0) {
+                synchronized (gamePhase) {
+                    gamePhase.notify();
+                }
+            }
+
+        } while (chosenToolCard < 0 || chosenToolCard > 6);
     }
 
     @Override
     public void setDraftedDice(List<Dice> dice) {
         this.draftedDice = dice;
         currentConnectionType.sendAck();
+    }
+
+    private void setDraftedDiceAndShow(List<Dice> dice){
+        this.draftedDice = dice;
+        showDraftedDice();
+
     }
 
     /**
@@ -741,4 +771,24 @@ public class CLI implements SceneUpdater {
         }
     }
 
+    @Override
+    public void toolCardAction(DraftPoolResponse draftPoolResponse) {
+        System.out.println("Here the new drafted pool:\n");
+        setDraftedDiceAndShow(draftPoolResponse.draftedDice);
+    }
+
+    @Override
+    public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
+
+    }
+
+    @Override
+    public void toolCardAction(FluxBrushResponse useToolCardResponse) {
+
+    }
+
+    @Override
+    public void toolCardAction(FluxRemoverResponse useToolCardResponse) {
+
+    }
 }
