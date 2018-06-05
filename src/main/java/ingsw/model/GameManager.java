@@ -153,7 +153,7 @@ public class GameManager {
         ArrayList<ToolCard> list = new ArrayList<>();
         list.add(new FluxBrush());
         list.add(new CopperFoilBurnisher());
-        list.add(new FluxRemover());
+        list.add(new EglomiseBrush());
 
         return list;
     }
@@ -558,11 +558,18 @@ public class GameManager {
         //TODO
     }
 
-    public void eglomiseBrushMove() {
-        //TODO
+    public void eglomiseBrushMove(Tuple dicePosition, Tuple position) {
+        List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
+        if (patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
+            patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+            patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
+        } else System.out.println("Eglomise Brusher: Error invalid selected dice");
+        synchronized (toolCardLock){
+            toolCardLock.notify();
+        }
     }
 
     public void eglomiseBrushResponse(){
-        //TODO
+        Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))) );
     }
 }

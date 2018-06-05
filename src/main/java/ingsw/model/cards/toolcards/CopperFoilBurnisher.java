@@ -39,20 +39,5 @@ public class CopperFoilBurnisher extends ToolCard {
         gameManager.copperFoilBurnisherResponse();
     }
 
-    private List<Dice> buildListDice(GameManager gameManager){
-        PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
-        List<Dice> diceToCheck = new ArrayList<>();
-        for (Dice dice : gameManager.getDraftedDice()) {
-            diceToCheck.add(dice);
-        }
-        for (int i = 0; i < patternCard.getGrid().size() ; i++) {
-            for (int j = 0; j < patternCard.getGrid().get(i).size(); j++) {
-                if (patternCard.getGrid().get(i).get(j).getDice() != null)
-                    diceToCheck.add(patternCard.getGrid().get(i).get(j).getDice());
-            }
-        }
-        return diceToCheck;
-    }
-
 
 }

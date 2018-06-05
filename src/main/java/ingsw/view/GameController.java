@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -26,7 +27,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -145,6 +145,8 @@ public class GameController implements SceneUpdater, Initializable {
 
     @FXML
     void onEndTurnPressed(ActionEvent event) {
+        tabPane.setCursor(Cursor.DEFAULT);
+        windowControllerList.get(0).setSelectedDice(null);
         networkType.endTurn();
         disableDice();
         endTurnButton.setDisable(true);
@@ -528,7 +530,7 @@ public class GameController implements SceneUpdater, Initializable {
             alert.showAndWait();
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
 
-            windowControllerList.get(0).copperFoilBurnisher();
+            windowControllerList.get(0).moveDiceinPatternCard();
         });
     }
 
@@ -553,7 +555,14 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void toolCardAction(EglomiseBrushResponse useToolCardResponse) {
-        //TODO
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\n ignoring color restrictions");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Eglomise Brush");
+            alert.showAndWait();
+            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+        });
+        windowControllerList.get(0).moveDiceinPatternCard();
     }
 
     @Override

@@ -18,7 +18,7 @@ public class EglomiseBrush extends ToolCard {
     @Override
     public void action(GameManager gameManager) {
         try {
-            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new EglomiseBrushResponse());
+            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new EglomiseBrushResponse(gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsNoColor()));
         } catch (RemoteException e) {
             e.printStackTrace();
         }

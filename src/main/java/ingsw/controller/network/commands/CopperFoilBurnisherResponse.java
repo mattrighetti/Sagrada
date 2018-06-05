@@ -2,7 +2,6 @@ package ingsw.controller.network.commands;
 
 import ingsw.utilities.ToolCardType;
 
-import java.util.List;
 import java.util.Map;
 
 public class CopperFoilBurnisherResponse extends UseToolCardResponse {

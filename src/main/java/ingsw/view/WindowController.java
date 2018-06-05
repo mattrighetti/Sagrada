@@ -132,7 +132,11 @@ public class WindowController implements Initializable {
         }
     }
 
-    public void copperFoilBurnisher(){
+    /**
+     * Method used by EglomiseBrush, CopperFoilBurnisher toolcards
+     *
+     */
+    public void moveDiceinPatternCard(){
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
                 DicePane thisDicePane = dicePanes[j][k];
