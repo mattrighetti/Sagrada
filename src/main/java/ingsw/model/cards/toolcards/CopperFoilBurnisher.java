@@ -23,7 +23,7 @@ public class CopperFoilBurnisher extends ToolCard {
     public void action(GameManager gameManager) {
         try {
             PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
-            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new CopperFoilBurnisherResponse(patternCard.computeAvailablePositionsNoValue(buildListDice(gameManager))));
+            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new CopperFoilBurnisherResponse(patternCard.computeAvailablePositionsNoValue()));
         } catch (RemoteException e) {
             e.printStackTrace();
         }

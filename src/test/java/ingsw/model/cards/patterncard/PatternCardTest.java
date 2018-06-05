@@ -27,7 +27,7 @@ class PatternCardTest {
 
         //empty grid test
         diceList.add(dice);
-        resultMap = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositionsDraftedDice(diceList);
 
         Boolean[][] resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -88,7 +88,7 @@ class PatternCardTest {
         dice.setFaceUpValue(3);
         patternCard.grid.get(2).get(3).insertDice(dice);
 
-        resultMap = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositionsDraftedDice(diceList);
 
         resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -120,7 +120,7 @@ class PatternCardTest {
 
         //empty grid test
         diceList.add(dice);
-        resultMap = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositionsDraftedDice(diceList);
 
         Boolean[][] resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -187,7 +187,7 @@ class PatternCardTest {
         dice.setFaceUpValue(3);
         patternCard.grid.get(1).get(1).insertDice(dice);
 
-        resultMap = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositionsDraftedDice(diceList);
 
         resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -222,7 +222,7 @@ class PatternCardTest {
 
         //empty grid test
         diceList.add(dice);
-        resultMap = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositionsDraftedDice(diceList);
 
         Boolean[][] resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
@@ -264,7 +264,7 @@ class PatternCardTest {
         }
         //empty grid test
         diceList.add(dice);
-        resultMap = patternCard.computeAvailablePositions(diceList);
+        resultMap = patternCard.computeAvailablePositionsDraftedDice(diceList);
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {

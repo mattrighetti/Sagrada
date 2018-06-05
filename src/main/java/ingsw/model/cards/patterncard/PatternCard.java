@@ -46,7 +46,7 @@ public abstract class PatternCard extends Card {
         this.grid.add(new ArrayList<>(5));
     }
 
-    public Map<String,Boolean[][]> computeAvailablePositions(List<Dice> draftedDice) {
+    public Map<String,Boolean[][]> computeAvailablePositionsDraftedDice(List<Dice> draftedDice) {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
             if(!hashMapGrid.containsKey(dice.toString())) {
@@ -56,41 +56,58 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
-    public Map<String,Boolean[][]> computeAvailablePositionsNoValue(List<Dice> draftedDice) {
+    public Map<String,Boolean[][]> computeAvailablePositions() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
-        for (Dice dice : draftedDice) {
-            if(!hashMapGrid.containsKey(dice.toString())) {
-                hashMapGrid.put(dice.toString(), computePosition(dice, true, false,true));
+        Dice dice;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                if(grid.get(i).get(j).getDice() != null) {
+                    dice = grid.get(i).get(j).getDice();
+                    grid.get(i).get(j).removeDice();
+                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true ));
+                    grid.get(i).get(j).insertDice(dice);
+                }
             }
         }
         return hashMapGrid;
     }
 
-    public Map<String,Boolean[][]> computeAvailablePositionsNoColor(List<Dice> draftedDice) {
+    public Map<String,Boolean[][]> computeAvailablePositionsNoValue() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
-        for (Dice dice : draftedDice) {
-            if(!hashMapGrid.containsKey(dice.toString())) {
-                hashMapGrid.put(dice.toString(), computePosition(dice, false, true,true));
+        Dice dice;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                if(grid.get(i).get(j).getDice() != null) {
+                    dice = grid.get(i).get(j).getDice();
+                    grid.get(i).get(j).removeDice();
+                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, false, true ));
+                    grid.get(i).get(j).insertDice(dice);
+                }
             }
         }
         return hashMapGrid;
     }
+
+    public Map<String,Boolean[][]> computeAvailablePositionsNoColor() {
+        HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
+        Dice dice;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                if(grid.get(i).get(j).getDice() != null) {
+                    dice = grid.get(i).get(j).getDice();
+                    grid.get(i).get(j).removeDice();
+                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, false, true, true ));
+                    grid.get(i).get(j).insertDice(dice);
+                }
+            }
+        }
+        return hashMapGrid;    }
 
     public Map<String,Boolean[][]> computeAvailablePositionsNoDiceAround(List<Dice> draftedDice) {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
             if(!hashMapGrid.containsKey(dice.toString())) {
                 hashMapGrid.put(dice.toString(), computePosition(dice, true, true,false));
-            }
-        }
-        return hashMapGrid;
-    }
-
-    public Map<String,Boolean[][]> computeAvailablePositionsNoColorNoValue(List<Dice> draftedDice) {
-        HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
-        for (Dice dice : draftedDice) {
-            if(!hashMapGrid.containsKey(dice.toString())) {
-                hashMapGrid.put(dice.toString(), computePosition(dice, false, false,true));
             }
         }
         return hashMapGrid;

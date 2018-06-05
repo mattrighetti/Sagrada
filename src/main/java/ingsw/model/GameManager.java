@@ -401,14 +401,7 @@ public class GameManager {
      * @param player player who's playing at the current time
      */
     Map<String,Boolean[][]> sendAvailablePositions(Player player) {
-        ArrayList<Dice> diceArrayList = new ArrayList<>(board.getDraftedDice());
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
-                if(player.getPatternCard().getGrid().get(i).get(j).getDice() != null)
-                    diceArrayList.add(player.getPatternCard().getGrid().get(i).get(j).getDice());
-            }
-        }
-        return player.getPatternCard().computeAvailablePositions(diceArrayList);
+        return player.getPatternCard().computeAvailablePositionsDraftedDice(board.getDraftedDice());
     }
 
     /*
