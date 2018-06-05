@@ -8,6 +8,7 @@ import ingsw.view.nodes.DicePane;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
@@ -30,13 +31,12 @@ public class WindowController implements Initializable {
     private Button breakWindowButton;
 
     private String username;
+
     private Map<String,Boolean[][]> availablePosition;
     private DicePane[][] dicePanes = new DicePane[4][5];
     private Dice selectedDice;
     private NetworkType networkType;
     private List<Tuple> selectedPositions = new ArrayList<>();
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -49,6 +49,7 @@ public class WindowController implements Initializable {
                     System.out.println("clicked");
                     if (selectedDice != null) {
                         networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                        patternCardGridPane.setCursor(Cursor.DEFAULT);
                     } else {
                         System.out.println("No dice selected");
                     }
@@ -62,6 +63,10 @@ public class WindowController implements Initializable {
 
     void setAvailablePosition(Map<String,Boolean[][]> availablePosition) {
         this.availablePosition = availablePosition;
+    }
+
+    public GridPane getPatternCardGridPane() {
+        return patternCardGridPane;
     }
 
     void setNetworkType(NetworkType networkType) {
@@ -137,7 +142,7 @@ public class WindowController implements Initializable {
                         if (!thisDicePane.getStyleClass().isEmpty())
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
                             System.out.println(thisDicePane.getStyleClass().toString());
-                            updateAvailablePositions(thisDicePane.getStyleClass().get(0).toString());
+                            updateAvailablePositions(thisDicePane.getStyleClass().get(0).toString() + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
                     }
                     else if (selectedPositions.size() == 1) {
                         if (thisDicePane.getStyleClass().isEmpty()) {

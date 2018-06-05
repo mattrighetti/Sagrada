@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -25,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -275,6 +277,11 @@ public class GameController implements SceneUpdater, Initializable {
         for (int i = 0; i < diceList.size(); i++) {
             DiceButton diceButtonToAdd = new DiceButton(diceList.get(i), i);
             diceButtonToAdd.setOnMouseClicked(event -> {
+
+                Image cursor = new Image("/img/dice/" + diceButtonToAdd.getDice().toString() + ".png" ,90,90,true,true);
+                ImageCursor imageCursor = new ImageCursor(cursor);
+                windowControllerList.get(0).getPatternCardGridPane().setCursor(imageCursor);
+
                 windowControllerList.get(0).setSelectedDice(diceButtonToAdd.getDice());
                 windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getDice().toString());
             });
