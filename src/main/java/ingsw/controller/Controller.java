@@ -152,4 +152,9 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     public void toolCardMove(EglomiseBrushRequest moveToolCardRequest) throws RemoteException {
         gameManager.eglomiseBrushMove(moveToolCardRequest.dicePosition, moveToolCardRequest.position);
     }
+
+    @Override
+    public void toolCardMove(LathekinRequest lathekinRequest) throws RemoteException {
+        gameManager.lathekinMove(lathekinRequest.dicePosition, lathekinRequest.position, lathekinRequest.doubleMove);
+    }
 }

@@ -32,6 +32,8 @@ public interface NetworkType {
 
     void corkBackedStraightedgeMove(Dice selectedDice, int row, int column);
 
+    void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove);
+
     void choosePatternCard(PatternCard patternCard);
 
     void endTurn();

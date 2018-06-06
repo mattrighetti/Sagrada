@@ -122,7 +122,12 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void lensCutter(int roundIndex, String roundTrackDice, String poolDice) {
-        new LensCutterRequest(roundIndex,roundTrackDice,poolDice).handle(rmiHandler);
+        new LensCutterRequest(roundIndex, roundTrackDice, poolDice).handle(rmiHandler);
+    }
+
+    @Override
+    public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
+        new LathekinRequest(dicePosition, position, doubleMove).handle(rmiHandler);
     }
 
     @Override
@@ -204,27 +209,39 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(UseToolCardResponse useToolCardResponse) {
-        switch (useToolCardResponse.toolCardType){
-            case FLUX_REMOVER:
-                sceneUpdater.toolCardAction((FluxRemoverResponse) useToolCardResponse);
+        switch (useToolCardResponse.toolCardType) {
+            case PATTERN_CARD:
+                sceneUpdater.toolCardAction((PatternCardToolCardResponse) useToolCardResponse);
                 break;
-            case GROZING_PLIERS:
-                sceneUpdater.toolCardAction((GrozingPliersResponse) useToolCardResponse);
+            case DRAFT_POOL:
+                sceneUpdater.toolCardAction((DraftedDiceToolCardResponse) useToolCardResponse);
+                break;
+            case ROUND_TRACK:
+                sceneUpdater.toolCardAction((RoundTrackToolCardResponse) useToolCardResponse);
                 break;
             case FLUX_BRUSH:
                 sceneUpdater.toolCardAction((FluxBrushResponse) useToolCardResponse);
                 break;
+            case GROZING_PLIERS:
+                sceneUpdater.toolCardAction((GrozingPliersResponse) useToolCardResponse);
+                break;
+            case FLUX_REMOVER:
+                sceneUpdater.toolCardAction((FluxRemoverResponse) useToolCardResponse);
+                break;
             case GRINDING_STONE:
                 sceneUpdater.toolCardAction((GrindingStoneResponse) useToolCardResponse);
                 break;
-            case DRAFT_POOL:
-                sceneUpdater.toolCardAction((DraftedDiceToolCardResponse) useToolCardResponse);
+            case LATHEKIN:
+                sceneUpdater.toolCardAction((LathekinResponse) useToolCardResponse);
                 break;
             case COPPER_FOIL_BURNISHER:
                 sceneUpdater.toolCardAction((CopperFoilBurnisherResponse) useToolCardResponse);
                 break;
             case CORK_BACKED_STRAIGHT_EDGE:
                 sceneUpdater.toolCardAction((CorkBackedStraightedgeResponse) useToolCardResponse);
+                break;
+            case LENS_CUTTER:
+                sceneUpdater.toolCardAction((LensCutterResponse) useToolCardResponse);
                 break;
             case EGLOMISE_BRUSH:
                 sceneUpdater.toolCardAction((EglomiseBrushResponse) useToolCardResponse);

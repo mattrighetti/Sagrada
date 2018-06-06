@@ -177,6 +177,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request((new CorkBackedStraightedgeRequest(selectedDice, row, column)));
     }
 
+    @Override
+    public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
+        client.request(new LathekinRequest(dicePosition, position, doubleMove));
+    }
+
     /**
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */
@@ -324,6 +329,7 @@ public class ClientController implements ResponseHandler, NetworkType {
                 break;
             case HISTORY_UPDATE:
                 sceneUpdater.updateMovesHistory((MoveStatusNotification) notification);
+                break;
         }
     }
 
@@ -351,6 +357,9 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(UseToolCardResponse useToolCardResponse) {
         switch (useToolCardResponse.toolCardType) {
+            case PATTERN_CARD:
+                sceneUpdater.toolCardAction((PatternCardToolCardResponse) useToolCardResponse);
+                break;
             case DRAFT_POOL:
                 sceneUpdater.toolCardAction((DraftedDiceToolCardResponse) useToolCardResponse);
                 break;

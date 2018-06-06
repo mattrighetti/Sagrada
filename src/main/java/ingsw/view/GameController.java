@@ -33,10 +33,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class GameController implements SceneUpdater, Initializable {
 
@@ -222,7 +219,7 @@ public class GameController implements SceneUpdater, Initializable {
         );
     }
 
-    private void disableToolCard() {
+    private void disableToolCards() {
         Platform.runLater(
                 () -> {
                     for (ImageView toolCard : toolCardsImageViewsList) {
@@ -249,6 +246,7 @@ public class GameController implements SceneUpdater, Initializable {
             imageView.setOnMouseClicked(event -> {
                 networkType.useToolCard(imageView.getId());
                 System.out.println(imageView.getId());
+                disableToolCards();
             });
             imageView.setDisable(true);
             counter++;
@@ -371,7 +369,6 @@ public class GameController implements SceneUpdater, Initializable {
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
-            disableToolCard();
         });
         System.out.println("Tool card used");
     }
@@ -548,6 +545,9 @@ public class GameController implements SceneUpdater, Initializable {
             alert.setTitle("Use Tool card");
             alert.setHeaderText("Lathekin");
             alert.showAndWait();
+
+            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+            windowControllerList.get(0).moveDiceinPatternCardLathekin();
         });
     }
 
@@ -623,14 +623,23 @@ public class GameController implements SceneUpdater, Initializable {
         endTurnButton.setDisable(false);
     }
 
-    @Override
-    public void updateView(UpdateViewResponse updateViewResponse) {
+    private void updateTab(Player player, Map<String, Boolean[][]> availablePositions) {
         for (WindowController windowController : windowControllerList) {
-            if (windowController.getUsername().equals(updateViewResponse.player.getPlayerUsername())) {
-                windowController.updatePatternCard(updateViewResponse.player.getPatternCard());
-                windowController.setAvailablePosition(updateViewResponse.availablePositions);
+            if (windowController.getUsername().equals(player.getPlayerUsername())) {
+                windowController.updatePatternCard(player.getPatternCard());
+                windowController.setAvailablePosition(availablePositions);
             }
         }
+    }
+
+    @Override
+    public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
+        updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
+    }
+
+    @Override
+    public void updateView(UpdateViewResponse updateViewResponse) {
+        updateTab(updateViewResponse.player, updateViewResponse.availablePositions);
         disableDice();
     }
 

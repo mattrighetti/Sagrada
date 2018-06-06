@@ -147,6 +147,13 @@ public class ServerController implements RequestHandler, Serializable {
                     e.printStackTrace();
                 }
                 break;
+            case LATHEKIN:
+                try {
+                    controller.toolCardMove((LathekinRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         return null;
     }

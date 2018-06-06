@@ -50,7 +50,7 @@ public abstract class PatternCard extends Card {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
             if(!hashMapGrid.containsKey(dice.toString())) {
-                hashMapGrid.put(dice.toString(), computePosition(dice, true, true,true));
+                hashMapGrid.put(dice.toString(), computePosition(dice, true, true,true, false));
             }
         }
         return hashMapGrid;
@@ -64,7 +64,7 @@ public abstract class PatternCard extends Card {
                 if(grid.get(i).get(j).getDice() != null) {
                     dice = grid.get(i).get(j).getDice();
                     grid.get(i).get(j).removeDice();
-                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true ));
+                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, false));
                     grid.get(i).get(j).insertDice(dice);
                 }
             }
@@ -80,7 +80,24 @@ public abstract class PatternCard extends Card {
                 if(grid.get(i).get(j).getDice() != null) {
                     dice = grid.get(i).get(j).getDice();
                     grid.get(i).get(j).removeDice();
-                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, false, true ));
+                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, false, true, false));
+                    grid.get(i).get(j).insertDice(dice);
+                }
+            }
+        }
+        return hashMapGrid;
+    }
+
+
+    public Map<String, Boolean[][]> computeAvailablePositionsLathekin() {
+        HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
+        Dice dice;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                if(grid.get(i).get(j).getDice() != null) {
+                    dice = grid.get(i).get(j).getDice();
+                    grid.get(i).get(j).removeDice();
+                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, true));
                     grid.get(i).get(j).insertDice(dice);
                 }
             }
@@ -96,7 +113,7 @@ public abstract class PatternCard extends Card {
                 if(grid.get(i).get(j).getDice() != null) {
                     dice = grid.get(i).get(j).getDice();
                     grid.get(i).get(j).removeDice();
-                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, false, true, true ));
+                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, false, true, true, false));
                     grid.get(i).get(j).insertDice(dice);
                 }
             }
@@ -107,13 +124,13 @@ public abstract class PatternCard extends Card {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
             if(!hashMapGrid.containsKey(dice.toString())) {
-                hashMapGrid.put(dice.toString(), computePosition(dice, true, true,false));
+                hashMapGrid.put(dice.toString(), computePosition(dice, true, true,false, false));
             }
         }
         return hashMapGrid;
     }
 
-    private Boolean[][] computePosition(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction) {
+    private Boolean[][] computePosition(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction, boolean lathekin) {
         Boolean[][] booleanGrid = new Boolean[4][5];
 
         //initialize booleanGrid
@@ -167,9 +184,9 @@ public abstract class PatternCard extends Card {
 
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 5; j++) {
-                    if (noDice(i, j)) {
+                    if (noDice(i, j) || lathekin) {
 
-                        if (!hasDicesAround(diceAroundRestriction,i, j)) {
+                        if (!hasDicesAround(diceAroundRestriction, i, j)) {
                             booleanGrid[i][j] = false;
                             continue;
                         }
@@ -196,10 +213,8 @@ public abstract class PatternCard extends Card {
                             if (checkAround(dice, i - 1, j, j, booleanGrid[i], booleanGrid)) continue;
 
 
-
                         if (j < 4)
                             if (checkAround(dice, i, j, j + 1, booleanGrid[i], booleanGrid)) continue;
-
 
 
                         if (j > 0) {

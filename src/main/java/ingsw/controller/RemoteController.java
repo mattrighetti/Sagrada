@@ -3,6 +3,7 @@ package ingsw.controller;
 import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.model.cards.toolcards.Lathekin;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -38,4 +39,6 @@ public interface RemoteController extends Remote {
     void toolCardMove(LensCutterRequest moveToolCardRequest) throws RemoteException;
 
     void toolCardMove(EglomiseBrushRequest moveToolCardRequest) throws RemoteException;
+
+    void toolCardMove(LathekinRequest lathekinRequest) throws RemoteException;
 }

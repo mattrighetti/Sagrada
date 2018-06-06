@@ -131,6 +131,13 @@ public class RMIHandler implements RequestHandler {
                     e.printStackTrace();
                 }
                 break;
+            case LATHEKIN:
+                try {
+                    remoteController.toolCardMove((LathekinRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         return null;
     }

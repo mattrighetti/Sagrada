@@ -42,6 +42,7 @@ public class GameManager {
     private Round currentRound;
     private boolean brokenWindow;
     private AtomicBoolean endRound;
+    private AtomicBoolean doubleMove;
     public final Object toolCardLock = new Object();
     private Thread diceAckThread;
     private Thread matchThread;
@@ -56,6 +57,7 @@ public class GameManager {
     public GameManager(List<Player> players) {
         noOfAck = new AtomicInteger(0);
         endRound = new AtomicBoolean(false);
+        doubleMove = new AtomicBoolean(false);
         brokenWindow = false;
         playerList = players;
         roundTrack = new ArrayList<>();
@@ -151,7 +153,7 @@ public class GameManager {
         //Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> list = new ArrayList<>();
-        list.add(new CorkBackedStraightEdge());
+        list.add(new Lathekin());
         list.add(new CopperFoilBurnisher());
         list.add(new EglomiseBrush());
 
@@ -539,7 +541,7 @@ public class GameManager {
     }
 
     public void copperFoilBurnisherResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
     }
 
     public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
@@ -552,7 +554,7 @@ public class GameManager {
     }
 
     public void corkBackedStraightedgeResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
+        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
     }
 
     public void lensCutterMove(int roundIndex, String roundTrackDice, String poolDice) {
@@ -596,6 +598,39 @@ public class GameManager {
     }
 
     public void eglomiseBrushResponse(){
-        Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))) );
+        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))) );
+    }
+
+    public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
+        List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
+        if (patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
+            if (!doubleMove) {
+                patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+                patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
+            }
+            else {
+                Dice dice = patternCard.get(position.getFirst()).get(position.getSecond()).getDice();
+                patternCard.get(position.getFirst()).get(position.getSecond()).removeDice();
+                patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+                patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
+                patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).insertDice(dice);
+                this.doubleMove.set(true);
+            }
+        } else System.out.println("Lathekin: Error invalid selected dice");
+        synchronized (toolCardLock){
+            toolCardLock.notify();
+        }
+    }
+
+    public void LathekinResponse() {
+        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))) );
+    }
+
+    public boolean getdoubleMove() {
+        return doubleMove.get();
+    }
+
+    public void setDoubleMove(boolean doubleMove) {
+        this.doubleMove.set(doubleMove);
     }
 }

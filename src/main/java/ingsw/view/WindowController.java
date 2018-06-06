@@ -9,7 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 
@@ -46,20 +45,24 @@ public class WindowController implements Initializable {
                 DicePane dicePane = new DicePane(i, j);
                 dicePane.getStyleClass().add("grey");
                 dicePane.setOpacity(0.8);
-                dicePane.setOnMouseClicked(event -> {
-                    System.out.println("clicked");
-                    if (selectedDice != null) {
-                        patternCardGridPane.setCursor(Cursor.DEFAULT);
-                        networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
-                    } else {
-                        System.out.println("No dice selected");
-                    }
-                    selectedDice = null;
-                });
+                DiceCursorMouseEvent(dicePane);
                 patternCardGridPane.add(dicePane, j, i);
                 dicePanes[i][j] = dicePane;
             }
         }
+    }
+
+    private void DiceCursorMouseEvent(DicePane dicePane) {
+        dicePane.setOnMouseClicked(event -> {
+            System.out.println("clicked");
+            if (selectedDice != null) {
+                patternCardGridPane.setCursor(Cursor.DEFAULT);
+                networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+            } else {
+                System.out.println("No dice selected");
+            }
+            selectedDice = null;
+        });
     }
 
     void setAvailablePosition(Map<String, Boolean[][]> availablePosition) {
@@ -108,18 +111,8 @@ public class WindowController implements Initializable {
                 if (patternCard.getGrid().get(j).get(k).getDice() != null) {
                     dicePane.getStyleClass().add(patternCard.getGrid().get(j).get(k).getDice().toString());
                     dicePane.getStyleClass().add("dicePaneImageSize");
-
                 }
-                dicePane.setOnMouseClicked(event -> {
-                    System.out.println("clicked");
-                    if (selectedDice != null) {
-                        patternCardGridPane.setCursor(Cursor.DEFAULT);
-                        networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
-                    } else {
-                        System.out.println("No dice selected");
-                    }
-                    selectedDice = null;
-                });
+                DiceCursorMouseEvent(dicePane);
             }
         }
     }
@@ -128,14 +121,22 @@ public class WindowController implements Initializable {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
                 if (availablePosition.get(diceString) != null) {
+                    System.out.print(availablePosition.get(diceString)[j][k] + "\t");
                     if (!availablePosition.get(diceString)[j][k]) {
                         (dicePanes[j][k]).getStyleClass().add("grey");
+                        (dicePanes[j][k]).setDisable(true);
                     } else {
-                        (dicePanes[j][k]).getStyleClass().clear();
+                        (dicePanes[j][k]).getStyleClass().remove("grey");
+                        dicePanes[j][k].setDisable(false);
                     }
                 } else System.err.println("Erron hashmap available positions");
             }
+            System.out.println();
         }
+    }
+
+    public void unsetSelectedDice() {
+        selectedDice = null;
     }
 
     /**
@@ -148,19 +149,20 @@ public class WindowController implements Initializable {
 
                 thisDicePane.setOnMouseClicked(event -> {
                     if (selectedPositions.isEmpty()) {
-                        if (!thisDicePane.getStyleClass().isEmpty())
+                        if (!thisDicePane.getStyleClass().isEmpty()) {
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
-                        System.out.println(thisDicePane.getStyleClass().toString());
-                        updateAvailablePositions(thisDicePane.getStyleClass().get(0).toString() + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
+                            System.out.println(thisDicePane.getStyleClass().toString());
+                            updateAvailablePositions(thisDicePane.getStyleClass().get(0) + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
+                        }
                     } else if (selectedPositions.size() == 1) {
                         if (thisDicePane.getStyleClass().isEmpty()) {
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
                             networkType.copperFoilBurnisherMove(selectedPositions.get(0), selectedPositions.get(1));
 
-                            selectedPositions.removeAll(selectedPositions);
+                            selectedPositions.clear();
                         }
                     } else
-                        selectedPositions.removeAll(selectedPositions);
+                        selectedPositions.clear();
                 });
 
             }
@@ -184,6 +186,38 @@ public class WindowController implements Initializable {
                 });
             }
         }
+    }
+
+    public void moveDiceinPatternCardLathekin() {
+        for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < 5; k++) {
+                DicePane thisDicePane = dicePanes[j][k];
+                thisDicePane.setOnMouseClicked(event -> lathekinMouseEvent(thisDicePane));
+            }
+        }
+
+    }
+
+    private void lathekinMouseEvent(DicePane thisDicePane) {
+        if (selectedPositions.isEmpty()) {
+            if (!thisDicePane.getStyleClass().isEmpty() && !thisDicePane.getStyleClass().contains("grey")) {
+                selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
+                System.out.println(thisDicePane.getStyleClass().toString());
+                updateAvailablePositions(thisDicePane.getStyleClass().get(0) + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
+            }
+        } else if (selectedPositions.size() == 1) {
+            if (!thisDicePane.getStyleClass().contains("grey") ) {
+                selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
+                if (thisDicePane.getStyleClass().isEmpty())
+                    networkType.lathekinMove(selectedPositions.get(0), selectedPositions.get(1), false);
+                else
+                    networkType.lathekinMove(selectedPositions.get(0), selectedPositions.get(1), true);
+                selectedPositions.clear();
+            } else {
+                System.out.println("cannot place dice here " + thisDicePane.getStyleClass() );
+            }
+        } else
+            selectedPositions.clear();
     }
 
 }
