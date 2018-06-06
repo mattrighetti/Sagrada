@@ -1,7 +1,9 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.model.Player;
 import ingsw.utilities.DoubleString;
+import ingsw.view.nodes.ProgressForm;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -91,5 +93,10 @@ public class LoginController implements SceneUpdater {
         });
     }
 
+    @Override
+    public void launchProgressForm() {
+        Platform.runLater(() -> new ProgressForm().getDialogStage());
+        System.out.println("Waiting for next UpdateViewResponse");
+    }
 }
 

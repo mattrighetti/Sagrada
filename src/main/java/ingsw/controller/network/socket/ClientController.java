@@ -315,5 +315,6 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(ReJoinResponse reJoinResponse) {
         client.request(new ReJoinMatchRequest(reJoinResponse.matchName));
+        sceneUpdater.launchProgressForm();
     }
 }
