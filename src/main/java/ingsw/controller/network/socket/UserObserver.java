@@ -18,4 +18,6 @@ public interface UserObserver extends Remote {
     void activateTurnNotification(List<Boolean[][]> booleanListGrid) throws RemoteException;
 
     void sendResponse(Response response) throws RemoteException;
+
+    void checkIfActive() throws RemoteException;
 }

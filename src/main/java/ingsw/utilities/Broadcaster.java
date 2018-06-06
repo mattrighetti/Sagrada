@@ -22,6 +22,11 @@ public final class Broadcaster {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (Player player : playerList) {
             if (!player.getUser().getUsername().equals(usernameToExclude)) {
+                try {
+                    player.getUserObserver().checkIfActive();
+                } catch (RemoteException e) {
+                    System.err.println("RMI Player " + player.getPlayerUsername() + " is not active, deactivating user");
+                }
                 playerListToBroadcast.add(player.getUser().getUserObserver());
             }
         }
@@ -32,8 +37,26 @@ public final class Broadcaster {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (User user : userMap.values()) {
             if (!user.getUsername().equals(usernameToExclude)) {
+                try {
+                    user.getUserObserver().checkIfActive();
+                } catch (RemoteException e) {
+                    System.err.println("RMI Player " + user.getUsername() + " is not active, deactivating user");
+                }
                 playerListToBroadcast.add(user.getUserObserver());
             }
+        }
+        return playerListToBroadcast;
+    }
+
+    private static List<UserObserver> playerToBroadcast(Map<String, User> userMap) {
+        List<UserObserver> playerListToBroadcast = new ArrayList<>();
+        for (User user : userMap.values()) {
+            try {
+                user.getUserObserver().checkIfActive();
+            } catch (RemoteException e) {
+                System.err.println("RMI Player " + user.getUsername() + " is not active, deactivating user");
+            }
+            playerListToBroadcast.add(user.getUserObserver());
         }
         return playerListToBroadcast;
     }
@@ -42,6 +65,11 @@ public final class Broadcaster {
     private static List<UserObserver> playerToBroadcast(List<Player> playerList) {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (Player player : playerList) {
+            try {
+                player.getUserObserver().checkIfActive();
+            } catch (RemoteException e) {
+                System.err.println("RMI Player " + player.getPlayerUsername() + " is not active, deactivating user");
+            }
             playerListToBroadcast.add(player.getUser().getUserObserver());
         }
         return playerListToBroadcast;
@@ -57,7 +85,7 @@ public final class Broadcaster {
         return userListToBroadcast;
     }
 
-    public static void broadcastMessage(List<Player> playerList, Message message) {
+    static void broadcastMessage(List<Player> playerList, Message message) {
         for (UserObserver userObserver : playerToBroadcast(playerList, message.sender)) {
             try {
                 userObserver.sendMessage(message);
@@ -67,7 +95,7 @@ public final class Broadcaster {
         }
     }
 
-    public static void broadcastResponse(List<Player> playerList, String usernameToExclude, List<Dice> dice) {
+    static void broadcastResponse(List<Player> playerList, String usernameToExclude, List<Dice> dice) {
         for (UserObserver userObserver : playerToBroadcast(playerList, usernameToExclude)) {
             try {
                 userObserver.sendResponse(new DraftedDiceResponse(dice));
@@ -127,7 +155,7 @@ public final class Broadcaster {
         }
     }
 
-    public static void broadcastResponseToAll(List<Player> playerList, RoundTrackNotification roundTrackNotification){
+    public static void broadcastResponseToAll(List<Player> playerList, RoundTrackNotification roundTrackNotification) {
         for (UserObserver userObserver : playerToBroadcast(playerList)) {
             try {
                 userObserver.sendResponse(roundTrackNotification);
@@ -171,6 +199,16 @@ public final class Broadcaster {
         for (UserObserver userObserver : playerToBroadcast(playerList)) {
             try {
                 userObserver.sendResponse(new MoveStatusNotification(movesHistory));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void broadcastResponseToAll(Map<String, User> users, int numberOfConnectedUsers) {
+        for (UserObserver userObserver : playerToBroadcast(users)) {
+            try {
+                userObserver.onJoin(numberOfConnectedUsers);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

@@ -160,9 +160,9 @@ public class ServerController implements RequestHandler, Serializable {
             if (controller != null) {
                 controller.deactivateUser(user);
                 sagradaGame.deactivateUser(user);
-            } else {
+            } else
                 System.err.println("The user did not join a match yet, removing the user from the Server");
-            }
+
             // Deactivate user in SagradaGame
             sagradaGame.logoutUser(user.getUsername());
         } catch (RemoteException e) {

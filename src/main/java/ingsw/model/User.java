@@ -3,6 +3,7 @@ package ingsw.model;
 import ingsw.controller.network.socket.UserObserver;
 
 import java.io.Serializable;
+import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,17 +52,24 @@ public class User implements Serializable {
     }
 
     public UserObserver getUserObserver() {
-        return userObserver;
+        try {
+            userObserver.checkIfActive();
+            return userObserver;
+        } catch (RemoteException e) {
+            setActive(false);
+            return null;
+        }
     }
 
     public void setActive(boolean active) {
         this.active = active;
     }
 
-    public boolean isActive() {
+    boolean isActive() {
         return active;
     }
 
+    // TODO consider removing this and adding a method to the Broadcaster
     void updateUserConnected(int numberOfConnectedUsers) throws RemoteException {
         userObserver.onJoin(numberOfConnectedUsers);
     }

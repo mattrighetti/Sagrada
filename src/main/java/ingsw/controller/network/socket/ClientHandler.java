@@ -6,6 +6,7 @@ import ingsw.controller.network.commands.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
@@ -131,6 +132,11 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     @Override
     public void onJoin(int numberOfConnectedUsers) {
         respond(new IntegerResponse(numberOfConnectedUsers));
+    }
+
+    @Override
+    public void checkIfActive() {
+        // Empty, useful only for RMI
     }
 
     /**

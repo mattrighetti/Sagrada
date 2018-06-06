@@ -162,13 +162,8 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
      * @throws RemoteException
      */
     @Override
-    public void broadcastUsersConnected(String username) throws RemoteException {
-        for (User user : connectedUsers.values()) {
-            if (!user.getUsername().equals(username)) {
-                System.out.println(user.getUsername());
-                user.updateUserConnected(connectedUsers.size());
-            }
-        }
+    public void broadcastUsersConnected(String username) {
+        Broadcaster.broadcastResponseToAll(connectedUsers, connectedUsers.size());
     }
 
     @Override

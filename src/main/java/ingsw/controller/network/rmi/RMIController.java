@@ -23,6 +23,7 @@ public class RMIController implements ResponseHandler, NetworkType {
         rmiHandler = new RMIHandler(this, rmiUserObserver, ipAddress);
     }
 
+    @Override
     public void setSceneUpdater(SceneUpdater sceneUpdater) {
         this.sceneUpdater = sceneUpdater;
     }
