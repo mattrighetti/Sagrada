@@ -144,6 +144,7 @@ public class GameController implements SceneUpdater, Initializable {
     void onDraftDicePressed(ActionEvent event) {
         networkType.draftDice();
         draftDiceButton.setDisable(true);
+
     }
 
     @FXML
@@ -291,7 +292,7 @@ public class GameController implements SceneUpdater, Initializable {
                     windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getDice().toString());
                 } else {
                     windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-                    windowControllerList.get(0).unsetSelectedDice();
+                    windowControllerList.get(0).setSelectedDice(null);
                 }
             });
             diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
@@ -552,7 +553,14 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void toolCardAction(CorkBackedStraightedgeResponse useToolCardResponse) {
-        //TODO
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Place a dice in a spot that is not\n adjacent to another die");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Cork Backed Straightedge");
+            alert.showAndWait();
+
+            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+        });
     }
 
     @Override
@@ -566,7 +574,6 @@ public class GameController implements SceneUpdater, Initializable {
             for(DiceButton diceButton : draftPool){
                 diceButton.setOnMouseClicked(mouseEvent -> {
                     toolCardSelectedDice = diceButton;
-                    tabPane.setCursor(Cursor.CLOSED_HAND);
                 });
             }
             for (VBox roundVbox : roundDiceVBoxList) {
@@ -590,17 +597,18 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void toolCardAction(RoundTrackToolCardResponse useToolCardResponse) {
-        Platform.runLater(() -> roundTrackHBox.getChildren().removeAll() );
-        for (List<Dice> roundDice: useToolCardResponse.roundTrack) {
+        ObservableList<Node> nodes = roundTrackHBox.getChildren();
+        Platform.runLater(() -> roundTrackHBox.getChildren().removeAll(nodes));
+        roundDiceVBoxList.clear();
+        roundButtonList.clear();
+        for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
             addRoundInRoundTrack(roundDice);
         }
     }
 
     @Override
     public void setDraftedDice(List<Dice> dice) {
-        Platform.runLater(() -> {
-            displayDraftedDice(dice);
-        });
+        Platform.runLater(() -> displayDraftedDice(dice));
         draftDiceButton.setDisable(true);
         activateToolCard();
         networkType.sendAck();
@@ -639,17 +647,18 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     private void addRoundInRoundTrack(List<Dice> diceToAdd) {
-        int round = roundTrackHBox.getChildren().size() + 1;
-        Button buttonRound = new Button("Round" + round);
+        int round = roundButtonList.size();
+        Button buttonRound = new Button("Round " + (round + 1));
         buttonRound.setId(String.valueOf(round));
         roundButtonList.add(buttonRound);
+        /*  Set Event:  */
         buttonRound.setOnMouseClicked(event -> {
             int id = 0;
             if (buttonRound.getId() != null) {
-                id = Integer.parseInt(buttonRound.getId()) - 1;
+                id = Integer.parseInt(buttonRound.getId());
                 FadeTransition fade = new FadeTransition(Duration.millis(1000));
 
-                if (id <= roundDiceVBoxList.size()) {
+                if (id < roundDiceVBoxList.size()) {
                     if (roundDiceVBoxList.get(id).isVisible()) {
                         roundDiceVBoxList.get(id).setVisible(false);
 
@@ -691,7 +700,6 @@ public class GameController implements SceneUpdater, Initializable {
                     for (int j = 0; j < roundDiceVBoxList.size(); j++) {
                         if (roundDiceVBoxList.get(j).equals(roundVBox)) {
                             networkType.lensCutter(j, diceButtonToAdd.getStyleClass().get(1), toolCardSelectedDice.getStyleClass().get(1));
-                            tabPane.setCursor(Cursor.DEFAULT);
                         }
                     }
             });

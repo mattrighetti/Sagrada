@@ -151,7 +151,7 @@ public class GameManager {
         //Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> list = new ArrayList<>();
-        list.add(new LensCutter());
+        list.add(new CorkBackedStraightEdge());
         list.add(new CopperFoilBurnisher());
         list.add(new EglomiseBrush());
 
@@ -543,11 +543,16 @@ public class GameManager {
     }
 
     public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
-        //TODO
+        Map<String,Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsNoDiceAround(board.getDraftedDice());
+        if (availablePositions.get(selectedDice.toString())[row][column])
+            placeDiceForPlayer(selectedDice,row,column);
+        synchronized (toolCardLock){
+            toolCardLock.notify();
+        }
     }
 
     public void corkBackedStraightedgeResponse() {
-        //TODO
+        Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
     }
 
     public void lensCutterMove(int roundIndex, String roundTrackDice, String poolDice) {

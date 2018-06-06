@@ -32,11 +32,12 @@ public class WindowController implements Initializable {
 
     private String username;
 
-    private Map<String,Boolean[][]> availablePosition;
+    private Map<String, Boolean[][]> availablePosition;
     private DicePane[][] dicePanes = new DicePane[4][5];
     private Dice selectedDice;
     private NetworkType networkType;
     private List<Tuple> selectedPositions = new ArrayList<>();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -61,7 +62,7 @@ public class WindowController implements Initializable {
         }
     }
 
-    void setAvailablePosition(Map<String,Boolean[][]> availablePosition) {
+    void setAvailablePosition(Map<String, Boolean[][]> availablePosition) {
         this.availablePosition = availablePosition;
     }
 
@@ -139,9 +140,8 @@ public class WindowController implements Initializable {
 
     /**
      * Method used by EglomiseBrush, CopperFoilBurnisher toolcards
-     *
      */
-    public void moveDiceinPatternCard(){
+    public void moveDiceinPatternCard() {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
                 DicePane thisDicePane = dicePanes[j][k];
@@ -150,18 +150,16 @@ public class WindowController implements Initializable {
                     if (selectedPositions.isEmpty()) {
                         if (!thisDicePane.getStyleClass().isEmpty())
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
-                            System.out.println(thisDicePane.getStyleClass().toString());
-                            updateAvailablePositions(thisDicePane.getStyleClass().get(0).toString() + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
-                    }
-                    else if (selectedPositions.size() == 1) {
+                        System.out.println(thisDicePane.getStyleClass().toString());
+                        updateAvailablePositions(thisDicePane.getStyleClass().get(0).toString() + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
+                    } else if (selectedPositions.size() == 1) {
                         if (thisDicePane.getStyleClass().isEmpty()) {
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
                             networkType.copperFoilBurnisherMove(selectedPositions.get(0), selectedPositions.get(1));
 
                             selectedPositions.removeAll(selectedPositions);
                         }
-                    }
-                    else
+                    } else
                         selectedPositions.removeAll(selectedPositions);
                 });
 
@@ -170,8 +168,22 @@ public class WindowController implements Initializable {
 
     }
 
-
-    public void unsetSelectedDice() {
-        selectedDice = null;
+    public void corkBackedStraightedge() {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                DicePane dicePane = dicePanes[i][j];
+                dicePanes[i][j].setOnMouseClicked(event -> {
+                    System.out.println("clicked");
+                    if (selectedDice != null) {
+                        patternCardGridPane.setCursor(Cursor.DEFAULT);
+                        networkType.corkBackedStraightedgeMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
+                    } else {
+                        System.out.println("No dice selected");
+                    }
+                    selectedDice = null;
+                });
+            }
+        }
     }
+
 }
