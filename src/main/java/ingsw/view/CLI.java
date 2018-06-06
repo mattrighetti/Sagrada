@@ -772,9 +772,9 @@ public class CLI implements SceneUpdater {
     }
 
     @Override
-    public void toolCardAction(DraftPoolResponse draftPoolResponse) {
+    public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         System.out.println("Here the new drafted pool:\n");
-        setDraftedDiceAndShow(draftPoolResponse.draftedDice);
+        setDraftedDiceAndShow(draftedDiceToolCardResponse.draftedDice);
     }
 
     @Override

@@ -4,7 +4,6 @@ import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.model.cards.toolcards.EglomiseBrush;
 import ingsw.utilities.Tuple;
 import ingsw.view.SceneUpdater;
 
@@ -219,7 +218,7 @@ public class RMIController implements ResponseHandler, NetworkType {
                 sceneUpdater.toolCardAction((GrindingStoneResponse) useToolCardResponse);
                 break;
             case DRAFT_POOL:
-                sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
+                sceneUpdater.toolCardAction((DraftedDiceToolCardResponse) useToolCardResponse);
                 break;
             case COPPER_FOIL_BURNISHER:
                 sceneUpdater.toolCardAction((CopperFoilBurnisherResponse) useToolCardResponse);

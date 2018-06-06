@@ -464,7 +464,7 @@ public class GameManager {
         for (Dice dice: board.getDraftedDice()) {
             dice.roll();
         }
-        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
     }
 
     public void grozingPliersMove(Dice dice, Boolean increase){
@@ -480,7 +480,7 @@ public class GameManager {
     }
 
     public void grozingPliersResponse(){
-        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
     }
 
 
@@ -496,7 +496,7 @@ public class GameManager {
     }
 
     public void fluxBrushResponse(){
-        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
     }
 
     public void fluxRemoverMove(Dice selectedDice) {
@@ -511,7 +511,7 @@ public class GameManager {
     }
 
     public void fluxRemoverResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
     }
 
     public void grindingStoneMove(Dice selectedDice) {
@@ -526,7 +526,7 @@ public class GameManager {
     }
 
     public void grindingStoneResponse(){
-        Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
     }
 
     public void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
@@ -580,7 +580,7 @@ public class GameManager {
     }
 
     public void lensCutterResponse(){
-        Broadcaster.broadcastResponseToAll(playerList,new DraftPoolResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList,new DraftedDiceToolCardResponse(board.getDraftedDice()));
         Broadcaster.broadcastResponseToAll(playerList, new RoundTrackToolCardResponse(roundTrack));
     }
 

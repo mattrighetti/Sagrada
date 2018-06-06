@@ -368,9 +368,9 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     @Override
-    public void toolCardAction(DraftPoolResponse draftPoolResponse) {
+    public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
-            displayDraftedDice(draftPoolResponse.draftedDice);
+            displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
             disableToolCard();
         });
         System.out.println("Tool card used");

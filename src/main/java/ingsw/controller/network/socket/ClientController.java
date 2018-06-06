@@ -352,7 +352,7 @@ public class ClientController implements ResponseHandler, NetworkType {
     public void handle(UseToolCardResponse useToolCardResponse) {
         switch (useToolCardResponse.toolCardType) {
             case DRAFT_POOL:
-                sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
+                sceneUpdater.toolCardAction((DraftedDiceToolCardResponse) useToolCardResponse);
                 break;
             case ROUND_TRACK:
                 sceneUpdater.toolCardAction((RoundTrackToolCardResponse) useToolCardResponse);

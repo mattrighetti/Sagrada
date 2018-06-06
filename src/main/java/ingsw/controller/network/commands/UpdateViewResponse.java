@@ -1,10 +1,6 @@
 package ingsw.controller.network.commands;
 
 import ingsw.model.Player;
-import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.utilities.GridCreator;
-
-import java.util.List;
 import java.util.Map;
 
 public class UpdateViewResponse implements Response {

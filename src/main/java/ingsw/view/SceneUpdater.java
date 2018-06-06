@@ -130,7 +130,7 @@ public interface SceneUpdater {
         System.out.println("Not overridden");
     }
 
-    default void toolCardAction(DraftPoolResponse draftPoolResponse) {
+    default void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         System.out.println("Not overridden");
     }
 
