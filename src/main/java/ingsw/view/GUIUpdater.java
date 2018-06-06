@@ -7,6 +7,10 @@ import ingsw.utilities.DoubleString;
 import java.util.List;
 
 public interface GUIUpdater {
+    void deploySocketClient();
+
+    void deployRMIClient();
+
     void launchSecondGUI(String username);
 
     void launchThirdGUI(PatternCardNotification patternCardNotification);

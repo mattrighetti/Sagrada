@@ -41,7 +41,7 @@ public class LoginController implements SceneUpdater {
         this.networkType = networkType;
     }
 
-    public void setApplication(GUIUpdater application) {
+    void setApplication(GUIUpdater application) {
         this.application = application;
     }
 
@@ -59,12 +59,20 @@ public class LoginController implements SceneUpdater {
 
     @FXML
     void selectedRMI(ActionEvent event) {
+        application.deployRMIClient();
         application.changeToRMI();
+        networkType.setSceneUpdater(this);
+        SocketToggleButton.setDisable(true);
+        RMIToggleButton.setDisable(true);
     }
 
     @FXML
     void selectedSocket(ActionEvent event) {
+        application.deploySocketClient();
         application.changeToSocket();
+        networkType.setSceneUpdater(this);
+        SocketToggleButton.setDisable(true);
+        RMIToggleButton.setDisable(true);
     }
 
     @Override
