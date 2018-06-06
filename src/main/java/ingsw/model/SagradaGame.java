@@ -144,27 +144,15 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         user.setActive(true);
         for (Player player : matchesByName.get(matchName).getPlayerList()) {
             if (player.getPlayerUsername().equals(user.getUsername()) && !player.getUser().isActive()) {
+                System.out.println("SagradaGame: re-activating User " + user.getUsername());
                 player.updateUser(user);
+                System.out.println("Player has been updated, it's now back online");
             }
         }
     }
 
     public Controller getMatchController(String matchName) {
         return matchesByName.get(matchName);
-    }
-
-    /**
-     * Method with which the user will join an existing match and it will return the match's controller
-     * @param matchName Name of the match to join
-     * @return
-     * @throws RemoteException
-     */
-    @Override
-    public synchronized Controller joinMatch(String matchName) throws RemoteException {
-        if (matchesByName.containsKey(matchName)) {
-            return matchesByName.get(matchName);
-        } else
-            throw new RemoteException("Match unreachable");
     }
 
     /**
@@ -179,6 +167,15 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
             if (!user.getUsername().equals(username)) {
                 System.out.println(user.getUsername());
                 user.updateUserConnected(connectedUsers.size());
+            }
+        }
+    }
+
+    @Override
+    public void deactivateUser(User disconnectedUser) throws RemoteException {
+        for (User user : connectedUsers.values()) {
+            if (user.getUsername().equals(disconnectedUser.getUsername())) {
+                user.setActive(false);
             }
         }
     }

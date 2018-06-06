@@ -149,4 +149,24 @@ public class ServerController implements RequestHandler, Serializable {
 
         return null;
     }
+
+    /**
+     * Method that removes a user from the Server in case it did not join a match, otherwise it just deactivates it from
+     * Sagrada and the match's Controller
+     */
+    void deactivateUser() {
+        try {
+            // Deactivate user in the match's controller
+            if (controller != null) {
+                controller.deactivateUser(user);
+                sagradaGame.deactivateUser(user);
+            } else {
+                System.err.println("The user did not join a match yet, removing the user from the Server");
+            }
+            // Deactivate user in SagradaGame
+            sagradaGame.logoutUser(user.getUsername());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 }

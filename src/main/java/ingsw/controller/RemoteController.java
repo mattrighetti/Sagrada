@@ -1,6 +1,7 @@
 package ingsw.controller;
 
 import ingsw.model.Dice;
+import ingsw.model.User;
 import ingsw.model.cards.patterncard.PatternCard;
 
 import java.rmi.Remote;
@@ -15,6 +16,8 @@ public interface RemoteController extends Remote {
     void sendAck() throws RemoteException;
 
     /* THESE METHODS HAVE TO PASS THE USERNAME OF THE PLAYER WHO CALLED THEM */
+
+    void deactivateUser(User user) throws RemoteException;
 
     void endTurn() throws RemoteException;
 
