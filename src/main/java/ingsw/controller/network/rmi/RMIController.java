@@ -122,6 +122,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void lensCutter(int roundIndex, String roundTrackDice, String poolDice) {
+        new LensCutterRequest(roundIndex,roundTrackDice,poolDice).handle(rmiHandler);
+    }
+
+    @Override
     public void endTurn() {
         new EndTurnRequest().handle(rmiHandler);
     }

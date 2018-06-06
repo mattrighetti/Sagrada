@@ -108,6 +108,9 @@ public class GameController implements SceneUpdater, Initializable {
     private List<VBox> roundDiceVBoxList;
     private ObservableList<MoveStatus> playersMoves;
 
+    /* Utility Elements */
+    private DiceButton toolCardSelectedDice;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         publicCardsImageViewsList = new ArrayList<>();
@@ -145,7 +148,7 @@ public class GameController implements SceneUpdater, Initializable {
 
     @FXML
     void onEndTurnPressed(ActionEvent event) {
-        tabPane.setCursor(Cursor.DEFAULT);
+        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
         windowControllerList.get(0).setSelectedDice(null);
         networkType.endTurn();
         disableDice();
@@ -279,13 +282,17 @@ public class GameController implements SceneUpdater, Initializable {
         for (int i = 0; i < diceList.size(); i++) {
             DiceButton diceButtonToAdd = new DiceButton(diceList.get(i), i);
             diceButtonToAdd.setOnMouseClicked(event -> {
+                if (windowControllerList.get(0).getSelectedDice() == null || !(windowControllerList.get(0).getSelectedDice().toString().equals(diceButtonToAdd.getDice().toString())) ) {
+                    Image cursor = new Image("/img/dice/" + diceButtonToAdd.getDice().toString() + ".png", 90, 90, true, true);
+                    ImageCursor imageCursor = new ImageCursor(cursor);
+                    windowControllerList.get(0).getPatternCardGridPane().setCursor(imageCursor);
 
-                Image cursor = new Image("/img/dice/" + diceButtonToAdd.getDice().toString() + ".png" ,90,90,true,true);
-                ImageCursor imageCursor = new ImageCursor(cursor);
-                windowControllerList.get(0).getPatternCardGridPane().setCursor(imageCursor);
-
-                windowControllerList.get(0).setSelectedDice(diceButtonToAdd.getDice());
-                windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getDice().toString());
+                    windowControllerList.get(0).setSelectedDice(diceButtonToAdd.getDice());
+                    windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getDice().toString());
+                } else {
+                    windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+                    windowControllerList.get(0).unsetSelectedDice();
+                }
             });
             diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
@@ -524,7 +531,7 @@ public class GameController implements SceneUpdater, Initializable {
     @Override
     public void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\n ignoring shade restrictions");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\nignoring shade restrictions");
             alert.setTitle("Use Tool card");
             alert.setHeaderText("Copper Foil Burnisher");
             alert.showAndWait();
@@ -550,19 +557,43 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void toolCardAction(LensCutterResponse useToolCardResponse) {
-        //TODO
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose a dice from the Drafted dice,\nthen choose what dice in the round track to swipe with");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Lens Cutter");
+            alert.showAndWait();
+
+            for(DiceButton diceButton : draftPool){
+                diceButton.setOnMouseClicked(mouseEvent -> {
+                    toolCardSelectedDice = diceButton;
+                    tabPane.setCursor(Cursor.CLOSED_HAND);
+                });
+            }
+            for (VBox roundVbox : roundDiceVBoxList) {
+                roundVbox.setDisable(false);
+            }
+        });
     }
+
 
     @Override
     public void toolCardAction(EglomiseBrushResponse useToolCardResponse) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\n ignoring color restrictions");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\nignoring color restrictions");
             alert.setTitle("Use Tool card");
             alert.setHeaderText("Eglomise Brush");
             alert.showAndWait();
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
         });
         windowControllerList.get(0).moveDiceinPatternCard();
+    }
+
+    @Override
+    public void toolCardAction(RoundTrackToolCardResponse useToolCardResponse) {
+        Platform.runLater(() -> roundTrackHBox.getChildren().removeAll() );
+        for (List<Dice> roundDice: useToolCardResponse.roundTrack) {
+            addRoundInRoundTrack(roundDice);
+        }
     }
 
     @Override
@@ -636,9 +667,10 @@ public class GameController implements SceneUpdater, Initializable {
         });
 
         VBox vBox = new VBox();
-        roundDiceVBoxList.add(vBox);
         addDiceToRoundTrack(vBox, diceToAdd);
         vBox.setVisible(false);
+        vBox.setDisable(true);
+        roundDiceVBoxList.add(vBox);
 
         VBox containerVBox = new VBox();
         containerVBox.setSpacing(10);
@@ -655,14 +687,20 @@ public class GameController implements SceneUpdater, Initializable {
         for (int i = 0; i < diceToAdd.size(); i++) {
             DiceButton diceButtonToAdd = new DiceButton(diceToAdd.get(i), i);
             diceButtonToAdd.setOnMouseClicked(event -> {
-
+                if (toolCardSelectedDice != null)
+                    for (int j = 0; j < roundDiceVBoxList.size(); j++) {
+                        if (roundDiceVBoxList.get(j).equals(roundVBox)) {
+                            networkType.lensCutter(j, diceButtonToAdd.getStyleClass().get(1), toolCardSelectedDice.getStyleClass().get(1));
+                            tabPane.setCursor(Cursor.DEFAULT);
+                        }
+                    }
             });
             diceButtonToAdd.getStyleClass().add(diceToAdd.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
             diceButtonToAdd.setMinSize(70, 70);
             roundVBox.setSpacing(5);
             roundVBox.getChildren().add(diceButtonToAdd);
+            diceButtonToAdd.setDisable(false);
         }
     }
 }
-

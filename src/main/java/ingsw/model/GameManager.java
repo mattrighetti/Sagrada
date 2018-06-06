@@ -151,7 +151,7 @@ public class GameManager {
         //Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> list = new ArrayList<>();
-        list.add(new FluxBrush());
+        list.add(new LensCutter());
         list.add(new CopperFoilBurnisher());
         list.add(new EglomiseBrush());
 
@@ -550,12 +550,33 @@ public class GameManager {
         //TODO
     }
 
-    public void lensCutterMove() {
-        //TODO
+    public void lensCutterMove(int roundIndex, String roundTrackDice, String poolDice) {
+        Dice fromTrackDice;
+        Dice fromPoolDice;
+        for (int i = 0; i < roundTrack.get(roundIndex).size(); i++) {
+            if (roundTrack.get(roundIndex).get(i).toString().equals(roundTrackDice)) {
+                fromTrackDice = roundTrack.get(roundIndex).get(i);
+                roundTrack.get(roundIndex).remove(i);
+                for (int j = 0; j < getDraftedDice().size(); j++) {
+                    if (getDraftedDice().get(j).toString().equals(poolDice)) {
+                        fromPoolDice = getDraftedDice().get(j);
+                        getDraftedDice().remove(j);
+                        getDraftedDice().add(fromTrackDice);
+                        roundTrack.get(roundIndex).add(fromPoolDice);
+                        break;
+                    }
+                }
+            }
+            System.err.println("Error: selected dice does not exist");
+        }
+        synchronized (toolCardLock){
+            toolCardLock.notify();
+        }
     }
 
     public void lensCutterResponse(){
-        //TODO
+        Broadcaster.broadcastResponseToAll(playerList,new DraftPoolResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackToolCardResponse(roundTrack));
     }
 
     public void eglomiseBrushMove(Tuple dicePosition, Tuple position) {

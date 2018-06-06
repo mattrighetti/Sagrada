@@ -139,6 +139,14 @@ public class ServerController implements RequestHandler, Serializable {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+                break;
+            case LENS_CUTTER:
+                try {
+                    controller.toolCardMove((LensCutterRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         return null;
     }

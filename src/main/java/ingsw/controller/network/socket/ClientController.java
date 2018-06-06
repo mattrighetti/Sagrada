@@ -148,6 +148,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void lensCutter(int roundIndex, String roundTrackDice, String poolDice) {
+        client.request(new LensCutterRequest(roundIndex, roundTrackDice, poolDice));
+    }
+
+    @Override
     public void grozingPliersMove(Dice dice, boolean increase) {
         client.request(new GrozingPliersRequest(dice, increase));
     }
@@ -348,6 +353,9 @@ public class ClientController implements ResponseHandler, NetworkType {
         switch (useToolCardResponse.toolCardType) {
             case DRAFT_POOL:
                 sceneUpdater.toolCardAction((DraftPoolResponse) useToolCardResponse);
+                break;
+            case ROUND_TRACK:
+                sceneUpdater.toolCardAction((RoundTrackToolCardResponse) useToolCardResponse);
                 break;
             case FLUX_BRUSH:
                 sceneUpdater.toolCardAction((FluxBrushResponse) useToolCardResponse);

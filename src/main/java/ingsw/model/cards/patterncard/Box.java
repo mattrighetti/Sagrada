@@ -10,6 +10,15 @@ public class Box implements Serializable {
     private Integer value;
     private Dice dice;
 
+    //COLORS
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
+    public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+    public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
+    public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
+    public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
+    public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+
     public Box(Color color) {
         this.color = color;
     }
@@ -44,14 +53,33 @@ public class Box implements Serializable {
         return dice;
     }
 
+    private String setPrintColor(Color color) {
+        switch (color) {
+            case RED:
+                return ANSI_RED_BACKGROUND;
+            case BLUE:
+                return ANSI_BLUE_BACKGROUND;
+            case BLANK:
+                return ANSI_WHITE_BACKGROUND;
+            case GREEN:
+                return ANSI_GREEN_BACKGROUND;
+            case PURPLE:
+                return ANSI_PURPLE_BACKGROUND;
+            case YELLOW:
+                return ANSI_YELLOW_BACKGROUND;
+            default:
+                return ANSI_RESET;
+        }
+    }
+
     @Override
     public String toString() {
         if (dice == null) {
-            if (isValueSet()) return "[" + String.valueOf(value) + "]";
-            else return "[" + color.toString() + "]";
+            if (isValueSet()) return "[ " + String.valueOf(value) + " ]";
+            else return "[" + " " + setPrintColor(color) + String.valueOf(color.name().charAt(0)) + " " + ANSI_RESET + "]";
         } else {
-            if (isValueSet()) return "[" + String.valueOf(value) + " -> " + dice.toString() + "]" ;
-            else return "[" + color.toString() +  " -> " + dice.toString() + "]";
+            if (isValueSet()) return "[ " + String.valueOf(value) + " -> " + setPrintColor(dice.getDiceColor()) + " " + String.valueOf(dice.getDiceColor().name().charAt(0)) + " " + dice.getFaceUpValue() + " " + ANSI_RESET + "]";
+            else return "[" + setPrintColor(color) + " " + String.valueOf(color.name().charAt(0)) + " -> " + ANSI_RESET + setPrintColor(dice.getDiceColor()) + String.valueOf(dice.getDiceColor().name().charAt(0)) + " " + dice.getFaceUpValue() + ANSI_RESET + setPrintColor(color) + " " + ANSI_RESET + "]" ;
         }
     }
 

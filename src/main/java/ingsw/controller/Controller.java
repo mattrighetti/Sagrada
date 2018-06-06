@@ -145,7 +145,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
 
     @Override
     public void toolCardMove(LensCutterRequest moveToolCardRequest) throws RemoteException {
-        gameManager.lensCutterMove();
+        gameManager.lensCutterMove(moveToolCardRequest.roundIndex,moveToolCardRequest.roundTrackDice,moveToolCardRequest.poolDice);
     }
 
     @Override

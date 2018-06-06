@@ -34,9 +34,9 @@ public class CLI implements SceneUpdater {
     private List<DoubleString> availableMatches = new ArrayList<>();
     private List<Player> players;
     private List<PublicObjectiveCard> publicObjectiveCards;
-    private List<String> toolCards;
+    private List<String> toolCards = new ArrayList<>();
     private List<Dice> draftedDice;
-    private Map<String,Boolean[][]> availaiblePosition;
+    private Map<String,Boolean[][]> availablePosition;
     private List<List<Dice>> roundTrack = new ArrayList<>();
     private List<MoveStatus> moveHistory = new ArrayList<>();
 
@@ -460,7 +460,7 @@ public class CLI implements SceneUpdater {
 
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
-        availaiblePosition = startTurnNotification.booleanMapGrid;
+        availablePosition = startTurnNotification.booleanMapGrid;
         chooseMove();
     }
 
@@ -648,7 +648,7 @@ public class CLI implements SceneUpdater {
                         if (selectedColumn < 0 || selectedColumn >= 5) System.out.println("Wrong input\n");
                     } while (selectedColumn < 0 || selectedColumn >= 5);
 
-                    if (availaiblePosition.get(selectedDice - 1)[selectedRow][selectedColumn].equals(true)) {
+                    if (availablePosition.get(draftedDice.get(selectedDice - 1).toString())[selectedRow][selectedColumn].equals(true)) {
                         currentConnectionType.placeDice(draftedDice.get(selectedDice - 1), selectedColumn, selectedRow);
                         return true;
                     } else System.out.println("Wrong position input");
@@ -670,7 +670,7 @@ public class CLI implements SceneUpdater {
         boolean anyAvailablePosition = false;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                if (availaiblePosition.get(selectedDice - 1)[i][j].equals(true)) {
+                if (availablePosition.get(draftedDice.get(selectedDice - 1).toString())[i][j].equals(true)) {
                     System.out.println("[" + i + "," + j + "]");
                     anyAvailablePosition = true;
                 }

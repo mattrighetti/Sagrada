@@ -37,4 +37,6 @@ public interface NetworkType {
     void endTurn();
 
     void grindingStoneMove(Dice dice);
+
+    void lensCutter(int roundIndex, String roundTrackDice, String poolDice);
 }

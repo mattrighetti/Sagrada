@@ -48,8 +48,8 @@ public class WindowController implements Initializable {
                 dicePane.setOnMouseClicked(event -> {
                     System.out.println("clicked");
                     if (selectedDice != null) {
-                        networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
+                        networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
                     } else {
                         System.out.println("No dice selected");
                     }
@@ -86,6 +86,10 @@ public class WindowController implements Initializable {
         this.selectedDice = dice;
     }
 
+    public Dice getSelectedDice() {
+        return selectedDice;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -108,6 +112,7 @@ public class WindowController implements Initializable {
                 dicePane.setOnMouseClicked(event -> {
                     System.out.println("clicked");
                     if (selectedDice != null) {
+                        patternCardGridPane.setCursor(Cursor.DEFAULT);
                         networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
                     } else {
                         System.out.println("No dice selected");
@@ -166,5 +171,7 @@ public class WindowController implements Initializable {
     }
 
 
-
+    public void unsetSelectedDice() {
+        selectedDice = null;
+    }
 }
