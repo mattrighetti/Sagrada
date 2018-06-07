@@ -121,7 +121,16 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
 
     @Override
     public void toolCardMove(FluxBrushRequest fluxBrushRequest) throws RemoteException {
-        gameManager.fluxBrushMove(fluxBrushRequest.selectedDice);
+        switch (fluxBrushRequest.phase) {
+            case 1:
+                gameManager.fluxBrushMove(fluxBrushRequest.selectedDice);
+                break;
+            case 2:
+                gameManager.fluxBrushMove(fluxBrushRequest.selectedDice, fluxBrushRequest.row, fluxBrushRequest.column);
+                break;
+            case 3:
+                gameManager.fluxBrushMove();
+        }
     }
 
     @Override

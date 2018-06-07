@@ -155,7 +155,7 @@ public class GameManager {
         ArrayList<ToolCard> list = new ArrayList<>();
         list.add(new Lathekin());
         list.add(new CopperFoilBurnisher());
-        list.add(new EglomiseBrush());
+        list.add(new FluxBrush());
 
         return list;
     }
@@ -199,7 +199,7 @@ public class GameManager {
         return patternCard;
     }
 
-    public List<Dice> getDraftedDice(){
+    public List<Dice> getDraftedDice() {
         return board.getDraftedDice();
     }
 
@@ -258,8 +258,8 @@ public class GameManager {
     }
 
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
-        if (!brokenWindow){
-            for (Dice diceInDraftedDice : board.getDraftedDice()){
+        if (!brokenWindow) {
+            for (Dice diceInDraftedDice : board.getDraftedDice()) {
                 if (diceInDraftedDice.getDiceColor().equals(dice.getDiceColor())
                         && (diceInDraftedDice.getFaceUpValue() == dice.getFaceUpValue())) {
                     currentRound.makeMove(diceInDraftedDice, rowIndex, columnIndex);
@@ -380,8 +380,8 @@ public class GameManager {
 
     private void notifyUpdatedRoundTrack() {
         int round = 0;
-        if (!roundTrack.isEmpty()) round = roundTrack.size() -1;
-        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack.get(round)) );
+        if (!roundTrack.isEmpty()) round = roundTrack.size() - 1;
+        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack.get(round)));
     }
 
     private void waitEndTurn() {
@@ -402,7 +402,7 @@ public class GameManager {
      *
      * @param player player who's playing at the current time
      */
-    Map<String,Boolean[][]> sendAvailablePositions(Player player) {
+    Map<String, Boolean[][]> sendAvailablePositions(Player player) {
         return player.getPatternCard().computeAvailablePositionsDraftedDice(board.getDraftedDice());
     }
 
@@ -415,7 +415,7 @@ public class GameManager {
     */
 
     boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
-        if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
+        if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
@@ -462,14 +462,14 @@ public class GameManager {
 
     //TOOL CARDS METHODS
 
-    public void glazingHammerResponse(){
-        for (Dice dice: board.getDraftedDice()) {
+    public void glazingHammerResponse() {
+        for (Dice dice : board.getDraftedDice()) {
             dice.roll();
         }
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
     }
 
-    public void grozingPliersMove(Dice dice, Boolean increase){
+    public void grozingPliersMove(Dice dice, Boolean increase) {
         for (Dice diceInPool : board.getDraftedDice()) {
             if (dice.toString().equals(diceInPool.toString())) {
                 if (increase) diceInPool.increasesByOneValue();
@@ -481,7 +481,7 @@ public class GameManager {
         }
     }
 
-    public void grozingPliersResponse(){
+    public void grozingPliersResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
     }
 
@@ -490,15 +490,37 @@ public class GameManager {
         for (Dice diceInPool : board.getDraftedDice()) {
             if (selectedDice.toString().equals(diceInPool.toString())) {
                 diceInPool.roll();
+                Map<String, Boolean[][]> availablePositions = getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsDraftedDice(board.getDraftedDice());
+                try {
+                    getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new FluxBrushResponse(board.getDraftedDice(), diceInPool, availablePositions));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
+        }
+    }
+
+    public void fluxBrushMove(Dice dice, int rowIndex, int columnIndex) {
+        Player player = getCurrentRound().getCurrentPlayer();
+        if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
+            player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
+            board.getDraftedDice().remove(dice);
         }
         synchronized (toolCardLock) {
             toolCardLock.notify();
         }
     }
 
-    public void fluxBrushResponse(){
+    public void fluxBrushMove() {
+        synchronized (toolCardLock) {
+            toolCardLock.notify();
+        }
+    }
+
+    public void fluxBrushResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
     }
 
     public void fluxRemoverMove(Dice selectedDice) {
@@ -527,7 +549,7 @@ public class GameManager {
         }
     }
 
-    public void grindingStoneResponse(){
+    public void grindingStoneResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
     }
 
@@ -535,7 +557,7 @@ public class GameManager {
         List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
         patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
         patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
-        synchronized (toolCardLock){
+        synchronized (toolCardLock) {
             toolCardLock.notify();
         }
     }
@@ -545,10 +567,10 @@ public class GameManager {
     }
 
     public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
-        Map<String,Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsNoDiceAround(board.getDraftedDice());
+        Map<String, Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsNoDiceAround(board.getDraftedDice());
         if (availablePositions.get(selectedDice.toString())[row][column])
-            placeDiceForPlayer(selectedDice,row,column);
-        synchronized (toolCardLock){
+            placeDiceForPlayer(selectedDice, row, column);
+        synchronized (toolCardLock) {
             toolCardLock.notify();
         }
     }
@@ -576,13 +598,13 @@ public class GameManager {
             }
             System.err.println("Error: selected dice does not exist");
         }
-        synchronized (toolCardLock){
+        synchronized (toolCardLock) {
             toolCardLock.notify();
         }
     }
 
-    public void lensCutterResponse(){
-        Broadcaster.broadcastResponseToAll(playerList,new DraftedDiceToolCardResponse(board.getDraftedDice()));
+    public void lensCutterResponse() {
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
         Broadcaster.broadcastResponseToAll(playerList, new RoundTrackToolCardResponse(roundTrack));
     }
 
@@ -592,13 +614,13 @@ public class GameManager {
             patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
             patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
         } else System.out.println("Eglomise Brusher: Error invalid selected dice");
-        synchronized (toolCardLock){
+        synchronized (toolCardLock) {
             toolCardLock.notify();
         }
     }
 
-    public void eglomiseBrushResponse(){
-        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))) );
+    public void eglomiseBrushResponse() {
+        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
     }
 
     public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
@@ -607,8 +629,7 @@ public class GameManager {
             if (!doubleMove) {
                 patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
                 patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
-            }
-            else {
+            } else {
                 Dice dice = patternCard.get(position.getFirst()).get(position.getSecond()).getDice();
                 patternCard.get(position.getFirst()).get(position.getSecond()).removeDice();
                 patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
@@ -617,13 +638,13 @@ public class GameManager {
                 this.doubleMove.set(true);
             }
         } else System.out.println("Lathekin: Error invalid selected dice");
-        synchronized (toolCardLock){
+        synchronized (toolCardLock) {
             toolCardLock.notify();
         }
     }
 
     public void LathekinResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))) );
+        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
     }
 
     public boolean getdoubleMove() {
@@ -633,4 +654,5 @@ public class GameManager {
     public void setDoubleMove(boolean doubleMove) {
         this.doubleMove.set(doubleMove);
     }
+
 }

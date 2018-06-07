@@ -129,7 +129,7 @@ public class WindowController implements Initializable {
                         (dicePanes[j][k]).getStyleClass().remove("grey");
                         dicePanes[j][k].setDisable(false);
                     }
-                } else System.err.println("Erron hashmap available positions");
+                } else dicePanes[j][k].getStyleClass().add("grey");
             }
             System.out.println();
         }
@@ -219,5 +219,24 @@ public class WindowController implements Initializable {
         } else
             selectedPositions.clear();
     }
+
+    public void fluxBrushMove() {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                DicePane dicePane = new DicePane(i, j);
+                dicePane.setOnMouseClicked(event -> {
+                    System.out.println("clicked");
+                    if (selectedDice != null) {
+                        patternCardGridPane.setCursor(Cursor.DEFAULT);
+                        networkType.fluxBrushMove(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                    } else {
+                        System.out.println("No dice selected");
+                    }
+                    selectedDice = null;
+                });
+            }
+        }
+    }
+
 
 }

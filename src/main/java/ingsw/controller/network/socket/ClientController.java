@@ -163,6 +163,16 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void fluxBrushMove(Dice selectedDice, int rowIndex, int columnIndex) {
+        client.request(new FluxBrushRequest(selectedDice,rowIndex,columnIndex));
+    }
+
+    @Override
+    public void fluxBrushMove() {
+        client.request((new FluxBrushRequest()));
+    }
+
+    @Override
     public void fluxRemoverMove(Dice dice) {
         client.request(new FluxRemoverRequest(dice));
     }

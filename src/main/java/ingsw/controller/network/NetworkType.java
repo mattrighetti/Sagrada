@@ -26,6 +26,10 @@ public interface NetworkType {
 
     void fluxBrushMove (Dice dice);
 
+    void fluxBrushMove(Dice selectedDice, int columnIndex, int rowIndex);
+
+    void fluxBrushMove();
+
     void fluxRemoverMove(Dice dice);
 
     void copperFoilBurnisherMove(Tuple dicePosition, Tuple position);
@@ -41,4 +45,5 @@ public interface NetworkType {
     void grindingStoneMove(Dice dice);
 
     void lensCutter(int roundIndex, String roundTrackDice, String poolDice);
+
 }

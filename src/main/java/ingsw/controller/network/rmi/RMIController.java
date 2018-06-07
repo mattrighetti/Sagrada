@@ -101,6 +101,16 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void fluxBrushMove(Dice selectedDice, int rowIndex, int columnIndex) {
+        new FluxBrushRequest(selectedDice,rowIndex, columnIndex).handle(rmiHandler);
+    }
+
+    @Override
+    public void fluxBrushMove() {
+        new FluxBrushRequest().handle(rmiHandler);
+    }
+
+    @Override
     public void fluxRemoverMove(Dice dice) {
         new FluxRemoverRequest(dice).handle(rmiHandler);
     }

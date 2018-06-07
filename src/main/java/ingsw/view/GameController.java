@@ -282,10 +282,7 @@ public class GameController implements SceneUpdater, Initializable {
             DiceButton diceButtonToAdd = new DiceButton(diceList.get(i), i);
             diceButtonToAdd.setOnMouseClicked(event -> {
                 if (windowControllerList.get(0).getSelectedDice() == null || !(windowControllerList.get(0).getSelectedDice().toString().equals(diceButtonToAdd.getDice().toString())) ) {
-                    Image cursor = new Image("/img/dice/" + diceButtonToAdd.getDice().toString() + ".png", 90, 90, true, true);
-                    ImageCursor imageCursor = new ImageCursor(cursor);
-                    windowControllerList.get(0).getPatternCardGridPane().setCursor(imageCursor);
-
+                    setCursorDice(diceButtonToAdd.getDice());
                     windowControllerList.get(0).setSelectedDice(diceButtonToAdd.getDice());
                     windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getDice().toString());
                 } else {
@@ -300,6 +297,12 @@ public class GameController implements SceneUpdater, Initializable {
             diceHorizontalBox.setSpacing(5);
             diceHorizontalBox.getChildren().add(diceButtonToAdd);
         }
+    }
+
+    private void setCursorDice(Dice dice){
+        Image cursor = new Image("/img/dice/" + dice.toString() + ".png", 90, 90, true, true);
+        ImageCursor imageCursor = new ImageCursor(cursor);
+        windowControllerList.get(0).getPatternCardGridPane().setCursor(imageCursor);
     }
 
     /**
@@ -444,30 +447,63 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void toolCardAction(FluxBrushResponse useToolCardResponse) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose which dice has to be rolled again");
-            alert.setTitle("Use Tool card");
-            alert.setHeaderText("Flux Brush");
-            alert.showAndWait();
+        switch (useToolCardResponse.phase) {
+            case 1:
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose which dice has to be rolled again");
+                    alert.setTitle("Use Tool card");
+                    alert.setHeaderText("Flux Brush");
+                    alert.showAndWait();
 
-            ArrayList<DiceButton> diceButtons = new ArrayList<>();
-            for (Node button : diceHorizontalBox.getChildren()) {
-                diceButtons.add((DiceButton) button);
-            }
+                    ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                    for (Node button : diceHorizontalBox.getChildren()) {
+                        diceButtons.add((DiceButton) button);
+                    }
 
-            for (DiceButton button : diceButtons) {
-                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
+                    for (DiceButton button : diceButtons) {
+                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
 
-                        System.out.println(button.getDice().toString());
-                        networkType.fluxBrushMove(button.getDice());
+                                System.out.println(button.getDice().toString());
+                                networkType.fluxBrushMove(button.getDice());
 
+                            }
+                        });
+                    }
+                    activateDice();
+
+                });
+                break;
+            case 2:
+                Platform.runLater(() -> {
+                    createPopUpWindow("Flux Brush", "This is the new drafted die", "Choose if you want to place or put back in the dice pool" ).showAndWait();
+
+                    windowControllerList.get(0).setSelectedDice(useToolCardResponse.selectedDice);
+                    windowControllerList.get(0).fluxBrushMove();
+                    setCursorDice(useToolCardResponse.selectedDice);
+                    windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+                    windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.selectedDice.toString());
+                    displayDraftedDice(useToolCardResponse.draftedDice);
+
+
+                    ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                    for (Node button : diceHorizontalBox.getChildren()) {
+                        diceButtons.add((DiceButton) button);
+                    }
+                    for (DiceButton button : diceButtons) {
+                        if (useToolCardResponse.selectedDice.toString().equals(button.getDice().toString()))
+                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                networkType.fluxBrushMove();
+                                windowControllerList.get(0).setSelectedDice(null);
+                                windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+                            }
+                        });
                     }
                 });
-            }
-
-        });
+        }
     }
 
     @Override
