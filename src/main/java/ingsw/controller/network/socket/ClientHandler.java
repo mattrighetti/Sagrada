@@ -6,7 +6,6 @@ import ingsw.controller.network.commands.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import java.rmi.RemoteException;
 import java.util.List;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
@@ -86,7 +85,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         }
     }
 
-    public void stop() {
+    private void stop() {
         stop = true;
     }
 
@@ -94,7 +93,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      * Method that closes ClientHandler connection
      */
     private void close() {
-        stop = true;
+        stop();
         if (objectInputStream != null) {
             try {
                 objectInputStream.close();

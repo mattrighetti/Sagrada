@@ -23,7 +23,7 @@ public class User implements Serializable {
 
     public User(String username) {
         this.username = username;
-        this.active = false;
+        this.active = true;
         matchesPlayed = new LinkedList<>();
     }
 

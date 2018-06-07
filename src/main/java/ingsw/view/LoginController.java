@@ -103,7 +103,7 @@ public class LoginController implements SceneUpdater {
 
     @Override
     public void launchProgressForm() {
-        Platform.runLater(() -> new ProgressForm().getDialogStage());
+        Platform.runLater(() -> new ProgressForm().activateProgressBar());
         System.out.println("Waiting for next UpdateViewResponse");
     }
 }
