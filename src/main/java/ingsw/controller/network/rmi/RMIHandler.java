@@ -5,6 +5,7 @@ import ingsw.controller.network.commands.*;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.model.RemoteSagradaGame;
 import ingsw.model.User;
+import ingsw.model.cards.toolcards.RunningPliers;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -138,6 +139,12 @@ public class RMIHandler implements RequestHandler {
                     e.printStackTrace();
                 }
                 break;
+            case RUNNING_PLIERS:
+                try {
+                    remoteController.toolCardMove((RunningPliersRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
         }
         return null;
     }

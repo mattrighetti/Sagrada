@@ -239,4 +239,39 @@ public class WindowController implements Initializable {
     }
 
 
+    public void fluxRemoverMove() {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                DicePane dicePane = new DicePane(i, j);
+                dicePane.setOnMouseClicked(event -> {
+                    System.out.println("clicked");
+                    if (selectedDice != null) {
+                        patternCardGridPane.setCursor(Cursor.DEFAULT);
+                        networkType.fluxRemoverMove(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                    } else {
+                        System.out.println("No dice selected");
+                    }
+                    selectedDice = null;
+                });
+            }
+        }
+    }
+
+    public void runningPliersMove() {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                DicePane dicePane = new DicePane(i, j);
+                dicePane.setOnMouseClicked(event -> {
+                    System.out.println("clicked");
+                    if (selectedDice != null) {
+                        patternCardGridPane.setCursor(Cursor.DEFAULT);
+                        networkType.runningPliersMove(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                    } else {
+                        System.out.println("No dice selected");
+                    }
+                    selectedDice = null;
+                });
+            }
+        }
+    }
 }

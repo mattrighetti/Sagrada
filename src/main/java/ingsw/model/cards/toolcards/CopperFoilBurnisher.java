@@ -35,7 +35,6 @@ public class CopperFoilBurnisher extends ToolCard {
                 e.printStackTrace();
             }
         }
-
         gameManager.copperFoilBurnisherResponse();
     }
 

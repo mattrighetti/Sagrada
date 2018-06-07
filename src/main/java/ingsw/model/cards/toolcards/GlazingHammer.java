@@ -14,6 +14,9 @@ public class GlazingHammer extends ToolCard {
      */
     @Override
     public void action(GameManager gameManager) {
-        gameManager.glazingHammerResponse();
+        if (gameManager.getTurnInRound() == 2)
+            gameManager.glazingHammerResponse();
+        else
+            gameManager.avoidToolCardUse();
     }
 }

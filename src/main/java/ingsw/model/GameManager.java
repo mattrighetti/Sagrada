@@ -47,6 +47,7 @@ public class GameManager {
     private Thread diceAckThread;
     private Thread matchThread;
     private Thread toolCardThread;
+    private AtomicInteger turnInRound = new AtomicInteger(0);
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -153,9 +154,9 @@ public class GameManager {
         //Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> list = new ArrayList<>();
-        list.add(new Lathekin());
-        list.add(new CopperFoilBurnisher());
-        list.add(new FluxBrush());
+        list.add(new GlazingHammer());
+        list.add(new FluxRemover());
+        list.add(new RunningPliers());
 
         return list;
     }
@@ -201,6 +202,10 @@ public class GameManager {
 
     public List<Dice> getDraftedDice() {
         return board.getDraftedDice();
+    }
+
+    public int getTurnInRound() {
+        return turnInRound.get();
     }
 
     /**
@@ -342,6 +347,7 @@ public class GameManager {
     private void startRound() {
         currentRound = new Round(this);
         //Rounds going forward
+        turnInRound.set(1);
         for (int i = 0; i < playerList.size(); i++) {
 
             System.out.println("Turn forward " + i + " player " + playerList.get(i));
@@ -351,7 +357,7 @@ public class GameManager {
             //wait until turn has ended
             waitEndTurn();
         }
-
+        turnInRound.set(2);
         for (int i = playerList.size() - 1; i >= 0; i--) {
 
             System.out.println("Turn backward " + i + " player " + playerList.get(i));
@@ -466,7 +472,8 @@ public class GameManager {
         for (Dice dice : board.getDraftedDice()) {
             dice.roll();
         }
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), true));
+        currentRound.toolCardMoveDone();
     }
 
     public void grozingPliersMove(Dice dice, Boolean increase) {
@@ -481,8 +488,20 @@ public class GameManager {
         }
     }
 
+    private void placeDiceToolCard(Dice dice, int rowIndex, int columnIndex){
+        Player player = getCurrentRound().getCurrentPlayer();
+        if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
+            player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
+            board.getDraftedDice().remove(dice);
+        }
+        synchronized (toolCardLock) {
+            toolCardLock.notify();
+        }
+    }
+
     public void grozingPliersResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
+        currentRound.toolCardMoveDone();
     }
 
 
@@ -502,14 +521,7 @@ public class GameManager {
     }
 
     public void fluxBrushMove(Dice dice, int rowIndex, int columnIndex) {
-        Player player = getCurrentRound().getCurrentPlayer();
-        if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
-            player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
-            board.getDraftedDice().remove(dice);
-        }
-        synchronized (toolCardLock) {
-            toolCardLock.notify();
-        }
+        placeDiceToolCard(dice, rowIndex, columnIndex);
     }
 
     public void fluxBrushMove() {
@@ -519,8 +531,9 @@ public class GameManager {
     }
 
     public void fluxBrushResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        currentRound.toolCardMoveDone();
     }
 
     public void fluxRemoverMove(Dice selectedDice) {
@@ -528,14 +541,49 @@ public class GameManager {
             if (board.getDraftedDice().get(i).toString().equals(selectedDice.toString()))
                 board.getDraftedDice().remove(i);
         }
-        board.draftOneDice();
+        List<Dice> diceList = new ArrayList<>();
+        for (int i = 1; i < 7; i++) {
+            Dice dice = new Dice(selectedDice.getDiceColor());
+            dice.setFaceUpValue(i);
+            diceList.add(dice);
+        }
+        try {
+            getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new FluxRemoverResponse(board.draftOneDice()));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fluxRemoverMove(Dice selectedDice, int chosenValue) {
+        for (Dice dice : getDraftedDice()) {
+            if (selectedDice.toString().equals(dice.toString())) {
+                dice.setFaceUpValue(chosenValue);
+                selectedDice.setFaceUpValue(chosenValue);
+            }
+        }
+        Map<String, Boolean[][]> availablePositions = getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsDraftedDice(board.getDraftedDice());
+        try {
+            getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new FluxRemoverResponse(getDraftedDice(),selectedDice,availablePositions));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fluxRemoverMove(Dice selectedDice, int rowIndex, int columnIndex) {
+        placeDiceToolCard(selectedDice,rowIndex,columnIndex);
+    }
+
+    public void fluxRemoverMove() {
         synchronized (toolCardLock) {
             toolCardLock.notify();
         }
     }
 
     public void fluxRemoverResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
+        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        currentRound.toolCardMoveDone();
+
     }
 
     public void grindingStoneMove(Dice selectedDice) {
@@ -550,7 +598,8 @@ public class GameManager {
     }
 
     public void grindingStoneResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
+        currentRound.toolCardMoveDone();
     }
 
     public void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
@@ -564,6 +613,7 @@ public class GameManager {
 
     public void copperFoilBurnisherResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        currentRound.toolCardMoveDone();
     }
 
     public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
@@ -577,6 +627,7 @@ public class GameManager {
 
     public void corkBackedStraightedgeResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
+        currentRound.toolCardMoveDone();
     }
 
     public void lensCutterMove(int roundIndex, String roundTrackDice, String poolDice) {
@@ -604,8 +655,9 @@ public class GameManager {
     }
 
     public void lensCutterResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice()));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
         Broadcaster.broadcastResponseToAll(playerList, new RoundTrackToolCardResponse(roundTrack));
+        currentRound.toolCardMoveDone();
     }
 
     public void eglomiseBrushMove(Tuple dicePosition, Tuple position) {
@@ -621,6 +673,7 @@ public class GameManager {
 
     public void eglomiseBrushResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        currentRound.toolCardMoveDone();
     }
 
     public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
@@ -645,6 +698,18 @@ public class GameManager {
 
     public void LathekinResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        currentRound.toolCardMoveDone();
+    }
+
+
+    public void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
+        placeDiceToolCard(selectedDice, rowIndex,columnIndex);
+    }
+
+    public void runningPliersResponse() {
+        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(getDraftedDice(),true));
+        currentRound.toolCardMoveDone();
     }
 
     public boolean getdoubleMove() {
@@ -653,6 +718,14 @@ public class GameManager {
 
     public void setDoubleMove(boolean doubleMove) {
         this.doubleMove.set(doubleMove);
+    }
+
+    public void avoidToolCardUse() {
+        try {
+            currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
 }

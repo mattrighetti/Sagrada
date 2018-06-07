@@ -3,6 +3,8 @@ package ingsw.model;
 import ingsw.model.cards.toolcards.ToolCard;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Round implements Runnable {
@@ -12,11 +14,13 @@ public class Round implements Runnable {
     private final AtomicBoolean hasMadeAMove;
     private GameManager gameManager;
     private final AtomicBoolean playerEndedTurn;
+    public List<String> blockedTurnPlayers;
 
     Round(GameManager gameManager) {
         this.gameManager = gameManager;
         hasMadeAMove = new AtomicBoolean();
         playerEndedTurn = new AtomicBoolean();
+        blockedTurnPlayers = new ArrayList<>();
     }
 
     void startForPlayer(Player player) {
@@ -28,21 +32,23 @@ public class Round implements Runnable {
 
     @Override
     public void run() {
-        playerMoves = new Thread( () -> {
+        playerMoves = new Thread(() -> {
             //TODO recheck activate turn
             try {
                 player.getUserObserver().activateTurnNotification(gameManager.sendAvailablePositions(player));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            waitForMove();
-            System.out.println("First move done");
-            waitForMove();
-            System.out.println("Second move done");
+            if (!(blockedTurnPlayers.contains(getCurrentPlayer().getPlayerUsername())) ) {
+                waitForMove();
+                System.out.println("First move done");
+                waitForMove();
+                System.out.println("Second move done");
+            } else blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
             playerEndedTurn.set(true);
 
             //wake up the round thread
-            synchronized (playerEndedTurn){
+            synchronized (playerEndedTurn) {
                 playerEndedTurn.notify();
             }
 
@@ -99,8 +105,9 @@ public class Round implements Runnable {
 
     /**
      * Place-Dice move. Method for the placing dice move
-     * @param dice to place
-     * @param rowIndex index of the row where to place dice in the pattern card
+     *
+     * @param dice        to place
+     * @param rowIndex    index of the row where to place dice in the pattern card
      * @param columnIndex index of the column where to place dice in pattern card
      */
     void makeMove(Dice dice, int rowIndex, int columnIndex) {
@@ -113,11 +120,10 @@ public class Round implements Runnable {
 
     void makeMove(ToolCard toolCard) {
         toolCard.action(gameManager);
-        hasMadeAMove();
     }
 
-    public void skipMove() {
-       hasMadeAMove();
+    public void toolCardMoveDone() {
+        hasMadeAMove();
     }
 
     public Player getCurrentPlayer() {

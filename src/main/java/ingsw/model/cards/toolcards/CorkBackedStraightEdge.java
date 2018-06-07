@@ -33,7 +33,6 @@ public class CorkBackedStraightEdge extends ToolCard {
                 e.printStackTrace();
             }
         }
-
         gameManager.corkBackedStraightedgeResponse();
     }
 }

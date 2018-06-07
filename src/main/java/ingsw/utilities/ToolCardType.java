@@ -15,5 +15,6 @@ public enum ToolCardType {
     LENS_CUTTER,
     DRAFT_POOL,
     PATTERN_CARD,
-    ROUND_TRACK
+    ROUND_TRACK,
+    AVOID_USE
 }

@@ -135,7 +135,21 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
 
     @Override
     public void toolCardMove(FluxRemoverRequest fluxRemoverRequest) throws RemoteException {
-        gameManager.fluxRemoverMove(fluxRemoverRequest.selectedDice);
+        switch (fluxRemoverRequest.phase){
+            case 1:
+                gameManager.fluxRemoverMove(fluxRemoverRequest.selectedDice);
+                break;
+            case 2:
+                gameManager.fluxRemoverMove(fluxRemoverRequest.selectedDice, fluxRemoverRequest.chosenValue);
+                break;
+            case 3:
+                gameManager.fluxRemoverMove(fluxRemoverRequest.selectedDice,fluxRemoverRequest.rowIndex,fluxRemoverRequest.columnIndex);
+                break;
+            case 4:
+                gameManager.fluxRemoverMove();
+        }
+
+
     }
 
     public void toolCardMove(GrindingStoneRequest grindingStoneRequest) throws RemoteException {
@@ -165,5 +179,10 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     @Override
     public void toolCardMove(LathekinRequest lathekinRequest) throws RemoteException {
         gameManager.lathekinMove(lathekinRequest.dicePosition, lathekinRequest.position, lathekinRequest.doubleMove);
+    }
+
+    @Override
+    public void toolCardMove(RunningPliersRequest moveToolCardRequest) throws RemoteException {
+        gameManager.runningPliersMove(moveToolCardRequest.selectedDice, moveToolCardRequest.rowIndex, moveToolCardRequest.ColumnIndex);
     }
 }

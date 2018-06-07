@@ -244,9 +244,17 @@ public class GameController implements SceneUpdater, Initializable {
             imageView.setImage(new Image("/img/toolcards/" + toolCards.get(counter).getName() + ".png"));
 
             imageView.setOnMouseClicked(event -> {
-                networkType.useToolCard(imageView.getId());
-                System.out.println(imageView.getId());
-                disableToolCards();
+                ButtonType no = new ButtonType("No");
+                ButtonType yes = new ButtonType("Yes");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do you want to use " + imageView.getId().toString() + "?",  no, yes);
+                alert.setTitle("Use Tool card");
+                Optional<ButtonType> result = alert.showAndWait();
+                System.out.println("no button pressed");
+                if (result.get() == yes) {
+                    networkType.useToolCard(imageView.getId());
+                    System.out.println(imageView.getId());
+                    disableToolCards();
+                }
             });
             imageView.setDisable(true);
             counter++;
@@ -281,7 +289,7 @@ public class GameController implements SceneUpdater, Initializable {
         for (int i = 0; i < diceList.size(); i++) {
             DiceButton diceButtonToAdd = new DiceButton(diceList.get(i), i);
             diceButtonToAdd.setOnMouseClicked(event -> {
-                if (windowControllerList.get(0).getSelectedDice() == null || !(windowControllerList.get(0).getSelectedDice().toString().equals(diceButtonToAdd.getDice().toString())) ) {
+                if (windowControllerList.get(0).getSelectedDice() == null || !(windowControllerList.get(0).getSelectedDice().toString().equals(diceButtonToAdd.getDice().toString()))) {
                     setCursorDice(diceButtonToAdd.getDice());
                     windowControllerList.get(0).setSelectedDice(diceButtonToAdd.getDice());
                     windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getDice().toString());
@@ -299,7 +307,7 @@ public class GameController implements SceneUpdater, Initializable {
         }
     }
 
-    private void setCursorDice(Dice dice){
+    private void setCursorDice(Dice dice) {
         Image cursor = new Image("/img/dice/" + dice.toString() + ".png", 90, 90, true, true);
         ImageCursor imageCursor = new ImageCursor(cursor);
         windowControllerList.get(0).getPatternCardGridPane().setCursor(imageCursor);
@@ -372,6 +380,12 @@ public class GameController implements SceneUpdater, Initializable {
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
+            if (draftedDiceToolCardResponse.endTurn)
+                windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+            windowControllerList.get(0).setSelectedDice(null);
+            networkType.endTurn();
+            disableDice();
+            endTurnButton.setDisable(true);
         });
         System.out.println("Tool card used");
     }
@@ -477,7 +491,7 @@ public class GameController implements SceneUpdater, Initializable {
                 break;
             case 2:
                 Platform.runLater(() -> {
-                    createPopUpWindow("Flux Brush", "This is the new drafted die", "Choose if you want to place or put back in the dice pool" ).showAndWait();
+                    createPopUpWindow("Flux Brush", "This is the new rolled die", "Place the dice, if it is possible").showAndWait();
 
                     windowControllerList.get(0).setSelectedDice(useToolCardResponse.selectedDice);
                     windowControllerList.get(0).fluxBrushMove();
@@ -485,22 +499,28 @@ public class GameController implements SceneUpdater, Initializable {
                     windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
                     windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.selectedDice.toString());
                     displayDraftedDice(useToolCardResponse.draftedDice);
-
-
-                    ArrayList<DiceButton> diceButtons = new ArrayList<>();
-                    for (Node button : diceHorizontalBox.getChildren()) {
-                        diceButtons.add((DiceButton) button);
+                    boolean noAvailable = false;
+                    for (int j = 0; j < 4; j++) {
+                        for (int k = 0; k < 5; k++) {
+                            noAvailable = useToolCardResponse.availablePositions.get(useToolCardResponse.selectedDice)[j][k] || noAvailable;
+                        }
                     }
-                    for (DiceButton button : diceButtons) {
-                        if (useToolCardResponse.selectedDice.toString().equals(button.getDice().toString()))
-                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent event) {
-                                networkType.fluxBrushMove();
-                                windowControllerList.get(0).setSelectedDice(null);
-                                windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-                            }
-                        });
+                    if (!noAvailable) {
+                        ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                        for (Node button : diceHorizontalBox.getChildren()) {
+                            diceButtons.add((DiceButton) button);
+                        }
+                        for (DiceButton button : diceButtons) {
+                            if (useToolCardResponse.selectedDice.toString().equals(button.getDice().toString()))
+                                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent event) {
+                                        networkType.fluxBrushMove();
+                                        windowControllerList.get(0).setSelectedDice(null);
+                                        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+                                    }
+                                });
+                        }
                     }
                 });
         }
@@ -508,29 +528,69 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void toolCardAction(FluxRemoverResponse useToolCardResponse) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose which dice has to be removed");
-            alert.setTitle("Use Tool card");
-            alert.setHeaderText("Flux Remover");
-            alert.showAndWait();
+        switch (useToolCardResponse.phase) {
+            case 1:
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose which dice has to be removed");
+                    alert.setTitle("Use Tool card");
+                    alert.setHeaderText("Flux Remover");
+                    alert.showAndWait();
 
-            ArrayList<DiceButton> diceButtons = new ArrayList<>();
-            for (Node button : diceHorizontalBox.getChildren()) {
-                diceButtons.add((DiceButton) button);
-            }
-
-            for (DiceButton button : diceButtons) {
-                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-
-                        System.out.println(button.getDice().toString());
-                        networkType.fluxRemoverMove(button.getDice());
+                    ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                    for (Node button : diceHorizontalBox.getChildren()) {
+                        diceButtons.add((DiceButton) button);
                     }
-                });
-            }
 
-        });
+                    for (DiceButton button : diceButtons) {
+                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+
+                                System.out.println(button.getDice().toString());
+                                networkType.fluxRemoverMove(button.getDice());
+                            }
+                        });
+                    }
+                    activateDice();
+
+                });
+                break;
+            case 2:
+                Platform.runLater(() -> {
+                    ChoiceDialog<Integer> dialog = new ChoiceDialog<>(1, 2, 3, 4, 5, 6);
+                    dialog.setTitle("Flux Remover");
+                    dialog.setHeaderText("The drafted dice is: " + useToolCardResponse.draftedDie.getDiceColor().toString() + "\nChoose the face up value");
+                    dialog.showAndWait();
+                    int chosenValue = dialog.getSelectedItem();
+                    networkType.fluxRemoverMove(useToolCardResponse.draftedDie, chosenValue);
+                });
+                break;
+            case 3:
+                Platform.runLater(() -> {
+                    displayDraftedDice(useToolCardResponse.draftedDice);
+                    ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                    for (Node button : diceHorizontalBox.getChildren()) {
+                        diceButtons.add((DiceButton) button);
+                    }
+                    for (DiceButton button : diceButtons) {
+                        if (useToolCardResponse.draftedDie.toString().equals(button.getDice().toString()))
+                            button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                @Override
+                                public void handle(MouseEvent event) {
+                                    networkType.fluxRemoverMove();
+                                    windowControllerList.get(0).setSelectedDice(null);
+                                    windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+                                }
+                            });
+                        else button.setDisable(true);
+                    }
+                    windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+                    windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.draftedDie.toString());
+                    windowControllerList.get(0).setSelectedDice(useToolCardResponse.draftedDie);
+                    setCursorDice(useToolCardResponse.draftedDie);
+                    windowControllerList.get(0).fluxRemoverMove();
+                });
+        }
     }
 
 
@@ -594,7 +654,7 @@ public class GameController implements SceneUpdater, Initializable {
             alert.setTitle("Use Tool card");
             alert.setHeaderText("Cork Backed Straightedge");
             alert.showAndWait();
-
+            windowControllerList.get(0).corkBackedStraightedge();
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
         });
     }
@@ -607,7 +667,7 @@ public class GameController implements SceneUpdater, Initializable {
             alert.setHeaderText("Lens Cutter");
             alert.showAndWait();
 
-            for(DiceButton diceButton : draftPool){
+            for (DiceButton diceButton : draftPool) {
                 diceButton.setOnMouseClicked(mouseEvent -> {
                     toolCardSelectedDice = diceButton;
                 });
@@ -652,8 +712,8 @@ public class GameController implements SceneUpdater, Initializable {
 
     @Override
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
-        windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
         Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
+        windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
         activateDice();
         activateToolCard();
         endTurnButton.setDisable(false);
@@ -671,6 +731,24 @@ public class GameController implements SceneUpdater, Initializable {
     @Override
     public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
         updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
+    }
+
+    @Override
+    public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            createPopUpWindow("Use Tool Card", "Move not allowed ", "You can't use this tool card").showAndWait();
+            activateToolCard();
+        });
+
+    }
+
+    @Override
+    public void toolCardAction(RunningPliersResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            createPopUpWindow("Use Tool Card", "Running Pliers", "Choose and place another die").showAndWait();
+            activateDice();
+            windowControllerList.get(0).runningPliersMove();
+        });
     }
 
     @Override

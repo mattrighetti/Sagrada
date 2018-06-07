@@ -13,8 +13,6 @@ import ingsw.controller.network.NetworkType;
 public class ClientController implements ResponseHandler, NetworkType {
     private Client client;
     private Thread thread;
-    private boolean generalPurposeBoolean = false;
-    private boolean hasMatchBeenCreated = false;
     private SceneUpdater sceneUpdater;
 
     public ClientController(Client client) {
@@ -153,6 +151,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
+        client.request(new RunningPliersRequest(selectedDice, rowIndex, columnIndex));
+    }
+
+    @Override
     public void grozingPliersMove(Dice dice, boolean increase) {
         client.request(new GrozingPliersRequest(dice, increase));
     }
@@ -175,6 +178,21 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void fluxRemoverMove(Dice dice) {
         client.request(new FluxRemoverRequest(dice));
+    }
+
+    @Override
+    public void fluxRemoverMove(Dice dice, int chosenValue) {
+        client.request(new FluxRemoverRequest(dice, chosenValue));
+    }
+
+    @Override
+    public void fluxRemoverMove() {
+        client.request(new FluxRemoverRequest());
+    }
+
+    @Override
+    public void fluxRemoverMove(Dice selectedDice, int columnIndex, int rowIndex) {
+        client.request(new FluxRemoverRequest(selectedDice,rowIndex,columnIndex));
     }
 
     @Override
@@ -403,6 +421,11 @@ public class ClientController implements ResponseHandler, NetworkType {
             case EGLOMISE_BRUSH:
                 sceneUpdater.toolCardAction((EglomiseBrushResponse) useToolCardResponse);
                 break;
+            case RUNNING_PLIERS:
+                sceneUpdater.toolCardAction((RunningPliersResponse) useToolCardResponse);
+                break;
+            case AVOID_USE:
+                sceneUpdater.toolCardAction((AvoidToolCardResponse) useToolCardResponse);
         }
     }
 }

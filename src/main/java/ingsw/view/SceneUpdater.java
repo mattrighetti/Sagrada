@@ -175,6 +175,14 @@ public interface SceneUpdater {
     }
 
     default void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
+        System.out.println("Not overridden");
+    }
 
+    default void toolCardAction(AvoidToolCardResponse useToolCardResponse){
+        System.out.println("Not overridden");
+    }
+
+    default void toolCardAction(RunningPliersResponse useToolCardResponse){
+        System.out.println("Not overridden");
     }
 }

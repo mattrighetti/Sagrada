@@ -116,6 +116,21 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void fluxRemoverMove(Dice dice, int chosenValue) {
+        new FluxRemoverRequest(dice, chosenValue).handle(rmiHandler);
+    }
+
+    @Override
+    public void fluxRemoverMove() {
+        new FluxBrushRequest().handle(rmiHandler);
+    }
+
+    @Override
+    public void fluxRemoverMove(Dice selectedDice, int columnIndex, int rowIndex) {
+        new FluxBrushRequest(selectedDice,rowIndex,columnIndex).handle(rmiHandler);
+    }
+
+    @Override
     public void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
         new CopperFoilBurnisherRequest(dicePosition, position).handle(rmiHandler);
     }
@@ -133,6 +148,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void lensCutter(int roundIndex, String roundTrackDice, String poolDice) {
         new LensCutterRequest(roundIndex, roundTrackDice, poolDice).handle(rmiHandler);
+    }
+
+    @Override
+    public void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
+        new RunningPliersRequest(selectedDice,rowIndex, columnIndex).handle(rmiHandler);
     }
 
     @Override
@@ -255,6 +275,12 @@ public class RMIController implements ResponseHandler, NetworkType {
                 break;
             case EGLOMISE_BRUSH:
                 sceneUpdater.toolCardAction((EglomiseBrushResponse) useToolCardResponse);
+                break;
+            case AVOID_USE:
+                sceneUpdater.toolCardAction((AvoidToolCardResponse) useToolCardResponse);
+                break;
+            case RUNNING_PLIERS:
+                sceneUpdater.toolCardAction((RunningPliersResponse) useToolCardResponse);
                 break;
         }
     }
