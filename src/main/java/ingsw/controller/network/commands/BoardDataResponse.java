@@ -5,7 +5,6 @@ import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 
 import java.util.List;
-import java.util.Set;
 
 public class BoardDataResponse implements Response {
     public List<Player> players;

@@ -81,7 +81,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
         for (Player player : playerList) {
             if (player.getPlayerUsername().equals(user.getUsername())) {
                 player.getUser().setActive(false);
-                System.out.println("Controller: User " + user.getUsername() + " has been deactivated");
+                System.err.println("Controller: User " + user.getUsername() + " has been deactivated");
             }
         }
     }

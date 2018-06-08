@@ -44,11 +44,11 @@ public class RMIHandler implements RequestHandler {
     public Response handle(LoginUserRequest loginUserRequest) {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, rmiUserObserver);
-            return new LoginUserResponse(user, sagradaGame.getConnectedUsers(), sagradaGame.doubleStringBuilder());
         } catch (InvalidUsernameException | RemoteException e) {
             new LoginUserResponse(null, -1, null).handle(rmiController);
-            return null;
         }
+
+        return null;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class RMIHandler implements RequestHandler {
     @Override
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {
-            sagradaGame.loginUserToController(joinMatchRequest.matchName, user);
+            sagradaGame.loginUserToController(joinMatchRequest.matchName, user.getUsername());
             try {
                 remoteController = (RemoteController) Naming.lookup("rmi://"+ ipAddress +":1099/" + joinMatchRequest.matchName);
             } catch (MalformedURLException e) {

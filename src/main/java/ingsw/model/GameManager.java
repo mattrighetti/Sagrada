@@ -43,6 +43,7 @@ public class GameManager {
     private AtomicBoolean endRound;
     private Thread diceAckThread;
     private Thread matchThread;
+    private Thread userDisconnectionListenerThread;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -169,6 +170,36 @@ public class GameManager {
         }
     }
 
+    void listenForPlayerDisconnection() {
+        Set<Player> disconnectedPlayerSet = new HashSet<>();
+        userDisconnectionListenerThread = new Thread(() -> {
+            do {
+                try {
+
+                    Thread.sleep(2000);
+                    System.out.println("Woke, checking");
+                    for (Player player : playerList) {
+                        try {
+                            if (disconnectedPlayerSet.contains(player) && player.getUser().isActive()) {
+                                System.out.println("Reactivated user: " + player.getPlayerUsername() + " sending data");
+                                disconnectedPlayerSet.remove(player);
+                                player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
+                            } else {
+                                player.getUserObserver();
+                            }
+                        } catch (RemoteException e) {
+                            disconnectedPlayerSet.add(player);
+                        }
+                    }
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (true);
+        });
+        userDisconnectionListenerThread.start();
+    }
+
     List<Player> getPlayerList() {
         return playerList;
     }
@@ -188,6 +219,10 @@ public class GameManager {
         return patternCard;
     }
 
+    void checkIfEveryUserIsActive() {
+
+    }
+
     /**
      * Method that waits for every users to choose a patternCard
      */
@@ -198,7 +233,7 @@ public class GameManager {
             BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
             Broadcaster.broadcastResponseToAll(playerList, boardDataResponse);
             this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards, playerList);
-
+            listenForPlayerDisconnection();
             startMatch();
         }).start();
     }

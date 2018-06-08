@@ -63,7 +63,7 @@ public class ServerController implements RequestHandler, Serializable {
     @Override
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {
-            sagradaGame.loginUserToController(joinMatchRequest.matchName, user);
+            sagradaGame.loginUserToController(joinMatchRequest.matchName, user.getUsername());
             controller = sagradaGame.getMatchController(joinMatchRequest.matchName);
         } catch (RemoteException e) {
             e.printStackTrace();

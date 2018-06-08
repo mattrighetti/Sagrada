@@ -26,5 +26,5 @@ public interface RemoteSagradaGame extends Remote {
 
     List<DoubleString> doubleStringBuilder() throws RemoteException;
 
-    void loginUserToController(String matchName, User user) throws RemoteException;
+    void loginUserToController(String matchName, String username) throws RemoteException;
 }

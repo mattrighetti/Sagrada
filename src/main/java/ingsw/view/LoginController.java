@@ -1,6 +1,7 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.model.Player;
 import ingsw.utilities.DoubleString;
 import ingsw.view.nodes.ProgressForm;
@@ -105,6 +106,11 @@ public class LoginController implements SceneUpdater {
     public void launchProgressForm() {
         Platform.runLater(() -> new ProgressForm().activateProgressBar());
         System.out.println("Waiting for next UpdateViewResponse");
+    }
+
+    @Override
+    public void launchFourthGui(BoardDataResponse boardDataResponse) {
+        Platform.runLater( () -> application.launchFourthGUI(boardDataResponse));
     }
 }
 
