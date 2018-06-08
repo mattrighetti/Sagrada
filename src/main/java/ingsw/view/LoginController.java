@@ -53,8 +53,16 @@ public class LoginController implements SceneUpdater {
      */
     @FXML
     void onLoginPressed(ActionEvent event) throws IOException {
-        String username = usernameTextField.getText();
-        networkType.loginUser(username);
+        if (networkType != null) {
+            String username = usernameTextField.getText();
+            networkType.loginUser(username);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Choose a connection type");
+            alert.setContentText("Select either RMI or Socket");
+            alert.showAndWait();
+        }
     }
 
     @FXML
