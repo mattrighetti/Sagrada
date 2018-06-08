@@ -1,25 +1,33 @@
 package ingsw.utilities;
 
 import ingsw.controller.Controller;
+import ingsw.model.Round;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ControllerTimer {
     private Timer timer;
-    private Controller controller;
+    private static ControllerTimer controllerTimer;
 
-    public ControllerTimer(Controller controller) {
+    private ControllerTimer() {
         this.timer = new Timer("TimerThread");
-        this.controller = controller;
     }
 
-    public void startLoginTimer(int loginSeconds) {
-        timer.schedule(new LaunchMatch(), loginSeconds * 1000);
+    public static ControllerTimer get() {
+        if (controllerTimer == null) {
+            controllerTimer = new ControllerTimer();
+        }
+
+        return controllerTimer;
     }
 
-    public void startTurnTimer() {
-        timer.schedule(new EndTurn(), 60 * 1000);
+    public void startLoginTimer(int loginSeconds, Controller controller) {
+        timer.schedule(new LaunchMatch(controller), loginSeconds * 1000);
+    }
+
+    public void startTurnTimer(int turnSeconds, Round round) {
+        timer.schedule(new EndTurn(round), turnSeconds * 1000);
     }
 
     public void cancelTimer() {
@@ -27,6 +35,12 @@ public class ControllerTimer {
     }
 
     public class LaunchMatch extends TimerTask {
+        Controller controller;
+
+        LaunchMatch(Controller controller) {
+            this.controller = controller;
+        }
+
         @Override
         public void run() {
             controller.createMatch();
@@ -34,9 +48,15 @@ public class ControllerTimer {
     }
 
     class EndTurn extends TimerTask {
+        Round round;
+
+        EndTurn(Round round) {
+            this.round = round;
+        }
+
         @Override
         public void run() {
-            // TODO timerTask to end turn
+            round.hasMadeAMove();
         }
     }
 

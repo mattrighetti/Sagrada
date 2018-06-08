@@ -1,6 +1,8 @@
 package ingsw.model;
 
 import ingsw.model.cards.toolcards.ToolCard;
+import ingsw.utilities.Broadcaster;
+import ingsw.utilities.ControllerTimer;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -39,12 +41,15 @@ public class Round implements Runnable {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            if (!(blockedTurnPlayers.contains(getCurrentPlayer().getPlayerUsername())) ) {
+
+            if (!blockedTurnPlayers.contains(getCurrentPlayer().getPlayerUsername())) {
                 waitForMove();
                 System.out.println("First move done");
                 waitForMove();
                 System.out.println("Second move done");
-            } else blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
+            } else
+                blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
+
             playerEndedTurn.set(true);
 
             //wake up the round thread
@@ -55,6 +60,14 @@ public class Round implements Runnable {
         });
         playerMoves.setName("Turn");
         playerMoves.start();
+    }
+
+    public void timeIsOver() {
+        hasMadeAMove.set(true);
+
+        synchronized (hasMadeAMove) {
+            hasMadeAMove.notify();
+        }
     }
 
     public void hasMadeAMove() {
@@ -68,6 +81,7 @@ public class Round implements Runnable {
 
     private void waitForMove() {
         System.out.println("Wait for the move");
+        ControllerTimer.get().startTurnTimer(15, this);
         synchronized (hasMadeAMove) {
             while (!hasMadeAMove.get()) {
                 //wait until the move is done

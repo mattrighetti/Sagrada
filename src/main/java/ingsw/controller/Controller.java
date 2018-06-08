@@ -17,12 +17,10 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     private String matchName;
     private GameManager gameManager;
     private List<Player> playerList;
-    private ControllerTimer controllerTimer;
 
     public Controller(String matchName) throws RemoteException {
         super();
         this.matchName = matchName;
-        this.controllerTimer = new ControllerTimer(this);
         playerList = new ArrayList<>();
     }
 
@@ -47,11 +45,11 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     public void loginUser(User user) {
         playerList.add(new Player(user));
         if (playerList.size() == 1) {
-            controllerTimer.startLoginTimer(2);
+            ControllerTimer.get().startLoginTimer(2, this);
         }
 
         if (playerList.size() == 4) {
-            controllerTimer.cancelTimer();
+            ControllerTimer.get().cancelTimer();
             createMatch();
         }
     }
