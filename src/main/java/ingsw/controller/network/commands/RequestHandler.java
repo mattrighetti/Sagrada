@@ -23,4 +23,7 @@ public interface RequestHandler {
     Response handle(UseToolCardRequest useToolCardRequest);
 
     Response handle(MoveToolCardRequest moveToolCardRequest);
+
+    Response handle(ReJoinMatchRequest reJoinMatchRequest);
+
 }

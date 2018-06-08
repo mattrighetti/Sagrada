@@ -189,4 +189,12 @@ public interface SceneUpdater {
     default void toolCardAction(TapWheelResponse useToolCardResponse) {
         System.out.println("Not overridden");
     }
+
+    default void launchProgressForm() {
+        System.out.println("Not overridden");
+    }
+
+    default void setUsernameInApplication(String username) {
+        System.out.println("Not overridden");
+    }
 }

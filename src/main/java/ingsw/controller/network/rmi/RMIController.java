@@ -24,6 +24,7 @@ public class RMIController implements ResponseHandler, NetworkType {
         rmiHandler = new RMIHandler(this, rmiUserObserver, ipAddress);
     }
 
+    @Override
     public void setSceneUpdater(SceneUpdater sceneUpdater) {
         this.sceneUpdater = sceneUpdater;
     }
@@ -39,13 +40,10 @@ public class RMIController implements ResponseHandler, NetworkType {
      * Method that logs in the user to SagradaGame
      *
      * @param username username chosen by the user
-     * @return boolean value that indicates if the user has been successfully logged in to the game
-     * @throws RemoteException throws RemoteException
      */
     @Override
     public void loginUser(String username) {
-        response = new LoginUserRequest(username).handle(rmiHandler);
-        response.handle(this);
+        new LoginUserRequest(username).handle(rmiHandler);
     }
 
     @Override
@@ -225,6 +223,12 @@ public class RMIController implements ResponseHandler, NetworkType {
 
             sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
         }
+    }
+
+    @Override
+    public void handle(ReJoinResponse reJoinResponse) {
+        System.out.println("Response Received, requesting rejoin in match");
+        sceneUpdater.launchProgressForm();
     }
 
     @Override

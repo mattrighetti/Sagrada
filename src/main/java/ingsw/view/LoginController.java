@@ -1,7 +1,9 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.utilities.DoubleString;
+import ingsw.view.nodes.ProgressForm;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,7 +41,7 @@ public class LoginController implements SceneUpdater {
         this.networkType = networkType;
     }
 
-    public void setApplication(GUIUpdater application) {
+    void setApplication(GUIUpdater application) {
         this.application = application;
     }
 
@@ -57,12 +59,20 @@ public class LoginController implements SceneUpdater {
 
     @FXML
     void selectedRMI(ActionEvent event) {
+        application.deployRMIClient();
         application.changeToRMI();
+        networkType.setSceneUpdater(this);
+        SocketToggleButton.setDisable(true);
+        RMIToggleButton.setDisable(true);
     }
 
     @FXML
     void selectedSocket(ActionEvent event) {
+        application.deploySocketClient();
         application.changeToSocket();
+        networkType.setSceneUpdater(this);
+        SocketToggleButton.setDisable(true);
+        RMIToggleButton.setDisable(true);
     }
 
     @Override
@@ -82,12 +92,29 @@ public class LoginController implements SceneUpdater {
 
     @Override
     public void launchAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Warning");
-        alert.setHeaderText("Username has already been taken");
-        alert.setContentText("Choose another username");
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Username has already been taken");
+            alert.setContentText("Choose another username");
+            alert.showAndWait();
+        });
     }
 
+    @Override
+    public void launchProgressForm() {
+        Platform.runLater(() -> new ProgressForm().activateProgressBar());
+        System.out.println("Waiting for next UpdateViewResponse");
+    }
+
+    @Override
+    public void launchFourthGui(BoardDataResponse boardDataResponse) {
+        Platform.runLater( () -> application.launchFourthGUI(boardDataResponse));
+    }
+
+    @Override
+    public void setUsernameInApplication(String username) {
+        application.setUsername(username);
+    }
 }
 

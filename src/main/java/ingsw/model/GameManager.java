@@ -48,6 +48,7 @@ public class GameManager {
     private Thread matchThread;
     private Thread toolCardThread;
     private AtomicInteger turnInRound = new AtomicInteger(0);
+    private Thread userDisconnectionListenerThread;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -181,6 +182,45 @@ public class GameManager {
         }
     }
 
+    private void listenForPlayerDisconnection() {
+        Set<Player> disconnectedPlayerSet = new HashSet<>();
+        userDisconnectionListenerThread = new Thread(() -> {
+            do {
+
+                try {
+
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    e.printStackTrace();
+                }
+
+                for (Player player : playerList) {
+                    try {
+                        // Se l'utente era nel set di utenti disconnessi e ora è attivo allora inviagli la boardDataResponse
+                        if (disconnectedPlayerSet.contains(player) && player.getUser().isActive()) {
+                            System.out.println("Reactivated user: " + player.getPlayerUsername() + " sending data");
+                            disconnectedPlayerSet.remove(player);
+                            player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
+                        } else if (!disconnectedPlayerSet.contains(player) && !player.getUser().isActive()) {
+                            System.out.println("Adding back Socket player");
+                            disconnectedPlayerSet.add(player);
+                        } else {
+                            //Altrimenti controlla se è ancora connesso
+                            player.getUserObserver();
+                            System.out.println("Else");
+                        }
+                    } catch (RemoteException e) {
+                        // Se un utente RMI è disconnesso viene lanciata l'eccezione e viene inserito negli utenti disconnessi
+                        System.out.println("Exception thrown");
+                        disconnectedPlayerSet.add(player);
+                    }
+                }
+            } while (true);
+        });
+        userDisconnectionListenerThread.start();
+    }
+
     List<Player> getPlayerList() {
         return playerList;
     }
@@ -208,6 +248,10 @@ public class GameManager {
         return turnInRound.get();
     }
 
+    void checkIfEveryUserIsActive() {
+
+    }
+
     /**
      * Method that waits for every users to choose a patternCard
      */
@@ -218,7 +262,7 @@ public class GameManager {
             BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
             Broadcaster.broadcastResponseToAll(playerList, boardDataResponse);
             this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards, playerList);
-
+            listenForPlayerDisconnection();
             startMatch();
         }).start();
     }
@@ -413,12 +457,12 @@ public class GameManager {
     }
 
     /*
-    *
-    *
-    * GAME MOVES
-    *
-    *
-    */
+     *
+     *
+     * GAME MOVES
+     *
+     *
+     */
 
     boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
         if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {

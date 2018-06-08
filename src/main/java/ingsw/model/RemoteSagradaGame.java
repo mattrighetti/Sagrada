@@ -1,6 +1,5 @@
 package ingsw.model;
 
-import ingsw.controller.Controller;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.utilities.DoubleString;
@@ -19,11 +18,13 @@ public interface RemoteSagradaGame extends Remote {
 
     void createMatch(String matchName) throws RemoteException;
 
-    Controller joinMatch(String matchName) throws RemoteException;
+    void loginPrexistentPlayer(String matchName, User user) throws RemoteException;
+
+    void deactivateUser(User user) throws RemoteException;
 
     void broadcastUsersConnected(String string) throws RemoteException;
 
     List<DoubleString> doubleStringBuilder() throws RemoteException;
 
-    void loginUserToController(String matchName, User user) throws RemoteException;
+    void loginUserToController(String matchName, String username) throws RemoteException;
 }

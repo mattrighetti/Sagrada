@@ -45,10 +45,11 @@ public class RMIHandler implements RequestHandler {
     public Response handle(LoginUserRequest loginUserRequest) {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, rmiUserObserver);
-            return new LoginUserResponse(user, sagradaGame.getConnectedUsers(), sagradaGame.doubleStringBuilder());
         } catch (InvalidUsernameException | RemoteException e) {
-            return new LoginUserResponse(null, -1, null);
+            new LoginUserResponse(null, -1, null).handle(rmiController);
         }
+
+        return null;
     }
 
     @Override
@@ -160,7 +161,7 @@ public class RMIHandler implements RequestHandler {
     @Override
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {
-            sagradaGame.loginUserToController(joinMatchRequest.matchName, user);
+            sagradaGame.loginUserToController(joinMatchRequest.matchName, user.getUsername());
             try {
                 remoteController = (RemoteController) Naming.lookup("rmi://"+ ipAddress +":1099/" + joinMatchRequest.matchName);
             } catch (MalformedURLException e) {
@@ -171,6 +172,20 @@ public class RMIHandler implements RequestHandler {
             e.printStackTrace();
             return new JoinedMatchResponse(false);
         }
+    }
+
+    @Override
+    public Response handle(ReJoinMatchRequest reJoinMatchRequest) {
+        try {
+            sagradaGame.loginPrexistentPlayer(reJoinMatchRequest.matchName, user);
+            remoteController = (RemoteController) Naming.lookup("rmi://" + ipAddress + ":1099/" + reJoinMatchRequest.matchName);
+        } catch (NotBoundException | RemoteException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            System.err.println("Error in URL String");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

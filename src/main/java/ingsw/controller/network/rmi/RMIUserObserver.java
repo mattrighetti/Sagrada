@@ -11,7 +11,7 @@ import java.util.Map;
 public class RMIUserObserver extends UnicastRemoteObject implements UserObserver {
     private transient ResponseHandler rmiController;
 
-    public RMIUserObserver(RMIController rmiController) throws RemoteException {
+    RMIUserObserver(RMIController rmiController) throws RemoteException {
         super();
         this.rmiController = rmiController;
     }
@@ -19,6 +19,12 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     @Override
     public void onJoin(int numberOfConnectedUsers) {
         new IntegerResponse(numberOfConnectedUsers).handle(rmiController);
+    }
+
+    @Override
+    public void checkIfActive() {
+        // This method is used by RMI to check if the connection is still active and the user too
+        // If this throws a RemoteException the User must be disabled
     }
 
     @Override

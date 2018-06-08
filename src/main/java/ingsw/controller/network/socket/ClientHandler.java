@@ -13,8 +13,8 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     private String ERROR_IN = "Errors in closing - ";
 
     private transient Socket clientSocket;
-    private transient final ObjectInputStream objectInputStream;
-    private transient final ObjectOutputStream objectOutputStream;
+    private final transient ObjectInputStream objectInputStream;
+    private final transient ObjectOutputStream objectOutputStream;
     private transient boolean stop = false;
 
     private ServerController serverController;
@@ -58,6 +58,9 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
         } catch (EOFException | SocketException e) {
             System.err.println("Client has disconnected from server, closing the connection");
+            System.err.println("Deactivating the user");
+            serverController.deactivateUser();
+            System.err.println("Closing down OutputStreams and InputStreams");
             close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,15 +86,15 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         }
     }
 
-    public void stop() {
+    private void stop() {
         stop = true;
     }
 
     /**
      * Method that closes ClientHandler connection
      */
-    void close() {
-        stop = true;
+    private void close() {
+        stop();
         if (objectInputStream != null) {
             try {
                 objectInputStream.close();
@@ -131,10 +134,15 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         respond(new IntegerResponse(numberOfConnectedUsers));
     }
 
+    @Override
+    public void checkIfActive() {
+        // Empty, useful only for RMI
+    }
+
     /**
      * Method that sends a generic message to the User
      *
-     * @param message
+     * @param message message to be sent
      */
     @Override
     public void sendMessage(Message message) {

@@ -16,7 +16,7 @@ public class ServerController implements RequestHandler, Serializable {
     private transient Controller controller;
     private User user;
 
-    public ServerController(ClientHandler clientHandler) throws RemoteException {
+    ServerController(ClientHandler clientHandler) throws RemoteException {
         this.clientHandler = clientHandler;
         sagradaGame = SagradaGame.get();
     }
@@ -32,10 +32,11 @@ public class ServerController implements RequestHandler, Serializable {
     public Response handle(LoginUserRequest loginUserRequest) {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, clientHandler);
-            return new LoginUserResponse(user, sagradaGame.getConnectedUsers(), sagradaGame.doubleStringBuilder());
         } catch (InvalidUsernameException | RemoteException e) {
             return new LoginUserResponse(null, -1, null);
         }
+
+        return null;
     }
 
     @Override
@@ -63,7 +64,7 @@ public class ServerController implements RequestHandler, Serializable {
     @Override
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {
-            sagradaGame.loginUserToController(joinMatchRequest.matchName, user);
+            sagradaGame.loginUserToController(joinMatchRequest.matchName, user.getUsername());
             controller = sagradaGame.getMatchController(joinMatchRequest.matchName);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -71,6 +72,18 @@ public class ServerController implements RequestHandler, Serializable {
         }
 
         return new JoinedMatchResponse(true);
+    }
+
+    @Override
+    public Response handle(ReJoinMatchRequest reJoinMatchRequest) {
+        try {
+            sagradaGame.loginPrexistentPlayer(reJoinMatchRequest.matchName, user);
+            controller = sagradaGame.getMatchController(reJoinMatchRequest.matchName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override
@@ -206,5 +219,25 @@ public class ServerController implements RequestHandler, Serializable {
         }
 
         return null;
+    }
+
+    /**
+     * Method that removes a user from the Server in case it did not join a match, otherwise it just deactivates it from
+     * Sagrada and the match's Controller
+     */
+    void deactivateUser() {
+        try {
+            // Deactivate user in the match's controller
+            if (controller != null) {
+                controller.deactivateUser(user);
+                sagradaGame.deactivateUser(user);
+            } else {
+                System.err.println("The user did not join a match yet, removing the user from the Server");
+                // Deactivate user in SagradaGame
+                sagradaGame.logoutUser(user.getUsername());
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }

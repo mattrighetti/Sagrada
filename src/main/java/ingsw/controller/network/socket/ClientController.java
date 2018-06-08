@@ -12,7 +12,7 @@ import ingsw.controller.network.NetworkType;
  */
 public class ClientController implements ResponseHandler, NetworkType {
     private Client client;
-    private Thread thread;
+    private boolean listenerActive = false;
     private SceneUpdater sceneUpdater;
 
     public ClientController(Client client) {
@@ -52,7 +52,9 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void loginUser(String username) {
         client.request(new LoginUserRequest(username));
-        client.nextResponse().handle(this);
+        if (!listenerActive) {
+            listenForResponses();
+        }
     }
 
     /**
@@ -82,9 +84,7 @@ public class ClientController implements ResponseHandler, NetworkType {
      */
     @Override
     public void joinExistingMatch(String matchName) {
-        //stopBroadcastReceiver();
         client.request(new JoinMatchRequest(matchName));
-        //client.nextResponse().handle(this);
     }
 
     /**
@@ -229,8 +229,9 @@ public class ClientController implements ResponseHandler, NetworkType {
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */
     private void listenForResponses() {
-        thread = new Thread(
+        new Thread(
                 () -> {
+                    listenerActive = true;
                     System.out.println("Opening the Thread");
                     Response response;
                     do {
@@ -243,9 +244,9 @@ public class ClientController implements ResponseHandler, NetworkType {
                             break;
                         }
                     } while (true);
+                    listenerActive = false;
                 }
-        );
-        thread.start();
+        ).start();
     }
 
 
@@ -267,7 +268,6 @@ public class ClientController implements ResponseHandler, NetworkType {
             sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
             sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
             sceneUpdater.launchSecondGui(loginUserResponse.user.getUsername());
-            listenForResponses();
         } else
             sceneUpdater.launchAlert();
     }
@@ -319,7 +319,7 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method that updates the view whenever a User placed a die in their window
-     * @param updateViewResponse
+     * @param updateViewResponse response that's going to trigger the view update
      */
     @Override
     public void handle(UpdateViewResponse updateViewResponse) {
@@ -359,7 +359,7 @@ public class ClientController implements ResponseHandler, NetworkType {
     /**
      * Method that handles every Notification and acts differently for every Notification's enumeration element
      *
-     * @param notification
+     * @param notification notification received by the ClientController
      */
     @Override
     public void handle(Notification notification) {
@@ -446,5 +446,12 @@ public class ClientController implements ResponseHandler, NetworkType {
                 sceneUpdater.toolCardAction((TapWheelResponse) useToolCardResponse);
                 break;
         }
+    }
+
+    @Override
+    public void handle(ReJoinResponse reJoinResponse) {
+        System.out.println("Response Received, requesting rejoin in match");
+        sceneUpdater.setUsernameInApplication(reJoinResponse.username);
+        sceneUpdater.launchProgressForm();
     }
 }

@@ -20,6 +20,7 @@ import java.util.List;
 
 public class View extends Application implements GUIUpdater {
     private String username;
+    private String ipAddress;
     private RMIController rmiController;
     private ClientController clientController;
     private NetworkType currentNetworkType;
@@ -42,8 +43,7 @@ public class View extends Application implements GUIUpdater {
     @Override
     public void start(Stage primaryStage) {
         if (getParameters() != null) {
-            deploySocketClient(getParameters().getRaw().get(0));
-            deployRMIClient(getParameters().getRaw().get(0));
+            this.ipAddress = getParameters().getRaw().get(0);
         }
         this.mainStage = primaryStage;
         launchFirstGUI();
@@ -52,7 +52,8 @@ public class View extends Application implements GUIUpdater {
     /**
      * Method that creates a client connection to the previously opened server socket
      */
-    private void deploySocketClient(String ipAddress) {
+    @Override
+    public void deploySocketClient() {
         Client client = new Client(ipAddress, 8000);
 
         try {
@@ -68,9 +69,11 @@ public class View extends Application implements GUIUpdater {
     /**
      * Method that creates a RMI connection to SagradaGame which resides in the RMIHandler
      */
-    private void deployRMIClient(String ipAddress) {
+    @Override
+    public void deployRMIClient() {
         rmiController = new RMIController();
         rmiController.connect(ipAddress);
+        currentNetworkType = rmiController;
     }
 
     /**
@@ -80,6 +83,11 @@ public class View extends Application implements GUIUpdater {
      */
     private void setCurrentScene(SceneUpdater currentScene) {
         this.currentScene = currentScene;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
@@ -96,10 +104,6 @@ public class View extends Application implements GUIUpdater {
         }
 
         LoginController loginController = fxmlLoader.getController();
-
-        // Pass the Scene to the first layer controllers
-        clientController.setSceneUpdater(loginController);
-        rmiController.setSceneUpdater(loginController);
 
         // Set networkType to the ViewController
         loginController.setNetworkType(clientController);
@@ -133,8 +137,7 @@ public class View extends Application implements GUIUpdater {
         LobbyController lobbyController = fxmlLoader.getController();
 
         // Pass the Scene to the first layer controllers
-        clientController.setSceneUpdater(lobbyController);
-        rmiController.setSceneUpdater(lobbyController);
+        currentNetworkType.setSceneUpdater(lobbyController);
 
         // Set networkType to the ViewController
         lobbyController.setNetworkType(currentNetworkType);
@@ -170,8 +173,7 @@ public class View extends Application implements GUIUpdater {
         }
 
         PatternCardController patternCardController = fxmlLoader.getController();
-        clientController.setSceneUpdater(patternCardController);
-        rmiController.setSceneUpdater(patternCardController);
+        currentNetworkType.setSceneUpdater(patternCardController);
         patternCardController.setNetworkType(currentNetworkType);
         patternCardController.setApplication(this);
         mainStage.setScene(new Scene(patternCardChoice));
@@ -199,8 +201,7 @@ public class View extends Application implements GUIUpdater {
         }
 
         GameController gameController = fxmlLoader.getController();
-        clientController.setSceneUpdater(gameController);
-        rmiController.setSceneUpdater(gameController);
+        currentNetworkType.setSceneUpdater(gameController);
         gameController.setNetworkType(currentNetworkType);
         gameController.setApplication(this);
         mainStage.setScene(new Scene(game));

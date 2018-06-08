@@ -72,6 +72,21 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     }
 
     /**
+     * Method that deactivates a user whenever he disconnects from the game
+     * @param user user that has to be disconnected
+     * @throws RemoteException if the user has not been disconnected correctly
+     */
+    @Override
+    public void deactivateUser(User user) throws RemoteException {
+        for (Player player : playerList) {
+            if (player.getPlayerUsername().equals(user.getUsername())) {
+                player.getUser().setActive(false);
+                System.err.println("Controller: User " + user.getUsername() + " has been deactivated");
+            }
+        }
+    }
+
+    /**
      * Assigns PatternCard to specified Player
      * Triggered by Command(PatterCard, String)
      *
