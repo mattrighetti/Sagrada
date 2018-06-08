@@ -146,11 +146,7 @@ public class GameController implements SceneUpdater, Initializable {
 
     @FXML
     void onEndTurnPressed(ActionEvent event) {
-        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-        windowControllerList.get(0).setSelectedDice(null);
-        networkType.endTurn();
-        disableDice();
-        endTurnButton.setDisable(true);
+        endTurnButtonReset();
     }
 
     /**
@@ -757,6 +753,19 @@ public class GameController implements SceneUpdater, Initializable {
             case 0:
                 Platform.runLater(
                         () -> {
+                            disableRoundTrack();
+                            disableDice();
+                            disableToolCards();
+                            endTurnButton.setOnAction(event1 -> {
+                                        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+                                        windowControllerList.get(0).setSelectedDice(null);
+                                        networkType.tapWheelMove(-1);
+                                        disableDice();
+                                        endTurnButton.setOnAction(event2 -> endTurnButtonReset());
+                                        endTurnButton.setDisable(true);
+                                        disableRoundTrack();
+                                    });
+
                             Alert alert = createPopUpWindow("Use Tool card", "Tap Wheel", "Select a dice from the round track and\n move at most two dice of that color in the pattern");
                             alert.showAndWait();
 
@@ -768,9 +777,6 @@ public class GameController implements SceneUpdater, Initializable {
                                         toolCardSelectedDice = (DiceButton) node;
                                         System.out.println("the selected dice is " + toolCardSelectedDice);
                                         networkType.tapWheelMove(toolCardSelectedDice.getDice(), 0);
-                                        disableRoundTrack();
-                                        disableDice();
-                                        disableToolCards();
                                     });
                                 }
                             }
@@ -813,6 +819,14 @@ public class GameController implements SceneUpdater, Initializable {
                         });
                 break;
         }
+    }
+
+    private void endTurnButtonReset() {
+        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+        windowControllerList.get(0).setSelectedDice(null);
+        networkType.endTurn();
+        disableDice();
+        endTurnButton.setDisable(true);
     }
 
     @Override

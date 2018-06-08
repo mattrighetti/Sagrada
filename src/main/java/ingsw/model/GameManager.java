@@ -152,14 +152,8 @@ public class GameManager {
     }
 
     private List<ToolCard> chooseToolCards() {
-        //Collections.shuffle(toolCards);
-        //return new ArrayList<>(this.toolCards.subList(0, 3));
-        ArrayList<ToolCard> list = new ArrayList<>();
-
-        list.add(new Lathekin());
-        list.add(new TapWheel());
-        list.add(new EglomiseBrush());
-        return list;
+        Collections.shuffle(toolCards);
+        return new ArrayList<>(this.toolCards.subList(0, 3));
     }
 
     private List<PublicObjectiveCard> choosePublicObjectiveCards() {
@@ -746,6 +740,7 @@ public class GameManager {
         if (phase == -1) {
             setDoubleMove(true);
             wakeUpToolCardThread();
+            tapWheelResponse(null, getCurrentRound().getCurrentPlayer().getPatternCard(), 3);
         }
         if (phase == 0) {
             System.out.println("Calculating the mask");
