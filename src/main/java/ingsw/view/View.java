@@ -85,6 +85,11 @@ public class View extends Application implements GUIUpdater {
         this.currentScene = currentScene;
     }
 
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     /**
      * First GUI launcher
      */

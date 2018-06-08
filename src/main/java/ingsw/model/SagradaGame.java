@@ -79,7 +79,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
                 for (Player player : controller.getPlayerList()) {
                     if (player.getPlayerUsername().equals(username)) {
                         player.getUser().addListener(userObserver);
-                        player.getUserObserver().sendResponse(new ReJoinResponse(controller.getMatchName()));
+                        player.getUserObserver().sendResponse(new ReJoinResponse(controller.getMatchName(), player.getPlayerUsername()));
                     }
                 }
             }

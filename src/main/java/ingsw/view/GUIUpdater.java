@@ -28,4 +28,6 @@ public interface GUIUpdater {
     String getUsername();
 
     void closeApplication();
+
+    void setUsername(String username);
 }

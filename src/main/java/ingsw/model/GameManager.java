@@ -170,30 +170,39 @@ public class GameManager {
         }
     }
 
-    void listenForPlayerDisconnection() {
+    private void listenForPlayerDisconnection() {
         Set<Player> disconnectedPlayerSet = new HashSet<>();
         userDisconnectionListenerThread = new Thread(() -> {
             do {
+
                 try {
 
                     Thread.sleep(2000);
-                    System.out.println("Woke, checking");
-                    for (Player player : playerList) {
-                        try {
-                            if (disconnectedPlayerSet.contains(player) && player.getUser().isActive()) {
-                                System.out.println("Reactivated user: " + player.getPlayerUsername() + " sending data");
-                                disconnectedPlayerSet.remove(player);
-                                player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
-                            } else {
-                                player.getUserObserver();
-                            }
-                        } catch (RemoteException e) {
-                            disconnectedPlayerSet.add(player);
-                        }
-                    }
-
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
+                }
+
+                for (Player player : playerList) {
+                    try {
+                        // Se l'utente era nel set di utenti disconnessi e ora è attivo allora inviagli la boardDataResponse
+                        if (disconnectedPlayerSet.contains(player) && player.getUser().isActive()) {
+                            System.out.println("Reactivated user: " + player.getPlayerUsername() + " sending data");
+                            disconnectedPlayerSet.remove(player);
+                            player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
+                        } else if (!disconnectedPlayerSet.contains(player) && !player.getUser().isActive()) {
+                            System.out.println("Adding back Socket player");
+                            disconnectedPlayerSet.add(player);
+                        } else {
+                            //Altrimenti controlla se è ancora connesso
+                            player.getUserObserver();
+                            System.out.println("Else");
+                        }
+                    } catch (RemoteException e) {
+                        // Se un utente RMI è disconnesso viene lanciata l'eccezione e viene inserito negli utenti disconnessi
+                        System.out.println("Exception thrown");
+                        disconnectedPlayerSet.add(player);
+                    }
                 }
             } while (true);
         });
@@ -278,8 +287,8 @@ public class GameManager {
     }
 
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
-        if (!brokenWindow){
-            for (Dice diceInDraftedDice : board.getDraftedDice()){
+        if (!brokenWindow) {
+            for (Dice diceInDraftedDice : board.getDraftedDice()) {
                 if (diceInDraftedDice.getDiceColor().equals(dice.getDiceColor())
                         && (diceInDraftedDice.getFaceUpValue() == dice.getFaceUpValue())) {
                     currentRound.makeMove(diceInDraftedDice, rowIndex, columnIndex);
@@ -292,18 +301,18 @@ public class GameManager {
     public void removeDice() {
         if (brokenWindow) {
             /*
-            * 1 - rimuovi dado
-            * 2 - if getPatternCard().isBreakable()
-            *       notifica rimozione
-            *     else
-            *         brokenWindow = false;
-            *         notifica mossa
+             * 1 - rimuovi dado
+             * 2 - if getPatternCard().isBreakable()
+             *       notifica rimozione
+             *     else
+             *         brokenWindow = false;
+             *         notifica mossa
              */
         }
 
     }
 
-    public void breakWindow(Player player){
+    public void breakWindow(Player player) {
         /*
          * if getPatternCard().isBreakable()
          *      brokenWindow = true
@@ -423,8 +432,8 @@ public class GameManager {
 
     private void notifyUpdatedRoundTrack() {
         int round = 0;
-        if (!roundTrack.isEmpty()) round = roundTrack.size() -1;
-        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack.get(round)) );
+        if (!roundTrack.isEmpty()) round = roundTrack.size() - 1;
+        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack.get(round)));
     }
 
     private void waitEndTurn() {
@@ -450,15 +459,15 @@ public class GameManager {
     }
 
     /*
-    *
-    *
-    * GAME MOVES
-    *
-    *
-    */
+     *
+     *
+     * GAME MOVES
+     *
+     *
+     */
 
     boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
-        if(player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
+        if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
@@ -498,8 +507,8 @@ public class GameManager {
 
     //TOOL CARDS METHODS
 
-    public void glazingHammer(){
-        for (Dice dice: board.getDraftedDice()) {
+    public void glazingHammer() {
+        for (Dice dice : board.getDraftedDice()) {
             dice.roll();
         }
         Broadcaster.broadcastResponseToAll(playerList, new DraftPoolResponse(board.getDraftedDice()));

@@ -2,7 +2,6 @@ package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
-import ingsw.model.Player;
 import ingsw.utilities.DoubleString;
 import ingsw.view.nodes.ProgressForm;
 import javafx.application.Platform;
@@ -111,6 +110,11 @@ public class LoginController implements SceneUpdater {
     @Override
     public void launchFourthGui(BoardDataResponse boardDataResponse) {
         Platform.runLater( () -> application.launchFourthGUI(boardDataResponse));
+    }
+
+    @Override
+    public void setUsernameInApplication(String username) {
+        application.setUsername(username);
     }
 }
 
