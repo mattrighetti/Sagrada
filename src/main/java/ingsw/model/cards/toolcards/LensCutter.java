@@ -31,6 +31,7 @@ public class LensCutter extends ToolCard {
         }
 
         gameManager.lensCutterResponse();
+        gameManager.getCurrentRound().hasMadeAMove();
 
     }
 }

@@ -34,5 +34,6 @@ public class CorkBackedStraightEdge extends ToolCard {
             }
         }
         gameManager.corkBackedStraightedgeResponse();
+        gameManager.getCurrentRound().hasMadeAMove();
     }
 }

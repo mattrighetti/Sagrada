@@ -185,4 +185,8 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     public void toolCardMove(RunningPliersRequest moveToolCardRequest) throws RemoteException {
         gameManager.runningPliersMove(moveToolCardRequest.selectedDice, moveToolCardRequest.rowIndex, moveToolCardRequest.ColumnIndex);
     }
+    @Override
+    public void toolCardMove(TapWheelRequest moveToolCardRequest) throws RemoteException {
+        gameManager.tapWheelMove(moveToolCardRequest.dice, moveToolCardRequest.phase, moveToolCardRequest.dicePosition, moveToolCardRequest.position, moveToolCardRequest.doubleMove);
+    }
 }

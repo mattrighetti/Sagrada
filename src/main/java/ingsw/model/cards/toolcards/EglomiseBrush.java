@@ -32,5 +32,6 @@ public class EglomiseBrush extends ToolCard {
         }
 
         gameManager.eglomiseBrushResponse();
+        gameManager.getCurrentRound().hasMadeAMove();
     }
 }

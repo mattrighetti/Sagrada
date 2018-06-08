@@ -57,7 +57,7 @@ public class Round implements Runnable {
         playerMoves.start();
     }
 
-    void hasMadeAMove() {
+    public void hasMadeAMove() {
         hasMadeAMove.set(true);
 
         //wake up the Thread of round class

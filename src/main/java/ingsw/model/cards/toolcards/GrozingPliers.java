@@ -31,5 +31,6 @@ public class GrozingPliers extends ToolCard {
 
         }
         gameManager.grozingPliersResponse();
+        gameManager.getCurrentRound().hasMadeAMove();
     }
 }

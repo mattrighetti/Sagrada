@@ -154,6 +154,13 @@ public class ServerController implements RequestHandler, Serializable {
                     e.printStackTrace();
                 }
                 break;
+            case TAP_WHEEL:
+                try {
+                    controller.toolCardMove((TapWheelRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         return null;
     }

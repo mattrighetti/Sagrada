@@ -43,4 +43,6 @@ public interface RemoteController extends Remote {
     void toolCardMove(LathekinRequest lathekinRequest) throws RemoteException;
 
     void toolCardMove(RunningPliersRequest moveToolCardRequest) throws RemoteException;
+
+    void toolCardMove(TapWheelRequest moveToolCardRequest) throws RemoteException;
 }

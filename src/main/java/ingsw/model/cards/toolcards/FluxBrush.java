@@ -32,6 +32,7 @@ public class FluxBrush extends ToolCard {
         }
 
         gameManager.fluxBrushResponse();
+        gameManager.getCurrentRound().hasMadeAMove();
     }
 
 }

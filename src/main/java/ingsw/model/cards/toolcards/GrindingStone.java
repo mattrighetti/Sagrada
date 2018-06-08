@@ -31,6 +31,7 @@ public class GrindingStone extends ToolCard {
         }
 
         gameManager.grindingStoneResponse();
+        gameManager.getCurrentRound().hasMadeAMove();
 
 
     }

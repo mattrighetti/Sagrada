@@ -752,6 +752,70 @@ public class GameController implements SceneUpdater, Initializable {
     }
 
     @Override
+    public void toolCardAction(TapWheelResponse useToolCardResponse) {
+        switch (useToolCardResponse.phase) {
+            case 0:
+                Platform.runLater(
+                        () -> {
+                            Alert alert = createPopUpWindow("Use Tool card", "Tap Wheel", "Select a dice from the round track and\n move at most two dice of that color in the pattern");
+                            alert.showAndWait();
+
+                            for (VBox roundVbox : roundDiceVBoxList) {
+                                roundVbox.setDisable(false);
+                                for (Node node : roundVbox.getChildren()) {
+                                    node.setDisable(false);
+                                    node.setOnMouseClicked(event -> {
+                                        toolCardSelectedDice = (DiceButton) node;
+                                        System.out.println("the selected dice is " + toolCardSelectedDice);
+                                        networkType.tapWheelMove(toolCardSelectedDice.getDice(), 0);
+                                        disableRoundTrack();
+                                        disableDice();
+                                        disableToolCards();
+                                    });
+                                }
+                            }
+                        });
+                break;
+            case 1:
+                System.out.println("phase 1");
+                Platform.runLater(
+                        () -> {
+                            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+                            windowControllerList.get(0).activateTapWheelDice(toolCardSelectedDice.getDice().getDiceColor());
+                            windowControllerList.get(0).moveDiceinPatternCardTapWheel(1, toolCardSelectedDice.getDice().getDiceColor().toString());
+                        }
+                );
+                break;
+            case 2:
+                Platform.runLater(
+                        () -> {
+                            windowControllerList.get(0).updatePatternCardTapWheel(useToolCardResponse.patternCard);
+                            ButtonType yes = new ButtonType("Yes");
+                            ButtonType no = new ButtonType("No");
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do you want to place another dice?", yes, no);
+                            alert.setTitle("Use Tool card");
+                            alert.setHeaderText("Tap Wheel");
+                            Optional<ButtonType> result = alert.showAndWait();
+
+                            if (!result.isPresent()) {
+                                System.err.println("No button pressed");
+                            } else {
+                                if (result.get() == yes) {
+                                    windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+                                    windowControllerList.get(0).moveDiceinPatternCardTapWheel(2, toolCardSelectedDice.getDice().getDiceColor().toString());
+                                }
+
+                                if (result.get() == no) {
+                                    networkType.tapWheelMove(-1);
+                                    windowControllerList.get(0).resetDiceCursorMouseEvent();
+                                }
+                            }
+                        });
+                break;
+        }
+    }
+
+    @Override
     public void updateView(UpdateViewResponse updateViewResponse) {
         updateTab(updateViewResponse.player, updateViewResponse.availablePositions);
         disableDice();
@@ -832,6 +896,15 @@ public class GameController implements SceneUpdater, Initializable {
             roundVBox.setSpacing(5);
             roundVBox.getChildren().add(diceButtonToAdd);
             diceButtonToAdd.setDisable(false);
+        }
+    }
+
+    private void disableRoundTrack() {
+        for (VBox roundVbox : roundDiceVBoxList) {
+            roundVbox.setDisable(false);
+            for (Node node : roundVbox.getChildren()) {
+                node.setDisable(true);
+            }
         }
     }
 }

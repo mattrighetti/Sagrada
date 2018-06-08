@@ -145,6 +145,14 @@ public class RMIHandler implements RequestHandler {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+                break;
+            case TAP_WHEEL:
+                try {
+                    remoteController.toolCardMove((TapWheelRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         return null;
     }

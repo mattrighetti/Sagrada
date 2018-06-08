@@ -36,6 +36,7 @@ public class CopperFoilBurnisher extends ToolCard {
             }
         }
         gameManager.copperFoilBurnisherResponse();
+        gameManager.getCurrentRound().hasMadeAMove();
     }
 
 

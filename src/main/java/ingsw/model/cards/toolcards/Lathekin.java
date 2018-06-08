@@ -34,12 +34,14 @@ public class Lathekin extends ToolCard {
                         e.printStackTrace();
                     }
                 }
-                gameManager.LathekinResponse();
+                gameManager.lathekinResponse();
             } else
-                gameManager.LathekinResponse();
+                gameManager.lathekinResponse();
         }
 
         gameManager.setDoubleMove(false);
+        gameManager.getCurrentRound().hasMadeAMove();
+
 
 
     }

@@ -156,6 +156,21 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void tapWheelMove(Dice dice, int phase) {
+        client.request(new TapWheelRequest(dice, phase));
+    }
+
+    @Override
+    public void tapWheelMove(Tuple dicePosition, Tuple position, int phase, boolean doubleMove) {
+        client.request(new TapWheelRequest(dicePosition, position, phase, doubleMove));
+    }
+
+    @Override
+    public void tapWheelMove(int endTapWheel) {
+        client.request(new TapWheelRequest(endTapWheel));
+    }
+
+    @Override
     public void grozingPliersMove(Dice dice, boolean increase) {
         client.request(new GrozingPliersRequest(dice, increase));
     }
@@ -426,6 +441,10 @@ public class ClientController implements ResponseHandler, NetworkType {
                 break;
             case AVOID_USE:
                 sceneUpdater.toolCardAction((AvoidToolCardResponse) useToolCardResponse);
+                break;
+            case TAP_WHEEL:
+                sceneUpdater.toolCardAction((TapWheelResponse) useToolCardResponse);
+                break;
         }
     }
 }

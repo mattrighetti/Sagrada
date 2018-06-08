@@ -161,6 +161,21 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void tapWheelMove(Dice dice, int phase) {
+        new TapWheelRequest(dice, phase).handle(rmiHandler);
+    }
+
+    @Override
+    public void tapWheelMove(int endTapWheel) {
+        new TapWheelRequest(endTapWheel).handle(rmiHandler);
+    }
+
+    @Override
+    public void tapWheelMove(Tuple dicePosition, Tuple position, int phase, boolean doubleMove) {
+        new TapWheelRequest(dicePosition, position, phase, doubleMove).handle(rmiHandler);
+    }
+
+    @Override
     public void endTurn() {
         new EndTurnRequest().handle(rmiHandler);
     }

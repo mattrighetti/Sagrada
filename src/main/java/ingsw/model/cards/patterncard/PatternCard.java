@@ -105,6 +105,35 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
+
+    public Map<String, Boolean[][]> computeAvailablePositionsTapWheel(Dice colorDice) {
+        HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
+        Dice dice;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                if(grid.get(i).get(j).getDice() != null && grid.get(i).get(j).getDice().getDiceColor() == colorDice.getDiceColor()) {
+                    dice = grid.get(i).get(j).getDice();
+                    grid.get(i).get(j).removeDice();
+
+                    //Re use lathekin algorithm for the double move
+                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, true));
+                    grid.get(i).get(j).insertDice(dice);
+
+                    System.out.println(dice.toString() +i +j);
+                    Boolean[][] x = hashMapGrid.get(dice.toString() +i +j);
+                    for (int k = 0; k < 4; k++) {
+                        for (int l = 0; l < 5; l++) {
+                            System.out.print(x[k][l] + "\t");
+                        }
+                        System.out.println();
+                    }
+                    System.out.println();
+                }
+            }
+        }
+        return hashMapGrid;
+    }
+
     public Map<String,Boolean[][]> computeAvailablePositionsNoColor() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
@@ -118,7 +147,8 @@ public abstract class PatternCard extends Card {
                 }
             }
         }
-        return hashMapGrid;    }
+        return hashMapGrid;
+    }
 
     public Map<String,Boolean[][]> computeAvailablePositionsNoDiceAround(List<Dice> draftedDice) {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
@@ -129,6 +159,7 @@ public abstract class PatternCard extends Card {
         }
         return hashMapGrid;
     }
+
 
     private Boolean[][] computePosition(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction, boolean lathekin) {
         Boolean[][] booleanGrid = new Boolean[4][5];

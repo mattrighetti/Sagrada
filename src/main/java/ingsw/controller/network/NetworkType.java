@@ -53,4 +53,10 @@ public interface NetworkType {
     void lensCutter(int roundIndex, String roundTrackDice, String poolDice);
 
     void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex);
+
+    void tapWheelMove(Dice dice, int phase);
+
+    void tapWheelMove(Tuple dicePosition, Tuple position, int phase, boolean doubleMove);
+
+    void tapWheelMove(int endTapWheel);
 }
