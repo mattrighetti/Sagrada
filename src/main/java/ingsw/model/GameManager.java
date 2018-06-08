@@ -155,7 +155,7 @@ public class GameManager {
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> list = new ArrayList<>();
         list.add(new GlazingHammer());
-        list.add(new FluxRemover());
+        list.add(new LensCutter());
         list.add(new RunningPliers());
 
         return list;

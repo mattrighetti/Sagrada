@@ -109,7 +109,7 @@ public class LobbyController implements SceneUpdater, Initializable {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Create Match");
         dialog.setHeaderText("Creating Match");
-        dialog.setContentText("Please enter the match name you'd like to create");
+        dialog.setContentText("Please enter the match name currentPlayerIndex'd like to create");
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {

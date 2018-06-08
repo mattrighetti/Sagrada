@@ -246,7 +246,7 @@ public class GameController implements SceneUpdater, Initializable {
             imageView.setOnMouseClicked(event -> {
                 ButtonType no = new ButtonType("No");
                 ButtonType yes = new ButtonType("Yes");
-                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do you want to use " + imageView.getId().toString() + "?",  no, yes);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do currentPlayerIndex want to use " + imageView.getId().toString() + "?",  no, yes);
                 alert.setTitle("Use Tool card");
                 Optional<ButtonType> result = alert.showAndWait();
                 System.out.println("no button pressed");
@@ -396,7 +396,7 @@ public class GameController implements SceneUpdater, Initializable {
                 () -> {
                     ButtonType increase = new ButtonType("Increase");
                     ButtonType decrease = new ButtonType("Decrease");
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you want to increase \nor decrease the dice value?", increase, decrease);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do currentPlayerIndex want to increase \nor decrease the dice value?", increase, decrease);
                     alert.setTitle("Use Tool card");
                     alert.setHeaderText("Grozing Pliers");
                     Optional<ButtonType> result = alert.showAndWait();
@@ -654,8 +654,8 @@ public class GameController implements SceneUpdater, Initializable {
             alert.setTitle("Use Tool card");
             alert.setHeaderText("Cork Backed Straightedge");
             alert.showAndWait();
-            windowControllerList.get(0).corkBackedStraightedge();
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+            windowControllerList.get(0).corkBackedStraightedge();
         });
     }
 

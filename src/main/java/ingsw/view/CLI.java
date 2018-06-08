@@ -13,6 +13,7 @@ import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.DoubleString;
 import ingsw.utilities.MoveStatus;
+import ingsw.utilities.Tuple;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CLI implements SceneUpdater {
     private AtomicBoolean moveNext = new AtomicBoolean(false);
     private AtomicBoolean gamePhase = new AtomicBoolean(false);
-    int you;
+    int currentPlayerIndex;
     private String username;
     private String ipAddress;
     private RMIController rmiController;
@@ -39,12 +40,13 @@ public class CLI implements SceneUpdater {
     private Map<String,Boolean[][]> availablePosition;
     private List<List<Dice>> roundTrack = new ArrayList<>();
     private List<MoveStatus> moveHistory = new ArrayList<>();
-
+    private AtomicBoolean toolCardUsed = new AtomicBoolean();
 
     CLI(String ipAddress) {
         AnsiConsole.systemInstall();
         this.scanner = new Scanner(System.in);
         this.ipAddress = ipAddress;
+        toolCardUsed.set(false);
     }
 
     void startCLI() {
@@ -177,7 +179,7 @@ public class CLI implements SceneUpdater {
      */
     private void chooseUsernameAndLogin() {
         boolean rightUsername = false;
-        System.out.print("We need to log you in now\n");
+        System.out.print("We need to log currentPlayerIndex in now\n");
         do {
             String username;
             System.out.print("Username:\n");
@@ -473,18 +475,17 @@ public class CLI implements SceneUpdater {
     private void chooseMove() {
         new Thread(() -> {
             boolean placeDiceMove = false;
-            boolean toolCardMove = false;
 
             notMoveNext();
             do {
                 int selectedMove;
-                displayPatternCards();
-                System.out.println("It's your turn!\nChoose what move you want to do:\n");
+                showPatternCards();
+                System.out.println("It's your turn!\nChoose what move currentPlayerIndex want to do:\n");
 
                 if (!placeDiceMove)
                     System.out.println("1 - Place dice");
 
-                if (!toolCardMove)
+                if (!toolCardUsed.get())
                     System.out.println("2 - Use tool card");
 
                 System.out.println("3 - Show Match Story"
@@ -511,9 +512,8 @@ public class CLI implements SceneUpdater {
                         } else System.out.println("You have already done this move in this turn");
                         break;
                     case 2:
-                        if (!toolCardMove) {
+                        if (!toolCardUsed.get()) {
                             toolCardMove();
-                            toolCardMove = true;
                             synchronized (gamePhase) {
                                 try {
                                     gamePhase.wait();
@@ -559,17 +559,29 @@ public class CLI implements SceneUpdater {
         backConferm = userStringInput();
     }
 
+    private void showRoundTrack(){
+        if (!roundTrack.isEmpty()) {
+            for (int i = 1; i <= roundTrack.size(); i++) {
+                System.out.println("Round " + i + ":\t");
+                for (int j = 1; j <= roundTrack.get(i).size(); j++) {
+                    System.out.println(j + " - " + roundTrack.get(i).get(j).toString() + "\t");
+                }
+                System.out.println("\n");
+            }
+        } else System.out.println("RoundTrack is empty\n");
+    }
+
 
     /**
      * <h1>Display pattern card</h1>
-     * <p>displayPatternCards prints the Pattern cards of each player who is in the match
+     * <p>showPatternCards prints the Pattern cards of each player who is in the match
      * </p>
      */
-    private void displayPatternCards() {
+    private void showPatternCards() {
 
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getPlayerUsername().equals(username)) {
-                you = i;
+                currentPlayerIndex = i;
                 System.out.print("\t\tYou\t\t");
             } else {
                 System.out.print("\t\t" + players.get(i).getPlayerUsername() + "\t\t");
@@ -592,18 +604,24 @@ public class CLI implements SceneUpdater {
 
     /**
      * <h1>Display pattern card</h1>
-     * <p>displayPatternCards prints the Pattern cards of the player selected
+     * <p>showPatternCards prints the Pattern cards of the player selected
      * </p>
      *
      * @param player the pattern card that has to be shown belongs to this player
      */
-    private void displayPatternCardPlayer(Player player) {
+    private void showPatternCardPlayer(Player player) {
         System.out.println("\tplayer: " + player.getPlayerUsername());
         for (int i = 0; i < player.getPatternCard().getGrid().size(); i++) {
             for (Box box : player.getPatternCard().getGrid().get(i)) {
                 System.out.print(box.toString() + "\t");
             }
             System.out.print("\n\n");
+        }
+    }
+
+    private void showDraftedDice() {
+        for (int i = 0; i < draftedDice.size(); i++) {
+            System.out.print((i + 1) + " - " + draftedDice.get(i).toString() + "\n");
         }
     }
 
@@ -630,12 +648,12 @@ public class CLI implements SceneUpdater {
 
             if (0 < selectedDice && selectedDice < (draftedDice.size() + 1)) {
                 System.out.println("Select a position in the pattern card: \n");
-                displayPatternCardPlayer(players.get(you));
+                showPatternCardPlayer(players.get(currentPlayerIndex));
                 int selectedColumn;
                 int selectedRow;
-                System.out.println("These are the positions where you can place the dice selected:");
+                System.out.println("These are the positions where currentPlayerIndex can place the dice selected:");
 
-                if (checkAndShowAvailablePositions(selectedDice)) {
+                if (checkAndShowAvailablePositions(draftedDice.get(selectedDice))) {
 
                     do {
                         System.out.println("Insert row index:");
@@ -660,23 +678,22 @@ public class CLI implements SceneUpdater {
         } while (true);
     }
 
-    private void showDraftedDice() {
-        for (int i = 0; i < draftedDice.size(); i++) {
-            System.out.print((i + 1) + " - " + draftedDice.get(i).toString() + "\n");
-        }
-    }
 
-    private boolean checkAndShowAvailablePositions(int selectedDice) {
+    private boolean checkAndShowAvailablePositions(Dice selectedDice) {
         boolean anyAvailablePosition = false;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                if (availablePosition.get(draftedDice.get(selectedDice - 1).toString())[i][j].equals(true)) {
+                if (availablePosition.get(selectedDice.toString())[i][j].equals(true)) {
                     System.out.println("[" + i + "," + j + "]");
                     anyAvailablePosition = true;
                 }
             }
         }
         return anyAvailablePosition;
+    }
+
+    private void updateAvailablePositions(Map<String,Boolean[][]> availablePosition){
+        this.availablePosition= availablePosition;
     }
 
     /**
@@ -695,13 +712,14 @@ public class CLI implements SceneUpdater {
     private void toolCardMove() {
         int chosenToolCard;
         do {
-            System.out.println("Choose a Pattern Card:\n");
-            for (int i = 0; i < toolCards.size(); i++) {
-                System.out.println(i + " - " + toolCards.get(i) + "\n");
+            System.out.println("Choose a Tool Card:\n");
+            System.out.println("0 - Exit\n");
+            for (int i = 1; i <= toolCards.size(); i++) {
+                System.out.println(i + " - " + toolCards.get(i-1) + "\n");
             }
-            chosenToolCard = userIntegerInput();
+            chosenToolCard = userIntegerInput() -1;
 
-            if (chosenToolCard > 0 && chosenToolCard < toolCards.size())
+            if (chosenToolCard >= 0 && chosenToolCard < toolCards.size())
                 currentConnectionType.useToolCard(toolCards.get(chosenToolCard));
             else if (chosenToolCard == 0) {
                 synchronized (gamePhase) {
@@ -709,7 +727,7 @@ public class CLI implements SceneUpdater {
                 }
             }
 
-        } while (chosenToolCard < 0 || chosenToolCard > 6);
+        } while (!(0 <= chosenToolCard && chosenToolCard < toolCards.size()));
     }
 
     @Override
@@ -736,15 +754,18 @@ public class CLI implements SceneUpdater {
      */
     @Override
     public void updateView(UpdateViewResponse updateViewResponse) {
-        for (Player player : players) {
-            if (player.equals(updateViewResponse.player)) {
-                //TODO update pattern card
-                System.out.println(player.getPlayerUsername() + " has placed a dice:\n");
-                displayPatternCardPlayer(player);
-            }
-        }
+        updatePatternCard(updateViewResponse.player);
+        System.out.println(updateViewResponse.player.getPlayerUsername() + " placed a die");
+        showPatternCardPlayer(updateViewResponse.player);
         synchronized (gamePhase) {
             gamePhase.notify();
+        }
+    }
+
+    private void updatePatternCard(Player playerToUpload){
+        for (Player player : players) {
+            if(player.getPlayerUsername().equals(playerToUpload.getPlayerUsername()))
+                player.getPatternCard().setGrid(playerToUpload.getPatternCard().getGrid());
         }
     }
 
@@ -771,14 +792,68 @@ public class CLI implements SceneUpdater {
         }
     }
 
+    /******************TOOL CARDS METHODS*******************/
+
     @Override
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
-        System.out.println("Here the new drafted pool:\n");
+        System.out.println("This is the new drafted pool:\n");
         setDraftedDiceAndShow(draftedDiceToolCardResponse.draftedDice);
     }
 
     @Override
+    public void toolCardAction(RoundTrackToolCardResponse useToolCardResponse) {
+        roundTrack = useToolCardResponse.roundTrack;
+        toolCardUsed.set(true);
+        synchronized (gamePhase){
+            gamePhase.notify();
+        }
+    }
+
+    @Override
+    public void toolCardAction(PatternCardToolCardResponse useToolCardResponse){
+        updatePatternCard(useToolCardResponse.player);
+        updateAvailablePositions(useToolCardResponse.availablePositions);
+        toolCardUsed.set(true);
+        synchronized (gamePhase){
+            gamePhase.notify();
+        }
+    }
+
+    @Override
+    public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
+        System.out.println("Pay Attention\n You can't use this tool card now\n");
+        synchronized (gamePhase){
+            gamePhase.notify();
+        }
+    }
+
+    @Override
     public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
+        int chosenInput;
+        do {
+            System.out.println("Grozing Pliers\n\nChoose a die:");
+            showDraftedDice();
+            chosenInput = userIntegerInput();
+        } while (!(0 < chosenInput && chosenInput <= draftedDice.size()));
+        Dice selectedDice = draftedDice.get(chosenInput-1);
+        chosenInput = -1;
+        boolean goOn = false;
+        do {
+            System.out.println("Do you want to increase or decrease its face up value?\n");
+            if (selectedDice.getFaceUpValue() < 6) System.out.println("1 - Increase\n");
+            if (selectedDice.getFaceUpValue() > 1) System.out.println("2 - Decrease\n");
+            chosenInput = userIntegerInput();
+
+            if (chosenInput == 1 && selectedDice.getFaceUpValue() < 6) {
+                currentConnectionType.grozingPliersMove(selectedDice, true);
+                goOn = true;
+            }
+            if (chosenInput == 2 && selectedDice.getFaceUpValue() > 1) {
+                currentConnectionType.grozingPliersMove(selectedDice, false);
+                goOn = true;
+            }
+        } while(!goOn);
+
 
     }
 
@@ -790,5 +865,228 @@ public class CLI implements SceneUpdater {
     @Override
     public void toolCardAction(FluxRemoverResponse useToolCardResponse) {
 
+    }
+
+    public int selectDiceFromDrafted(){
+        int selectedDice;
+        do {
+            selectedDice = -1;
+            System.out.println("Choose the die you want to place:\n");
+            showDraftedDice();
+            selectedDice = userIntegerInput();
+
+        } while (!(0 < selectedDice && selectedDice <= draftedDice.size()));
+        return selectedDice -1;
+    }
+
+    @Override
+    public void toolCardAction(GrindingStoneResponse useToolCardResponse) {
+        int chosenInput;
+        do {
+
+            System.out.println("Grinding Stone\n\nChoose which dice has to be flipped to the opposite side:");
+            showDraftedDice();
+            chosenInput = userIntegerInput();
+
+        } while (!(0 < chosenInput && chosenInput <= draftedDice.size()));
+
+        Dice selectedDice = draftedDice.get(chosenInput-1);
+        chosenInput = -1;
+
+        currentConnectionType.grindingStoneMove(selectedDice);
+    }
+
+    @Override
+    public void toolCardAction(EglomiseBrushResponse useToolCardResponse) {
+        updateAvailablePositions(useToolCardResponse.availablePositions);
+        System.out.println("Eglomise Brush\n\nMove a dice in the Pattern Card ignoring color restrictions\n");
+        int rowOne, columnOne;
+        boolean dicePlaced;
+
+        do{
+            System.out.println("Choose which die you want to move\n");
+            showPatternCardPlayer(players.get(currentPlayerIndex));
+
+            do {
+                System.out.println("Choose the row index of the die to move:\n");
+                rowOne = userIntegerInput();
+            } while (rowOne < 0 || rowOne > 4);
+
+            do {
+                System.out.println("Choose the column index of the die to move:\n");
+                columnOne = userIntegerInput();
+            } while (columnOne < 0 || columnOne > 5);
+
+            dicePlaced = placeDiceWithNoRestricitionsToolCard(rowOne,columnOne);
+
+        } while (dicePlaced);
+
+    }
+
+
+    @Override
+    public void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
+        updateAvailablePositions(useToolCardResponse.availablePositions);
+        System.out.println("Copper Foil Burnisher\n\nMove a dice in the Pattern Card ignoring shade restrictions\n");
+        int rowOne = -1, columnOne = -1;
+        boolean dicePlaced = false;
+
+        do {
+
+            System.out.println("Choose which die you want to move\n");
+            showPatternCardPlayer(players.get(currentPlayerIndex));
+
+            do {
+                System.out.println("Choose the row index of the die to move:\n");
+                rowOne = userIntegerInput();
+            } while (rowOne < 0 || rowOne > 4);
+
+            do {
+                System.out.println("Choose the column index of the die to move:\n");
+                columnOne = userIntegerInput();
+            } while (columnOne < 0 || columnOne > 5);
+
+           dicePlaced = placeDiceWithNoRestricitionsToolCard(rowOne,columnOne);
+
+        } while (!dicePlaced);
+    }
+
+    public boolean placeDiceWithNoRestricitionsToolCard(int rowOne, int columnOne){
+        int rowTwo,columnTwo;
+        if (players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice() != null) {
+
+            System.out.println("You chose " + players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice().toString() + "\n");
+            System.out.println("These are the position in which you can place the die:\n");
+            showPatternCardPlayer(players.get(currentPlayerIndex));
+
+            if (checkAndShowAvailablePositions(players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice())) {
+
+                System.out.println("Choose were you want to place the die\n");
+
+                do {
+                    System.out.println("Choose the row index:\n");
+                    rowTwo = userIntegerInput();
+                } while (rowTwo < 0 || rowTwo > 4);
+
+                do {
+                    System.out.println("Choose the column index:\n");
+                    columnTwo = userIntegerInput();
+                } while (columnTwo < 0 || columnTwo > 5);
+
+                if (availablePosition.get(players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice().toString())[rowTwo][columnTwo].equals(true)) {
+                    Tuple diceToMoveIndex = new Tuple(rowOne,columnOne);
+                    Tuple positionIndex = new Tuple(rowTwo,columnTwo);
+                    currentConnectionType.copperFoilBurnisherMove(diceToMoveIndex,positionIndex);
+                    return true;
+                } else System.out.println("Wrong position input\n");
+
+            } else System.out.println("You can't place this dice, choose another one\n");
+
+        }
+        return false;
+    }
+
+    @Override
+    public void toolCardAction(LathekinResponse useToolCardResponse) {
+
+    }
+
+
+    @Override
+    public void toolCardAction(CorkBackedStraightedgeResponse useToolCardResponse) {
+        System.out.println("Cork Backed Straightedge\nPlace a dice in a spot that is not adjacent to another die ");
+        int selectedDice, selectedRow, selectedColumn;
+        boolean dicePlaced = false;
+        do {
+
+            selectedDice = selectDiceFromDrafted();
+
+            System.out.println("You chose " + draftedDice.get(selectedDice).toString() + "\n");
+            System.out.println("These are the position in which you can place the die:\n");
+            showPatternCardPlayer(players.get(currentPlayerIndex));
+
+            if (checkAndShowAvailablePositions(draftedDice.get(selectedDice))) {
+
+                System.out.println("Choose were you want to place the die\n");
+
+                do {
+                    System.out.println("Choose the row index:\n");
+                    selectedRow = userIntegerInput();
+                } while (selectedRow < 0 || selectedRow > 4);
+
+                do {
+                    System.out.println("Choose the column index:\n");
+                    selectedColumn = userIntegerInput();
+                } while (selectedColumn < 0 || selectedColumn > 5);
+
+                if (availablePosition.get(draftedDice.get(selectedDice).toString())[selectedRow][selectedColumn].equals(true)) {
+                    currentConnectionType.corkBackedStraightedgeMove(draftedDice.get(selectedDice), selectedRow, selectedColumn);
+                    dicePlaced = true;
+                } else System.out.println("Wrong position input\n");
+
+            } else System.out.println("You can't place this dice, choose another one\n");
+
+        } while (!dicePlaced);
+
+    }
+
+    @Override
+    public void toolCardAction(LensCutterResponse useToolCardResponse) {
+        System.out.println("Lens Cutter\nSwipe a die from the drafted die with another in the Round Track\n");
+        int selectedDraftedDice = selectDiceFromDrafted();
+        int selectedRound = -1, selectedTrackDice = -1;
+
+        System.out.println("Select a die from the Round Track");
+        showRoundTrack();
+        if (!roundTrack.isEmpty()) {
+            do {
+                System.out.println("Select the round:\n");
+
+                selectedRound = userIntegerInput() - 1;
+            } while (!(0 <= selectedRound && selectedRound < roundTrack.size()));
+
+            do {
+                System.out.println("Choose the die you want to swipe with:\n");
+                selectedTrackDice = userIntegerInput() - 1;
+            } while (!(0 <= selectedTrackDice && selectedTrackDice < roundTrack.get(selectedRound).size()));
+
+            currentConnectionType.lensCutter(selectedRound + 1, roundTrack.get(selectedRound).get(selectedTrackDice).toString(), draftedDice.get(selectedDraftedDice).toString());
+
+        } else System.out.println("RoundTrack is empty, you can't swipe dice");
+    }
+
+
+    @Override
+    public void toolCardAction(RunningPliersResponse useToolCardResponse) {
+        System.out.println("Running Pliers\n Draft another die\n");
+        boolean dicePlaced = false;
+
+        do {
+            int selectedDice = selectDiceFromDrafted();
+
+            showPatternCardPlayer(players.get(currentPlayerIndex));
+            System.out.println("These are the available position in wich you can place the selected die\n");
+
+            if (checkAndShowAvailablePositions(draftedDice.get(selectedDice))) {
+                int selectedRow = -1, selectedColumn = -1;
+
+                do {
+                    System.out.println("Choose the row index:\n");
+                    selectedRow = userIntegerInput();
+                } while (selectedRow < 0 || selectedRow > 4);
+
+                do {
+                    System.out.println("Choose the column index:\n");
+                    selectedColumn = userIntegerInput();
+                } while (selectedColumn < 0 || selectedColumn > 5);
+
+                if (availablePosition.get(draftedDice.get(selectedDice).toString())[selectedRow][selectedColumn].equals(true)) {
+                    currentConnectionType.runningPliersMove(draftedDice.get(selectedDice), selectedRow, selectedColumn);
+                    dicePlaced = true;
+                } else System.out.println("Wrong position input\n");
+
+            } else System.out.println("You cannot place this die\n");
+
+        } while (!dicePlaced);
     }
 }
