@@ -792,8 +792,14 @@ public class CLI implements SceneUpdater {
         }
     }
 
-    /******************TOOL CARDS METHODS*******************/
+    /* *******************TOOL CARDS METHODS****************** */
 
+    /**
+     * TOOL CARD RESPONSE
+     * Data update and Confirmation
+     *
+     * @param draftedDiceToolCardResponse contains the new drafted dice list, after a player used a tool card
+     */
     @Override
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         System.out.println("This is the new drafted pool:\n");
@@ -827,6 +833,11 @@ public class CLI implements SceneUpdater {
         }
     }
 
+    /**
+     * GROZING PLIERS ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
         int chosenInput;
@@ -857,21 +868,111 @@ public class CLI implements SceneUpdater {
 
     }
 
+    /**
+     * FLUX BRUSH ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(FluxBrushResponse useToolCardResponse) {
 
+        switch (useToolCardResponse.phase) {
+            case 1:
+
+                System.out.println("Flux Brush\n\nChoose which dice has to be rolled again:\n");
+                int selecteDice = selectDiceFromDrafted();
+                currentConnectionType.fluxBrushMove(draftedDice.get(selecteDice));
+                break;
+
+            case 2:
+
+                System.out.println("This is the new rolled value: " + useToolCardResponse.selectedDice.toString() + "\n");
+                updateAvailablePositions(useToolCardResponse.availablePositions);
+                draftedDice = useToolCardResponse.draftedDice;
+                boolean dicePlaced = false;
+
+                do {
+                    showPatternCardPlayer(players.get(currentPlayerIndex));
+
+                    if (checkAndShowAvailablePositions(useToolCardResponse.selectedDice)) {
+
+                        int selecteRow = chooseRowIndex();
+                        int selectedColumn = chooseColumnIndex();
+                        if (availablePosition.get(useToolCardResponse.selectedDice.toString())[selecteRow][selectedColumn]) {
+                            dicePlaced = true;
+                            currentConnectionType.fluxBrushMove(useToolCardResponse.selectedDice, selecteRow, selectedColumn);
+                        } else System.out.println("You can't place this dice in this position, choose another one\n");
+
+                    } else {
+                        System.out.println("This die can't be placed\n");
+                        currentConnectionType.fluxBrushMove();
+                    }
+                } while (dicePlaced);
+                break;
+        }
+
     }
 
+    /**
+     * FLUX REMOVER ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(FluxRemoverResponse useToolCardResponse) {
+        switch(useToolCardResponse.phase){
+            case 1:
+                System.out.println("Flux Remover\n\nChoose which dice has to be removed:\n");
+                currentConnectionType.fluxRemoverMove(draftedDice.get(selectDiceFromDrafted()));
+                break;
+            case 2:
+                System.out.println("The new drafted die has color " + useToolCardResponse.draftedDie.getDiceColor() + "\n");
+                int selectedValue;
+                do {
+                    System.out.println("Choose its face up value\nType 1,2,3,4,5 or 6:\n");
+                    selectedValue = userIntegerInput();
+                } while (selectedValue < 1 || selectedValue > 6);
+                currentConnectionType.fluxRemoverMove(useToolCardResponse.draftedDie, selectedValue);
+                break;
+            case 3:
+                updateAvailablePositions(useToolCardResponse.availablePositions);
+                draftedDice = useToolCardResponse.draftedDice;
+                showPatternCardPlayer(players.get(currentPlayerIndex));
+                boolean dicePlaced = false;
+
+                do {
+                    if (checkAndShowAvailablePositions(useToolCardResponse.draftedDie)) {
+                        int selectedRow = -1, selectedColumn = -1;
+
+                        selectedRow = chooseRowIndex();
+                        selectedColumn = chooseColumnIndex();
+
+                        if (availablePosition.get(useToolCardResponse.draftedDie.toString())[selectedRow][selectedColumn]) {
+                            currentConnectionType.fluxRemoverMove(useToolCardResponse.draftedDie, selectedRow, selectedColumn);
+                            dicePlaced = true;
+                        } else System.out.println("Position not available, choose another one\n");
+
+                    } else {
+                        System.out.println("You can't place this die");
+                        currentConnectionType.fluxRemoverMove();
+                    }
+                } while (dicePlaced);
+        }
+
+
 
     }
 
+    /**
+     * Method that show to the user the drafted dice list and make him choose one.
+     *
+     * @return the index of the die selected from the player
+     */
     public int selectDiceFromDrafted(){
         int selectedDice;
         do {
             selectedDice = -1;
-            System.out.println("Choose the die you want to place:\n");
+            System.out.println("Choose a die:\n");
             showDraftedDice();
             selectedDice = userIntegerInput();
 
@@ -879,6 +980,11 @@ public class CLI implements SceneUpdater {
         return selectedDice -1;
     }
 
+    /**
+     * GRINDING STONE ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(GrindingStoneResponse useToolCardResponse) {
         int chosenInput;
@@ -896,6 +1002,29 @@ public class CLI implements SceneUpdater {
         currentConnectionType.grindingStoneMove(selectedDice);
     }
 
+    private int chooseRowIndex(){
+        int rowIndex = -1;
+        do {
+            System.out.println("Choose the row index:\n");
+            rowIndex = userIntegerInput();
+        } while (rowIndex < 0 || rowIndex > 4);
+        return rowIndex;
+    }
+
+    private int chooseColumnIndex(){
+        int columnIndex = -1;
+        do {
+            System.out.println("Choose the column index:\n");
+            columnIndex = userIntegerInput();
+        } while (columnIndex < 0 || columnIndex > 5);
+        return columnIndex;
+    }
+
+    /**
+     * EGLOMISE BRUSH ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(EglomiseBrushResponse useToolCardResponse) {
         updateAvailablePositions(useToolCardResponse.availablePositions);
@@ -924,6 +1053,11 @@ public class CLI implements SceneUpdater {
     }
 
 
+    /**
+     * COPPER FOIL BURNISHER ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
         updateAvailablePositions(useToolCardResponse.availablePositions);
@@ -986,12 +1120,22 @@ public class CLI implements SceneUpdater {
         return false;
     }
 
+    /**
+     * LATHEKIN ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(LathekinResponse useToolCardResponse) {
 
     }
 
 
+    /**
+     * CORK BACKED STRAIGHTEDGE ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(CorkBackedStraightedgeResponse useToolCardResponse) {
         System.out.println("Cork Backed Straightedge\nPlace a dice in a spot that is not adjacent to another die ");
@@ -1030,6 +1174,11 @@ public class CLI implements SceneUpdater {
 
     }
 
+    /**
+     * LENS CUTTER ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(LensCutterResponse useToolCardResponse) {
         System.out.println("Lens Cutter\nSwipe a die from the drafted die with another in the Round Track\n");
@@ -1056,6 +1205,11 @@ public class CLI implements SceneUpdater {
     }
 
 
+    /**
+     * RUNNING PLIERS ToolCard
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(RunningPliersResponse useToolCardResponse) {
         System.out.println("Running Pliers\n Draft another die\n");
