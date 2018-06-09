@@ -390,6 +390,7 @@ public class GameManager {
 
             System.out.println("Turn forward " + i + " player " + playerList.get(i));
 
+            currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
 
             //wait until turn has ended
@@ -400,6 +401,7 @@ public class GameManager {
 
             System.out.println("Turn backward " + i + " player " + playerList.get(i));
 
+            currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
 
             //wait until turn has ended

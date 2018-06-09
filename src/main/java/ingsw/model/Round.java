@@ -1,8 +1,6 @@
 package ingsw.model;
 
 import ingsw.model.cards.toolcards.ToolCard;
-import ingsw.utilities.Broadcaster;
-import ingsw.utilities.ControllerTimer;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -43,8 +41,10 @@ public class Round implements Runnable {
             }
 
             if (!blockedTurnPlayers.contains(getCurrentPlayer().getPlayerUsername())) {
+                hasMadeAMove.set(false);
                 waitForMove();
                 System.out.println("First move done");
+                hasMadeAMove.set(false);
                 waitForMove();
                 System.out.println("Second move done");
             } else
@@ -81,9 +81,9 @@ public class Round implements Runnable {
 
     private void waitForMove() {
         System.out.println("Wait for the move");
-        ControllerTimer.get().startTurnTimer(15, this);
+        //ControllerTimer.get().startTurnTimer(40, this);
         synchronized (hasMadeAMove) {
-            while (!hasMadeAMove.get()) {
+            while (!hasPlayerEndedTurn().get() || !hasMadeAMove.get()) {
                 //wait until the move is done
                 try {
                     hasMadeAMove.wait();
@@ -93,16 +93,22 @@ public class Round implements Runnable {
 
             }
             hasMadeAMove.set(false);
+            //ControllerTimer.get().cancelTimer();
         }
     }
 
     void setPlayerEndedTurn(boolean hasPlayerEndedTurn) {
-        System.out.println("End the turn");
+        if (hasPlayerEndedTurn)
+            System.out.println("End the turn");
+        else System.out.println("Reset PlayerEndedTurn");
         playerEndedTurn.set(hasPlayerEndedTurn);
 
+
         //Wake up the round thread
-        synchronized (playerEndedTurn) {
-            playerEndedTurn.notify();
+        if (hasPlayerEndedTurn) {
+            synchronized (playerEndedTurn) {
+                playerEndedTurn.notify();
+            }
         }
     }
 
