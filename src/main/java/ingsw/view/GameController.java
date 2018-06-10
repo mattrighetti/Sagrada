@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class GameController implements SceneUpdater, Initializable {
+public class GameController implements SceneUpdater, Initializable, GameUpdater {
 
     @FXML
     private VBox toolCardVBox;
@@ -107,6 +107,7 @@ public class GameController implements SceneUpdater, Initializable {
 
     /* Utility Elements */
     private DiceButton toolCardSelectedDice;
+    private boolean placeDiceMoveDone;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -179,7 +180,7 @@ public class GameController implements SceneUpdater, Initializable {
     /**
      * Method that activates every Dice in the view
      */
-    private void activateDice() {
+    public void activateDice() {
         Platform.runLater(
                 () -> {
                     for (Node diceButton : diceHorizontalBox.getChildren()) {
@@ -192,7 +193,7 @@ public class GameController implements SceneUpdater, Initializable {
     /**
      * Method that disables every Dice in the view
      */
-    private void disableDice() {
+    public void disableDice() {
         Platform.runLater(
                 () -> {
                     for (Node diceButton : diceHorizontalBox.getChildren()) {
@@ -242,7 +243,7 @@ public class GameController implements SceneUpdater, Initializable {
             imageView.setOnMouseClicked(event -> {
                 ButtonType no = new ButtonType("No");
                 ButtonType yes = new ButtonType("Yes");
-                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do currentPlayerIndex want to use " + imageView.getId().toString() + "?",  no, yes);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do you want to use " + imageView.getId().toString() + "?",  no, yes);
                 alert.setTitle("Use Tool card");
                 Optional<ButtonType> result = alert.showAndWait();
                 System.out.println("no button pressed");
@@ -297,6 +298,7 @@ public class GameController implements SceneUpdater, Initializable {
             diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
             diceButtonToAdd.setMinSize(70, 70);
+            diceButtonToAdd.setDisable(true);
             draftPool.add(diceButtonToAdd);
             diceHorizontalBox.setSpacing(5);
             diceHorizontalBox.getChildren().add(diceButtonToAdd);
@@ -326,6 +328,7 @@ public class GameController implements SceneUpdater, Initializable {
 
         WindowController windowController = fxmlLoader.getController();
         windowController.setUsername(player.getPlayerUsername());
+        windowController.setGameUpdater(this);
         windowControllerList.add(windowController);
         Tab windowTab = new Tab();
         windowTab.setContent(windowGrid);
@@ -380,7 +383,8 @@ public class GameController implements SceneUpdater, Initializable {
                 windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
             windowControllerList.get(0).setSelectedDice(null);
             networkType.endTurn();
-            disableDice();
+            if (placeDiceMoveDone)
+                disableDice();
             endTurnButton.setDisable(true);
         });
         System.out.println("Tool card used");
@@ -650,6 +654,7 @@ public class GameController implements SceneUpdater, Initializable {
             alert.setTitle("Use Tool card");
             alert.setHeaderText("Cork Backed Straightedge");
             alert.showAndWait();
+            activateDice();
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
             windowControllerList.get(0).corkBackedStraightedge();
         });
@@ -696,6 +701,8 @@ public class GameController implements SceneUpdater, Initializable {
         for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
             addRoundInRoundTrack(roundDice);
         }
+        if (placeDiceMoveDone)
+            disableDice();
     }
 
     @Override
@@ -727,6 +734,8 @@ public class GameController implements SceneUpdater, Initializable {
     @Override
     public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
         updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
+        if (placeDiceMoveDone)
+            disableDice();
     }
 
     @Override
@@ -826,6 +835,7 @@ public class GameController implements SceneUpdater, Initializable {
         windowControllerList.get(0).setSelectedDice(null);
         networkType.endTurn();
         disableDice();
+        placeDiceMoveDone = false;
         endTurnButton.setDisable(true);
     }
 
@@ -913,12 +923,17 @@ public class GameController implements SceneUpdater, Initializable {
         }
     }
 
-    private void disableRoundTrack() {
+    public void disableRoundTrack() {
         for (VBox roundVbox : roundDiceVBoxList) {
             roundVbox.setDisable(false);
             for (Node node : roundVbox.getChildren()) {
                 node.setDisable(true);
             }
         }
+    }
+
+    @Override
+    public void setPlaceDiceMove() {
+        placeDiceMoveDone = true;
     }
 }

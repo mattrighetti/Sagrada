@@ -10,7 +10,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 
 import java.net.URL;
@@ -27,9 +26,6 @@ public class WindowController implements Initializable {
     @FXML
     private GridPane patternCardGridPane;
 
-    @FXML
-    private Button breakWindowButton;
-
     private String username;
 
     private Map<String, Boolean[][]> availablePosition;
@@ -37,6 +33,7 @@ public class WindowController implements Initializable {
     private Dice selectedDice;
     private NetworkType networkType;
     private List<Tuple> selectedPositions = new ArrayList<>();
+    private GameUpdater gameUpdater;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -66,6 +63,7 @@ public class WindowController implements Initializable {
             System.out.println("clicked");
             if (selectedDice != null) {
                 patternCardGridPane.setCursor(Cursor.DEFAULT);
+                gameUpdater.setPlaceDiceMove();
                 networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
             } else {
                 System.out.println("No dice selected");
@@ -80,6 +78,10 @@ public class WindowController implements Initializable {
 
     public GridPane getPatternCardGridPane() {
         return patternCardGridPane;
+    }
+
+    void setGameUpdater(GameUpdater gameUpdater) {
+        this.gameUpdater = gameUpdater;
     }
 
     void setNetworkType(NetworkType networkType) {
@@ -187,6 +189,7 @@ public class WindowController implements Initializable {
                     System.out.println("clicked");
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
+                        gameUpdater.disableDice();
                         networkType.corkBackedStraightedgeMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
                     } else {
                         System.out.println("No dice selected");
