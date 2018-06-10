@@ -20,6 +20,7 @@ import ingsw.utilities.Broadcaster;
 import ingsw.utilities.MoveStatus;
 import ingsw.utilities.Tuple;
 
+import javax.tools.Tool;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
@@ -152,8 +153,13 @@ public class GameManager {
     }
 
     private List<ToolCard> chooseToolCards() {
-        Collections.shuffle(toolCards);
-        return new ArrayList<>(this.toolCards.subList(0, 3));
+       // Collections.shuffle(toolCards);
+        //return new ArrayList<>(this.toolCards.subList(0, 3));
+        ArrayList<ToolCard> toolCards = new ArrayList<>();
+        toolCards.add(new CorkBackedStraightEdge());
+        toolCards.add(new FluxRemover());
+        toolCards.add(new FluxBrush());
+        return toolCards;
     }
 
     private List<PublicObjectiveCard> choosePublicObjectiveCards() {

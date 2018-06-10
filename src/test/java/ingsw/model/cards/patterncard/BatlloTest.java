@@ -52,8 +52,8 @@ class BatlloTest {
 
     @Test
     void toStringTest() {
-        assertEquals("Battlo", batllo.getName());
-        assertEquals("PatternCard{'Battlo'}", batllo.toString());
+        assertEquals("Batllo", batllo.getName());
+        assertEquals("PatternCard{'Batllo'}", batllo.toString());
     }
 
     @Test

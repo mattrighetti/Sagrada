@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -88,8 +89,8 @@ class GameManagerTest {
     void draftDiceFromBoard() throws NoSuchFieldException, IllegalAccessException {
         Field Ack = gameManager.getClass().getDeclaredField("noOfAck");
         Ack.setAccessible(true);
-        int noOfAck = (int) Ack.get(gameManager);
-        assertEquals(0, noOfAck);
+        AtomicInteger noOfAck = (AtomicInteger) Ack.get(gameManager);
+        assertEquals((new AtomicInteger(0)).get(), noOfAck.get());
         List<Dice> diceList = new ArrayList<>();
         diceList.add(new Dice(Color.BLUE));
 
@@ -98,14 +99,17 @@ class GameManagerTest {
     }
 
     @Test
-    void setPatternCardForPlayer() throws NoSuchFieldException, IllegalAccessException {
+    void setPatternCardForPlayer() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Field field = gameManager.getClass().getDeclaredField("noOfAck");
         field.setAccessible(true);
-        int old = (int) field.get(gameManager);
+        Method resetAck = gameManager.getClass().getDeclaredMethod("resetAck");
+        resetAck.setAccessible(true);
+        resetAck.invoke(gameManager);
+        AtomicInteger old = (AtomicInteger) field.get(gameManager);
         gameManager.setPatternCardForPlayer("a", new Batllo());
-        int current = (int) field.get(gameManager);
-        assertEquals( "PatternCard{'Battlo'}" , gameManager.getPlayerList().get(0).getPatternCard().toString());
-        assertEquals(current, old + 1);
+        AtomicInteger current = (AtomicInteger) field.get(gameManager);
+        assertEquals( "PatternCard{'Batllo'}" , gameManager.getPlayerList().get(0).getPatternCard().toString());
+        assertEquals(current.get(), old.getAndIncrement());
     }
 
     @Test
@@ -115,7 +119,8 @@ class GameManagerTest {
         Method resetAck = gameManager.getClass().getDeclaredMethod("resetAck");
         resetAck.setAccessible(true);
         resetAck.invoke(gameManager);
-        assertEquals(0, noOfAck.get(gameManager));
+        AtomicInteger actual = (AtomicInteger) noOfAck.get(gameManager);
+        assertEquals((new AtomicInteger(0)).get(), actual.get());
         gameManager.waitForEveryPatternCard();
 
         gameManager.setPatternCardForPlayer("a", new Batllo());
@@ -123,11 +128,13 @@ class GameManagerTest {
         gameManager.setPatternCardForPlayer("b", new Batllo());
         gameManager.setPatternCardForPlayer("d", new Batllo());
 
-        assertEquals(4, noOfAck.get(gameManager));
+        actual = (AtomicInteger) noOfAck.get(gameManager);
+        assertEquals((new AtomicInteger(4)).get(), actual.get());
 
         resetAck.invoke(gameManager);
 
-        assertEquals(0, noOfAck.get(gameManager));
+        actual = (AtomicInteger) noOfAck.get(gameManager);
+        assertEquals((new AtomicInteger(0)).get(), actual.get());
 
         //TODO Why noOfAck is not 0 after the 4th setPatternCardFor Player()?
 

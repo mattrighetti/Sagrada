@@ -6,6 +6,7 @@ import ingsw.controller.network.commands.*;
 import ingsw.controller.network.rmi.RMIController;
 import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
+import ingsw.model.Color;
 import ingsw.model.Dice;
 import ingsw.model.Player;
 import ingsw.model.cards.patterncard.Box;
@@ -1080,9 +1081,51 @@ public class CLI implements SceneUpdater {
                 columnOne = userIntegerInput();
             } while (columnOne < 0 || columnOne > 5);
 
-           dicePlaced = placeDiceWithNoRestricitionsToolCard(rowOne,columnOne);
+           dicePlaced = placeDiceWithAllRestricitionsToolCard(rowOne,columnOne);
 
         } while (!dicePlaced);
+    }
+
+    private boolean placeDiceWithAllRestricitionsToolCard(int rowOne, int columnOne) {
+        int rowTwo, columnTwo;
+        if(players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice() != null) {
+
+            System.out.println("You chose " + players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice().toString() + "\n");
+            System.out.println("These are the position in which you can place the die:\n");
+            showPatternCardPlayer(players.get(currentPlayerIndex));
+
+            if (checkAndShowAvailablePositions(players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice())) {
+
+                System.out.println("Choose were you want to place the die\n");
+
+                do {
+                    System.out.println("Choose the row index:\n");
+                    rowTwo = userIntegerInput();
+                } while (rowTwo < 0 || rowTwo > 4);
+
+                do {
+                    System.out.println("Choose the column index:\n");
+                    columnTwo = userIntegerInput();
+                } while (columnTwo < 0 || columnTwo > 5);
+
+
+                if (availablePosition.get(players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice().toString())[rowTwo][columnTwo].equals(true)) {
+                    Tuple diceToMoveIndex = new Tuple(rowOne,columnOne);
+                    Tuple positionIndex = new Tuple(rowTwo,columnTwo);
+
+                    if (players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice() == null)
+                        currentConnectionType.lathekinMove(diceToMoveIndex,positionIndex, false);
+                    else
+                        currentConnectionType.lathekinMove(diceToMoveIndex,positionIndex, true);
+
+                    return true;
+                } else System.out.println("Wrong position input\n");
+
+            } else System.out.println("You can't place this dice, choose another one\n");
+
+        }
+        return false;
+
     }
 
     public boolean placeDiceWithNoRestricitionsToolCard(int rowOne, int columnOne){
@@ -1127,6 +1170,45 @@ public class CLI implements SceneUpdater {
      */
     @Override
     public void toolCardAction(LathekinResponse useToolCardResponse) {
+        updateAvailablePositions(useToolCardResponse.availablePositions);
+        System.out.println("Lathekin\nMove the first dice. You must pay attention to all restrictions");
+        int rowOne, columnOne;
+        boolean dicePlaced;
+
+        do{
+            System.out.println("Choose which die you want to move\n");
+            showPatternCardPlayer(players.get(currentPlayerIndex));
+
+            do {
+                System.out.println("Choose the row index of the die to move:\n");
+                rowOne = userIntegerInput();
+            } while (rowOne < 0 || rowOne > 4);
+
+            do {
+                System.out.println("Choose the column index of the die to move:\n");
+                columnOne = userIntegerInput();
+            } while (columnOne < 0 || columnOne > 5);
+
+            dicePlaced = placeDiceWithAllRestricitionsToolCard(rowOne,columnOne);
+        } while (dicePlaced);
+
+
+        do{
+            System.out.println("Choose which die you want to move\n");
+            showPatternCardPlayer(players.get(currentPlayerIndex));
+
+            do {
+                System.out.println("Choose the row index of the die to move:\n");
+                rowOne = userIntegerInput();
+            } while (rowOne < 0 || rowOne > 4);
+
+            do {
+                System.out.println("Choose the column index of the die to move:\n");
+                columnOne = userIntegerInput();
+            } while (columnOne < 0 || columnOne > 5);
+
+            dicePlaced = placeDiceWithAllRestricitionsToolCard(rowOne,columnOne);
+        } while (dicePlaced);
 
     }
 
@@ -1242,5 +1324,134 @@ public class CLI implements SceneUpdater {
             } else System.out.println("You cannot place this die\n");
 
         } while (!dicePlaced);
+    }
+
+    @Override
+    public void toolCardAction(TapWheelResponse useToolCardResponse) {
+
+        Color selectedDiceColor = null;
+
+        switch (useToolCardResponse.phase) {
+            case 0:
+                int selectedRound = -1, selectedTrackDice = -1;
+                System.out.println("Tap Wheel\nChoose a dice from the round track and move at most two dice in the pattern with the same color");
+                showRoundTrack();
+                if (!roundTrack.isEmpty()) {
+                    do {
+                        System.out.println("Select the round:\n");
+
+                        selectedRound = userIntegerInput() - 1;
+                    } while (!(0 <= selectedRound && selectedRound < roundTrack.size()));
+
+                    do {
+                        System.out.println("Choose the die you want to swipe with:\n");
+                        selectedTrackDice = userIntegerInput() - 1;
+                    } while (!(0 <= selectedTrackDice && selectedTrackDice < roundTrack.get(selectedRound).size()));
+
+                    selectedDiceColor = roundTrack.get(selectedRound).get(selectedTrackDice).getDiceColor();
+                    currentConnectionType.tapWheelMove(roundTrack.get(selectedRound).get(selectedTrackDice),0);
+
+                } else {
+                    System.out.println("RoundTrack is empty, you choose dice");
+                    currentConnectionType.tapWheelMove(-1);
+                }
+                break;
+            case 1:
+                int rowOne, columnOne;
+                boolean dicePlaced;
+                updateAvailablePositions(useToolCardResponse.availablePositions);
+
+                do{
+                    System.out.println("Choose which die you want to move\n");
+                    showPatternCardPlayer(players.get(currentPlayerIndex));
+
+                    do {
+                        System.out.println("Choose the row index of the die to move:\n");
+                        rowOne = userIntegerInput();
+                    } while (rowOne < 0 || rowOne > 4);
+
+                    do {
+                        System.out.println("Choose the column index of the die to move:\n");
+                        columnOne = userIntegerInput();
+                    } while (columnOne < 0 || columnOne > 5);
+
+                    dicePlaced = placeDiceWithAllRestricitionsToolCardTapWheel(rowOne, columnOne, selectedDiceColor);
+                } while (dicePlaced);
+
+                break;
+            case 2:
+
+
+                System.out.println("Do you want to place another dice or end the move?");
+                System.out.print("1 - Place a dice\n2 - End the move");
+                int choice = userIntegerInput();
+
+                if (choice == 1) {
+                    do {
+                        System.out.println("Choose which die you want to move\n");
+                        showPatternCardPlayer(players.get(currentPlayerIndex));
+
+                        do {
+                            System.out.println("Choose the row index of the die to move:\n");
+                            rowOne = userIntegerInput();
+                        } while (rowOne < 0 || rowOne > 4);
+
+                        do {
+                            System.out.println("Choose the column index of the die to move:\n");
+                            columnOne = userIntegerInput();
+                        } while (columnOne < 0 || columnOne > 5);
+
+                        dicePlaced = placeDiceWithAllRestricitionsToolCardTapWheel(rowOne, columnOne, selectedDiceColor);
+                    } while (dicePlaced);
+                }
+                if (choice == 2) {
+                    System.out.println("end the turn");
+                    currentConnectionType.tapWheelMove(-1);
+                }
+
+                break;
+        }
+
+    }
+
+    private boolean placeDiceWithAllRestricitionsToolCardTapWheel(int rowOne, int columnOne, Color selectedDiceColor) {
+
+        int rowTwo, columnTwo;
+        if(players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice() != null) {
+
+            System.out.println("You chose " + players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice().toString() + "\n");
+            System.out.println("These are the position in which you can place the die:\n");
+            showPatternCardPlayer(players.get(currentPlayerIndex));
+
+            if (checkAndShowAvailablePositions(players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice())) {
+
+                System.out.println("Choose were you want to place the die\n");
+
+                do {
+                    System.out.println("Choose the row index:\n");
+                    rowTwo = userIntegerInput();
+                } while (rowTwo < 0 || rowTwo > 4);
+
+                do {
+                    System.out.println("Choose the column index:\n");
+                    columnTwo = userIntegerInput();
+                } while (columnTwo < 0 || columnTwo > 5);
+
+
+                if (availablePosition.get(players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice().toString())[rowTwo][columnTwo].equals(true)) {
+                    Tuple diceToMoveIndex = new Tuple(rowOne,columnOne);
+                    Tuple positionIndex = new Tuple(rowTwo,columnTwo);
+                    if (players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowTwo).get(columnTwo).getDice() == null)
+                        currentConnectionType.lathekinMove(diceToMoveIndex,positionIndex, false);
+                    else
+                        currentConnectionType.lathekinMove(diceToMoveIndex,positionIndex, true);
+                    } else System.out.println("You can't place this dice, choose another one\n");
+
+                    return true;
+                } else System.out.println("Wrong position input\n");
+
+            } else System.out.println("You can't place this dice, choose another one\n");
+        return false;
+
     }
 }
