@@ -11,6 +11,7 @@
 
 package ingsw.model;
 
+import ingsw.controller.Controller;
 import ingsw.controller.network.commands.*;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
@@ -446,11 +447,21 @@ public class GameManager {
             if (player.getPlayerUsername().equals(winnerUsername)) {
                 player.getUser().setNoOfWins(player.getUser().getNoOfWins() + 1);
                 player.getUser().setNoOfLose(player.getUser().getNoOfLose());
-                player.getUserObserver().notifyVictory(scores.get(player.getPlayerUsername()));
+
+                //TODO Move thee try/catch block
+                try {
+                    player.getUserObserver().notifyVictory(scores.get(player.getPlayerUsername()));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             } else {
                 player.getUser().setNoOfWins(player.getUser().getNoOfWins());
                 player.getUser().setNoOfLose(player.getUser().getNoOfLose() + 1);
-                player.getUserObserver().notifyLost(scores.get(player.getPlayerUsername()));
+                try {
+                    player.getUserObserver().notifyLost(scores.get(player.getPlayerUsername()));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -480,6 +491,7 @@ public class GameManager {
 
             currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
+            ControllerTimer.get().startTurnTimer(40, this);
 
             //wait until turn has ended
             waitEndTurn();
@@ -539,6 +551,8 @@ public class GameManager {
 
     boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
         if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
+
+            ControllerTimer.get().cancelTimer();
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
@@ -604,6 +618,7 @@ public class GameManager {
         }
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), true));
         currentRound.toolCardMoveDone();
+        ControllerTimer.get().cancelTimer();
     }
 
     public void grozingPliersMove(Dice dice, Boolean increase) {
@@ -630,6 +645,7 @@ public class GameManager {
     public void grozingPliersResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         currentRound.toolCardMoveDone();
+        ControllerTimer.get().cancelTimer();
     }
 
 
@@ -660,6 +676,8 @@ public class GameManager {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         currentRound.toolCardMoveDone();
+
+        ControllerTimer.get().cancelTimer();
     }
 
     public void fluxRemoverMove(Dice selectedDice) {
@@ -708,6 +726,8 @@ public class GameManager {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
         currentRound.toolCardMoveDone();
 
+        ControllerTimer.get().cancelTimer();
+
     }
 
     public void grindingStoneMove(Dice selectedDice) {
@@ -722,6 +742,7 @@ public class GameManager {
     public void grindingStoneResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         currentRound.toolCardMoveDone();
+        ControllerTimer.get().cancelTimer();
     }
 
     public void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
@@ -734,6 +755,7 @@ public class GameManager {
     public void copperFoilBurnisherResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         currentRound.toolCardMoveDone();
+        ControllerTimer.get().cancelTimer();
     }
 
     public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
@@ -746,6 +768,7 @@ public class GameManager {
     public void corkBackedStraightedgeResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
         currentRound.toolCardMoveDone();
+        ControllerTimer.get().cancelTimer();
     }
 
     public void lensCutterMove(int roundIndex, String roundTrackDice, String poolDice) {
@@ -774,6 +797,7 @@ public class GameManager {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         Broadcaster.broadcastResponseToAll(playerList, new RoundTrackToolCardResponse(roundTrack));
         currentRound.toolCardMoveDone();
+        ControllerTimer.get().cancelTimer();
     }
 
     public void eglomiseBrushMove(Tuple dicePosition, Tuple position) {
@@ -788,6 +812,7 @@ public class GameManager {
     public void eglomiseBrushResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
         currentRound.toolCardMoveDone();
+        ControllerTimer.get().cancelTimer();
     }
 
     public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
@@ -811,6 +836,7 @@ public class GameManager {
     public void lathekinResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
         currentRound.toolCardMoveDone();
+        ControllerTimer.get().cancelTimer();
     }
 
 
@@ -822,6 +848,7 @@ public class GameManager {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(getDraftedDice(), true));
         currentRound.toolCardMoveDone();
+        ControllerTimer.get().cancelTimer();
     }
 
     public boolean getdoubleMove() {
@@ -917,6 +944,7 @@ public class GameManager {
         if (phase == 3) {
             Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
             currentRound.toolCardMoveDone();
+            ControllerTimer.get().cancelTimer();
         }
     }
 }

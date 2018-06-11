@@ -21,7 +21,7 @@ public interface UserObserver extends Remote {
 
     void checkIfActive() throws RemoteException;
 
-    void notifyVictory(int score);
+    void notifyVictory(int score) throws RemoteException;
 
-    void notifyLost(int score);
+    void notifyLost(int score) throws RemoteException;
 }

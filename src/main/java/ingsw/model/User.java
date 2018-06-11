@@ -19,7 +19,7 @@ public class User implements Serializable {
     private int noOfWins;
     private int noOfLose;
     private List<String> matchesPlayed;
-    private StopWatch stopWatch;
+    private transient StopWatch stopWatch;
 
     public User(String username) {
         this.username = username;
