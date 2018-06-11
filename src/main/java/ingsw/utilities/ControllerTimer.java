@@ -1,6 +1,7 @@
 package ingsw.utilities;
 
 import ingsw.controller.Controller;
+import ingsw.model.GameManager;
 import ingsw.model.Round;
 
 import java.util.Timer;
@@ -26,8 +27,8 @@ public class ControllerTimer {
         timer.schedule(new LaunchMatch(controller), loginSeconds * 1000);
     }
 
-    public void startTurnTimer(int turnSeconds, Round round) {
-        timer.schedule(new EndTurn(round), turnSeconds * 1000);
+    public void startTurnTimer(int turnSeconds, GameManager gameManager) {
+        timer.schedule(new EndTurn(gameManager), turnSeconds * 1000);
     }
 
     public void cancelTimer() {
@@ -48,15 +49,15 @@ public class ControllerTimer {
     }
 
     class EndTurn extends TimerTask {
-        Round round;
+        GameManager gameManager;
 
-        EndTurn(Round round) {
-            this.round = round;
+        EndTurn(GameManager gameManager) {
+            this.gameManager = gameManager;
         }
 
         @Override
         public void run() {
-            round.hasMadeAMove();
+            gameManager.endTurn();
         }
     }
 

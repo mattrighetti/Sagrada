@@ -17,6 +17,7 @@ import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.Broadcaster;
+import ingsw.utilities.ControllerTimer;
 import ingsw.utilities.MoveStatus;
 import ingsw.utilities.Tuple;
 
@@ -398,6 +399,7 @@ public class GameManager {
 
             currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
+            ControllerTimer.get().startTurnTimer(40, this);
 
             //wait until turn has ended
             waitEndTurn();

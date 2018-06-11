@@ -32,8 +32,7 @@ public class Round implements Runnable {
 
     @Override
     public void run() {
-        playerMoves = new Thread(() -> {
-            //TODO recheck activate turn
+        new Thread(() -> {
             try {
                 player.getUserObserver().activateTurnNotification(gameManager.sendAvailablePositions(player));
             } catch (RemoteException e) {
@@ -57,17 +56,7 @@ public class Round implements Runnable {
                 playerEndedTurn.notify();
             }
 
-        });
-        playerMoves.setName("Turn");
-        playerMoves.start();
-    }
-
-    public void timeIsOver() {
-        hasMadeAMove.set(true);
-
-        synchronized (hasMadeAMove) {
-            hasMadeAMove.notify();
-        }
+        }).start();
     }
 
     public void hasMadeAMove() {
@@ -81,7 +70,6 @@ public class Round implements Runnable {
 
     private void waitForMove() {
         System.out.println("Wait for the move");
-        //ControllerTimer.get().startTurnTimer(40, this);
         synchronized (hasMadeAMove) {
             while (!hasPlayerEndedTurn().get() || !hasMadeAMove.get()) {
                 //wait until the move is done
@@ -93,7 +81,6 @@ public class Round implements Runnable {
 
             }
             hasMadeAMove.set(false);
-            //ControllerTimer.get().cancelTimer();
         }
     }
 
@@ -115,13 +102,6 @@ public class Round implements Runnable {
     AtomicBoolean hasPlayerEndedTurn() {
         return playerEndedTurn;
     }
-
-/*    public boolean makeMove(Dice dice, int rowIndex, int columnIndex) {
-        //TODO ricontrolla se deve ritornare realmente valori
-        boolean isMoveAccepted = gameManager.equals("");
-        hasMadeAMove.set(isMoveAccepted);
-        return isMoveAccepted;
-    }*/
 
     /**
      * Place-Dice move. Method for the placing dice move
