@@ -1,9 +1,9 @@
 package ingsw.model;
 
 import ingsw.controller.network.socket.UserObserver;
+import org.apache.commons.lang.time.StopWatch;
 
 import java.io.Serializable;
-import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,11 +20,14 @@ public class User implements Serializable {
     private int noOfLose;
     private int noOfDraws;
     private List<String> matchesPlayed;
+    private StopWatch stopWatch;
 
     public User(String username) {
         this.username = username;
         this.active = true;
         matchesPlayed = new LinkedList<>();
+        this.stopWatch = new StopWatch();
+        stopWatch.start();
     }
 
     public String getUsername() {
@@ -63,6 +66,8 @@ public class User implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
+        if (active) stopWatch.resume();
+        else stopWatch.suspend();
     }
 
     boolean isActive() {

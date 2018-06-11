@@ -69,6 +69,10 @@ public class GameManager {
         setUpGameManager();
     }
 
+    /**
+     * Method that will setup the GameManager.
+     * This will populate the GameManager with every component needed for the game
+     */
     private synchronized void setUpGameManager() {
         setUpPrivateObjectiveCards();
 
@@ -82,6 +86,9 @@ public class GameManager {
         setUpPatternCards();
     }
 
+    /**
+     * Method that populates the PatternCards in the List
+     */
     private void setUpPatternCards() {
         this.patternCards = new LinkedList<>();
         this.patternCards.add(new AuroraeMagnificus());
@@ -111,6 +118,9 @@ public class GameManager {
         Collections.shuffle(patternCards);
     }
 
+    /**
+     * Method that populates the ToolCards in the List
+     */
     private void setUpToolCards() {
         toolCards = new LinkedList<>();
         this.toolCards.add(new CopperFoilBurnisher());
@@ -128,6 +138,9 @@ public class GameManager {
 
     }
 
+    /**
+     * Method that populates the PublicObjectiveCards in the List
+     */
     private void setUpPublicObjectiveCards() {
         publicObjectiveCards = new LinkedList<>();
         this.publicObjectiveCards.add(new ColorDiagonals());
@@ -143,6 +156,9 @@ public class GameManager {
 
     }
 
+    /**
+     * Method that populates the PrivateObjectiveCards in the List
+     */
     private void setUpPrivateObjectiveCards() {
         privateObjectiveCards = new LinkedList<>();
         this.privateObjectiveCards.add(new PrivateObjectiveCard(Color.BLUE));
@@ -153,6 +169,10 @@ public class GameManager {
         Collections.shuffle(privateObjectiveCards);
     }
 
+    /**
+     * Method that will randomly pick three ToolCards that will be used throughout the game
+     * @return three randomly picked ToolCards
+     */
     private List<ToolCard> chooseToolCards() {
        // Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
@@ -163,11 +183,18 @@ public class GameManager {
         return toolCards;
     }
 
+    /**
+     * Method that will randomly pick three PublicObjectiveCards that will be used throughout the game
+     * @return three randomly picked PublicObjectiveCards
+     */
     private List<PublicObjectiveCard> choosePublicObjectiveCards() {
         Collections.shuffle(publicObjectiveCards);
         return new ArrayList<>(publicObjectiveCards.subList(0, 3));
     }
 
+    /**
+     * Method that will distribute four PatternCards to each Player
+     */
     public void pickPatternCards() {
         for (Player player : playerList) {
             try {
@@ -183,9 +210,12 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method that will check every two seconds which player is active and those who has disconnected from the game
+     */
     private void listenForPlayerDisconnection() {
         Set<Player> disconnectedPlayerSet = new HashSet<>();
-        userDisconnectionListenerThread = new Thread(() -> {
+        new Thread(() -> {
             do {
 
                 try {
@@ -218,15 +248,22 @@ public class GameManager {
                     }
                 }
             } while (true);
-        });
-        userDisconnectionListenerThread.start();
+        }).start();
     }
 
+    /**
+     * Method that return the current players as a List
+     * @return current Players List
+     */
     List<Player> getPlayerList() {
         return playerList;
     }
 
-
+    /**
+     * Method that will assign the chosen pattern card to the player
+     * @param username player who chose the pattern card
+     * @param patternCard pattern card chosen by the player
+     */
     public PatternCard setPatternCardForPlayer(String username, PatternCard patternCard) {
         for (Player player : playerList) {
             if (player.getPlayerUsername().equals(username)) {
@@ -241,16 +278,20 @@ public class GameManager {
         return patternCard;
     }
 
+    /**
+     * Method that will return the dice drafted at the beginning of the current round
+     * @return dice drafted in the Board at the beginning of the current round
+     */
     public List<Dice> getDraftedDice() {
         return board.getDraftedDice();
     }
 
+    /**
+     * Method that returns the current round's number
+     * @return round number
+     */
     public int getTurnInRound() {
         return turnInRound.get();
-    }
-
-    void checkIfEveryUserIsActive() {
-
     }
 
     /**
@@ -505,16 +546,29 @@ public class GameManager {
         toolCardThread.start();
     }
 
-    void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
+    /**
+     * Method that will update the current Moves made by each Player in every User's View
+     * @param moveStatus move to be added in the List of Moves made
+     */
+    private void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
         movesHistory.add(moveStatus);
         Broadcaster.updateMovesHistory(playerList, movesHistory);
     }
 
+    /**
+     * @return the current available Round
+     */
     public Round getCurrentRound() {
         return currentRound;
     }
 
-    //TOOL CARDS METHODS
+
+    /*
+
+    -------------------------  TOOLCARDS METHODS  --------------------------------------
+
+     */
+
 
     public void glazingHammerResponse() {
         for (Dice dice : board.getDraftedDice()) {

@@ -71,6 +71,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
 
     /**
      * Method that deactivates a user whenever he disconnects from the game
+     *
      * @param user user that has to be disconnected
      * @throws RemoteException if the user has not been disconnected correctly
      */
@@ -143,12 +144,16 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
                 break;
             case 3:
                 gameManager.fluxBrushMove();
+                break;
+            default:
+                System.out.println("Not specified");
+                break;
         }
     }
 
     @Override
     public void toolCardMove(FluxRemoverRequest fluxRemoverRequest) throws RemoteException {
-        switch (fluxRemoverRequest.phase){
+        switch (fluxRemoverRequest.phase) {
             case 1:
                 gameManager.fluxRemoverMove(fluxRemoverRequest.selectedDice);
                 break;
@@ -156,10 +161,14 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
                 gameManager.fluxRemoverMove(fluxRemoverRequest.selectedDice, fluxRemoverRequest.chosenValue);
                 break;
             case 3:
-                gameManager.fluxRemoverMove(fluxRemoverRequest.selectedDice,fluxRemoverRequest.rowIndex,fluxRemoverRequest.columnIndex);
+                gameManager.fluxRemoverMove(fluxRemoverRequest.selectedDice, fluxRemoverRequest.rowIndex, fluxRemoverRequest.columnIndex);
                 break;
             case 4:
                 gameManager.fluxRemoverMove();
+                break;
+            default:
+                System.out.println("Not specified");
+                break;
         }
 
 
@@ -175,13 +184,13 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     }
 
     @Override
-    public void toolCardMove(CorkBackedStraightedgeRequest moveToolCardRequest) throws RemoteException{
+    public void toolCardMove(CorkBackedStraightedgeRequest moveToolCardRequest) throws RemoteException {
         gameManager.corkBackedStraightedgeMove(moveToolCardRequest.selectedDice, moveToolCardRequest.row, moveToolCardRequest.column);
     }
 
     @Override
     public void toolCardMove(LensCutterRequest moveToolCardRequest) throws RemoteException {
-        gameManager.lensCutterMove(moveToolCardRequest.roundIndex,moveToolCardRequest.roundTrackDice,moveToolCardRequest.poolDice);
+        gameManager.lensCutterMove(moveToolCardRequest.roundIndex, moveToolCardRequest.roundTrackDice, moveToolCardRequest.poolDice);
     }
 
     @Override
@@ -198,6 +207,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     public void toolCardMove(RunningPliersRequest moveToolCardRequest) throws RemoteException {
         gameManager.runningPliersMove(moveToolCardRequest.selectedDice, moveToolCardRequest.rowIndex, moveToolCardRequest.ColumnIndex);
     }
+
     @Override
     public void toolCardMove(TapWheelRequest moveToolCardRequest) throws RemoteException {
         gameManager.tapWheelMove(moveToolCardRequest.dice, moveToolCardRequest.phase, moveToolCardRequest.dicePosition, moveToolCardRequest.position, moveToolCardRequest.doubleMove);
