@@ -1,9 +1,11 @@
 package ingsw.utilities;
 
 import ingsw.controller.Controller;
+import ingsw.controller.network.commands.TimeOutResponse;
 import ingsw.model.GameManager;
 import ingsw.model.Round;
 
+import java.rmi.RemoteException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -57,6 +59,12 @@ public class ControllerTimer {
 
         @Override
         public void run() {
+
+            try {
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
             gameManager.endTurn();
         }
     }

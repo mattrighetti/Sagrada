@@ -464,4 +464,9 @@ public class ClientController implements ResponseHandler, NetworkType {
     public void handle(VictoryNotification victoryNotification) {
         sceneUpdater.showLostNotification(victoryNotification.totalScore);
     }
+
+    @Override
+    public void handle(TimeOutResponse timeOutResponse) {
+        sceneUpdater.timeOut();
+    }
 }

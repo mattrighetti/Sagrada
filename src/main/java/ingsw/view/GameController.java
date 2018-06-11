@@ -581,21 +581,28 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 Platform.runLater(() -> {
                     displayDraftedDice(useToolCardResponse.draftedDice);
                     ArrayList<DiceButton> diceButtons = new ArrayList<>();
-                    for (Node button : diceHorizontalBox.getChildren()) {
-                        diceButtons.add((DiceButton) button);
+
+                    if (useToolCardResponse.availablePositions.get(useToolCardResponse.draftedDie) != null) {
+                        if (!checkAvailablePositions(useToolCardResponse.availablePositions.get(useToolCardResponse.draftedDie))) {
+                            for (Node button : diceHorizontalBox.getChildren()) {
+                                diceButtons.add((DiceButton) button);
+                            }
+                            for (DiceButton button : diceButtons) {
+                                if (useToolCardResponse.draftedDie.toString().equals(button.getDice().toString())) {
+                                    button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                        @Override
+                                        public void handle(MouseEvent event) {
+                                            networkType.fluxRemoverMove();
+                                            windowControllerList.get(0).setSelectedDice(null);
+                                            windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+                                        }
+                                    });
+                                    button.setDisable(false);
+                                } else button.setDisable(true);
+                            }
+                        } else disableDice();
                     }
-                    for (DiceButton button : diceButtons) {
-                        if (useToolCardResponse.draftedDie.toString().equals(button.getDice().toString()))
-                            button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                @Override
-                                public void handle(MouseEvent event) {
-                                    networkType.fluxRemoverMove();
-                                    windowControllerList.get(0).setSelectedDice(null);
-                                    windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-                                }
-                            });
-                        else button.setDisable(true);
-                    }
+                    System.out.println("Error in available position Flux Remover");
                     windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
                     windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.draftedDie.toString());
                     windowControllerList.get(0).setSelectedDice(useToolCardResponse.draftedDie);
@@ -603,6 +610,17 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                     windowControllerList.get(0).fluxRemoverMove();
                 });
         }
+    }
+
+    private boolean checkAvailablePositions(Boolean[][] availablePositions) {
+        boolean existsAvailablePosition = false;
+        for (int i = 0; i < availablePositions.length; i++) {
+            for (int j = 0; j < availablePositions[i].length; j++) {
+                existsAvailablePosition = availablePositions[i][j] || existsAvailablePosition;
+            }
+
+        }
+        return existsAvailablePosition;
     }
 
 
@@ -842,13 +860,24 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
-    private void endTurnButtonReset() {
+    @Override
+    public void timeOut() {
+        createPopUpWindow("Message", "Time's out!", "The time to make the moves is ended");
+
         windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
         windowControllerList.get(0).setSelectedDice(null);
-        networkType.endTurn();
         disableDice();
         placeDiceMoveDone = false;
         endTurnButton.setDisable(true);
+    }
+
+    private void endTurnButtonReset() {
+        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+        windowControllerList.get(0).setSelectedDice(null);
+        disableDice();
+        placeDiceMoveDone = false;
+        endTurnButton.setDisable(true);
+        networkType.endTurn();
     }
 
     @Override

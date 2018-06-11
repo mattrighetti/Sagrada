@@ -198,11 +198,15 @@ public interface SceneUpdater {
         System.out.println("Not overridden");
     }
 
+
     default void showLostNotification(int totalScore) {
         System.out.println("Not overridden");
     }
 
     default void showWinnerNotification(int totalScore) {
+        System.out.println("Not overridden");
+    }
+    default void timeOut(){
         System.out.println("Not overridden");
     }
 }

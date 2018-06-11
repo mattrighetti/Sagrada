@@ -33,4 +33,6 @@ public interface ResponseHandler {
     void handle(LoseNotification loseNotification);
 
     void handle(VictoryNotification victoryNotification);
+
+    void handle(TimeOutResponse timeOutResponse);
 }
