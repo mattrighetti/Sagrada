@@ -197,4 +197,12 @@ public interface SceneUpdater {
     default void setUsernameInApplication(String username) {
         System.out.println("Not overridden");
     }
+
+    default void showLostNotification(int totalScore) {
+        System.out.println("Not overridden");
+    }
+
+    default void showWinnerNotification(int totalScore) {
+        System.out.println("Not overridden");
+    }
 }

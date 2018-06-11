@@ -20,4 +20,8 @@ public interface UserObserver extends Remote {
     void sendResponse(Response response) throws RemoteException;
 
     void checkIfActive() throws RemoteException;
+
+    void notifyVictory(int score);
+
+    void notifyLost(int score);
 }

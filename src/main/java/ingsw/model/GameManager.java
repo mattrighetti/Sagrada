@@ -21,7 +21,6 @@ import ingsw.utilities.ControllerTimer;
 import ingsw.utilities.MoveStatus;
 import ingsw.utilities.Tuple;
 
-import javax.tools.Tool;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
@@ -46,11 +45,7 @@ public class GameManager {
     private AtomicBoolean endRound;
     private AtomicBoolean doubleMove;
     public final Object toolCardLock = new Object();
-    private Thread diceAckThread;
-    private Thread matchThread;
-    private Thread toolCardThread;
     private AtomicInteger turnInRound = new AtomicInteger(0);
-    private Thread userDisconnectionListenerThread;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -171,10 +166,11 @@ public class GameManager {
 
     /**
      * Method that will randomly pick three ToolCards that will be used throughout the game
+     *
      * @return three randomly picked ToolCards
      */
     private List<ToolCard> chooseToolCards() {
-       // Collections.shuffle(toolCards);
+        // Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> toolCards = new ArrayList<>();
         toolCards.add(new CorkBackedStraightEdge());
@@ -185,6 +181,7 @@ public class GameManager {
 
     /**
      * Method that will randomly pick three PublicObjectiveCards that will be used throughout the game
+     *
      * @return three randomly picked PublicObjectiveCards
      */
     private List<PublicObjectiveCard> choosePublicObjectiveCards() {
@@ -253,6 +250,7 @@ public class GameManager {
 
     /**
      * Method that return the current players as a List
+     *
      * @return current Players List
      */
     List<Player> getPlayerList() {
@@ -261,7 +259,8 @@ public class GameManager {
 
     /**
      * Method that will assign the chosen pattern card to the player
-     * @param username player who chose the pattern card
+     *
+     * @param username    player who chose the pattern card
      * @param patternCard pattern card chosen by the player
      */
     public PatternCard setPatternCardForPlayer(String username, PatternCard patternCard) {
@@ -280,6 +279,7 @@ public class GameManager {
 
     /**
      * Method that will return the dice drafted at the beginning of the current round
+     *
      * @return dice drafted in the Board at the beginning of the current round
      */
     public List<Dice> getDraftedDice() {
@@ -288,6 +288,7 @@ public class GameManager {
 
     /**
      * Method that returns the current round's number
+     *
      * @return round number
      */
     public int getTurnInRound() {
@@ -322,15 +323,12 @@ public class GameManager {
      * Method that stalls the program until every user has received every dice
      */
     private void waitForDiceAck() {
-        diceAckThread = new Thread(() -> {
+        new Thread(() -> {
             System.out.println("Waiting Dice Ack");
             waitAck();
             resetAck();
             startRound();
-        });
-
-        diceAckThread.setName("diceAck and round");
-        diceAckThread.start();
+        }).start();
     }
 
     /**
@@ -395,7 +393,7 @@ public class GameManager {
      * Method that opens a thread dedicated to the match
      */
     private void startMatch() {
-        matchThread = new Thread(() -> {
+        new Thread(() -> {
 
             try {
                 Thread.sleep(500);
@@ -421,10 +419,40 @@ public class GameManager {
                 }
             }
 
-        });
+            evaluatePointsAndNotifyWinner();
 
-        matchThread.setName("match");
-        matchThread.start();
+        }).start();
+    }
+
+    private void evaluatePointsAndNotifyWinner() {
+        Map<String, Integer> scores = new HashMap<>();
+        int maxScore = 0;
+        String winnerUsername = "";
+        for (Player player : playerList) {
+            int points = 0;
+            points += publicObjectiveCards.get(0).getScore(player.getPatternCard().getGrid());
+            points += publicObjectiveCards.get(1).getScore(player.getPatternCard().getGrid());
+            points += publicObjectiveCards.get(2).getScore(player.getPatternCard().getGrid());
+            points += player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid());
+            points -= player.getPatternCard().getNoOfEmptyBoxes();
+            if (points > maxScore) {
+                maxScore = points;
+                winnerUsername = player.getPlayerUsername();
+            }
+            scores.put(player.getPlayerUsername(), points);
+        }
+
+        for (Player player : playerList) {
+            if (player.getPlayerUsername().equals(winnerUsername)) {
+                player.getUser().setNoOfWins(player.getUser().getNoOfWins() + 1);
+                player.getUser().setNoOfLose(player.getUser().getNoOfLose());
+                player.getUserObserver().notifyVictory(scores.get(player.getPlayerUsername()));
+            } else {
+                player.getUser().setNoOfWins(player.getUser().getNoOfWins());
+                player.getUser().setNoOfLose(player.getUser().getNoOfLose() + 1);
+                player.getUserObserver().notifyLost(scores.get(player.getPlayerUsername()));
+            }
+        }
     }
 
     /**
@@ -533,7 +561,7 @@ public class GameManager {
      * @param toolCardName name of the ToolCard to use
      */
     public void useToolCard(String toolCardName) {
-        toolCardThread = new Thread(
+        new Thread(
                 () -> {
                     for (ToolCard toolCard : toolCards) {
                         if (toolCard.getName().equals(toolCardName)) {
@@ -542,12 +570,12 @@ public class GameManager {
 
                         }
                     }
-                });
-        toolCardThread.start();
+                }).start();
     }
 
     /**
      * Method that will update the current Moves made by each Player in every User's View
+     *
      * @param moveStatus move to be added in the List of Moves made
      */
     private void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
@@ -588,7 +616,7 @@ public class GameManager {
         wakeUpToolCardThread();
     }
 
-    private void placeDiceToolCard(Dice dice, int rowIndex, int columnIndex){
+    private void placeDiceToolCard(Dice dice, int rowIndex, int columnIndex) {
         Player player = getCurrentRound().getCurrentPlayer();
         if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
@@ -600,7 +628,7 @@ public class GameManager {
     }
 
     public void grozingPliersResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         currentRound.toolCardMoveDone();
     }
 
@@ -629,7 +657,7 @@ public class GameManager {
     }
 
     public void fluxBrushResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         currentRound.toolCardMoveDone();
     }
@@ -661,14 +689,14 @@ public class GameManager {
         }
         Map<String, Boolean[][]> availablePositions = getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsDraftedDice(board.getDraftedDice());
         try {
-            getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new FluxRemoverResponse(getDraftedDice(),selectedDice,availablePositions));
+            getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new FluxRemoverResponse(getDraftedDice(), selectedDice, availablePositions));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
     public void fluxRemoverMove(Dice selectedDice, int rowIndex, int columnIndex) {
-        placeDiceToolCard(selectedDice,rowIndex,columnIndex);
+        placeDiceToolCard(selectedDice, rowIndex, columnIndex);
     }
 
     public void fluxRemoverMove() {
@@ -676,7 +704,7 @@ public class GameManager {
     }
 
     public void fluxRemoverResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
         currentRound.toolCardMoveDone();
 
@@ -692,7 +720,7 @@ public class GameManager {
     }
 
     public void grindingStoneResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         currentRound.toolCardMoveDone();
     }
 
@@ -711,7 +739,7 @@ public class GameManager {
     public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
         Map<String, Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsNoDiceAround(board.getDraftedDice());
         if (availablePositions.get(selectedDice.toString())[row][column])
-            placeDiceForPlayer(selectedDice,row,column);
+            placeDiceForPlayer(selectedDice, row, column);
         wakeUpToolCardThread();
     }
 
@@ -743,7 +771,7 @@ public class GameManager {
     }
 
     public void lensCutterResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(),false));
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         Broadcaster.broadcastResponseToAll(playerList, new RoundTrackToolCardResponse(roundTrack));
         currentRound.toolCardMoveDone();
     }
@@ -787,7 +815,7 @@ public class GameManager {
 
 
     public void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
-        placeDiceToolCard(selectedDice, rowIndex,columnIndex);
+        placeDiceToolCard(selectedDice, rowIndex, columnIndex);
     }
 
     public void runningPliersResponse() {
@@ -808,7 +836,7 @@ public class GameManager {
         }
         if (phase == 0) {
             System.out.println("Calculating the mask");
-            Map<String,Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsTapWheel(roundTrackDice);
+            Map<String, Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsTapWheel(roundTrackDice);
             tapWheelResponse(availablePositions, currentRound.getCurrentPlayer().getPatternCard(), 1);
         }
         if (phase == 1) {
@@ -819,7 +847,7 @@ public class GameManager {
                 Dice dice1 = patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice();
                 patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
 
-                Map<String,Boolean[][]> hashMapGrid = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsTapWheel(dice1);
+                Map<String, Boolean[][]> hashMapGrid = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsTapWheel(dice1);
                 hashMapGrid.remove(dice1.toString() + position.getFirst() + position.getSecond());
 
                 System.out.println("The dice removed is\t" + dice1.toString() + position.getFirst() + position.getSecond());
@@ -853,7 +881,7 @@ public class GameManager {
     }
 
     private void wakeUpToolCardThread() {
-        synchronized (toolCardLock){
+        synchronized (toolCardLock) {
             toolCardLock.notify();
         }
     }
@@ -870,7 +898,7 @@ public class GameManager {
         }
     }
 
-    public void tapWheelResponse(Map<String, Boolean[][]> availablePositions, PatternCard patternCard, int phase) {
+    private void tapWheelResponse(Map<String, Boolean[][]> availablePositions, PatternCard patternCard, int phase) {
         if (phase == 1) {
             try {
                 getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TapWheelResponse(availablePositions, patternCard, 1));
@@ -886,8 +914,8 @@ public class GameManager {
             }
         }
 
-        if( phase == 3) {
-            Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))) );
+        if (phase == 3) {
+            Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
             currentRound.toolCardMoveDone();
         }
     }

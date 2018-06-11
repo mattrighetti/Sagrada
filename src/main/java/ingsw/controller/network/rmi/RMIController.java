@@ -320,4 +320,14 @@ public class RMIController implements ResponseHandler, NetworkType {
                 break;
         }
     }
+
+    @Override
+    public void handle(LoseNotification loseNotification) {
+        sceneUpdater.showLostNotification(loseNotification.totalScore);
+    }
+
+    @Override
+    public void handle(VictoryNotification victoryNotification) {
+        sceneUpdater.showWinnerNotification(victoryNotification.totalScore);
+    }
 }

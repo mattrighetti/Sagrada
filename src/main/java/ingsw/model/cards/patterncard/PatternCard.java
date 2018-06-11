@@ -46,6 +46,12 @@ public abstract class PatternCard extends Card {
         this.grid.add(new ArrayList<>(5));
     }
 
+    public int getNoOfEmptyBoxes() {
+        return (int) grid.stream()
+                .filter(boxes -> boxes.stream()
+                        .filter(box -> box.getDice() != null).count() != 0).count();
+    }
+
     public Map<String,Boolean[][]> computeAvailablePositionsDraftedDice(List<Dice> draftedDice) {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {

@@ -46,4 +46,14 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     public void receiveNotification(Notification notification) {
         notification.handle(rmiController);
     }
+
+    @Override
+    public void notifyVictory(int score) {
+        new VictoryNotification(score).handle(rmiController);
+    }
+
+    @Override
+    public void notifyLost(int score) {
+        new LoseNotification(score).handle(rmiController);
+    }
 }

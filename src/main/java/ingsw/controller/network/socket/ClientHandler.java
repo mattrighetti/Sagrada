@@ -178,4 +178,14 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     public void activateTurnNotification(Map<String,Boolean[][]> booleanMapGrid) {
         respond(new StartTurnNotification(booleanMapGrid));
     }
+
+    @Override
+    public void notifyVictory(int score) {
+        respond(new VictoryNotification(score));
+    }
+
+    @Override
+    public void notifyLost(int score) {
+        respond(new LoseNotification(score));
+    }
 }

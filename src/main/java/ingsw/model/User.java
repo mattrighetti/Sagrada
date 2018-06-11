@@ -18,7 +18,6 @@ public class User implements Serializable {
     private UserObserver userObserver;
     private int noOfWins;
     private int noOfLose;
-    private int noOfDraws;
     private List<String> matchesPlayed;
     private StopWatch stopWatch;
 
@@ -38,12 +37,16 @@ public class User implements Serializable {
         return noOfWins;
     }
 
+    public void setNoOfWins(int noOfWins) {
+        this.noOfWins = noOfWins;
+    }
+
     int getNoOfLose() {
         return noOfLose;
     }
 
-    int getNoOfDraws() {
-        return noOfDraws;
+    public void setNoOfLose(int noOfLose) {
+        this.noOfLose = noOfLose;
     }
 
     List<String> getMatchesPlayed() {

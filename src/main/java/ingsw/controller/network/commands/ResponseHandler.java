@@ -29,4 +29,8 @@ public interface ResponseHandler {
     void handle(RoundTrackNotification roundTrackNotification);
 
     void handle(ReJoinResponse reJoinResponse);
+
+    void handle(LoseNotification loseNotification);
+
+    void handle(VictoryNotification victoryNotification);
 }

@@ -376,6 +376,17 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     @Override
+    public void showLostNotification(int totalScore) {
+        Platform.runLater(() -> createPopUpWindow("Match has ended", "You lost :(", "Your Score: " + totalScore));
+    }
+
+    @Override
+    public void showWinnerNotification(int totalScore) {
+
+        Platform.runLater(() -> createPopUpWindow("Match has ended", "You won!", "Your Score: " + totalScore));
+    }
+
+    @Override
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);

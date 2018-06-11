@@ -454,4 +454,14 @@ public class ClientController implements ResponseHandler, NetworkType {
         sceneUpdater.setUsernameInApplication(reJoinResponse.username);
         sceneUpdater.launchProgressForm();
     }
+
+    @Override
+    public void handle(LoseNotification loseNotification) {
+        sceneUpdater.showWinnerNotification(loseNotification.totalScore);
+    }
+
+    @Override
+    public void handle(VictoryNotification victoryNotification) {
+        sceneUpdater.showLostNotification(victoryNotification.totalScore);
+    }
 }

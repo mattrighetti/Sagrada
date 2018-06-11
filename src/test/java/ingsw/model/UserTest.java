@@ -29,11 +29,6 @@ class UserTest {
     }
 
     @Test
-    void getNoOfDraws() {
-        assertTrue(user.getNoOfDraws() >= 0);
-    }
-
-    @Test
     void getMatchesPlayed() {
         assertNotNull(user.getMatchesPlayed());
     }
