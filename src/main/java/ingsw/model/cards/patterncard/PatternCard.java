@@ -47,9 +47,11 @@ public abstract class PatternCard extends Card {
     }
 
     public int getNoOfEmptyBoxes() {
-        return (int) grid.stream()
-                .filter(boxes -> boxes.stream()
-                        .filter(box -> box.getDice() != null).count() != 0).count();
+
+        return grid.stream().
+                mapToInt(row -> (int) row.stream()
+                        .filter(box -> box.getDice() == null).count())
+                .reduce(0, (sum, x) -> sum + x);
     }
 
     public Map<String,Boolean[][]> computeAvailablePositionsDraftedDice(List<Dice> draftedDice) {
