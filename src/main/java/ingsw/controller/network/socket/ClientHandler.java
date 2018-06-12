@@ -78,8 +78,8 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      */
     private void respond(Response response) {
         try {
-            objectOutputStream.reset();
             objectOutputStream.writeObject(response);
+            objectOutputStream.reset();
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());

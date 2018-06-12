@@ -499,6 +499,7 @@ public class GameManager {
 
             currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
+            startTimer(20000);
 
             //wait until turn has ended
             waitEndTurn();
@@ -533,13 +534,20 @@ public class GameManager {
             }
             if (!cancelTimer.get()){
 
-                endTurn();
-
                 try {
                     currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                endTurn();
+
+                cancelTimer.set(false);
                 System.out.println("timer ended\n");
             }
 

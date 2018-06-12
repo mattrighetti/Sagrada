@@ -862,7 +862,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void timeOut() {
-        createPopUpWindow("Message", "Time's out!", "The time to make the moves is ended");
+        createPopUpWindow("Message", "Time's out!", "The time to make the moves is ended").showAndWait();
 
         windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
         windowControllerList.get(0).setSelectedDice(null);
