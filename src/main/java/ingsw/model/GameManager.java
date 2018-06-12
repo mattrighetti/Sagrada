@@ -46,6 +46,7 @@ public class GameManager {
     private AtomicBoolean doubleMove;
     public final Object toolCardLock = new Object();
     private AtomicInteger turnInRound = new AtomicInteger(0);
+    private AtomicBoolean cancelTimer;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -57,6 +58,7 @@ public class GameManager {
         noOfAck = new AtomicInteger(0);
         endRound = new AtomicBoolean(false);
         doubleMove = new AtomicBoolean(false);
+        cancelTimer = new AtomicBoolean(false);
         brokenWindow = false;
         playerList = players;
         roundTrack = new ArrayList<>();
@@ -361,6 +363,13 @@ public class GameManager {
     public void endTurn() {
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
+
+        synchronized (cancelTimer){
+            if (!cancelTimer.get()) {
+            cancelTimer.set(true);
+            cancelTimer.notify();
+            }
+        }
     }
 
     /**
@@ -478,6 +487,7 @@ public class GameManager {
 
             currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
+            startTimer(20000);
 
             //wait until turn has ended
             waitEndTurn();
@@ -508,6 +518,32 @@ public class GameManager {
         synchronized (endRound) {
             endRound.notify();
         }
+    }
+
+    private void startTimer(long time) {
+        cancelTimer.set(false);
+        new Thread(() -> {
+            System.out.println("start timer\n");
+            synchronized (cancelTimer) {
+                try {
+                    cancelTimer.wait(time);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (!cancelTimer.get()){
+
+                endTurn();
+
+                try {
+                    currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("timer ended\n");
+            }
+
+        }).start();
     }
 
     private void notifyUpdatedRoundTrack() {
