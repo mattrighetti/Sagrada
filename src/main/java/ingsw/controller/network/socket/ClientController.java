@@ -457,12 +457,12 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(LoseNotification loseNotification) {
-        sceneUpdater.showWinnerNotification(loseNotification.totalScore);
+        sceneUpdater.showLostNotification(loseNotification.totalScore);
     }
 
     @Override
     public void handle(VictoryNotification victoryNotification) {
-        sceneUpdater.showLostNotification(victoryNotification.totalScore);
+        sceneUpdater.showWinnerNotification(victoryNotification.totalScore);
     }
 
     @Override

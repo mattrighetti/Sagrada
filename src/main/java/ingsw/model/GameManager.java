@@ -402,7 +402,7 @@ public class GameManager {
                 e.printStackTrace();
             }
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1; i++) {
                 notifyDraftToPlayer(playerList.get(0));
                 endRound.set(false);
 
@@ -426,13 +426,13 @@ public class GameManager {
 
     private void evaluatePointsAndNotifyWinner() {
         Map<String, Integer> scores = new HashMap<>();
-        int maxScore = 0;
+        int maxScore = -21;
         String winnerUsername = "";
         for (Player player : playerList) {
             int points = 0;
-            points += publicObjectiveCards.get(0).getScore(player.getPatternCard().getGrid());
-            points += publicObjectiveCards.get(1).getScore(player.getPatternCard().getGrid());
-            points += publicObjectiveCards.get(2).getScore(player.getPatternCard().getGrid());
+            for (PublicObjectiveCard publicObjectiveCard : board.getPublicObjectiveCards()) {
+                points += publicObjectiveCard.getScore(player.getPatternCard().getGrid());
+            }
             points += player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid());
             points -= player.getPatternCard().getNoOfEmptyBoxes();
             if (points > maxScore) {

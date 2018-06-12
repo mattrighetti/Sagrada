@@ -47,7 +47,6 @@ public abstract class PatternCard extends Card {
     }
 
     public int getNoOfEmptyBoxes() {
-
         return grid.stream().
                 mapToInt(row -> (int) row.stream()
                         .filter(box -> box.getDice() == null).count())

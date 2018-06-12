@@ -60,4 +60,8 @@ public class Board {
     public List<Dice> getDraftedDice() {
         return draftedDice;
     }
+
+    public List<PublicObjectiveCard> getPublicObjectiveCards() {
+        return publicObjectiveCards;
+    }
 }
