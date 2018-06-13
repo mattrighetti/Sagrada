@@ -411,6 +411,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
         Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
         windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
+        placeDiceMoveDone = false;
         activateCommands();
     }
 
@@ -552,9 +553,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         return existsAvailablePosition;
     }
 
-    /**************************************/
 
-    /*_____________TOOL CARDS_____________*/
+    /***************TOOL CARDS**************/
 
 
     /**
@@ -573,6 +573,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             }
             if (placeDiceMoveDone)
                 disableDice();
+            else
+                activateDice();
             endTurnButton.setDisable(true);
         });
         System.out.println("Tool card used");
@@ -589,6 +591,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
         if (placeDiceMoveDone)
             disableDice();
+        else activateDice();
     }
 
 
@@ -597,6 +600,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
         if (placeDiceMoveDone)
             disableDice();
+        else activateDice();
     }
 
     @Override
@@ -699,6 +703,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
                                 System.out.println(button.getDice().toString());
                                 networkType.fluxBrushMove(button.getDice());
+                                clearSelectedDice();
 
                             }
                         });
@@ -711,23 +716,27 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 Platform.runLater(() -> {
                     createPopUpWindow("Flux Brush", "This is the new rolled die", "Place the dice, if it is possible").showAndWait();
 
+                    clearSelectedDice();
                     windowControllerList.get(0).setSelectedDice(useToolCardResponse.selectedDice);
-                    windowControllerList.get(0).fluxBrushMove();
                     setCursorDice(useToolCardResponse.selectedDice);
                     windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
                     windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.selectedDice.toString());
                     displayDraftedDice(useToolCardResponse.draftedDice);
+
                     boolean noAvailable = false;
-                    for (int j = 0; j < 4; j++) {
-                        for (int k = 0; k < 5; k++) {
-                            noAvailable = useToolCardResponse.availablePositions.get(useToolCardResponse.selectedDice)[j][k] || noAvailable;
+
+                    for (int j = 0; j < useToolCardResponse.availablePositions.get(useToolCardResponse.selectedDice.toString()).length; j++) {
+                        for (int k = 0; k < useToolCardResponse.availablePositions.get(useToolCardResponse.selectedDice.toString())[j].length; k++) {
+                            noAvailable = useToolCardResponse.availablePositions.get(useToolCardResponse.selectedDice.toString())[j][k] || noAvailable;
                         }
                     }
+
                     if (!noAvailable) {
                         ArrayList<DiceButton> diceButtons = new ArrayList<>();
                         for (Node button : diceHorizontalBox.getChildren()) {
                             diceButtons.add((DiceButton) button);
                         }
+
                         for (DiceButton button : diceButtons) {
                             if (useToolCardResponse.selectedDice.toString().equals(button.getDice().toString()))
                                 button.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -739,8 +748,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                     }
                                 });
                         }
-                    }
+
+                    } else  windowControllerList.get(0).fluxBrushMove();
                 });
+
         }
     }
 
