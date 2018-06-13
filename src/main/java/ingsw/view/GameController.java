@@ -366,14 +366,16 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void timeOut() {
-        createPopUpWindow("Message", "Time's out!", "The time to make the moves is ended").showAndWait();
-        System.out.println("Time out\n");
-        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-        windowControllerList.get(0).setSelectedDice(null);
-        disableDice();
-        disableToolCards();
-        placeDiceMoveDone = false;
-        endTurnButton.setDisable(true);
+        Platform.runLater(() -> {
+            createPopUpWindow("Message", "Time's out!", "The time to make the moves is ended").showAndWait();
+            System.out.println("Time out\n");
+            windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+            windowControllerList.get(0).setSelectedDice(null);
+            disableDice();
+            disableToolCards();
+            placeDiceMoveDone = false;
+            endTurnButton.setDisable(true);
+        });
     }
 
     private void endTurnButtonReset() {
