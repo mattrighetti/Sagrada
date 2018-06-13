@@ -1,8 +1,10 @@
 package ingsw.view;
 
 import ingsw.controller.network.NetworkType;
+import ingsw.controller.network.commands.BundleDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.utilities.DoubleString;
+import ingsw.utilities.TripleString;
 import ingsw.view.nodes.ProgressForm;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -59,7 +61,7 @@ public class LobbyController implements SceneUpdater, Initializable {
     private TableColumn matchConnectedUsersColumn;
 
     @FXML
-    private TableView<?> rankingTableView;
+    private TableView<TripleString> rankingTableView;
 
     @FXML
     private TableColumn rankColumn;
@@ -68,10 +70,13 @@ public class LobbyController implements SceneUpdater, Initializable {
     private TableColumn usernameColumn;
 
     @FXML
-    private TableColumn winsColumn;
+    private TableColumn rankWinsColumn;
 
     @FXML
-    private TableView<?> statisticsTableView;
+    private TableView<TripleString> statisticsTableView;
+
+    @FXML
+    private TableColumn statsWinsColumn;
 
     @FXML
     private TableColumn losesColumn;
@@ -86,14 +91,33 @@ public class LobbyController implements SceneUpdater, Initializable {
     private View application;
 
     private ObservableList<DoubleString> availableMatches;
+    private ObservableList<TripleString> statistics;
+    private ObservableList<TripleString> ranking;
     private ProgressForm progressForm;
+
+    private final String FIRST_FIELD = "firstField";
+    private final String SECOND_FIELD = "secondField";
+    private final String THIRD_FIELD = "thirdField";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         availableMatches = FXCollections.observableArrayList();
+        statistics = FXCollections.observableArrayList();
+        ranking = FXCollections.observableArrayList();
+
         matchTableView.setItems(availableMatches);
-        matchNameColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, String>("firstField"));
-        matchConnectedUsersColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, Integer>("secondField"));
+        matchNameColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, String>(FIRST_FIELD));
+        matchConnectedUsersColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, Integer>(SECOND_FIELD));
+
+        rankingTableView.setItems(ranking);
+        rankColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(FIRST_FIELD));
+        usernameColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(SECOND_FIELD));
+        rankWinsColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(THIRD_FIELD));
+
+        statisticsTableView.setItems(statistics);
+        statsWinsColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(FIRST_FIELD));
+        losesColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(SECOND_FIELD));
+        timePlayedColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(THIRD_FIELD));
     }
 
     void setApplication(View application) {
@@ -167,6 +191,29 @@ public class LobbyController implements SceneUpdater, Initializable {
     public void updateExistingMatches(List<DoubleString> matches) {
         availableMatches.clear();
         availableMatches.addAll(matches);
+    }
+
+    @Override
+    public void loadLobbyData(BundleDataResponse bundleDataResponse) {
+        availableMatches.clear();
+        availableMatches.addAll(bundleDataResponse.matches);
+        ranking.clear();
+        ranking.addAll(bundleDataResponse.rankings);
+        statistics.clear();
+        statistics.addAll(bundleDataResponse.getUserStatsData(application.getUsername()));
+        updateConnectedUsers(bundleDataResponse.connectedUsers);
+    }
+
+    void requestBundleData() {
+        networkType.requestBundleData();
+    }
+
+    @Override
+    public void updateRankingStatsTableView(List<TripleString> tripleStringList) {
+        ranking.clear();
+        ranking.addAll(tripleStringList);
+        statistics.clear();
+        statistics.addAll(tripleStringList);
     }
 
     @Override

@@ -67,6 +67,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.nextResponse().handle(this);
     }
 
+    @Override
+    public void requestBundleData() {
+        client.request(new BundleDataRequest());
+    }
+
     /**
      * Method that creates a match
      *
@@ -117,9 +122,9 @@ public class ClientController implements ResponseHandler, NetworkType {
      * Method that tells the server to position a dice in the user's pattern card at that column and row indexes.
      * It's one of the possible move that the player is able to use
      *
-     * @param dice dice placed in the window
+     * @param dice        dice placed in the window
      * @param columnIndex column index where the die has been placed
-     * @param rowIndex row index where the die has been placed
+     * @param rowIndex    row index where the die has been placed
      */
     @Override
     public void placeDice(Dice dice, int columnIndex, int rowIndex) {
@@ -182,7 +187,7 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     @Override
     public void fluxBrushMove(Dice selectedDice, int rowIndex, int columnIndex) {
-        client.request(new FluxBrushRequest(selectedDice,rowIndex,columnIndex));
+        client.request(new FluxBrushRequest(selectedDice, rowIndex, columnIndex));
     }
 
     @Override
@@ -207,7 +212,7 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     @Override
     public void fluxRemoverMove(Dice selectedDice, int columnIndex, int rowIndex) {
-        client.request(new FluxRemoverRequest(selectedDice,rowIndex,columnIndex));
+        client.request(new FluxRemoverRequest(selectedDice, rowIndex, columnIndex));
     }
 
     @Override
@@ -265,8 +270,6 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(LoginUserResponse loginUserResponse) {
         if (loginUserResponse.user != null) {
-            sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
-            sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
             sceneUpdater.launchSecondGui(loginUserResponse.user.getUsername());
         } else
             sceneUpdater.launchAlert();
@@ -319,6 +322,7 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /**
      * Method that updates the view whenever a User placed a die in their window
+     *
      * @param updateViewResponse response that's going to trigger the view update
      */
     @Override
@@ -395,6 +399,7 @@ public class ClientController implements ResponseHandler, NetworkType {
      * Method that handle the responses from the server after the user send his move for a ToolCard
      * Depending on the ToolCard Type, the switch-case calls the relative interface method, throws overloading,
      * to the SceneUpdater
+     *
      * @param useToolCardResponse response from the Server that contains information about the toolCard move
      */
     @Override
@@ -456,6 +461,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void handle(BundleDataResponse bundleDataResponse) {
+        sceneUpdater.loadLobbyData(bundleDataResponse);
+    }
+
+    @Override
     public void handle(LoseNotification loseNotification) {
         sceneUpdater.showLostNotification(loseNotification.totalScore);
     }
@@ -468,5 +478,10 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(TimeOutResponse timeOutResponse) {
         sceneUpdater.timeOut();
+    }
+
+    @Override
+    public void handle(RankingDataResponse rankingDataResponse) {
+        sceneUpdater.updateRankingStatsTableView(rankingDataResponse.tripleString);
     }
 }

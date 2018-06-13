@@ -1,6 +1,7 @@
 package ingsw.model;
 
 import ingsw.controller.Controller;
+import ingsw.controller.network.commands.BundleDataResponse;
 import ingsw.controller.network.commands.CreateMatchResponse;
 import ingsw.controller.network.commands.LoginUserResponse;
 import ingsw.controller.network.commands.ReJoinResponse;
@@ -8,6 +9,7 @@ import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.utilities.Broadcaster;
 import ingsw.utilities.DoubleString;
+import ingsw.utilities.TripleString;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -47,14 +49,41 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
-    public List<DoubleString> doubleStringBuilder() throws RemoteException {
+    public List<DoubleString> createAvailableMatchesList() {
         DoubleString doubleString;
         List<DoubleString> availableMatchesDoubleString = new ArrayList<>();
         for (Controller match : matchesByName.values()) {
             doubleString = new DoubleString(match.getMatchName(), match.getConnectedUsers());
             availableMatchesDoubleString.add(doubleString);
         }
+
         return availableMatchesDoubleString;
+    }
+
+    @Override
+    public List<TripleString> createRankingsList() {
+        TripleString tripleString;
+        List<TripleString> ranking = new ArrayList<>();
+        for (User user : connectedUsers.values()) {
+            tripleString = new TripleString("?", user.getUsername(), String.valueOf(user.getNoOfWins()));
+            ranking.add(tripleString);
+        }
+
+        return ranking;
+    }
+
+    @Override
+    public Map<String, TripleString> createUserStats() {
+        TripleString tripleString;
+        Map<String, TripleString> userStats = new HashMap<>();
+        for (User user : connectedUsers.values()) {
+            tripleString = new TripleString(String.valueOf(user.getNoOfWins()),
+                    String.valueOf(user.getNoOfLose()),
+                    String.valueOf(user.getActiveTime()));
+            userStats.put(user.getUsername(), tripleString);
+        }
+
+        return userStats;
     }
 
     /**
@@ -92,8 +121,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         if (!connectedUsers.containsKey(username)) {
             currentUser.addListener(userObserver);
             connectedUsers.put(username, currentUser);
-            connectedUsers.get(username).getUserObserver()
-                    .sendResponse(new LoginUserResponse(currentUser, getConnectedUsers(), doubleStringBuilder()));
+            connectedUsers.get(username).getUserObserver().sendResponse(new LoginUserResponse(currentUser));
             broadcastUsersConnected(username);
             return connectedUsers.get(username);
         }
@@ -131,7 +159,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
                 e.printStackTrace();
             }
 
-            Broadcaster.broadcastResponseToAll(connectedUsers, new CreateMatchResponse(doubleStringBuilder()));
+            Broadcaster.broadcastResponseToAll(connectedUsers, new CreateMatchResponse(createAvailableMatchesList()));
         } else
             throw new RemoteException("Match already exists");
     }
@@ -141,7 +169,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         for (User user : connectedUsers.values()) {
             if (user.getUsername().equals(username)) {
                 matchesByName.get(matchName).loginUser(user);
-                Broadcaster.broadcastResponse(connectedUsers, user.getUsername(), new CreateMatchResponse(doubleStringBuilder()));
+                Broadcaster.broadcastResponse(connectedUsers, user.getUsername(), new CreateMatchResponse(createAvailableMatchesList()));
             }
         }
     }
@@ -178,6 +206,13 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     @Override
     public void broadcastUsersConnected(String username) {
         Broadcaster.broadcastResponseToAll(connectedUsers, connectedUsers.size());
+        Broadcaster.broadcastResponseToAll(connectedUsers, createRankingsList());
+    }
+
+    @Override
+    public void sendBundleData(String username) throws RemoteException {
+        connectedUsers.get(username).getUserObserver().sendResponse(
+                new BundleDataResponse(connectedUsers.size(), createRankingsList(), createAvailableMatchesList(), createUserStats()));
     }
 
     @Override

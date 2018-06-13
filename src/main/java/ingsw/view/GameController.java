@@ -244,7 +244,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             imageView.setOnMouseClicked(event -> {
                 ButtonType no = new ButtonType("No");
                 ButtonType yes = new ButtonType("Yes");
-                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do you want to use " + imageView.getId().toString() + "?",  no, yes);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you want to use " + imageView.getId().toString() + "?", no, yes);
                 alert.setTitle("Use Tool card");
                 Optional<ButtonType> result = alert.showAndWait();
                 System.out.println("no button pressed");
@@ -538,7 +538,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void showWinnerNotification(int totalScore) {
-
         Platform.runLater(() -> createPopUpWindow("Match has ended", "You won!", "Your Score: " + totalScore).showAndWait());
     }
 
@@ -994,14 +993,14 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                             disableDice();
                             disableToolCards();
                             endTurnButton.setOnAction(event1 -> {
-                                        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-                                        windowControllerList.get(0).setSelectedDice(null);
-                                        networkType.tapWheelMove(-1);
-                                        disableDice();
-                                        endTurnButton.setOnAction(event2 -> endTurnButtonReset());
-                                        endTurnButton.setDisable(true);
-                                        disableRoundTrack();
-                                    });
+                                windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+                                windowControllerList.get(0).setSelectedDice(null);
+                                networkType.tapWheelMove(-1);
+                                disableDice();
+                                endTurnButton.setOnAction(event2 -> endTurnButtonReset());
+                                endTurnButton.setDisable(true);
+                                disableRoundTrack();
+                            });
 
                             Alert alert = createPopUpWindow("Use Tool card", "Tap Wheel", "Select a dice from the round track and\n move at most two dice of that color in the pattern");
                             alert.showAndWait();
@@ -1035,7 +1034,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                             windowControllerList.get(0).updatePatternCardTapWheel(useToolCardResponse.patternCard);
                             ButtonType yes = new ButtonType("Yes");
                             ButtonType no = new ButtonType("No");
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION,"Do you want to place another dice?", yes, no);
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you want to place another dice?", yes, no);
                             alert.setTitle("Use Tool card");
                             alert.setHeaderText("Tap Wheel");
                             Optional<ButtonType> result = alert.showAndWait();

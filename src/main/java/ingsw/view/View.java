@@ -156,6 +156,7 @@ public class View extends Application implements GUIUpdater {
         setCurrentScene(lobbyController);
 
         this.username = username;
+        lobbyController.requestBundleData();
     }
 
     /**

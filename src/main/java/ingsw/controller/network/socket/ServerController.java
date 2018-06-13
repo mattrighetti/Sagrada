@@ -33,7 +33,7 @@ public class ServerController implements RequestHandler, Serializable {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, clientHandler);
         } catch (InvalidUsernameException | RemoteException e) {
-            return new LoginUserResponse(null, -1, null);
+            return new LoginUserResponse(null);
         }
 
         return null;
@@ -101,6 +101,17 @@ public class ServerController implements RequestHandler, Serializable {
     public Response handle(DraftDiceRequest draftDiceRequest) {
         try {
             controller.draftDice(user.getUsername());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public Response handle(BundleDataRequest bundleDataRequest) {
+        try {
+            sagradaGame.sendBundleData(user.getUsername());
         } catch (RemoteException e) {
             e.printStackTrace();
         }

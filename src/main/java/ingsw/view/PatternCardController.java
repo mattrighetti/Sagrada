@@ -3,9 +3,8 @@ package ingsw.view;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.utilities.DoubleString;
+import ingsw.view.nodes.ProgressForm;
 import javafx.application.Platform;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -31,13 +30,13 @@ public class PatternCardController implements SceneUpdater {
     @FXML
     private Button patternCardFour;
 
-    private List<PatternCard> patternCards;
-
     private NetworkType networkType;
-
     private View application;
 
-    public void setApplication(View application) {
+    private List<PatternCard> patternCards;
+    private ProgressForm progressForm;
+
+    void setApplication(View application) {
         this.application = application;
     }
 
@@ -49,33 +48,29 @@ public class PatternCardController implements SceneUpdater {
     @FXML
     void onClickPatternCardFour(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(3));
+        progressForm = new ProgressForm();
+        progressForm.activateProgressBar();
     }
 
     @FXML
     void onClickPatternCardOne(ActionEvent event) {
-        System.out.println(patternCards.get(0).toString() + " clicked.");
         networkType.choosePatternCard(patternCards.get(0));
+        progressForm = new ProgressForm();
+        progressForm.activateProgressBar();
     }
 
     @FXML
     void onClickPatternCardThree(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(2));
+        progressForm = new ProgressForm();
+        progressForm.activateProgressBar();
     }
 
     @FXML
     void onClickPatternCardTwo(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(1));
-    }
-
-
-    @Override
-    public void updateConnectedUsers(int usersConnected) {
-
-    }
-
-    @Override
-    public void updateExistingMatches(List<DoubleString> matches) {
-
+        progressForm = new ProgressForm();
+        progressForm.activateProgressBar();
     }
 
     @Override
@@ -105,6 +100,6 @@ public class PatternCardController implements SceneUpdater {
 
     @Override
     public void launchFourthGui(BoardDataResponse boardDataResponse) {
-        Platform.runLater( () -> application.launchFourthGUI(boardDataResponse));
+        Platform.runLater(() -> application.launchFourthGUI(boardDataResponse));
     }
 }

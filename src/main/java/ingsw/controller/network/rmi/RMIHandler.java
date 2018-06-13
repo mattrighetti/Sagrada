@@ -5,7 +5,6 @@ import ingsw.controller.network.commands.*;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.model.RemoteSagradaGame;
 import ingsw.model.User;
-import ingsw.model.cards.toolcards.RunningPliers;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -46,7 +45,7 @@ public class RMIHandler implements RequestHandler {
         try {
             user = sagradaGame.loginUser(loginUserRequest.username, rmiUserObserver);
         } catch (InvalidUsernameException | RemoteException e) {
-            new LoginUserResponse(null, -1, null).handle(rmiController);
+            new LoginUserResponse(null).handle(rmiController);
         }
 
         return null;
@@ -73,6 +72,16 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    @Override
+    public Response handle(BundleDataRequest bundleDataRequest) {
+        try {
+            sagradaGame.sendBundleData(user.getUsername());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     @Override
     public Response handle(MoveToolCardRequest moveToolCardRequest) {

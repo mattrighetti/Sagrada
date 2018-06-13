@@ -81,4 +81,8 @@ public class User implements Serializable {
     void updateUserConnected(int numberOfConnectedUsers) throws RemoteException {
         userObserver.onJoin(numberOfConnectedUsers);
     }
+
+    public long getActiveTime() {
+        return stopWatch.getTime();
+    }
 }

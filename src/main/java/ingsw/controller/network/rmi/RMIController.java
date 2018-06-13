@@ -64,6 +64,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void requestBundleData() {
+        new BundleDataRequest().handle(rmiHandler);
+    }
+
+    @Override
     public void choosePatternCard(PatternCard patternCard) {
         new ChosenPatternCardRequest(patternCard).handle(rmiHandler);
     }
@@ -100,7 +105,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void fluxBrushMove(Dice selectedDice, int rowIndex, int columnIndex) {
-        new FluxBrushRequest(selectedDice,rowIndex, columnIndex).handle(rmiHandler);
+        new FluxBrushRequest(selectedDice, rowIndex, columnIndex).handle(rmiHandler);
     }
 
     @Override
@@ -125,7 +130,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void fluxRemoverMove(Dice selectedDice, int columnIndex, int rowIndex) {
-        new FluxBrushRequest(selectedDice,rowIndex,columnIndex).handle(rmiHandler);
+        new FluxBrushRequest(selectedDice, rowIndex, columnIndex).handle(rmiHandler);
     }
 
     @Override
@@ -135,7 +140,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
-        new CorkBackedStraightedgeRequest(selectedDice,row,column).handle(rmiHandler);
+        new CorkBackedStraightedgeRequest(selectedDice, row, column).handle(rmiHandler);
     }
 
     @Override
@@ -150,7 +155,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
-        new RunningPliersRequest(selectedDice,rowIndex, columnIndex).handle(rmiHandler);
+        new RunningPliersRequest(selectedDice, rowIndex, columnIndex).handle(rmiHandler);
     }
 
     @Override
@@ -190,8 +195,6 @@ public class RMIController implements ResponseHandler, NetworkType {
             loginUserResponse.user.addListener(rmiUserObserver);
             System.out.println("New connection >>> " + loginUserResponse.user.getUsername());
 
-            sceneUpdater.updateConnectedUsers(loginUserResponse.connectedUsers);
-            sceneUpdater.updateExistingMatches(loginUserResponse.availableMatches);
             sceneUpdater.launchSecondGui(loginUserResponse.user.getUsername());
         } else
             sceneUpdater.launchAlert();
@@ -337,5 +340,15 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(VictoryNotification victoryNotification) {
         sceneUpdater.showWinnerNotification(victoryNotification.totalScore);
+    }
+
+    @Override
+    public void handle(RankingDataResponse rankingDataResponse) {
+        sceneUpdater.updateRankingStatsTableView(rankingDataResponse.tripleString);
+    }
+
+    @Override
+    public void handle(BundleDataResponse bundleDataResponse) {
+        sceneUpdater.loadLobbyData(bundleDataResponse);
     }
 }

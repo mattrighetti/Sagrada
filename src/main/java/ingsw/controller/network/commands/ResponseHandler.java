@@ -35,4 +35,8 @@ public interface ResponseHandler {
     void handle(VictoryNotification victoryNotification);
 
     void handle(TimeOutResponse timeOutResponse);
+
+    void handle(RankingDataResponse rankingDataResponse);
+
+    void handle(BundleDataResponse bundleDataResponse);
 }

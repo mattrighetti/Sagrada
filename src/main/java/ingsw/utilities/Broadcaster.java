@@ -214,4 +214,14 @@ public final class Broadcaster {
             }
         }
     }
+
+    public static void broadcastResponseToAll(Map<String, User> users, List<TripleString> tripleStrings) {
+        for (User user : users.values()) {
+            try {
+                user.getUserObserver().sendResponse(new RankingDataResponse(tripleStrings));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

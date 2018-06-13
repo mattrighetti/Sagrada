@@ -62,4 +62,6 @@ public interface NetworkType {
     void tapWheelMove(Tuple dicePosition, Tuple position, int phase, boolean doubleMove);
 
     void tapWheelMove(int endTapWheel);
+
+    void requestBundleData();
 }
