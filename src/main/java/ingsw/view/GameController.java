@@ -30,6 +30,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.apache.xerces.impl.dtd.models.DFAContentModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -249,6 +250,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 System.out.println("no button pressed");
                 if (result.get() == yes) {
                     networkType.useToolCard(imageView.getId());
+                    clearSelectedDice();
                     System.out.println(imageView.getId());
                     disableToolCards();
                 }
@@ -291,8 +293,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                     windowControllerList.get(0).setSelectedDice(diceButtonToAdd.getDice());
                     windowControllerList.get(0).updateAvailablePositions(diceButtonToAdd.getDice().toString());
                 } else {
-                    windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-                    windowControllerList.get(0).setSelectedDice(null);
+                    clearSelectedDice();
                 }
             });
             diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
@@ -306,9 +307,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     private void setCursorDice(Dice dice) {
-        Image cursor = new Image("/img/dice/" + dice.toString() + ".png", 90, 90, true, true);
-        ImageCursor imageCursor = new ImageCursor(cursor);
-        windowControllerList.get(0).getPatternCardGridPane().setCursor(imageCursor);
+        windowControllerList.get(0).setCursorDice(dice.toString());
     }
 
     /**
@@ -366,26 +365,21 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void timeOut() {
-        Platform.runLater(() -> {
-            createPopUpWindow("Message", "Time's out!", "The time to make the moves is ended").showAndWait();
-            System.out.println("Time out\n");
-            windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-            windowControllerList.get(0).setSelectedDice(null);
-            disableDice();
-            disableToolCards();
-            placeDiceMoveDone = false;
-            endTurnButton.setDisable(true);
-        });
+        Platform.runLater(() -> disableCommandsAndReset() );
     }
 
     private void endTurnButtonReset() {
+        disableCommandsAndReset();
+        networkType.endTurn();
+    }
+
+    private void disableCommandsAndReset() {
         windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
         windowControllerList.get(0).setSelectedDice(null);
         disableDice();
         disableToolCards();
         placeDiceMoveDone = false;
         endTurnButton.setDisable(true);
-        networkType.endTurn();
     }
 
     @Override
@@ -404,6 +398,45 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void updateMovesHistory(MoveStatusNotification notification) {
         playersMoves.clear();
         playersMoves.addAll(notification.moveStatuses);
+    }
+
+    @Override
+    public void setDraftedDice(List<Dice> dice) {
+        Platform.runLater(() -> displayDraftedDice(dice));
+        draftDiceButton.setDisable(true);
+        networkType.sendAck();
+    }
+
+    @Override
+    public void setAvailablePosition(StartTurnNotification startTurnNotification) {
+        Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
+        windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
+        activateCommands();
+    }
+
+    private void activateCommands(){
+        activateDice();
+        activateToolCard();
+        endTurnButton.setDisable(false);
+    }
+
+    /**
+     * Clear the selected dice
+     * sets null the attribute selectedDice in the WindowController
+     * sets the Default Cursor
+     */
+    void clearSelectedDice(){
+        windowControllerList.get(0).setSelectedDice(null);
+        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+    }
+
+    private void updateTab(Player player, Map<String, Boolean[][]> availablePositions) {
+        for (WindowController windowController : windowControllerList) {
+            if (windowController.getUsername().equals(player.getPlayerUsername())) {
+                windowController.updatePatternCard(player.getPatternCard());
+                windowController.setAvailablePosition(availablePositions);
+            }
+        }
     }
 
     private void addRoundInRoundTrack(List<Dice> diceToAdd) {
@@ -508,12 +541,27 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         Platform.runLater(() -> createPopUpWindow("Match has ended", "You won!", "Your Score: " + totalScore).showAndWait());
     }
 
+    private boolean checkAvailablePositions(Boolean[][] availablePositions) {
+        boolean existsAvailablePosition = false;
+        for (int i = 0; i < availablePositions.length; i++) {
+            for (int j = 0; j < availablePositions[i].length; j++) {
+                existsAvailablePosition = availablePositions[i][j] || existsAvailablePosition;
+            }
+
+        }
+        return existsAvailablePosition;
+    }
 
     /**************************************/
 
     /*_____________TOOL CARDS_____________*/
 
 
+    /**
+     *
+     *
+     * @param draftedDiceToolCardResponse
+     */
     @Override
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
@@ -531,74 +579,104 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     @Override
-    public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
-        Platform.runLater(
-                () -> {
-                    ButtonType increase = new ButtonType("Increase");
-                    ButtonType decrease = new ButtonType("Decrease");
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do currentPlayerIndex want to increase \nor decrease the dice value?", increase, decrease);
-                    alert.setTitle("Use Tool card");
-                    alert.setHeaderText("Grozing Pliers");
-                    Optional<ButtonType> result = alert.showAndWait();
-
-                    if (!result.isPresent()) {
-                        System.out.println("no button pressed");
-                    } else {
-                        activateDice();
-
-                        if ((increase == result.get())) {
-                            System.out.println("increase pressed");
-                            ArrayList<DiceButton> diceButtons = new ArrayList<>();
-                            for (Node button : diceHorizontalBox.getChildren()) {
-                                diceButtons.add((DiceButton) button);
-                            }
-
-                            for (DiceButton button : diceButtons) {
-                                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                    @Override
-                                    public void handle(MouseEvent event) {
-                                        if (button.getDice().toString().indexOf('6') < 0) {
-                                            System.out.println(button.getDice().toString());
-                                            networkType.grozingPliersMove(button.getDice(), true);
-                                        } else {
-                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value SIX can't be increased");
-                                            ErrAlert.showAndWait();
-                                        }
-
-                                    }
-                                });
-                            }
-
-
-                        } else if ((decrease == result.get())) {
-                            System.out.println("decrease pressed");
-                            ArrayList<DiceButton> diceButtons = new ArrayList<>();
-                            for (Node button : diceHorizontalBox.getChildren()) {
-                                diceButtons.add((DiceButton) button);
-                            }
-
-                            for (DiceButton button : diceButtons) {
-                                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                    @Override
-                                    public void handle(MouseEvent event) {
-                                        if (button.getDice().toString().indexOf('1') < 0) {
-                                            System.out.println(button.getDice());
-                                            networkType.grozingPliersMove(button.getDice(), false);
-                                        } else {
-                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value ONE can't be decreased");
-                                            ErrAlert.showAndWait();
-                                        }
-
-                                    }
-                                });
-
-                            }
-                        }
-                    }
-
-                });
+    public void toolCardAction(RoundTrackToolCardResponse useToolCardResponse) {
+        ObservableList<Node> nodes = roundTrackHBox.getChildren();
+        Platform.runLater(() -> roundTrackHBox.getChildren().removeAll(nodes));
+        roundDiceVBoxList.clear();
+        roundButtonList.clear();
+        for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
+            addRoundInRoundTrack(roundDice);
+        }
+        if (placeDiceMoveDone)
+            disableDice();
     }
 
+
+    @Override
+    public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
+        updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
+        if (placeDiceMoveDone)
+            disableDice();
+    }
+
+    @Override
+    public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            createPopUpWindow("Use Tool Card", "Move not allowed ", "You can't use this tool card").showAndWait();
+            activateToolCard();
+        });
+
+    }
+
+    /**
+     * COPPER FOIL BURNISHER
+     *
+     * Tool Card that makes move a die in the Pattern Card in another position
+     * ignoring the shade restrictions
+     *
+     * @param useToolCardResponse response with the available positions to place dice with specific restriction for this tool card
+     */
+    @Override
+    public void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\nignoring shade restrictions");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Copper Foil Burnisher");
+            alert.showAndWait();
+            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+
+            windowControllerList.get(0).moveDiceinPatternCard();
+        });
+    }
+
+    /**
+     * CORK BACKED STRAIGHTEDGE
+     *
+     * Tool Card that makes place a die in a spot that is not adjacent to another die
+     *
+     * @param useToolCardResponse response with the available positions to place dice with specific restriction for this tool card
+     */
+    @Override
+    public void toolCardAction(CorkBackedStraightedgeResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Place a dice in a spot that is not\n adjacent to another die");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Cork Backed Straightedge");
+            alert.showAndWait();
+            activateDice();
+            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+            windowControllerList.get(0).corkBackedStraightedge();
+        });
+    }
+
+    /**
+     * EGLOMISE BRUSH
+     *
+     * Tool Card that makes move a die in the Pattern Card in another position
+     * ignoring the color restrictions
+     *
+     * @param useToolCardResponse response with the available positions to place dice with specific restriction for this tool card
+     */
+    @Override
+    public void toolCardAction(EglomiseBrushResponse useToolCardResponse) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\nignoring color restrictions");
+            alert.setTitle("Use Tool card");
+            alert.setHeaderText("Eglomise Brush");
+            alert.showAndWait();
+            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+        });
+        windowControllerList.get(0).moveDiceinPatternCard();
+    }
+
+    /**
+     * FLUX BRUSH
+     *
+     * Tool Card that makes choose a die to be rolled again, than makes place it
+     * if it is possible, otherwise let place it in the drafted pool
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(FluxBrushResponse useToolCardResponse) {
         switch (useToolCardResponse.phase) {
@@ -666,6 +744,16 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
+    /**
+     * FLUX REMOVER
+     *
+     * Tool Card that makes choose a die to be removed from the drafted pool
+     * then, received a new one from the dice bag, makes choose its value
+     * and place it in the pattern, if it is possible
+     * otherwise let place it in the drafted pool
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(FluxRemoverResponse useToolCardResponse) {
         switch (useToolCardResponse.phase) {
@@ -740,15 +828,73 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
-    private boolean checkAvailablePositions(Boolean[][] availablePositions) {
-        boolean existsAvailablePosition = false;
-        for (int i = 0; i < availablePositions.length; i++) {
-            for (int j = 0; j < availablePositions[i].length; j++) {
-                existsAvailablePosition = availablePositions[i][j] || existsAvailablePosition;
-            }
+    @Override
+    public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
+        Platform.runLater(
+                () -> {
+                    ButtonType increase = new ButtonType("Increase");
+                    ButtonType decrease = new ButtonType("Decrease");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do currentPlayerIndex want to increase \nor decrease the dice value?", increase, decrease);
+                    alert.setTitle("Use Tool card");
+                    alert.setHeaderText("Grozing Pliers");
+                    Optional<ButtonType> result = alert.showAndWait();
 
-        }
-        return existsAvailablePosition;
+                    if (!result.isPresent()) {
+                        System.out.println("no button pressed");
+                    } else {
+                        activateDice();
+
+                        if ((increase == result.get())) {
+                            System.out.println("increase pressed");
+                            ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                            for (Node button : diceHorizontalBox.getChildren()) {
+                                diceButtons.add((DiceButton) button);
+                            }
+
+                            for (DiceButton button : diceButtons) {
+                                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent event) {
+                                        if (button.getDice().toString().indexOf('6') < 0) {
+                                            System.out.println(button.getDice().toString());
+                                            networkType.grozingPliersMove(button.getDice(), true);
+                                        } else {
+                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value SIX can't be increased");
+                                            ErrAlert.showAndWait();
+                                        }
+
+                                    }
+                                });
+                            }
+
+
+                        } else if ((decrease == result.get())) {
+                            System.out.println("decrease pressed");
+                            ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                            for (Node button : diceHorizontalBox.getChildren()) {
+                                diceButtons.add((DiceButton) button);
+                            }
+
+                            for (DiceButton button : diceButtons) {
+                                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent event) {
+                                        if (button.getDice().toString().indexOf('1') < 0) {
+                                            System.out.println(button.getDice());
+                                            networkType.grozingPliersMove(button.getDice(), false);
+                                        } else {
+                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value ONE can't be decreased");
+                                            ErrAlert.showAndWait();
+                                        }
+
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+
+                });
     }
 
 
@@ -780,19 +926,12 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
-    @Override
-    public void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\nignoring shade restrictions");
-            alert.setTitle("Use Tool card");
-            alert.setHeaderText("Copper Foil Burnisher");
-            alert.showAndWait();
-            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
 
-            windowControllerList.get(0).moveDiceinPatternCard();
-        });
-    }
-
+    /**
+     * LATHEKIN
+     *
+     * @param useToolCardResponse
+     */
     public void toolCardAction(LathekinResponse useToolCardResponse) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move the dice.\nYou must pay attention to all restrictions");
@@ -805,18 +944,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
-    @Override
-    public void toolCardAction(CorkBackedStraightedgeResponse useToolCardResponse) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Place a dice in a spot that is not\n adjacent to another die");
-            alert.setTitle("Use Tool card");
-            alert.setHeaderText("Cork Backed Straightedge");
-            alert.showAndWait();
-            activateDice();
-            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
-            windowControllerList.get(0).corkBackedStraightedge();
-        });
-    }
 
     @Override
     public void toolCardAction(LensCutterResponse useToolCardResponse) {
@@ -835,74 +962,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 roundVbox.setDisable(false);
             }
         });
-    }
-
-
-    @Override
-    public void toolCardAction(EglomiseBrushResponse useToolCardResponse) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Move a dice in the Pattern Card\nignoring color restrictions");
-            alert.setTitle("Use Tool card");
-            alert.setHeaderText("Eglomise Brush");
-            alert.showAndWait();
-            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
-        });
-        windowControllerList.get(0).moveDiceinPatternCard();
-    }
-
-    @Override
-    public void toolCardAction(RoundTrackToolCardResponse useToolCardResponse) {
-        ObservableList<Node> nodes = roundTrackHBox.getChildren();
-        Platform.runLater(() -> roundTrackHBox.getChildren().removeAll(nodes));
-        roundDiceVBoxList.clear();
-        roundButtonList.clear();
-        for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
-            addRoundInRoundTrack(roundDice);
-        }
-        if (placeDiceMoveDone)
-            disableDice();
-    }
-
-    @Override
-    public void setDraftedDice(List<Dice> dice) {
-        Platform.runLater(() -> displayDraftedDice(dice));
-        draftDiceButton.setDisable(true);
-        activateToolCard();
-        networkType.sendAck();
-    }
-
-    @Override
-    public void setAvailablePosition(StartTurnNotification startTurnNotification) {
-        Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
-        windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
-        activateDice();
-        activateToolCard();
-        endTurnButton.setDisable(false);
-    }
-
-    private void updateTab(Player player, Map<String, Boolean[][]> availablePositions) {
-        for (WindowController windowController : windowControllerList) {
-            if (windowController.getUsername().equals(player.getPlayerUsername())) {
-                windowController.updatePatternCard(player.getPatternCard());
-                windowController.setAvailablePosition(availablePositions);
-            }
-        }
-    }
-
-    @Override
-    public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
-        updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
-        if (placeDiceMoveDone)
-            disableDice();
-    }
-
-    @Override
-    public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
-        Platform.runLater(() -> {
-            createPopUpWindow("Use Tool Card", "Move not allowed ", "You can't use this tool card").showAndWait();
-            activateToolCard();
-        });
-
     }
 
     @Override

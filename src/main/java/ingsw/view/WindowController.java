@@ -10,6 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 
 import java.net.URL;
@@ -146,6 +148,12 @@ public class WindowController implements Initializable {
         }
     }
 
+    public void setCursorDice(String dice){
+        Image cursor = new Image("/img/dice/" + dice + ".png", 90, 90, true, true);
+        ImageCursor imageCursor = new ImageCursor(cursor);
+        patternCardGridPane.setCursor(imageCursor);
+    }
+
     public void unsetSelectedDice() {
         selectedDice = null;
     }
@@ -164,10 +172,12 @@ public class WindowController implements Initializable {
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
                             System.out.println(thisDicePane.getStyleClass().toString());
                             updateAvailablePositions(thisDicePane.getStyleClass().get(0) + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
+                            setCursorDice(thisDicePane.getStyleClass().get(0));
                         }
                     } else if (selectedPositions.size() == 1) {
                         if (thisDicePane.getStyleClass().isEmpty()) {
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
+                            patternCardGridPane.setCursor(Cursor.DEFAULT);
                             networkType.copperFoilBurnisherMove(selectedPositions.get(0), selectedPositions.get(1));
 
                             selectedPositions.clear();
