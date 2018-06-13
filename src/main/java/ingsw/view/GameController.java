@@ -365,6 +365,126 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     @Override
+    public void timeOut() {
+        createPopUpWindow("Message", "Time's out!", "The time to make the moves is ended").showAndWait();
+        System.out.println("Time out\n");
+        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+        windowControllerList.get(0).setSelectedDice(null);
+        disableDice();
+        disableToolCards();
+        placeDiceMoveDone = false;
+        endTurnButton.setDisable(true);
+    }
+
+    private void endTurnButtonReset() {
+        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
+        windowControllerList.get(0).setSelectedDice(null);
+        disableDice();
+        disableToolCards();
+        placeDiceMoveDone = false;
+        endTurnButton.setDisable(true);
+        networkType.endTurn();
+    }
+
+    @Override
+    public void updateView(UpdateViewResponse updateViewResponse) {
+        updateTab(updateViewResponse.player, updateViewResponse.availablePositions);
+        disableDice();
+    }
+
+    @Override
+    public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
+        addRoundInRoundTrack(roundTrackNotification.roundTrack);
+
+    }
+
+    @Override
+    public void updateMovesHistory(MoveStatusNotification notification) {
+        playersMoves.clear();
+        playersMoves.addAll(notification.moveStatuses);
+    }
+
+    private void addRoundInRoundTrack(List<Dice> diceToAdd) {
+        int round = roundButtonList.size();
+        Button buttonRound = new Button("Round " + (round + 1));
+        buttonRound.setId(String.valueOf(round));
+        roundButtonList.add(buttonRound);
+        /*  Set Event:  */
+        buttonRound.setOnMouseClicked(event -> {
+            int id = 0;
+            if (buttonRound.getId() != null) {
+                id = Integer.parseInt(buttonRound.getId());
+                FadeTransition fade = new FadeTransition(Duration.millis(1000));
+
+                if (id < roundDiceVBoxList.size()) {
+                    if (roundDiceVBoxList.get(id).isVisible()) {
+                        roundDiceVBoxList.get(id).setVisible(false);
+
+                    } else {
+                        fade.setNode(roundDiceVBoxList.get(id));
+                        fade.setFromValue(0.0);
+                        fade.setToValue(1.0);
+                        fade.setCycleCount(1);
+                        fade.setAutoReverse(false);
+                        roundDiceVBoxList.get(id).setVisible(true);
+                        fade.playFromStart();
+                    }
+                }
+            } else System.err.println("Dice has no id");
+        });
+
+        VBox vBox = new VBox();
+        addDiceToRoundTrack(vBox, diceToAdd);
+        vBox.setVisible(false);
+        vBox.setDisable(true);
+        roundDiceVBoxList.add(vBox);
+
+        VBox containerVBox = new VBox();
+        containerVBox.setSpacing(10);
+        containerVBox.getChildren().addAll(buttonRound, vBox);
+
+        Platform.runLater(
+                () -> {
+                    roundTrackHBox.getChildren().add(containerVBox);
+                }
+        );
+    }
+
+    private void addDiceToRoundTrack(VBox roundVBox, List<Dice> diceToAdd) {
+        for (int i = 0; i < diceToAdd.size(); i++) {
+            DiceButton diceButtonToAdd = new DiceButton(diceToAdd.get(i), i);
+            diceButtonToAdd.setOnMouseClicked(event -> {
+                if (toolCardSelectedDice != null)
+                    for (int j = 0; j < roundDiceVBoxList.size(); j++) {
+                        if (roundDiceVBoxList.get(j).equals(roundVBox)) {
+                            networkType.lensCutter(j, diceButtonToAdd.getStyleClass().get(1), toolCardSelectedDice.getStyleClass().get(1));
+                        }
+                    }
+            });
+            diceButtonToAdd.getStyleClass().add(diceToAdd.get(i).toString());
+            diceButtonToAdd.getStyleClass().add("diceImageSize");
+            diceButtonToAdd.setMinSize(70, 70);
+            roundVBox.setSpacing(5);
+            roundVBox.getChildren().add(diceButtonToAdd);
+            diceButtonToAdd.setDisable(false);
+        }
+    }
+
+    public void disableRoundTrack() {
+        for (VBox roundVbox : roundDiceVBoxList) {
+            roundVbox.setDisable(false);
+            for (Node node : roundVbox.getChildren()) {
+                node.setDisable(true);
+            }
+        }
+    }
+
+    @Override
+    public void setPlaceDiceMove() {
+        placeDiceMoveDone = true;
+    }
+
+    @Override
     public void popUpDraftNotification() {
         Platform.runLater(() -> {
             endTurnButton.setDisable(true);
@@ -385,6 +505,12 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
         Platform.runLater(() -> createPopUpWindow("Match has ended", "You won!", "Your Score: " + totalScore).showAndWait());
     }
+
+
+    /**************************************/
+
+    /*_____________TOOL CARDS_____________*/
+
 
     @Override
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
@@ -860,121 +986,5 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
-    @Override
-    public void timeOut() {
-        createPopUpWindow("Message", "Time's out!", "The time to make the moves is ended").showAndWait();
 
-        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-        windowControllerList.get(0).setSelectedDice(null);
-        disableDice();
-        placeDiceMoveDone = false;
-        endTurnButton.setDisable(true);
-    }
-
-    private void endTurnButtonReset() {
-        windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-        windowControllerList.get(0).setSelectedDice(null);
-        disableDice();
-        placeDiceMoveDone = false;
-        endTurnButton.setDisable(true);
-        networkType.endTurn();
-    }
-
-    @Override
-    public void updateView(UpdateViewResponse updateViewResponse) {
-        updateTab(updateViewResponse.player, updateViewResponse.availablePositions);
-        disableDice();
-    }
-
-    @Override
-    public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
-        addRoundInRoundTrack(roundTrackNotification.roundTrack);
-
-    }
-
-    @Override
-    public void updateMovesHistory(MoveStatusNotification notification) {
-        playersMoves.clear();
-        playersMoves.addAll(notification.moveStatuses);
-    }
-
-    private void addRoundInRoundTrack(List<Dice> diceToAdd) {
-        int round = roundButtonList.size();
-        Button buttonRound = new Button("Round " + (round + 1));
-        buttonRound.setId(String.valueOf(round));
-        roundButtonList.add(buttonRound);
-        /*  Set Event:  */
-        buttonRound.setOnMouseClicked(event -> {
-            int id = 0;
-            if (buttonRound.getId() != null) {
-                id = Integer.parseInt(buttonRound.getId());
-                FadeTransition fade = new FadeTransition(Duration.millis(1000));
-
-                if (id < roundDiceVBoxList.size()) {
-                    if (roundDiceVBoxList.get(id).isVisible()) {
-                        roundDiceVBoxList.get(id).setVisible(false);
-
-                    } else {
-                        fade.setNode(roundDiceVBoxList.get(id));
-                        fade.setFromValue(0.0);
-                        fade.setToValue(1.0);
-                        fade.setCycleCount(1);
-                        fade.setAutoReverse(false);
-                        roundDiceVBoxList.get(id).setVisible(true);
-                        fade.playFromStart();
-                    }
-                }
-            } else System.err.println("Dice has no id");
-        });
-
-        VBox vBox = new VBox();
-        addDiceToRoundTrack(vBox, diceToAdd);
-        vBox.setVisible(false);
-        vBox.setDisable(true);
-        roundDiceVBoxList.add(vBox);
-
-        VBox containerVBox = new VBox();
-        containerVBox.setSpacing(10);
-        containerVBox.getChildren().addAll(buttonRound, vBox);
-
-        Platform.runLater(
-                () -> {
-                    roundTrackHBox.getChildren().add(containerVBox);
-                }
-        );
-    }
-
-    private void addDiceToRoundTrack(VBox roundVBox, List<Dice> diceToAdd) {
-        for (int i = 0; i < diceToAdd.size(); i++) {
-            DiceButton diceButtonToAdd = new DiceButton(diceToAdd.get(i), i);
-            diceButtonToAdd.setOnMouseClicked(event -> {
-                if (toolCardSelectedDice != null)
-                    for (int j = 0; j < roundDiceVBoxList.size(); j++) {
-                        if (roundDiceVBoxList.get(j).equals(roundVBox)) {
-                            networkType.lensCutter(j, diceButtonToAdd.getStyleClass().get(1), toolCardSelectedDice.getStyleClass().get(1));
-                        }
-                    }
-            });
-            diceButtonToAdd.getStyleClass().add(diceToAdd.get(i).toString());
-            diceButtonToAdd.getStyleClass().add("diceImageSize");
-            diceButtonToAdd.setMinSize(70, 70);
-            roundVBox.setSpacing(5);
-            roundVBox.getChildren().add(diceButtonToAdd);
-            diceButtonToAdd.setDisable(false);
-        }
-    }
-
-    public void disableRoundTrack() {
-        for (VBox roundVbox : roundDiceVBoxList) {
-            roundVbox.setDisable(false);
-            for (Node node : roundVbox.getChildren()) {
-                node.setDisable(true);
-            }
-        }
-    }
-
-    @Override
-    public void setPlaceDiceMove() {
-        placeDiceMoveDone = true;
-    }
 }
