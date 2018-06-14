@@ -175,9 +175,9 @@ public class GameManager {
         // Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> toolCards = new ArrayList<>();
-        toolCards.add(new CorkBackedStraightEdge());
-        toolCards.add(new FluxRemover());
         toolCards.add(new FluxBrush());
+        toolCards.add(new FluxRemover());
+        toolCards.add(new GlazingHammer());
         return toolCards;
     }
 
@@ -411,7 +411,7 @@ public class GameManager {
                 e.printStackTrace();
             }
 
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 4; i++) {
                 notifyDraftToPlayer(playerList.get(0));
                 endRound.set(false);
 
@@ -487,7 +487,7 @@ public class GameManager {
 
             currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
-            startTimer(20000);
+            startTimer(40000);
 
             //wait until turn has ended
             waitEndTurn();
@@ -499,7 +499,7 @@ public class GameManager {
 
             currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
-            startTimer(20000);
+            startTimer(40000);
 
             //wait until turn has ended
             waitEndTurn();

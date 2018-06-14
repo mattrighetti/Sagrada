@@ -41,6 +41,9 @@ public class StoppableScanner {
 
             try {
                 inputInt = intRead.get();
+            } catch (NumberFormatException e) {
+                System.err.println("Type again");
+                inputInt = -1;
             } catch (ExecutionException e) {
                 System.err.println("Interrupted READ INT");
             } catch (InterruptedException e) {
@@ -87,7 +90,7 @@ public class StoppableScanner {
         @Override
         public Integer call() throws Exception {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-            Integer input;
+            Integer input = -3 ;
             do {
                 System.out.println("Waiting for input: ");
                 try {
@@ -95,13 +98,13 @@ public class StoppableScanner {
                         Thread.sleep(200);
                     }
 
-                    input = bufferedReader.read();
+                    input = Integer.parseInt(bufferedReader.readLine());
 
                 } catch (InterruptedException e) {
                     System.err.println("ConsoleLineReader stopped");
                     return null;
                 }
-            } while (input < 0);
+            } while (input < -1);
 
             return input;
         }

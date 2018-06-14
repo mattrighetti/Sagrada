@@ -14,6 +14,7 @@ import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.DoubleString;
 import ingsw.utilities.MoveStatus;
+import ingsw.utilities.StoppableScanner;
 import ingsw.utilities.Tuple;
 import org.fusesource.jansi.AnsiConsole;
 
@@ -21,10 +22,15 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CLI implements SceneUpdater {
     private AtomicBoolean moveNext = new AtomicBoolean(false);
     private AtomicBoolean gamePhase = new AtomicBoolean(false);
+    private AtomicInteger integerInput;
+    private AtomicReference<String> stringInput;
+    private StoppableScanner stoppableScanner;
     int currentPlayerIndex;
     private String username;
     private String ipAddress;
@@ -80,7 +86,28 @@ public class CLI implements SceneUpdater {
      * @return the String typed by the user
      */
     private String userStringInput() {
-        return scanner.nextLine();
+        stringInput = new AtomicReference<>();
+        stoppableScanner = new StoppableScanner();
+        new Thread(
+                () -> {
+                    stringInput.set(stoppableScanner.readLine());
+
+                    synchronized (stringInput) {
+                        stringInput.notify();
+                    }
+                }
+        ).start();
+
+        synchronized (stringInput) {
+            if (stringInput.get() == null) {
+                try {
+                    stringInput.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return stringInput.get();
     }
 
     /*
@@ -91,14 +118,29 @@ public class CLI implements SceneUpdater {
      * @return the int typed by the user, otherwise if he insert an invalid type, return -1
      */
     private int userIntegerInput() {
-        int input;
-        try {
-            input = Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.err.println("Type again");
-            return -1;
+        integerInput = new AtomicInteger(-1);
+        stoppableScanner = new StoppableScanner();
+        new Thread(
+                () -> {
+                    integerInput.set(stoppableScanner.readInt());
+
+
+                    synchronized (integerInput) {
+                        integerInput.notify();
+                    }
+                }
+        ).start();
+
+        synchronized (integerInput) {
+            if (integerInput.get() == -1) {
+                try {
+                    integerInput.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        return input;
+        return integerInput.get();
     }
 
     /**
