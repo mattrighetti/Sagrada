@@ -37,7 +37,7 @@ public class User implements Serializable {
         return noOfWins;
     }
 
-    public void setNoOfWins(int noOfWins) {
+    void setNoOfWins(int noOfWins) {
         this.noOfWins = noOfWins;
     }
 
@@ -45,7 +45,7 @@ public class User implements Serializable {
         return noOfLose;
     }
 
-    public void setNoOfLose(int noOfLose) {
+    void setNoOfLose(int noOfLose) {
         this.noOfLose = noOfLose;
     }
 
@@ -82,7 +82,7 @@ public class User implements Serializable {
         userObserver.onJoin(numberOfConnectedUsers);
     }
 
-    public long getActiveTime() {
+    long getActiveTime() {
         return stopWatch.getTime();
     }
 }

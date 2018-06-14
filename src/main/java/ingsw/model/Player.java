@@ -13,6 +13,7 @@ public class Player implements Serializable {
     private User user;
     private PrivateObjectiveCard privateObjectiveCard;
     private PatternCard patternCard;
+    private int favorTokens;
 
     public Player(User user) {
         this.user = user;
@@ -20,6 +21,7 @@ public class Player implements Serializable {
 
     public void setPatternCard(PatternCard patternCard) {
         this.patternCard = patternCard;
+        this.favorTokens = patternCard.getDifficulty();
     }
 
     public PatternCard getPatternCard() {
@@ -59,6 +61,10 @@ public class Player implements Serializable {
 
     void updateUser(User user) {
         this.user = user;
+    }
+
+    public int getFavourTokens() {
+        return favorTokens;
     }
 
     //Get a Private Card of this player

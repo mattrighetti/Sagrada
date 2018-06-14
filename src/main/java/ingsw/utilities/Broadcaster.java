@@ -14,10 +14,6 @@ import java.util.Map;
 
 public final class Broadcaster {
 
-    private Broadcaster() {
-
-    }
-
     private static List<UserObserver> playerToBroadcast(List<Player> playerList, String usernameToExclude) {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (Player player : playerList) {

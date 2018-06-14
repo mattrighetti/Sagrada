@@ -364,10 +364,10 @@ public class GameManager {
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
 
-        synchronized (cancelTimer){
+        synchronized (cancelTimer) {
             if (!cancelTimer.get()) {
-            cancelTimer.set(true);
-            cancelTimer.notify();
+                cancelTimer.set(true);
+                cancelTimer.notify();
             }
         }
     }
@@ -433,10 +433,57 @@ public class GameManager {
         }).start();
     }
 
-    private void evaluatePointsAndNotifyWinner() {
-        Map<String, Integer> scores = new HashMap<>();
-        int maxScore = -21;
+    /**
+     * Method that evaluates the match's winner
+     *
+     * @param scores map of all the scores
+     * @return username of the player who won
+     */
+    private List<String> evaluateWinner(Map<String, Integer> scores) {
         String winnerUsername = "";
+        List<String> winnerUsernames = new LinkedList<>();
+
+        for (String playerUsername : scores.keySet()) {
+            if ("".equals(winnerUsername)) {
+                winnerUsername = playerUsername;
+                winnerUsernames.add(winnerUsername);
+            } else if (scores.get(winnerUsername).equals(scores.get(playerUsername))) {
+                winnerUsernames.add(playerUsername);
+            } else if (scores.get(winnerUsername) < scores.get(playerUsername)) {
+                winnerUsernames.clear();
+                winnerUsername = playerUsername;
+                winnerUsernames.add(winnerUsername);
+            }
+        }
+
+        return winnerUsernames;
+    }
+
+    private List<String> evaluateMaxPrivateObjCardPoints(List<String> possibleWinners) {
+        List<String> candidateWinners = new LinkedList<>();
+        int maxPrivateObjectivePoints = -1;
+        for (Player player : playerList) {
+            if (candidateWinners.contains(player.getPlayerUsername())) {
+                if (maxPrivateObjectivePoints < player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid())) {
+                    candidateWinners.clear();
+                    maxPrivateObjectivePoints = player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid());
+                    candidateWinners.add(player.getPlayerUsername());
+                } else if (maxPrivateObjectivePoints == player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid())) {
+                    candidateWinners.add(player.getPlayerUsername());
+                }
+            }
+        }
+
+        return candidateWinners;
+    }
+
+    /**
+     * Method that evaluates the most basics points for each player
+     *
+     * @return map of scores mapped by its player's username
+     */
+    private Map<String, Integer> evaluateBasicPoints() {
+        Map<String, Integer> scores = new HashMap<>();
         for (Player player : playerList) {
             int points = 0;
             for (PublicObjectiveCard publicObjectiveCard : board.getPublicObjectiveCards()) {
@@ -444,11 +491,58 @@ public class GameManager {
             }
             points += player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid());
             points -= player.getPatternCard().getNoOfEmptyBoxes();
-            if (points > maxScore) {
-                maxScore = points;
-                winnerUsername = player.getPlayerUsername();
-            }
             scores.put(player.getPlayerUsername(), points);
+        }
+
+        return scores;
+    }
+
+    /**
+     * Method that calculates the winner in case of tie
+     *
+     * @param scores map of each player's score
+     * @return
+     */
+    private Map<String, Integer> evaluateFavorTokenPoints(Map<String, Integer> scores, List<String> candidateWinners) {
+        for (Player player : playerList) {
+            if (candidateWinners.contains(player.getPlayerUsername())) {
+                int previousScore = scores.get(player.getPlayerUsername());
+                previousScore += player.getFavourTokens();
+                scores.replace(player.getPlayerUsername(), previousScore);
+            }
+        }
+
+        return scores;
+    }
+
+    private void evaluatePointsAndNotifyWinner() {
+        String winnerUsername;
+        Map<String, Integer> scores = evaluateBasicPoints();
+        List<String> candidateWinners = evaluateWinner(scores);
+
+        if (candidateWinners.size() > 1) {
+            candidateWinners = evaluateMaxPrivateObjCardPoints(candidateWinners);
+
+            if (candidateWinners.size() > 1) {
+                evaluateFavorTokenPoints(scores, candidateWinners);
+                candidateWinners = evaluateWinner(scores);
+
+                if (candidateWinners.size() > 1) {
+                    for (int i = 0; i < playerList.size(); i++) {
+                        if (candidateWinners.contains(playerList.get(i))) {
+                            winnerUsername = playerList.get(i).getPlayerUsername();
+                            break;
+                        }
+                    }
+                } else {
+                    winnerUsername = candidateWinners.get(0);
+                }
+            } else {
+                winnerUsername = candidateWinners.get(0);
+            }
+
+        } else {
+            winnerUsername = candidateWinners.get(0);
         }
 
         for (Player player : playerList) {
@@ -532,7 +626,7 @@ public class GameManager {
                     e.printStackTrace();
                 }
             }
-            if (!cancelTimer.get()){
+            if (!cancelTimer.get()) {
 
                 try {
                     currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
