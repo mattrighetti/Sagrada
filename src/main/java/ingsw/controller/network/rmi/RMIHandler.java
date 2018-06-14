@@ -253,6 +253,11 @@ public class RMIHandler implements RequestHandler {
     }
 
     @Override
+    public Response handle(ReadHistoryRequest readHistoryRequest) {
+        return null; // TODO
+    }
+
+    @Override
     public Response handle(EndTurnRequest endTurnRequest) {
         try {
             remoteController.endTurn();

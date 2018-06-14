@@ -230,6 +230,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new LathekinRequest(dicePosition, position, doubleMove));
     }
 
+    @Override
+    public void requestHistory(String matchName) {
+        client.request(new ReadHistoryRequest(matchName));
+    }
+
     /**
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */
@@ -478,6 +483,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(TimeOutResponse timeOutResponse) {
         sceneUpdater.timeOut();
+    }
+
+    @Override
+    public void handle(HistoryResponse historyResponse) {
+        // TODO
     }
 
     @Override

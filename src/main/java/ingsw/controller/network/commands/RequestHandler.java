@@ -27,4 +27,6 @@ public interface RequestHandler {
     Response handle(ReJoinMatchRequest reJoinMatchRequest);
 
     Response handle(BundleDataRequest bundleDataRequest);
+
+    Response handle(ReadHistoryRequest readHistoryRequest);
 }

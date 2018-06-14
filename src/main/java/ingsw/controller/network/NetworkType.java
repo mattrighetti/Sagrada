@@ -63,5 +63,7 @@ public interface NetworkType {
 
     void tapWheelMove(int endTapWheel);
 
+    void requestHistory(String matchName);
+
     void requestBundleData();
 }

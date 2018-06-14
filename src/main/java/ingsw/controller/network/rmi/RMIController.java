@@ -179,6 +179,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void requestHistory(String matchName) {
+        new ReadHistoryRequest(matchName).handle(rmiHandler);
+    }
+
+    @Override
     public void endTurn() {
         new EndTurnRequest().handle(rmiHandler);
     }
@@ -350,5 +355,10 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(BundleDataResponse bundleDataResponse) {
         sceneUpdater.loadLobbyData(bundleDataResponse);
+    }
+
+    @Override
+    public void handle(HistoryResponse historyResponse) {
+        // TODO
     }
 }

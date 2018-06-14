@@ -11,6 +11,7 @@
 
 package ingsw.model;
 
+import com.google.gson.Gson;
 import ingsw.controller.network.commands.*;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
@@ -21,6 +22,9 @@ import ingsw.utilities.ControllerTimer;
 import ingsw.utilities.MoveStatus;
 import ingsw.utilities.Tuple;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
@@ -430,7 +434,20 @@ public class GameManager {
 
             evaluatePointsAndNotifyWinner();
 
+            writeHistoryToFile(movesHistory);
+
         }).start();
+    }
+
+    private void writeHistoryToFile(List<MoveStatus> movesHistory) {
+        Gson gson = new Gson();
+        String moveHistoryJSON = gson.toJson(movesHistory);
+
+        try (FileWriter file = new FileWriter("src/main/resources/history/" + playerList.toString() + ".txt")) {
+            file.write(moveHistoryJSON);
+        } catch (IOException e) {
+            System.err.println("There was an error writing the file! Could not complete.");
+        }
     }
 
     /**
@@ -459,6 +476,12 @@ public class GameManager {
         return winnerUsernames;
     }
 
+    /**
+     * Method that is first called when two or more players have the score. It calculates which users has the highest
+     * score for their own PrivateObjectiveCard
+     * @param possibleWinners winners with equal maximum score
+     * @return winner/s with maximum score
+     */
     private List<String> evaluateMaxPrivateObjCardPoints(List<String> possibleWinners) {
         List<String> candidateWinners = new LinkedList<>();
         int maxPrivateObjectivePoints = -1;
@@ -498,12 +521,11 @@ public class GameManager {
     }
 
     /**
-     * Method that calculates the winner in case of tie
+     * Method that is called in case two or more players have the score after PublicObjectiveCard's score re-calculation
      *
      * @param scores map of each player's score
-     * @return
      */
-    private Map<String, Integer> evaluateFavorTokenPoints(Map<String, Integer> scores, List<String> candidateWinners) {
+    private void evaluateFavorTokenPoints(Map<String, Integer> scores, List<String> candidateWinners) {
         for (Player player : playerList) {
             if (candidateWinners.contains(player.getPlayerUsername())) {
                 int previousScore = scores.get(player.getPlayerUsername());
@@ -511,12 +533,13 @@ public class GameManager {
                 scores.replace(player.getPlayerUsername(), previousScore);
             }
         }
-
-        return scores;
     }
 
+    /**
+     * Method that computes the winner and notifies each player with their results
+     */
     private void evaluatePointsAndNotifyWinner() {
-        String winnerUsername;
+        String winnerUsername = "";
         Map<String, Integer> scores = evaluateBasicPoints();
         List<String> candidateWinners = evaluateWinner(scores);
 
@@ -550,7 +573,6 @@ public class GameManager {
                 player.getUser().setNoOfWins(player.getUser().getNoOfWins() + 1);
                 player.getUser().setNoOfLose(player.getUser().getNoOfLose());
 
-                //TODO Move thee try/catch block
                 try {
                     player.getUserObserver().notifyVictory(scores.get(player.getPlayerUsername()));
                 } catch (RemoteException e) {

@@ -39,4 +39,6 @@ public interface ResponseHandler {
     void handle(RankingDataResponse rankingDataResponse);
 
     void handle(BundleDataResponse bundleDataResponse);
+
+    void handle(HistoryResponse historyResponse);
 }

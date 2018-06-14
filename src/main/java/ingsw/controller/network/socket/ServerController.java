@@ -232,6 +232,11 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    @Override
+    public Response handle(ReadHistoryRequest readHistoryRequest) {
+        return null; // TODO
+    }
+
     /**
      * Method that removes a user from the Server in case it did not join a match, otherwise it just deactivates it from
      * Sagrada and the match's Controller
