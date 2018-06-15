@@ -67,5 +67,10 @@ public class Player implements Serializable {
         return favorTokens;
     }
 
+    @Override
+    public String toString() {
+        return getUser().getUsername();
+    }
+
     //Get a Private Card of this player
 }

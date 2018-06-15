@@ -69,8 +69,8 @@ public class User implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
-        if (active) stopWatch.resume();
-        else stopWatch.suspend();
+        //if (active) stopWatch.resume();
+        //else stopWatch.suspend();
     }
 
     boolean isActive() {
