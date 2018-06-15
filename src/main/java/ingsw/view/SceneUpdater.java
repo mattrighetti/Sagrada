@@ -241,4 +241,8 @@ public interface SceneUpdater {
     default void showFinishedMatches(List<String> finishedMatches) {
         System.out.println("Not overridden");
     }
+
+    default void endedTurn(){
+        System.out.println("Not overridden");
+    }
 }

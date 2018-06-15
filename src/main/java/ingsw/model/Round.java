@@ -1,5 +1,6 @@
 package ingsw.model;
 
+import ingsw.controller.network.commands.EndTurnResponse;
 import ingsw.model.cards.toolcards.ToolCard;
 
 import java.rmi.RemoteException;
@@ -49,6 +50,7 @@ public class Round implements Runnable {
             } else
                 blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
 
+            endTurnNotification();
             playerEndedTurn.set(true);
 
             //wake up the round thread
@@ -96,6 +98,14 @@ public class Round implements Runnable {
             synchronized (playerEndedTurn) {
                 playerEndedTurn.notify();
             }
+        }
+    }
+
+    private void endTurnNotification(){
+        try {
+            player.getUserObserver().sendResponse(new EndTurnResponse());
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 

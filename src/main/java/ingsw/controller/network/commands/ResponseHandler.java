@@ -43,4 +43,6 @@ public interface ResponseHandler {
     void handle(HistoryResponse historyResponse);
 
     void handle(FinishedMatchesResponse finishedMatchesResponse);
+
+    void handle(EndTurnResponse endTurnResponse);
 }

@@ -771,7 +771,9 @@ public class GameManager {
         for (Dice dice : board.getDraftedDice()) {
             dice.roll();
         }
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), true));
+        boolean endTurnCheck = false;
+        if (currentRound.getNoOfMoves() == 0) endTurnCheck = true;
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));
         currentRound.toolCardMoveDone();
     }
 

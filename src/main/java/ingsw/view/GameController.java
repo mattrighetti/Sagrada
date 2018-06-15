@@ -366,6 +366,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         Platform.runLater(() -> disableCommandsAndReset() );
     }
 
+    @Override
+    public void endedTurn() {
+        disableCommandsAndReset();
+    }
+
     private void endTurnButtonReset() {
         disableCommandsAndReset();
         networkType.endTurn();

@@ -496,6 +496,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void handle(EndTurnResponse endTurnResponse) {
+        sceneUpdater.endedTurn();
+    }
+
+    @Override
     public void handle(HistoryResponse historyResponse) {
         sceneUpdater.showSelectedMatchHistory(historyResponse.historyJSON);
     }

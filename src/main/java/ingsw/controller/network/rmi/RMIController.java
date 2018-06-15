@@ -323,6 +323,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void handle(EndTurnResponse endTurnResponse) {
+        sceneUpdater.endedTurn();
+    }
+
+    @Override
     public void handle(RoundTrackNotification roundTrackNotification) {
         sceneUpdater.updateRoundTrack(roundTrackNotification);
     }
