@@ -602,7 +602,7 @@ public class GameManager {
 
             currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
-            startTimer(40000);
+        //    startTimer(40000);
 
             //wait until turn has ended
             waitEndTurn();
@@ -614,7 +614,7 @@ public class GameManager {
 
             currentRound.setPlayerEndedTurn(false);
             currentRound.startForPlayer(playerList.get(i));
-            startTimer(40000);
+        //    startTimer(40000);
 
             //wait until turn has ended
             waitEndTurn();

@@ -363,7 +363,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void timeOut() {
-        Platform.runLater(() -> disableCommandsAndReset() );
+        Platform.runLater(this::disableCommandsAndReset);
     }
 
     @Override
@@ -568,12 +568,14 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
-            if (placeDiceMoveDone)
+            if (placeDiceMoveDone){
                 disableDice();
-            else
+                endTurnButton.setDisable(true);
+            }
+            else {
                 activateDice();
+            }
 
-            endTurnButton.setDisable(true);
 
             if (draftedDiceToolCardResponse.endTurn) endTurnButtonReset();
         });
