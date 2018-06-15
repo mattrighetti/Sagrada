@@ -44,34 +44,34 @@ public class LobbyController implements SceneUpdater, Initializable {
     private TableView<DoubleString> matchTableView;
 
     @FXML
-    private TableColumn matchNameColumn;
+    private TableColumn<DoubleString, String> matchNameColumn;
 
     @FXML
-    private TableColumn matchConnectedUsersColumn;
+    private TableColumn<DoubleString, Integer> matchConnectedUsersColumn;
 
     @FXML
     private TableView<TripleString> rankingTableView;
 
     @FXML
-    private TableColumn rankColumn;
+    private TableColumn<TripleString, String> rankColumn;
 
     @FXML
-    private TableColumn usernameColumn;
+    private TableColumn<TripleString, String> usernameColumn;
 
     @FXML
-    private TableColumn rankWinsColumn;
+    private TableColumn<TripleString, String> rankWinsColumn;
 
     @FXML
     private TableView<TripleString> statisticsTableView;
 
     @FXML
-    private TableColumn statsWinsColumn;
+    private TableColumn<TripleString, String> statsWinsColumn;
 
     @FXML
-    private TableColumn losesColumn;
+    private TableColumn<TripleString, String> losesColumn;
 
     @FXML
-    private TableColumn timePlayedColumn;
+    private TableColumn<TripleString, String> timePlayedColumn;
 
     @FXML
     private Text connectedUsersText;
@@ -95,18 +95,18 @@ public class LobbyController implements SceneUpdater, Initializable {
         ranking = FXCollections.observableArrayList();
 
         matchTableView.setItems(availableMatches);
-        matchNameColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, String>(FIRST_FIELD));
-        matchConnectedUsersColumn.setCellValueFactory(new PropertyValueFactory<DoubleString, Integer>(SECOND_FIELD));
+        matchNameColumn.setCellValueFactory(new PropertyValueFactory<>(FIRST_FIELD));
+        matchConnectedUsersColumn.setCellValueFactory(new PropertyValueFactory<>(SECOND_FIELD));
 
         rankingTableView.setItems(ranking);
-        rankColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(FIRST_FIELD));
-        usernameColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(SECOND_FIELD));
-        rankWinsColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(THIRD_FIELD));
+        rankColumn.setCellValueFactory(new PropertyValueFactory<>(FIRST_FIELD));
+        usernameColumn.setCellValueFactory(new PropertyValueFactory<>(SECOND_FIELD));
+        rankWinsColumn.setCellValueFactory(new PropertyValueFactory<>(THIRD_FIELD));
 
         statisticsTableView.setItems(statistics);
-        statsWinsColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(FIRST_FIELD));
-        losesColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(SECOND_FIELD));
-        timePlayedColumn.setCellValueFactory(new PropertyValueFactory<TripleString, String>(THIRD_FIELD));
+        statsWinsColumn.setCellValueFactory(new PropertyValueFactory<>(FIRST_FIELD));
+        losesColumn.setCellValueFactory(new PropertyValueFactory<>(SECOND_FIELD));
+        timePlayedColumn.setCellValueFactory(new PropertyValueFactory<>(THIRD_FIELD));
     }
 
     void setApplication(View application) {

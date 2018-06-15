@@ -100,6 +100,9 @@ public class PatternCardController implements SceneUpdater {
 
     @Override
     public void launchFourthGui(BoardDataResponse boardDataResponse) {
-        Platform.runLater(() -> application.launchFourthGUI(boardDataResponse));
+        Platform.runLater(() -> {
+            progressForm.getDialogStage().close();
+            application.launchFourthGUI(boardDataResponse);
+        });
     }
 }
