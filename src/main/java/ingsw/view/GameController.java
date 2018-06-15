@@ -563,18 +563,15 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
-            if (draftedDiceToolCardResponse.endTurn) {
-                windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
-                windowControllerList.get(0).setSelectedDice(null);
-                networkType.endTurn();
-            }
             if (placeDiceMoveDone)
                 disableDice();
             else
                 activateDice();
+
             endTurnButton.setDisable(true);
+
+            if (draftedDiceToolCardResponse.endTurn) endTurnButtonReset();
         });
-        System.out.println("Tool card used");
     }
 
     @Override
