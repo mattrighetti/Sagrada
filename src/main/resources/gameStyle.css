@@ -33,121 +33,145 @@
 }
 
 .AuroraeMagnificus {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/AuroraeMagnificus.png");
     -fx-background-repeat: no-repeat;
 }
 
 .AuroraSagradis {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/AuroraSagradis.png");
     -fx-background-repeat: no-repeat;
 }
 
 .Batllo {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/Batllo.png");
     -fx-background-repeat: no-repeat;
 }
 
 .Bellesguard {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/Bellesguard.png");
     -fx-background-repeat: no-repeat;
 }
 
 .ChromaticSplendor {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/ChromaticSplendor.png");
     -fx-background-repeat: no-repeat;
 }
 
 .Comitas {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/Comitas.png");
     -fx-background-repeat: no-repeat;
 }
 
 .Firelight {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/Firelight.png");
     -fx-background-repeat: no-repeat;
 }
 
 .Firmitas {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/Firmitas.png");
     -fx-background-repeat: no-repeat;
 }
 
 .FractalDrops {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/FractalDrops.png");
     -fx-background-repeat: no-repeat;
 }
 
 .FulgorDelCielo {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/FulgorDelCielo.png");
     -fx-background-repeat: no-repeat;
 }
 
 .Gravitas {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/Gravitas.png");
     -fx-background-repeat: no-repeat;
 }
 
 .Industria {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/Industria.png");
     -fx-background-repeat: no-repeat;
 }
 
 .KaleidoscopicDream {
+    -fx-background-size: cover;
     -fx-background-image: url("img/patterncards/KaleidoscopicDream.png");
     -fx-background-repeat: no-repeat;
 }
 
 .LuxAstram {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/LuxAstram.png");
     -fx-background-repeat: no-repeat;
 }
 
 .LuxMundi {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/LuxMundi.png");
     -fx-background-repeat: no-repeat;
 }
 
 .LuzCelestial {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/LuzCelestial.png");
     -fx-background-repeat: no-repeat;
 }
 
 .RipplesOfLight {
+    -fx-background-size: auto;
     -fx-background-image: url("/img/patterncards/RipplesOfLight.png");
     -fx-background-repeat: no-repeat;
 }
 
 .ShadowThief {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/ShadowThief.png");
     -fx-background-repeat: no-repeat;
 }
 
 .SunCatcher {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/SunCatcher.png");
     -fx-background-repeat: no-repeat;
 }
 
 .SunsGlory {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/SunsGlory.png");
     -fx-background-repeat: no-repeat;
 }
 
 .SymphonyOfLight {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/SymphonyOfLight.png");
     -fx-background-repeat: no-repeat;
 }
 
 .ViaLux {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/ViaLux.png");
     -fx-background-repeat: no-repeat;
 }
 
 .Virtus {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/Virtus.png");
     -fx-background-repeat: no-repeat;
 }
 
 .WaterOfLife {
+    -fx-background-size: cover;
     -fx-background-image: url("/img/patterncards/WaterOfLife.png");
     -fx-background-repeat: no-repeat;
 }
