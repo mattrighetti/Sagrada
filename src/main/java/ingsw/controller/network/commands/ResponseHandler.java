@@ -41,4 +41,6 @@ public interface ResponseHandler {
     void handle(BundleDataResponse bundleDataResponse);
 
     void handle(HistoryResponse historyResponse);
+
+    void handle(FinishedMatchesResponse finishedMatchesResponse);
 }

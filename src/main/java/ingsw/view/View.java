@@ -212,6 +212,29 @@ public class View extends Application implements GUIUpdater {
         currentScene.loadData(boardDataResponse);
     }
 
+    @Override
+    public void launchHistoryView() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/historyView.fxml"));
+        Parent history = null;
+
+        try {
+            history = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        HistoryController historyController = fxmlLoader.getController();
+        currentNetworkType.setSceneUpdater(historyController);
+        historyController.setNetworkType(currentNetworkType);
+        historyController.setApplication(this);
+        mainStage.setScene(new Scene(history));
+        mainStage.setTitle("Histories");
+        mainStage.show();
+        setCurrentScene(historyController);
+
+        historyController.requestFinishedMatchesList();
+    }
+
     /**
      * Method that switches to RMI connection
      */

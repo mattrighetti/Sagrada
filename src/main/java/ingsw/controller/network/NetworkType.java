@@ -66,4 +66,6 @@ public interface NetworkType {
     void requestHistory(String matchName);
 
     void requestBundleData();
+
+    void requestFinishedMatches();
 }

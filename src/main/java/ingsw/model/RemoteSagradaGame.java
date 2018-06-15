@@ -14,9 +14,13 @@ public interface RemoteSagradaGame extends Remote {
 
     int getConnectedUsers() throws RemoteException;
 
+    void sendSelectedMatchHistory(String username, String selectedMatchName) throws RemoteException;
+
     List<TripleString> createRankingsList() throws RemoteException;
 
     Map<String, TripleString> createUserStats() throws RemoteException;
+
+    void sendFinishedMatchesList(String username) throws RemoteException;
 
     User loginUser(String username, UserObserver userObserver) throws RemoteException, InvalidUsernameException;
 

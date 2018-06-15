@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.0" prefWidth="487.0" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx/9.0.4" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingsw.view.WindowController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.0" prefWidth="487.0" stylesheets="@gameStyle.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="ingsw.view.WindowController">
    <children>
       <VBox fx:id="windowFrameVBox" alignment="CENTER" layoutY="10.0" prefHeight="583.0" prefWidth="487.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>

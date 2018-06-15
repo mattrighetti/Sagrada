@@ -29,4 +29,6 @@ public interface RequestHandler {
     Response handle(BundleDataRequest bundleDataRequest);
 
     Response handle(ReadHistoryRequest readHistoryRequest);
+
+    Response handle(FinishedMatchesRequest finishedMatchesRequest);
 }

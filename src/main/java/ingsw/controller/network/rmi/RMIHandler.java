@@ -253,8 +253,27 @@ public class RMIHandler implements RequestHandler {
     }
 
     @Override
+    public Response handle(FinishedMatchesRequest finishedMatchesRequest) {
+
+        try {
+            sagradaGame.sendFinishedMatchesList(user.getUsername());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
     public Response handle(ReadHistoryRequest readHistoryRequest) {
-        return null; // TODO
+
+        try {
+            sagradaGame.sendSelectedMatchHistory(user.getUsername(), readHistoryRequest.matchName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override

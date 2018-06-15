@@ -5,7 +5,6 @@ import ingsw.controller.network.commands.*;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.model.SagradaGame;
 import ingsw.model.User;
-import ingsw.model.cards.toolcards.GrindingStone;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -233,8 +232,27 @@ public class ServerController implements RequestHandler, Serializable {
     }
 
     @Override
+    public Response handle(FinishedMatchesRequest finishedMatchesRequest) {
+
+        try {
+            sagradaGame.sendFinishedMatchesList(user.getUsername());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
     public Response handle(ReadHistoryRequest readHistoryRequest) {
-        return null; // TODO
+
+        try {
+            sagradaGame.sendSelectedMatchHistory(user.getUsername(), readHistoryRequest.matchName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     /**

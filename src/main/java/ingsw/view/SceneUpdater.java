@@ -5,6 +5,7 @@ import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.DoubleString;
+import ingsw.utilities.MoveStatus;
 import ingsw.utilities.TripleString;
 
 import java.util.List;
@@ -21,6 +22,10 @@ public interface SceneUpdater {
      * @param usersConnected
      */
     default void updateConnectedUsers(int usersConnected) {
+        System.out.println("Not overridden");
+    }
+
+    default void showSelectedMatchHistory(List<MoveStatus> history) {
         System.out.println("Not overridden");
     }
 
@@ -217,7 +222,6 @@ public interface SceneUpdater {
         System.out.println("Not overridden");
     }
 
-
     default void showLostNotification(int totalScore) {
         System.out.println("Not overridden");
     }
@@ -231,6 +235,10 @@ public interface SceneUpdater {
     }
 
     default void loadLobbyData(BundleDataResponse bundleDataResponse) {
+        System.out.println("Not overridden");
+    }
+
+    default void showFinishedMatches(List<String> finishedMatches) {
         System.out.println("Not overridden");
     }
 }

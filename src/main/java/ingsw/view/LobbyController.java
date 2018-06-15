@@ -6,30 +6,16 @@ import ingsw.controller.network.commands.PatternCardNotification;
 import ingsw.utilities.DoubleString;
 import ingsw.utilities.TripleString;
 import ingsw.view.nodes.ProgressForm;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.util.Duration;
 import org.apache.commons.lang.StringUtils;
 
 import java.net.URL;
@@ -44,6 +30,9 @@ public class LobbyController implements SceneUpdater, Initializable {
 
     @FXML
     private Button exitButton;
+
+    @FXML
+    private Button historyButton;
 
     @FXML
     private Button joinButton;
@@ -180,6 +169,11 @@ public class LobbyController implements SceneUpdater, Initializable {
             alert.setContentText("Retry");
             alert.showAndWait();
         }
+    }
+
+    @FXML
+    void onHistoryButtonPressed() {
+        application.launchHistoryView();
     }
 
     @Override

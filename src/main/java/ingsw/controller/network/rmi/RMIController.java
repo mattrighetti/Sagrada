@@ -184,6 +184,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void requestFinishedMatches() {
+        new FinishedMatchesRequest().handle(rmiHandler);
+    }
+
+    @Override
     public void endTurn() {
         new EndTurnRequest().handle(rmiHandler);
     }
@@ -358,7 +363,12 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void handle(FinishedMatchesResponse finishedMatchesResponse) {
+        sceneUpdater.showFinishedMatches(finishedMatchesResponse.finishedMatchesList);
+    }
+
+    @Override
     public void handle(HistoryResponse historyResponse) {
-        // TODO
+        sceneUpdater.showSelectedMatchHistory(historyResponse.historyJSON);
     }
 }

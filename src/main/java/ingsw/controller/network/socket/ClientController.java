@@ -231,6 +231,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void requestFinishedMatches() {
+        client.request(new FinishedMatchesRequest());
+    }
+
+    @Override
     public void requestHistory(String matchName) {
         client.request(new ReadHistoryRequest(matchName));
     }
@@ -376,11 +381,11 @@ public class ClientController implements ResponseHandler, NetworkType {
             case DRAFT_DICE:
                 sceneUpdater.popUpDraftNotification();
                 break;
-            case START_TURN:
-                sceneUpdater.setAvailablePosition((StartTurnNotification) notification);
-                break;
             case HISTORY_UPDATE:
                 sceneUpdater.updateMovesHistory((MoveStatusNotification) notification);
+                break;
+            case START_TURN:
+                sceneUpdater.setAvailablePosition((StartTurnNotification) notification);
                 break;
         }
     }
@@ -486,8 +491,13 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void handle(FinishedMatchesResponse finishedMatchesResponse) {
+        sceneUpdater.showFinishedMatches(finishedMatchesResponse.finishedMatchesList);
+    }
+
+    @Override
     public void handle(HistoryResponse historyResponse) {
-        // TODO
+        sceneUpdater.showSelectedMatchHistory(historyResponse.historyJSON);
     }
 
     @Override

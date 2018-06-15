@@ -5,9 +5,10 @@ import com.google.gson.reflect.TypeToken;
 import ingsw.utilities.MoveStatus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HistoryResponse implements Response {
-    String historyJSON;
+    public List<MoveStatus> historyJSON;
 
     public HistoryResponse(String historyJSON) {
         convertFromJSON(historyJSON);

@@ -30,4 +30,6 @@ public interface GUIUpdater {
     void closeApplication();
 
     void setUsername(String username);
+
+    void launchHistoryView();
 }

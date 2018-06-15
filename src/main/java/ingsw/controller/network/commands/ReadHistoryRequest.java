@@ -1,7 +1,7 @@
 package ingsw.controller.network.commands;
 
 public class ReadHistoryRequest implements Request {
-    String matchName;
+    public String matchName;
 
     public ReadHistoryRequest(String matchName) {
         this.matchName = matchName;

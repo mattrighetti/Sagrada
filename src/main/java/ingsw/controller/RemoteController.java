@@ -4,7 +4,6 @@ import ingsw.controller.network.commands.*;
 import ingsw.model.Dice;
 import ingsw.model.User;
 import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.model.cards.toolcards.Lathekin;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

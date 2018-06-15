@@ -1,21 +1,23 @@
 package ingsw.model;
 
 import ingsw.controller.Controller;
-import ingsw.controller.network.commands.BundleDataResponse;
-import ingsw.controller.network.commands.CreateMatchResponse;
-import ingsw.controller.network.commands.LoginUserResponse;
-import ingsw.controller.network.commands.ReJoinResponse;
+import ingsw.controller.network.commands.*;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.utilities.Broadcaster;
 import ingsw.utilities.DoubleString;
 import ingsw.utilities.TripleString;
 
+import java.io.*;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGame {
     private static SagradaGame sagradaGameSingleton;
@@ -61,6 +63,17 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
+    public void sendSelectedMatchHistory(String username, String selectedMatchName) throws RemoteException {
+        String matchFileName = selectedMatchName + ".txt";
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("src/main/resources/history/" + matchFileName))) {
+            String movesJSON = bufferedReader.readLine();
+            connectedUsers.get(username).getUserObserver().sendResponse(new HistoryResponse(movesJSON));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public List<TripleString> createRankingsList() {
         TripleString tripleString;
         List<TripleString> ranking = new ArrayList<>();
@@ -84,6 +97,23 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         }
 
         return userStats;
+    }
+
+    /**
+     * Method that reads all .txt files in the history folder and sends them to the user who requested them
+     * @param username username who requested these datas
+     * @throws RemoteException if something's wrong with the connection
+     */
+    @Override
+    public synchronized void sendFinishedMatchesList(String username) throws RemoteException {
+        List<String> stringList = new ArrayList<>();
+        try (Stream<Path> pathStream = Files.walk(Paths.get("/Users/matt/Dev/IdeaProjects/Sagrada/src/main/resources/history/"))) {
+            pathStream.filter(Files::isRegularFile).forEach(path -> stringList.add(path.getFileName().toString().replace(".txt", "")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        connectedUsers.get(username).getUserObserver().sendResponse(new FinishedMatchesResponse(stringList));
     }
 
     /**
@@ -165,7 +195,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
-    public void loginUserToController(String matchName, String username) throws RemoteException {
+    public synchronized void loginUserToController(String matchName, String username) throws RemoteException {
         for (User user : connectedUsers.values()) {
             if (user.getUsername().equals(username)) {
                 matchesByName.get(matchName).loginUser(user);
@@ -175,7 +205,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
-    public void loginPrexistentPlayer(String matchName, User newUser) throws RemoteException {
+    public synchronized void loginPrexistentPlayer(String matchName, User newUser) throws RemoteException {
         for (User user : connectedUsers.values()) {
             if (user.getUsername().equals(newUser.getUsername())) {
                 connectedUsers.remove(user);
@@ -192,7 +222,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         }
     }
 
-    public Controller getMatchController(String matchName) {
+    public synchronized Controller getMatchController(String matchName) {
         return matchesByName.get(matchName);
     }
 
@@ -201,7 +231,6 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
      * name passed by parameter
      *
      * @param username Username to exclude from the broadcast message
-     * @throws RemoteException
      */
     @Override
     public void broadcastUsersConnected(String username) {
@@ -216,7 +245,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
-    public void deactivateUser(User disconnectedUser) throws RemoteException {
+    public void deactivateUser(User disconnectedUser) {
         for (User user : connectedUsers.values()) {
             if (user.getUsername().equals(disconnectedUser.getUsername())) {
                 user.setActive(false);
