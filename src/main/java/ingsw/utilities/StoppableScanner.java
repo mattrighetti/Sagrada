@@ -58,8 +58,11 @@ public class StoppableScanner {
         return inputInt;
     }
 
-    private void cancel() {
-        lineRead.cancel(true);
+    public void cancel() {
+        if (lineRead != null)
+            lineRead.cancel(true);
+        if (intRead != null)
+            intRead.cancel(true);
     }
 
     class ConsoleReadLineTask implements Callable<String> {

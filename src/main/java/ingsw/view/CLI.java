@@ -12,10 +12,8 @@ import ingsw.model.Player;
 import ingsw.model.cards.patterncard.Box;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
-import ingsw.utilities.DoubleString;
-import ingsw.utilities.MoveStatus;
-import ingsw.utilities.StoppableScanner;
-import ingsw.utilities.Tuple;
+import ingsw.utilities.*;
+import javafx.collections.ObservableList;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
@@ -37,8 +35,10 @@ public class CLI implements SceneUpdater {
     private RMIController rmiController;
     private ClientController clientController;
     private NetworkType currentConnectionType;
-    private SceneUpdater currentScene;
     private Scanner scanner;
+
+    private ObservableList<TripleString> statistics;
+    private ObservableList<TripleString> ranking;
     private List<DoubleString> availableMatches = new ArrayList<>();
     private List<Player> players;
     private List<PublicObjectiveCard> publicObjectiveCards;
@@ -48,12 +48,15 @@ public class CLI implements SceneUpdater {
     private List<List<Dice>> roundTrack = new ArrayList<>();
     private List<MoveStatus> moveHistory = new ArrayList<>();
     private AtomicBoolean toolCardUsed = new AtomicBoolean();
+    private Thread moveThread;
 
     CLI(String ipAddress) {
         AnsiConsole.systemInstall();
         this.scanner = new Scanner(System.in);
         this.ipAddress = ipAddress;
         toolCardUsed.set(false);
+        moveThread = new Thread();
+        stoppableScanner = new StoppableScanner();
     }
 
     void startCLI() {
@@ -87,7 +90,6 @@ public class CLI implements SceneUpdater {
      */
     private String userStringInput() {
         stringInput = new AtomicReference<>();
-        stoppableScanner = new StoppableScanner();
         new Thread(
                 () -> {
                     stringInput.set(stoppableScanner.readLine());
@@ -256,8 +258,10 @@ public class CLI implements SceneUpdater {
      */
     private void showLobbyCommandsAndWait() {
         new Thread(() -> {
+            currentConnectionType.requestBundleData();
             int selectedCommand;
             notMoveNext();
+
             do {
                 System.out.println("You're finally logged to SagradaGame");
                 flushScanner();
@@ -381,16 +385,21 @@ public class CLI implements SceneUpdater {
     }
 
     private void showStatistics() {
-        flushScanner();
-        // TODO da implementare
+
+        System.out.println("Your Statistic:\n");
+        for (TripleString statistic : statistics) {
+            System.out.println(statistic.toString());
+        }
         synchronized (gamePhase) {
             gamePhase.notify();
         }
     }
 
     private void showRanking() {
-        flushScanner();
-        // TODO da implementare
+        System.out.println("Ranking: ");
+        for (TripleString rankingList : ranking) {
+            System.out.println(rankingList.toString());
+        }
         synchronized (gamePhase) {
             gamePhase.notify();
         }
@@ -516,7 +525,7 @@ public class CLI implements SceneUpdater {
      * </p>
      */
     private void chooseMove() {
-        new Thread(() -> {
+        moveThread = new Thread(() -> {
             boolean placeDiceMove = false;
 
             notMoveNext();
@@ -577,7 +586,8 @@ public class CLI implements SceneUpdater {
                         System.err.println("Wrong input");
                 }
             } while (!moveNext.get());
-        }).start();
+        });
+        moveThread.start();
     }
 
     /**
@@ -737,6 +747,23 @@ public class CLI implements SceneUpdater {
 
     private void updateAvailablePositions(Map<String,Boolean[][]> availablePosition){
         this.availablePosition= availablePosition;
+    }
+
+    @Override
+    public void timeOut() {
+        stoppableScanner.cancel();
+        moveThread.interrupt();
+        System.out.println("Time Out!\nThe time is ended");
+    }
+
+    @Override
+    public void loadLobbyData(BundleDataResponse bundleDataResponse) {
+        availableMatches.clear();
+        availableMatches.addAll(bundleDataResponse.matches);
+        ranking.clear();
+        ranking.addAll(bundleDataResponse.rankings);
+        statistics.clear();
+        statistics.addAll(bundleDataResponse.userStatistics.values());
     }
 
     /**
