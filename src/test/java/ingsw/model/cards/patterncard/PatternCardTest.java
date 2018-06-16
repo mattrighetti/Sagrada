@@ -272,4 +272,48 @@ class PatternCardTest {
             }
         }
     }
+
+    @Test
+    void computeAvailablePositionsNoDiceAround() {
+        patternCard = new ShadowThief();
+        List<Dice> diceList = new ArrayList<>();
+        Map<String,Boolean[][]> resultMap;
+
+
+        Dice dice = new Dice(Color.PURPLE);
+        dice.setFaceUpValue(5);
+        patternCard.grid.get(0).get(3).insertDice(dice);
+
+        dice = new Dice(Color.PURPLE);
+        dice.setFaceUpValue(4);
+        patternCard.grid.get(1).get(2).insertDice(dice);
+
+        dice = new Dice(Color.YELLOW);
+        dice.setFaceUpValue(5);
+        patternCard.grid.get(1).get(4).insertDice(dice);
+
+        dice = new Dice(Color.YELLOW);
+        dice.setFaceUpValue(4);
+        patternCard.grid.get(3).get(3).insertDice(dice);
+
+        dice = new Dice(Color.RED);
+        dice.setFaceUpValue(3);
+        diceList.add(dice);
+        resultMap = patternCard.computeAvailablePositionsNoDiceAround(diceList);
+
+        Boolean[][] resultGrid = new Boolean[4][5];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                resultGrid[i][j] = false;
+            }
+        }
+        resultGrid[2][0] = true;
+        resultGrid[3][1] = true;
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                assertEquals(resultGrid[i][j], resultMap.get(diceList.get(0).toString())[i][j]);
+            }
+        }
+    }
 }

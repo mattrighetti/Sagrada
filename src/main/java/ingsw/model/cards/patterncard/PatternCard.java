@@ -224,39 +224,57 @@ public abstract class PatternCard extends Card {
                 for (int j = 0; j < 5; j++) {
                     if (noDice(i, j) || lathekin) {
 
-                        if (!hasDicesAround(diceAroundRestriction, i, j)) {
+                        //Check if there are dices around the box
+
+                        if (!hasDicesAround(i, j)) {
+                            if (!diceAroundRestriction) {
+                                booleanGrid[i][j] = true;
+                            } else {
+                                booleanGrid[i][j] = false;
+                                continue;
+                            }
+                        } else if (!diceAroundRestriction) {
                             booleanGrid[i][j] = false;
                             continue;
                         }
-                        //Check restrictions
 
+
+                        //Check restrictions
 
                         if (hasValue(i, j)) {
                             if (!sameGridValue(valueRestrictions, i, j, dice)) {
                                 booleanGrid[i][j] = false;
                                 continue;
+                            } else if (!diceAroundRestriction) {
+                                booleanGrid[i][j] = true;
+                                continue;
                             }
-                        } else if (!sameGridColor(colorRestrictions, i, j, dice) && !isBlank(i, j)) {
-                            booleanGrid[i][j] = false;
-                            continue;
+                        } else {
+                            if (!sameGridColor(colorRestrictions, i, j, dice) && !isBlank(i, j)) {
+                                booleanGrid[i][j] = false;
+                                continue;
+                            } else if (!diceAroundRestriction) {
+                                booleanGrid[i][j] = true;
+                                continue;
+                            }
                         }
 
                         //Check dices around
 
                         if (i < 3)
-                            if (checkAround(dice, i + 1, j, j, booleanGrid[i], booleanGrid)) continue;
+                            if (checkAround(dice, i + 1, j, j, booleanGrid[i])) continue;
 
 
                         if (i > 0)
-                            if (checkAround(dice, i - 1, j, j, booleanGrid[i], booleanGrid)) continue;
+                            if (checkAround(dice, i - 1, j, j, booleanGrid[i])) continue;
 
 
                         if (j < 4)
-                            if (checkAround(dice, i, j, j + 1, booleanGrid[i], booleanGrid)) continue;
+                            if (checkAround(dice, i, j, j + 1, booleanGrid[i])) continue;
 
 
                         if (j > 0) {
-                            checkAround(dice, i, j, j - 1, booleanGrid[i], booleanGrid);
+                            checkAround(dice, i, j, j - 1, booleanGrid[i]);
                         }
                     }
                 }
@@ -265,7 +283,7 @@ public abstract class PatternCard extends Card {
         return booleanGrid;
     }
 
-    private boolean checkAround(Dice dice, int i, int j, int i2, Boolean[] booleans, Boolean[][] booleanGrid) {
+    private boolean checkAround(Dice dice, int i, int j, int i2, Boolean[] booleans) {
         if (!noDice(i, i2)) {
             if (!sameDiceValue(i, i2, dice) && !sameDiceColor(i, i2, dice)) {
                 booleans[j] = true;
@@ -279,8 +297,7 @@ public abstract class PatternCard extends Card {
         return false;
     }
 
-    private boolean hasDicesAround(boolean diceAroundRestriction, int i, int j) {
-        if (diceAroundRestriction){
+    private boolean hasDicesAround(int i, int j) {
             if (j > 0) {
                 if (!noDice(i, j - 1))
                     return !noDice(i,j - 1);
@@ -314,9 +331,9 @@ public abstract class PatternCard extends Card {
                     return !noDice(i - 1,j + 1);
             }
             return false;
-        }
-        return true;
+
     }
+
 
     private boolean sameDiceColor(int i, int j, Dice dice) {
         return grid.get(i).get(j).getDice().getDiceColor().equals(dice.getDiceColor());
