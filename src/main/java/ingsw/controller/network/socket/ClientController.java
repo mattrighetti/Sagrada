@@ -468,6 +468,7 @@ public class ClientController implements ResponseHandler, NetworkType {
         System.out.println("Response Received, requesting rejoin in match");
         sceneUpdater.setUsernameInApplication(reJoinResponse.username);
         sceneUpdater.launchProgressForm();
+        client.request(new ReJoinMatchRequest(reJoinResponse.matchName));
     }
 
     @Override

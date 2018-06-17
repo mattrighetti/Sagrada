@@ -241,7 +241,7 @@ public class GameManager {
                         } else {
                             //Altrimenti controlla se è ancora connesso
                             player.getUserObserver();
-                            System.out.println("Else");
+                            //System.out.println("Else");
                         }
                     } catch (RemoteException e) {
                         // Se un utente RMI è disconnesso viene lanciata l'eccezione e viene inserito negli utenti disconnessi
@@ -601,11 +601,13 @@ public class GameManager {
             System.out.println("Turn forward " + i + " player " + playerList.get(i));
 
             currentRound.setPlayerEndedTurn(false);
-            currentRound.startForPlayer(playerList.get(i));
-        //    startTimer(40000);
+            if (playerList.get(i).getUser().isActive()){
+                currentRound.startForPlayer(playerList.get(i));
+                startTimer(40000);
 
-            //wait until turn has ended
-            waitEndTurn();
+                //wait until turn has ended
+                waitEndTurn();
+            }
         }
         turnInRound.set(2);
         for (int i = playerList.size() - 1; i >= 0; i--) {
@@ -613,11 +615,13 @@ public class GameManager {
             System.out.println("Turn backward " + i + " player " + playerList.get(i));
 
             currentRound.setPlayerEndedTurn(false);
-            currentRound.startForPlayer(playerList.get(i));
-        //    startTimer(40000);
+            if (playerList.get(i).getUser().isActive()) {
+                currentRound.startForPlayer(playerList.get(i));
+                startTimer(40000);
 
-            //wait until turn has ended
-            waitEndTurn();
+                //wait until turn has ended
+                waitEndTurn();
+            }
         }
 
         if (!board.getDraftedDice().isEmpty()) {
@@ -648,17 +652,18 @@ public class GameManager {
                 }
             }
             if (!cancelTimer.get()) {
+                if (currentRound.getCurrentPlayer().getUser().isActive()) {
+                    try {
+                        currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
 
-                try {
-                    currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 endTurn();
 

@@ -51,15 +51,16 @@ public class Round implements Runnable {
                 waitForMove();
                 noOfMoves++;
                 System.out.println("Second move done");
-            } else
+            } else {
                 blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
+            }
 
             endTurnNotification();
             playerEndedTurn.set(true);
 
             //wake up the round thread
             synchronized (playerEndedTurn) {
-                playerEndedTurn.notify();
+                playerEndedTurn.notifyAll();
             }
 
         }).start();
@@ -70,14 +71,14 @@ public class Round implements Runnable {
 
         //wake up the Thread of round class
         synchronized (hasMadeAMove) {
-            hasMadeAMove.notify();
+            hasMadeAMove.notifyAll();
         }
     }
 
     private void waitForMove() {
         System.out.println("Wait for the move");
         synchronized (hasMadeAMove) {
-            while (!hasPlayerEndedTurn().get() || !hasMadeAMove.get()) {
+            while (!(hasPlayerEndedTurn().get() || hasMadeAMove.get())) {
                 //wait until the move is done
                 try {
                     hasMadeAMove.wait();
@@ -99,8 +100,8 @@ public class Round implements Runnable {
 
         //Wake up the round thread
         if (hasPlayerEndedTurn) {
-            synchronized (playerEndedTurn) {
-                playerEndedTurn.notify();
+            synchronized (hasMadeAMove) {
+                hasMadeAMove.notifyAll();
             }
         }
     }

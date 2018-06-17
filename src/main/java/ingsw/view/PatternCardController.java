@@ -48,6 +48,10 @@ public class PatternCardController implements SceneUpdater {
     @FXML
     void onClickPatternCardFour(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(3));
+        patternCardOne.setDisable(true);
+        patternCardTwo.setDisable(true);
+        patternCardThree.setDisable(true);
+        patternCardFour.setDisable(true);
         //progressForm = new ProgressForm();
         //progressForm.activateProgressBar();
     }
@@ -55,6 +59,10 @@ public class PatternCardController implements SceneUpdater {
     @FXML
     void onClickPatternCardOne(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(0));
+        patternCardOne.setDisable(true);
+        patternCardTwo.setDisable(true);
+        patternCardThree.setDisable(true);
+        patternCardFour.setDisable(true);
         //progressForm = new ProgressForm();
         //progressForm.activateProgressBar();
     }
@@ -62,6 +70,10 @@ public class PatternCardController implements SceneUpdater {
     @FXML
     void onClickPatternCardThree(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(2));
+        patternCardOne.setDisable(true);
+        patternCardTwo.setDisable(true);
+        patternCardThree.setDisable(true);
+        patternCardFour.setDisable(true);
         //progressForm = new ProgressForm();
         //progressForm.activateProgressBar();
     }
@@ -69,6 +81,10 @@ public class PatternCardController implements SceneUpdater {
     @FXML
     void onClickPatternCardTwo(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(1));
+        patternCardOne.setDisable(true);
+        patternCardTwo.setDisable(true);
+        patternCardThree.setDisable(true);
+        patternCardFour.setDisable(true);
         //progressForm = new ProgressForm();
         //progressForm.activateProgressBar();
     }
