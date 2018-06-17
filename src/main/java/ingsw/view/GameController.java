@@ -600,8 +600,12 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @Override
     public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
         Platform.runLater(() -> {
-            createPopUpWindow("Use Tool Card", "Move not allowed ", "You can't use this tool card").showAndWait();
-            activateToolCard();
+            if (useToolCardResponse.playerTokens >= 0){
+                createPopUpWindow("Use Tool Card", "Move not allowed", "You can't use this tool card, you haven't got enough favor tokens\n You have " + useToolCardResponse.playerTokens + " tokens").showAndWait();
+            } else {
+                createPopUpWindow("Use Tool Card", "Move not allowed ", "You can't use this tool card").showAndWait();
+                activateToolCard();
+            }
         });
 
     }

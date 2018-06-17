@@ -4,10 +4,11 @@ import ingsw.model.GameManager;
 import ingsw.model.cards.Card;
 
 public abstract class ToolCard extends Card {
-    private int price = 1;
+    private int price;
 
     public ToolCard(String name) {
         super(name);
+        price = 1;
     }
 
     @Override

@@ -67,5 +67,9 @@ public class Player implements Serializable {
         return favorTokens;
     }
 
+    public void decreaseFavorTokens(int favorTokens) {
+        this.favorTokens = this.favorTokens - favorTokens;
+    }
+
     //Get a Private Card of this player
 }

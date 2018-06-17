@@ -1,5 +1,6 @@
 package ingsw.model;
 
+import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.model.cards.toolcards.ToolCard;
 
 import java.rmi.RemoteException;
@@ -119,7 +120,19 @@ public class Round implements Runnable {
     }
 
     void makeMove(ToolCard toolCard) {
-        toolCard.action(gameManager);
+        if (toolCard.getPrice() <= getCurrentPlayer().getFavourTokens() ) {
+
+            if (toolCard.getPrice() == 1) toolCard.increasePrice();
+            getCurrentPlayer().decreaseFavorTokens(toolCard.getPrice());
+            toolCard.action(gameManager);
+
+        } else {
+            try {
+                getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse(getCurrentPlayer().getFavourTokens()));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void toolCardMoveDone() {
