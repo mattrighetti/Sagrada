@@ -54,7 +54,7 @@ public class Round implements Runnable {
 
             //wake up the round thread
             synchronized (playerEndedTurn) {
-                playerEndedTurn.notify();
+                playerEndedTurn.notifyAll();
             }
 
         }).start();
@@ -65,7 +65,7 @@ public class Round implements Runnable {
 
         //wake up the Thread of round class
         synchronized (hasMadeAMove) {
-            hasMadeAMove.notify();
+            hasMadeAMove.notifyAll();
         }
     }
 
@@ -77,6 +77,7 @@ public class Round implements Runnable {
                 try {
                     hasMadeAMove.wait();
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
 
@@ -95,7 +96,7 @@ public class Round implements Runnable {
         //Wake up the round thread
         if (hasPlayerEndedTurn) {
             synchronized (playerEndedTurn) {
-                playerEndedTurn.notify();
+                playerEndedTurn.notifyAll();
             }
         }
     }

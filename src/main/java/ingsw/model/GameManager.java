@@ -274,7 +274,7 @@ public class GameManager {
                 player.setPatternCard(patternCard);
                 receiveAck();
                 synchronized (noOfAck) {
-                    noOfAck.notify();
+                    noOfAck.notifyAll();
                 }
             }
         }
@@ -345,6 +345,7 @@ public class GameManager {
                 try {
                     noOfAck.wait();
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
             }
@@ -370,7 +371,7 @@ public class GameManager {
         synchronized (cancelTimer) {
             if (!cancelTimer.get()) {
                 cancelTimer.set(true);
-                cancelTimer.notify();
+                cancelTimer.notifyAll();
             }
         }
     }
@@ -388,7 +389,7 @@ public class GameManager {
     public synchronized void receiveAck() {
         noOfAck.getAndIncrement();
         synchronized (noOfAck) {
-            noOfAck.notify();
+            noOfAck.notifyAll();
         }
     }
 
@@ -425,6 +426,7 @@ public class GameManager {
                         try {
                             endRound.wait();
                         } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
                             e.printStackTrace();
                         }
                     }
@@ -632,7 +634,7 @@ public class GameManager {
 
         //wake up the match thread
         synchronized (endRound) {
-            endRound.notify();
+            endRound.notifyAll();
         }
     }
 
@@ -644,6 +646,7 @@ public class GameManager {
                 try {
                     cancelTimer.wait(time);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
             }
@@ -658,6 +661,7 @@ public class GameManager {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
                 endTurn();
@@ -681,6 +685,7 @@ public class GameManager {
                 try {
                     currentRound.hasPlayerEndedTurn().wait();
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
             }
@@ -792,7 +797,7 @@ public class GameManager {
             board.getDraftedDice().remove(dice);
         }
         synchronized (toolCardLock) {
-            toolCardLock.notify();
+            toolCardLock.notifyAll();
         }
     }
 
@@ -1051,7 +1056,7 @@ public class GameManager {
 
     private void wakeUpToolCardThread() {
         synchronized (toolCardLock) {
-            toolCardLock.notify();
+            toolCardLock.notifyAll();
         }
     }
 

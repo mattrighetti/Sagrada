@@ -26,6 +26,7 @@ public class GrozingPliers extends ToolCard {
             try {
                 gameManager.toolCardLock.wait();
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
 

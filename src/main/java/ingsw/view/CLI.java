@@ -95,7 +95,7 @@ public class CLI implements SceneUpdater {
                     stringInput.set(stoppableScanner.readLine());
 
                     synchronized (stringInput) {
-                        stringInput.notify();
+                        stringInput.notifyAll();
                     }
                 }
         ).start();
@@ -105,6 +105,7 @@ public class CLI implements SceneUpdater {
                 try {
                     stringInput.wait();
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
             }
@@ -128,7 +129,7 @@ public class CLI implements SceneUpdater {
 
 
                     synchronized (integerInput) {
-                        integerInput.notify();
+                        integerInput.notifyAll();
                     }
                 }
         ).start();
@@ -138,6 +139,7 @@ public class CLI implements SceneUpdater {
                 try {
                     integerInput.wait();
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
             }
@@ -282,6 +284,7 @@ public class CLI implements SceneUpdater {
                             try {
                                 gamePhase.wait();
                             } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
                                 e.printStackTrace();
                             }
                         }
@@ -296,6 +299,7 @@ public class CLI implements SceneUpdater {
                             try {
                                 gamePhase.wait();
                             } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
                                 e.printStackTrace();
                             }
                         }
@@ -306,6 +310,7 @@ public class CLI implements SceneUpdater {
                             try {
                                 gamePhase.wait();
                             } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
                                 e.printStackTrace();
                             }
                         }
@@ -391,7 +396,7 @@ public class CLI implements SceneUpdater {
             System.out.println(statistic.toString());
         }
         synchronized (gamePhase) {
-            gamePhase.notify();
+            gamePhase.notifyAll();
         }
     }
 
@@ -401,7 +406,7 @@ public class CLI implements SceneUpdater {
             System.out.println(rankingList.toString());
         }
         synchronized (gamePhase) {
-            gamePhase.notify();
+            gamePhase.notifyAll();
         }
     }
 
@@ -557,6 +562,7 @@ public class CLI implements SceneUpdater {
                                     try {
                                         gamePhase.wait();
                                     } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
                                         e.printStackTrace();
                                     }
                                 }
@@ -570,6 +576,7 @@ public class CLI implements SceneUpdater {
                                 try {
                                     gamePhase.wait();
                                 } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
                                     e.printStackTrace();
                                 }
                             }
@@ -793,7 +800,7 @@ public class CLI implements SceneUpdater {
                 currentConnectionType.useToolCard(toolCards.get(chosenToolCard));
             else if (chosenToolCard == 0) {
                 synchronized (gamePhase) {
-                    gamePhase.notify();
+                    gamePhase.notifyAll();
                 }
             }
 
@@ -828,7 +835,7 @@ public class CLI implements SceneUpdater {
         System.out.println(updateViewResponse.player.getPlayerUsername() + " placed a die");
         showPatternCardPlayer(updateViewResponse.player);
         synchronized (gamePhase) {
-            gamePhase.notify();
+            gamePhase.notifyAll();
         }
     }
 
@@ -858,7 +865,7 @@ public class CLI implements SceneUpdater {
         availableMatches.clear();
         availableMatches = matches;
         synchronized (gamePhase) {
-            gamePhase.notify();
+            gamePhase.notifyAll();
         }
     }
 
@@ -881,7 +888,7 @@ public class CLI implements SceneUpdater {
         roundTrack = useToolCardResponse.roundTrack;
         toolCardUsed.set(true);
         synchronized (gamePhase){
-            gamePhase.notify();
+            gamePhase.notifyAll();
         }
     }
 
@@ -891,7 +898,7 @@ public class CLI implements SceneUpdater {
         updateAvailablePositions(useToolCardResponse.availablePositions);
         toolCardUsed.set(true);
         synchronized (gamePhase){
-            gamePhase.notify();
+            gamePhase.notifyAll();
         }
     }
 
@@ -899,7 +906,7 @@ public class CLI implements SceneUpdater {
     public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
         System.out.println("Pay Attention\n You can't use this tool card now\n");
         synchronized (gamePhase){
-            gamePhase.notify();
+            gamePhase.notifyAll();
         }
     }
 

@@ -22,6 +22,7 @@ public class StoppableScanner {
                 System.err.println("Interrupted READ LINE");
             } catch (InterruptedException e) {
                 System.err.println("Interrupted READ LINE");
+                Thread.currentThread().interrupt();
                 executorService.shutdown();
             }
 
@@ -48,6 +49,7 @@ public class StoppableScanner {
                 System.err.println("Interrupted READ INT");
             } catch (InterruptedException e) {
                 System.err.println("Interrupted READ INT");
+                Thread.currentThread().interrupt();
                 executorService.shutdown();
             }
 
@@ -81,6 +83,7 @@ public class StoppableScanner {
 
                 } catch (InterruptedException e) {
                     System.err.println("ConsoleLineReader stopped");
+                    Thread.currentThread().interrupt();
                     return null;
                 }
             } while ("".equals(input));
@@ -105,6 +108,7 @@ public class StoppableScanner {
 
                 } catch (InterruptedException e) {
                     System.err.println("ConsoleLineReader stopped");
+                    Thread.currentThread().interrupt();
                     return null;
                 }
             } while (input < -1);
