@@ -158,7 +158,9 @@ public class LobbyController implements SceneUpdater, Initializable {
 
     @FXML
     void onJoinPressed(ActionEvent event) {
-        if (matchTableView.getSelectionModel().getSelectedItem() != null) {
+        if (matchTableView.getSelectionModel().getSelectedItem() != null  &&
+                !matchTableView.getSelectionModel().getSelectedItem().getFirstField().equals(4)) {
+
             networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField());
             progressForm = new ProgressForm();
             progressForm.activateProgressBar();
