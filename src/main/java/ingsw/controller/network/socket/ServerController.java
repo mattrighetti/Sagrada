@@ -66,7 +66,6 @@ public class ServerController implements RequestHandler, Serializable {
             sagradaGame.loginUserToController(joinMatchRequest.matchName, user.getUsername());
             controller = sagradaGame.getMatchController(joinMatchRequest.matchName);
         } catch (RemoteException e) {
-            e.printStackTrace();
             return new JoinedMatchResponse(false);
         }
 

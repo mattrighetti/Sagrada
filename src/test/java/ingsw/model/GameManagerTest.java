@@ -1,5 +1,6 @@
 package ingsw.model;
 
+import ingsw.controller.Controller;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.model.cards.publicoc.*;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.*;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,13 +23,13 @@ class GameManagerTest {
     private GameManager gameManager;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws RemoteException {
         List<Player> players = new ArrayList<>();
         players.add(new Player(new User("a")));
         players.add(new Player(new User("b")));
         players.add(new Player(new User("c")));
         players.add(new Player(new User("d")));
-        gameManager = new GameManager(players);
+        gameManager = new GameManager(players, new Controller("Match", SagradaGame.get()));
     }
 
     @Test

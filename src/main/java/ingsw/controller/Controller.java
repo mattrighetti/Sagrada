@@ -12,12 +12,14 @@ import java.util.List;
 
 public class Controller extends UnicastRemoteObject implements RemoteController {
     private String matchName;
+    private boolean hasStarted;
     private SagradaGame sagradaGame;
     private GameManager gameManager;
     private List<Player> playerList;
 
     public Controller(String matchName, SagradaGame sagradaGame) throws RemoteException {
         super();
+        hasStarted = false;
         this.sagradaGame = sagradaGame;
         this.matchName = matchName;
         playerList = new ArrayList<>();
@@ -41,16 +43,19 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      *
      * @param user the user wants to join the match
      */
-    public void loginUser(User user) {
-        playerList.add(new Player(user));
-        if (playerList.size() == 2) {
-            ControllerTimer.get().startLoginTimer(2, this);
-        }
+    public void loginUser(User user) throws RemoteException {
+        if (!hasStarted) {
+            playerList.add(new Player(user));
+            if (playerList.size() == 2) {
+                ControllerTimer.get().startLoginTimer(2, this, hasStarted);
+            }
 
-        if (playerList.size() == 4) {
-            ControllerTimer.get().cancelTimer();
-            createMatch();
-        }
+            if (playerList.size() == 4) {
+                ControllerTimer.get().cancelTimer();
+                hasStarted = true;
+                createMatch();
+            }
+        } else throw new RemoteException("Match has already started");
     }
 
     /**

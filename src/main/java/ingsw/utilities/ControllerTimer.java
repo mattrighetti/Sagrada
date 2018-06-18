@@ -24,8 +24,8 @@ public class ControllerTimer {
         return controllerTimer;
     }
 
-    public void startLoginTimer(int loginSeconds, Controller controller) {
-        timer.schedule(new LaunchMatch(controller), loginSeconds * 1000);
+    public void startLoginTimer(int loginSeconds, Controller controller, boolean hasStarted) {
+        timer.schedule(new LaunchMatch(controller, hasStarted), loginSeconds * 1000);
     }
 
     public void startTurnTimer(int turnSeconds, GameManager gameManager) {
@@ -39,8 +39,9 @@ public class ControllerTimer {
     public class LaunchMatch extends TimerTask {
         Controller controller;
 
-        LaunchMatch(Controller controller) {
+        LaunchMatch(Controller controller, boolean hasStarted) {
             this.controller = controller;
+            hasStarted = true;
         }
 
         @Override

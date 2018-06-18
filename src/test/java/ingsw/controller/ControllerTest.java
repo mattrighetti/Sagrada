@@ -1,6 +1,7 @@
 package ingsw.controller;
 
 import ingsw.model.Player;
+import ingsw.model.SagradaGame;
 import ingsw.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +21,11 @@ class ControllerTest {
 
     @BeforeEach
     void setUp() throws RemoteException {
-        controller = new Controller("Test");
+        controller = new Controller("Test", SagradaGame.get());
     }
 
     @Test
-    void loginUser() throws NoSuchFieldException, IllegalAccessException {
+    void loginUser() throws NoSuchFieldException, IllegalAccessException, RemoteException {
         Field field = controller.getClass().getDeclaredField("playerList");
         field.setAccessible(true);
         for (int i = 0; i < 3; i++) {
