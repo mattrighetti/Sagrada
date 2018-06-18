@@ -1,6 +1,7 @@
 package ingsw.model;
 
 import ingsw.controller.network.commands.Notification;
+import ingsw.controller.network.commands.Response;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
@@ -10,17 +11,17 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 public class Player implements Serializable {
-    private User user;
-    private PrivateObjectiveCard privateObjectiveCard;
-    private PatternCard patternCard;
-    private int favorTokens;
     private int score;
+    private User user;
+    private int favorTokens;
+    private PatternCard patternCard;
+    private PrivateObjectiveCard privateObjectiveCard;
 
     public Player(User user) {
         this.user = user;
     }
 
-    public void setScore(int score) {
+    void setScore(int score) {
         this.score = score;
     }
 
@@ -60,6 +61,14 @@ public class Player implements Serializable {
         return user.getUserObserver();
     }
 
+    public void sendResponse(Response response) {
+        try {
+            user.getUserObserver().sendResponse(response);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     void notifyDraft() {
         try {
             getUserObserver().receiveNotification(new Notification(NotificationType.DRAFT_DICE));
@@ -72,13 +81,12 @@ public class Player implements Serializable {
         this.user = user;
     }
 
-    public int getFavourTokens() {
+    int getFavourTokens() {
         return favorTokens;
     }
 
-    public void decreaseFavorTokens(int favorTokens) {
+    void decreaseFavorTokens(int favorTokens) {
         this.favorTokens = this.favorTokens - favorTokens;
     }
 
-    //Get a Private Card of this player
 }

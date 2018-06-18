@@ -35,21 +35,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GameManager {
     private Board board;
-    private List<MoveStatus> movesHistory;
-    private final AtomicInteger noOfAck;
+    private Round currentRound;
+    private boolean brokenWindow;
     private List<Player> playerList;
+    private List<MoveStatus> movesHistory;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
     private List<ToolCard> toolCards;
     private List<PatternCard> patternCards;
     private List<List<Dice>> roundTrack;
-    private Round currentRound;
-    private boolean brokenWindow;
+    private final AtomicInteger noOfAck;
     private final AtomicBoolean endRound;
+    private final AtomicBoolean stop;
     private final AtomicBoolean doubleMove;
-    public final Object toolCardLock = new Object();
-    private final AtomicInteger turnInRound = new AtomicInteger(0);
     private final AtomicBoolean cancelTimer;
+    private final AtomicInteger turnInRound = new AtomicInteger(0);
+    public final Object toolCardLock = new Object();
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -58,14 +59,15 @@ public class GameManager {
      * @param players players that joined the match
      */
     public GameManager(List<Player> players) {
-        noOfAck = new AtomicInteger(0);
-        endRound = new AtomicBoolean(false);
-        doubleMove = new AtomicBoolean(false);
-        cancelTimer = new AtomicBoolean(false);
         brokenWindow = false;
         playerList = players;
         roundTrack = new ArrayList<>();
         movesHistory = new LinkedList<>();
+        stop = new AtomicBoolean(true);
+        noOfAck = new AtomicInteger(0);
+        endRound = new AtomicBoolean(false);
+        doubleMove = new AtomicBoolean(false);
+        cancelTimer = new AtomicBoolean(false);
         setUpGameManager();
     }
 
@@ -199,13 +201,15 @@ public class GameManager {
      */
     public void pickPatternCards() {
         for (Player player : playerList) {
+
             try {
                 //Need to create another List: subList is not Serializable
-                ArrayList<PatternCard> patternCardArrayList = new ArrayList<>(patternCards.subList(0, 4));
+                List<PatternCard> patternCardArrayList = new ArrayList<>(patternCards.subList(0, 4));
                 player.getUserObserver().sendResponse(new PatternCardNotification(patternCardArrayList));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+
             for (int i = 0; i < 4; i++) {
                 patternCards.remove(0);
             }
@@ -213,44 +217,72 @@ public class GameManager {
     }
 
     /**
-     * Method that will check every two seconds which player is active and those who has disconnected from the game
+     * Method that checks if every user is connected to the game.
+     */
+    private void checkUserConnection() {
+        final Set<Player> disconnectedPlayers = new HashSet<>();
+        for (Player player : playerList) {
+            try {
+
+                // If there are at least two active players then...
+                if (disconnectedPlayers.size() == playerList.size() - 1) {
+
+                    // If a user was in the disconnectedPlayers' Set and it's now active
+                    // He gets removed from the set and the necessary data will be notified to him
+                    if (disconnectedPlayers.contains(player) && player.getUser().isActive()) {
+                        System.out.println("User: " + player.getPlayerUsername() + " is back online! ---> Sending data");
+                        disconnectedPlayers.remove(player);
+                        player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
+
+                        Thread.sleep(500);
+                        player.getUserObserver().sendResponse(new DraftedDiceResponse(board.getDraftedDice()));
+                    } else if (!disconnectedPlayers.contains(player) && !player.getUser().isActive()) {
+                        System.out.println("User" + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users");
+                        disconnectedPlayers.add(player);
+                    } else {
+                        // Check if the User is disconnected or not
+                        // If it's disconnected the catch block will handle the disconnection
+                        player.getUserObserver();
+                    }
+
+                    // If there's only a user connected then...
+                } else {
+                    playerList.removeAll(disconnectedPlayers);
+                    playerList.get(0).sendResponse(new VictoryNotification(0));
+                    stop.set(true);
+                }
+
+            } catch (RemoteException e) {
+                // If a RMI user disconnects, this code will execute
+                System.out.println("RMI User " + player.getPlayerUsername() + " disconnected");
+                disconnectedPlayers.add(player);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Method that will check every two seconds which player is active and those who has disconnected from the game.
+     * This method is especially handy for checking RMI users disconnection since when a RMI user disconnects you
+     * don't get an immediate Exception.
      */
     private void listenForPlayerDisconnection() {
-        Set<Player> disconnectedPlayerSet = new HashSet<>();
+        stop.set(false);
         new Thread(() -> {
-            do {
-                try {
-
+            try {
+                do {
+                    // PING every 2 seconds
                     Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    e.printStackTrace();
-                }
 
-                for (Player player : playerList) {
-                    try {
-                        // Se l'utente era nel set di utenti disconnessi e ora è attivo allora inviagli la boardDataResponse
-                        if (disconnectedPlayerSet.contains(player) && player.getUser().isActive()) {
-                            System.out.println("Reactivated user: " + player.getPlayerUsername() + " sending data");
-                            disconnectedPlayerSet.remove(player);
-                            player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
-                            //TODO check why the dice are not displayed
-                            player.getUserObserver().sendResponse(new DraftedDiceResponse(board.getDraftedDice()));
-                        } else if (!disconnectedPlayerSet.contains(player) && !player.getUser().isActive()) {
-                            System.out.println("Adding back Socket player");
-                            disconnectedPlayerSet.add(player);
-                        } else {
-                            //Altrimenti controlla se è ancora connesso
-                            player.getUserObserver();
-                            //System.out.println("Else");
-                        }
-                    } catch (RemoteException e) {
-                        // Se un utente RMI è disconnesso viene lanciata l'eccezione e viene inserito negli utenti disconnessi
-                        System.out.println("Exception thrown");
-                        disconnectedPlayerSet.add(player);
-                    }
-                }
-            } while (true);
+                    checkUserConnection();
+
+                } while (!stop.get());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            }
         }).start();
     }
 
@@ -269,7 +301,7 @@ public class GameManager {
      * @param username    player who chose the pattern card
      * @param patternCard pattern card chosen by the player
      */
-    public PatternCard setPatternCardForPlayer(String username, PatternCard patternCard) {
+    public void setPatternCardForPlayer(String username, PatternCard patternCard) {
         for (Player player : playerList) {
             if (player.getPlayerUsername().equals(username)) {
                 player.setPatternCard(patternCard);
@@ -279,8 +311,6 @@ public class GameManager {
                 }
             }
         }
-
-        return patternCard;
     }
 
     /**
@@ -440,6 +470,8 @@ public class GameManager {
 
             writeHistoryToFile(movesHistory);
 
+            stop.set(true);
+
         }).start();
     }
 
@@ -458,7 +490,7 @@ public class GameManager {
         Player winner = evaluateWinner();
 
         for (Player player : playerList) {
-            if (winner!= null && winner.equals(player)) {
+            if (winner != null && winner.equals(player)) {
                 try {
                     player.getUserObserver().notifyVictory(player.getScore());
                 } catch (RemoteException e) {
@@ -487,14 +519,15 @@ public class GameManager {
 
     private Set<Player> evaluateBasicPoints() {
         Set<Player> tiePlayers = new HashSet<>();
-        int score = -30;
+        int maxScore = -30;
         Player winner = null;
+
         for (Player player : playerList) {
-            if (score < player.getScore()) {
+            if (maxScore < player.getScore()) {
                 tiePlayers.clear();
                 winner = player;
-                score = player.getScore();
-            } else if (score == player.getScore()) {
+                maxScore = player.getScore();
+            } else if (maxScore == player.getScore()) {
                 if (!tiePlayers.contains(winner)) {
                     tiePlayers.add(winner);
                 }
@@ -514,6 +547,7 @@ public class GameManager {
         int privateOc = 0;
         Set<Player> tieAgainPlayers = new HashSet<>();
         Player winner = null;
+
         for (Player player : tiePlayers) {
             if (privateOc < player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid())) {
                 tieAgainPlayers.clear();
@@ -539,6 +573,7 @@ public class GameManager {
         int favorTokens = 0;
         Player winner = null;
         Set<Player> tiePlayers = new HashSet<>();
+
         for (Player player : tieAgainPlayers) {
             if (favorTokens < player.getFavourTokens()) {
                 winner = player;
@@ -577,9 +612,9 @@ public class GameManager {
         } else found = true;
 
         if (possibleWinners.size() > 1) {
-            for (int i = 0; i < playerList.size(); i++) {
-                if (possibleWinners.contains(playerList.get(i))) {
-                    winner = playerList.get(i);
+            for (Player player : playerList) {
+                if (possibleWinners.contains(player)) {
+                    winner = player;
                     found = true;
                     break;
                 }
@@ -608,7 +643,7 @@ public class GameManager {
             System.out.println("Turn forward " + i + " player " + playerList.get(i));
 
             currentRound.setPlayerEndedTurn(false);
-            if (playerList.get(i).getUser().isActive()){
+            if (playerList.get(i).getUser().isActive()) {
                 currentRound.startForPlayer(playerList.get(i));
                 startTimer(40000);
 
@@ -651,6 +686,7 @@ public class GameManager {
         cancelTimer.set(false);
         new Thread(() -> {
             System.out.println("start timer\n");
+
             synchronized (cancelTimer) {
                 try {
                     cancelTimer.wait(time);
@@ -659,25 +695,24 @@ public class GameManager {
                     e.printStackTrace();
                 }
             }
+
             if (!cancelTimer.get()) {
-                try {
-                    currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
 
                 try {
+                    currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    e.printStackTrace();
+                } catch (RemoteException e) {
                     e.printStackTrace();
                 }
 
                 cancelTimer.set(false);
                 System.out.println("timer ended\n");
             }
-            stopTurn();
 
+            stopTurn();
         }).start();
     }
 
@@ -724,17 +759,19 @@ public class GameManager {
 
             player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).insertDice(dice);
             board.getDraftedDice().remove(dice);
+
             // Send updated draftedDice
             Broadcaster.broadcastResponseToAll(playerList, board.getDraftedDice());
+
             // Update MovesHistory
             addMoveToHistoryAndNotify(new MoveStatus(player.getPlayerUsername(),
                     "Placed dice" + dice + " in [" + rowIndex + ", " + columnIndex + "]"));
+
             // UpdateView response
             Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player, sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
             return true;
-        } else {
+        } else
             return false;
-        }
     }
 
     /**
@@ -988,7 +1025,8 @@ public class GameManager {
                 patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).insertDice(dice);
                 this.doubleMove.set(true);
             }
-        } else System.out.println("Lathekin: Error invalid selected dice");
+        } else
+            System.out.println("Lathekin: Error invalid selected dice");
         wakeUpToolCardThread();
     }
 
@@ -1090,6 +1128,7 @@ public class GameManager {
                 e.printStackTrace();
             }
         }
+
         if (phase == 2) {
             try {
                 getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TapWheelResponse(availablePositions, patternCard, 2));

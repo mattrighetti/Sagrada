@@ -77,11 +77,6 @@ public class User implements Serializable {
         return active;
     }
 
-    // TODO consider removing this and adding a method to the Broadcaster
-    void updateUserConnected(int numberOfConnectedUsers) throws RemoteException {
-        userObserver.onJoin(numberOfConnectedUsers);
-    }
-
     long getActiveTime() {
         return stopWatch.getTime();
     }
