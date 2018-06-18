@@ -32,6 +32,8 @@ public class ColorDiagonals extends PublicObjectiveCard {
         for (int i = 0; i < 5; i++) {
             checkChilds(grid, flags, 0, i, null);
         }
+        System.out.println(flags.keySet());
+        System.out.println(flags.values());
         return flags.size();
     }
 

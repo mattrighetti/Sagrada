@@ -19,6 +19,7 @@ class ColorDiagonalsTest {
     private List<List<Box>> gridFour;
     private List<List<Box>> gridFive;
     private List<List<Box>> gridSix;
+    private List<List<Box>> gridSeven;
 
 
     @BeforeEach
@@ -62,6 +63,12 @@ class ColorDiagonalsTest {
         gridSix.add(new ArrayList<>(5));
         gridSix.add(new ArrayList<>(5));
 
+        gridSeven = new ArrayList<>(4);
+        gridSeven.add(new ArrayList<>(5));
+        gridSeven.add(new ArrayList<>(5));
+        gridSeven.add(new ArrayList<>(5));
+        gridSeven.add(new ArrayList<>(5));
+
         for(int i = 0; i < 4; i++){
             for(int j = 0; j <5; j++){
                 gridOne.get(i).add(j, new Box(Color.BLANK));
@@ -70,6 +77,7 @@ class ColorDiagonalsTest {
                 gridFour.get(i).add(j, new Box(Color.BLANK));
                 gridFive.get(i).add(j, new Box(Color.BLANK));
                 gridSix.get(i).add(j, new Box(Color.BLANK));
+                gridSeven.get(i).add(j, new Box(Color.BLANK));
 
             }
         }
@@ -128,6 +136,12 @@ class ColorDiagonalsTest {
         gridSix.get(0).get(1).insertDice(new Dice(Color.BLUE));
         gridSix.get(0).get(2).insertDice(new Dice(Color.BLUE));
         gridSix.get(0).get(3).insertDice(new Dice(Color.BLUE));
+
+        gridSeven.get(2).get(2).insertDice(new Dice(Color.BLUE));
+        gridSeven.get(3).get(3).insertDice(new Dice(Color.BLUE));
+        gridSeven.get(2).get(3).insertDice(new Dice(Color.RED));
+        gridSeven.get(3).get(4).insertDice(new Dice(Color.RED));
+
     }
 
     @Test
@@ -140,10 +154,11 @@ class ColorDiagonalsTest {
     void checkTest() {
         assertEquals(8,colorDiagonals.check(gridOne));
         assertEquals(4,colorDiagonals.check(gridTwo));
-        assertEquals(9,colorDiagonals.check(gridThree));
+        assertEquals(9, colorDiagonals.check(gridThree));
         assertEquals(0, colorDiagonals.check(gridFour));
         assertEquals(20, colorDiagonals.check(gridFive));
         assertEquals(5,colorDiagonals.check(gridSix));
+        assertEquals(4,colorDiagonals.check(gridSeven));
     }
 
     @Test

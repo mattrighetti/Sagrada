@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GameManager {
     private Board board;
     private List<MoveStatus> movesHistory;
-    private AtomicInteger noOfAck;
+    private final AtomicInteger noOfAck;
     private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
@@ -49,7 +49,7 @@ public class GameManager {
     private AtomicBoolean doubleMove;
     public final Object toolCardLock = new Object();
     private AtomicInteger turnInRound = new AtomicInteger(0);
-    private AtomicBoolean cancelTimer;
+    private final AtomicBoolean cancelTimer;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -235,6 +235,8 @@ public class GameManager {
                             System.out.println("Reactivated user: " + player.getPlayerUsername() + " sending data");
                             disconnectedPlayerSet.remove(player);
                             player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
+                            //TODO check why the dice are not displayed
+                            player.getUserObserver().sendResponse(new DraftedDiceResponse(board.getDraftedDice()));
                         } else if (!disconnectedPlayerSet.contains(player) && !player.getUser().isActive()) {
                             System.out.println("Adding back Socket player");
                             disconnectedPlayerSet.add(player);
@@ -364,15 +366,15 @@ public class GameManager {
     }
 
     public void endTurn() {
+        synchronized (cancelTimer) {
+            cancelTimer.set(true);
+            cancelTimer.notifyAll();
+        }
+    }
+
+    public void stopTurn() {
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
-
-        synchronized (cancelTimer) {
-            if (!cancelTimer.get()) {
-                cancelTimer.set(true);
-                cancelTimer.notify();
-            }
-        }
     }
 
     /**
@@ -388,7 +390,7 @@ public class GameManager {
     public synchronized void receiveAck() {
         noOfAck.getAndIncrement();
         synchronized (noOfAck) {
-            noOfAck.notify();
+            noOfAck.notifyAll();
         }
     }
 
@@ -652,24 +654,22 @@ public class GameManager {
                 }
             }
             if (!cancelTimer.get()) {
-                if (currentRound.getCurrentPlayer().getUser().isActive()) {
-                    try {
-                        currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-                endTurn();
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 cancelTimer.set(false);
                 System.out.println("timer ended\n");
             }
+            stopTurn();
 
         }).start();
     }

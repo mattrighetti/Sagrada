@@ -75,7 +75,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      *
      * @param response response to send
      */
-    private void respond(Response response) {
+    private synchronized void respond(Response response) {
         try {
             objectOutputStream.writeObject(response);
             objectOutputStream.reset();

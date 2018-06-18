@@ -341,6 +341,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         tabPane.getTabs().add(windowTab);
         windowController.setNetworkType(networkType);
         windowController.setGridPaneBackground(player.getPatternCard().getName());
+        windowController.updatePatternCard(player.getPatternCard());
     }
 
     /* UPDATE VIEWS METHODS */
