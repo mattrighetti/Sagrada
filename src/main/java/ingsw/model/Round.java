@@ -1,6 +1,7 @@
 package ingsw.model;
 
 import ingsw.controller.network.commands.AvoidToolCardResponse;
+import ingsw.controller.network.commands.EndTurnResponse;
 import ingsw.model.cards.toolcards.ToolCard;
 
 import java.rmi.RemoteException;
@@ -16,6 +17,7 @@ public class Round implements Runnable {
     private GameManager gameManager;
     private final AtomicBoolean playerEndedTurn;
     public List<String> blockedTurnPlayers;
+    private int noOfMoves;
 
     Round(GameManager gameManager) {
         this.gameManager = gameManager;
@@ -41,15 +43,20 @@ public class Round implements Runnable {
             }
 
             if (!blockedTurnPlayers.contains(getCurrentPlayer().getPlayerUsername())) {
+                noOfMoves = 0;
                 hasMadeAMove.set(false);
                 waitForMove();
+                noOfMoves++;
                 System.out.println("First move done");
                 hasMadeAMove.set(false);
                 waitForMove();
+                noOfMoves++;
                 System.out.println("Second move done");
-            } else
+            } else {
                 blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
+            }
 
+            endTurnNotification();
             playerEndedTurn.set(true);
 
             //wake up the round thread
@@ -72,7 +79,7 @@ public class Round implements Runnable {
     private void waitForMove() {
         System.out.println("Wait for the move");
         synchronized (hasMadeAMove) {
-            while (!hasPlayerEndedTurn().get() || !hasMadeAMove.get()) {
+            while (!(hasPlayerEndedTurn().get() || hasMadeAMove.get())) {
                 //wait until the move is done
                 try {
                     hasMadeAMove.wait();
@@ -95,9 +102,17 @@ public class Round implements Runnable {
 
         //Wake up the round thread
         if (hasPlayerEndedTurn) {
-            synchronized (playerEndedTurn) {
-                playerEndedTurn.notifyAll();
+            synchronized (hasMadeAMove) {
+                hasMadeAMove.notifyAll();
             }
+        }
+    }
+
+    private void endTurnNotification(){
+        try {
+            player.getUserObserver().sendResponse(new EndTurnResponse());
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -142,5 +157,9 @@ public class Round implements Runnable {
 
     public Player getCurrentPlayer() {
         return player;
+    }
+
+    public int getNoOfMoves() {
+        return noOfMoves;
     }
 }

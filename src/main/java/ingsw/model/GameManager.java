@@ -234,13 +234,15 @@ public class GameManager {
                             System.out.println("Reactivated user: " + player.getPlayerUsername() + " sending data");
                             disconnectedPlayerSet.remove(player);
                             player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
+                            //TODO check why the dice are not displayed
+                            player.getUserObserver().sendResponse(new DraftedDiceResponse(board.getDraftedDice()));
                         } else if (!disconnectedPlayerSet.contains(player) && !player.getUser().isActive()) {
                             System.out.println("Adding back Socket player");
                             disconnectedPlayerSet.add(player);
                         } else {
                             //Altrimenti controlla se è ancora connesso
                             player.getUserObserver();
-                            System.out.println("Else");
+                            //System.out.println("Else");
                         }
                     } catch (RemoteException e) {
                         // Se un utente RMI è disconnesso viene lanciata l'eccezione e viene inserito negli utenti disconnessi
@@ -364,15 +366,15 @@ public class GameManager {
     }
 
     public void endTurn() {
+        synchronized (cancelTimer) {
+            cancelTimer.set(true);
+            cancelTimer.notifyAll();
+        }
+    }
+
+    public void stopTurn() {
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
-
-        synchronized (cancelTimer) {
-            if (!cancelTimer.get()) {
-                cancelTimer.set(true);
-                cancelTimer.notifyAll();
-            }
-        }
     }
 
     /**
@@ -606,11 +608,13 @@ public class GameManager {
             System.out.println("Turn forward " + i + " player " + playerList.get(i));
 
             currentRound.setPlayerEndedTurn(false);
-            currentRound.startForPlayer(playerList.get(i));
-            startTimer(40000);
+            if (playerList.get(i).getUser().isActive()){
+                currentRound.startForPlayer(playerList.get(i));
+                startTimer(40000);
 
-            //wait until turn has ended
-            waitEndTurn();
+                //wait until turn has ended
+                waitEndTurn();
+            }
         }
         turnInRound.set(2);
         for (int i = playerList.size() - 1; i >= 0; i--) {
@@ -618,11 +622,13 @@ public class GameManager {
             System.out.println("Turn backward " + i + " player " + playerList.get(i));
 
             currentRound.setPlayerEndedTurn(false);
-            currentRound.startForPlayer(playerList.get(i));
-            startTimer(40000);
+            if (playerList.get(i).getUser().isActive()) {
+                currentRound.startForPlayer(playerList.get(i));
+                startTimer(40000);
 
-            //wait until turn has ended
-            waitEndTurn();
+                //wait until turn has ended
+                waitEndTurn();
+            }
         }
 
         if (!board.getDraftedDice().isEmpty()) {
@@ -654,7 +660,6 @@ public class GameManager {
                 }
             }
             if (!cancelTimer.get()) {
-
                 try {
                     currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
                 } catch (RemoteException e) {
@@ -667,11 +672,11 @@ public class GameManager {
                     Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
-                endTurn();
 
                 cancelTimer.set(false);
                 System.out.println("timer ended\n");
             }
+            stopTurn();
 
         }).start();
     }
@@ -779,7 +784,9 @@ public class GameManager {
         for (Dice dice : board.getDraftedDice()) {
             dice.roll();
         }
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), true));
+        boolean endTurnCheck = false;
+        if (currentRound.getNoOfMoves() == 0) endTurnCheck = true;
+        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));
         currentRound.toolCardMoveDone();
     }
 

@@ -242,6 +242,7 @@ public class RMIController implements ResponseHandler, NetworkType {
     public void handle(ReJoinResponse reJoinResponse) {
         System.out.println("Response Received, requesting rejoin in match");
         sceneUpdater.launchProgressForm();
+        new ReJoinMatchRequest(reJoinResponse.matchName).handle(rmiHandler);
     }
 
     @Override
@@ -320,6 +321,11 @@ public class RMIController implements ResponseHandler, NetworkType {
                 sceneUpdater.toolCardAction((RunningPliersResponse) useToolCardResponse);
                 break;
         }
+    }
+
+    @Override
+    public void handle(EndTurnResponse endTurnResponse) {
+        sceneUpdater.endedTurn();
     }
 
     @Override

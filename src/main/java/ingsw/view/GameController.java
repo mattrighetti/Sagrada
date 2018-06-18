@@ -27,6 +27,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -340,6 +341,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         tabPane.getTabs().add(windowTab);
         windowController.setNetworkType(networkType);
         windowController.setGridPaneBackground(player.getPatternCard().getName());
+        windowController.updatePatternCard(player.getPatternCard());
     }
 
     /* UPDATE VIEWS METHODS */
@@ -363,7 +365,12 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void timeOut() {
-        Platform.runLater(() -> disableCommandsAndReset() );
+        Platform.runLater(this::disableCommandsAndReset);
+    }
+
+    @Override
+    public void endedTurn() {
+        disableCommandsAndReset();
     }
 
     private void endTurnButtonReset() {
@@ -471,6 +478,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         addDiceToRoundTrack(vBox, diceToAdd);
         vBox.setVisible(false);
         vBox.setDisable(true);
+        vBox.setMaxHeight(100);
         roundDiceVBoxList.add(vBox);
 
         VBox containerVBox = new VBox();
@@ -563,12 +571,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
-            if (placeDiceMoveDone)
+            if (placeDiceMoveDone){
                 disableDice();
-            else
-                activateDice();
+                endTurnButton.setDisable(true);
+            } else activateDice();
 
-            endTurnButton.setDisable(true);
 
             if (draftedDiceToolCardResponse.endTurn) endTurnButtonReset();
         });
@@ -583,18 +590,20 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
             addRoundInRoundTrack(roundDice);
         }
-        if (placeDiceMoveDone)
+        if (placeDiceMoveDone){
             disableDice();
-        else activateDice();
+            endTurnButton.setDisable(true);
+        } else activateDice();
     }
 
 
     @Override
     public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
         updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
-        if (placeDiceMoveDone)
+        if (placeDiceMoveDone){
             disableDice();
-        else activateDice();
+            endTurnButton.setDisable(true);
+        } else activateDice();
     }
 
     @Override
@@ -807,8 +816,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                     displayDraftedDice(useToolCardResponse.draftedDice);
                     ArrayList<DiceButton> diceButtons = new ArrayList<>();
 
-                    if (useToolCardResponse.availablePositions.get(useToolCardResponse.draftedDie) != null) {
-                        if (!checkAvailablePositions(useToolCardResponse.availablePositions.get(useToolCardResponse.draftedDie))) {
+                    if (useToolCardResponse.availablePositions.get(useToolCardResponse.draftedDie.toString()) != null) {
+                        if (!checkAvailablePositions(useToolCardResponse.availablePositions.get(useToolCardResponse.draftedDie.toString()))) {
                             for (Node button : diceHorizontalBox.getChildren()) {
                                 diceButtons.add((DiceButton) button);
                             }
@@ -827,7 +836,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                             }
                         } else disableDice();
                     }
-                    System.out.println("Error in available position Flux Remover");
+                    else System.out.println("Error in available position Flux Remover");
                     windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
                     windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.draftedDie.toString());
                     windowControllerList.get(0).setSelectedDice(useToolCardResponse.draftedDie);

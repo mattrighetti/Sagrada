@@ -468,6 +468,7 @@ public class ClientController implements ResponseHandler, NetworkType {
         System.out.println("Response Received, requesting rejoin in match");
         sceneUpdater.setUsernameInApplication(reJoinResponse.username);
         sceneUpdater.launchProgressForm();
+        client.request(new ReJoinMatchRequest(reJoinResponse.matchName));
     }
 
     @Override
@@ -493,6 +494,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(FinishedMatchesResponse finishedMatchesResponse) {
         sceneUpdater.showFinishedMatches(finishedMatchesResponse.finishedMatchesList);
+    }
+
+    @Override
+    public void handle(EndTurnResponse endTurnResponse) {
+        sceneUpdater.endedTurn();
     }
 
     @Override
