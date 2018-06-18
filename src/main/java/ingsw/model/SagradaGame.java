@@ -38,6 +38,11 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         return sagradaGameSingleton;
     }
 
+    public void removeMatch(Controller controller) {
+        matchesByName.remove(controller);
+        Broadcaster.broadcastResponseToAll(connectedUsers, new CreateMatchResponse(createAvailableMatchesList()));
+    }
+
     /* REMOTE SAGRADAGAME PART*/
 
     /**
@@ -101,6 +106,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
 
     /**
      * Method that reads all .txt files in the history folder and sends them to the user who requested them
+     *
      * @param username username who requested these datas
      * @throws RemoteException if something's wrong with the connection
      */
@@ -180,7 +186,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     public synchronized void createMatch(String matchName) throws RemoteException {
         Controller controller;
         if (!matchesByName.containsKey(matchName)) {
-            controller = new Controller(matchName);
+            controller = new Controller(matchName, this);
             matchesByName.put(matchName, controller);
 
             try {

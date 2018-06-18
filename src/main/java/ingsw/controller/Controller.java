@@ -1,10 +1,7 @@
 package ingsw.controller;
 
 import ingsw.controller.network.commands.*;
-import ingsw.model.Dice;
-import ingsw.model.GameManager;
-import ingsw.model.Player;
-import ingsw.model.User;
+import ingsw.model.*;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.ControllerTimer;
 
@@ -15,11 +12,13 @@ import java.util.List;
 
 public class Controller extends UnicastRemoteObject implements RemoteController {
     private String matchName;
+    private SagradaGame sagradaGame;
     private GameManager gameManager;
     private List<Player> playerList;
 
-    public Controller(String matchName) throws RemoteException {
+    public Controller(String matchName, SagradaGame sagradaGame) throws RemoteException {
         super();
+        this.sagradaGame = sagradaGame;
         this.matchName = matchName;
         playerList = new ArrayList<>();
     }
@@ -59,7 +58,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      * Start the first phase of the match, the PatternCards choice
      */
     public void createMatch() {
-        gameManager = new GameManager(playerList);
+        gameManager = new GameManager(playerList, this);
         gameManager.pickPatternCards();
         gameManager.waitForEveryPatternCard();
     }
@@ -211,5 +210,9 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     @Override
     public void toolCardMove(TapWheelRequest moveToolCardRequest) throws RemoteException {
         gameManager.tapWheelMove(moveToolCardRequest.dice, moveToolCardRequest.phase, moveToolCardRequest.dicePosition, moveToolCardRequest.position, moveToolCardRequest.doubleMove);
+    }
+
+    public void removeMatch() {
+        sagradaGame.removeMatch(this);
     }
 }

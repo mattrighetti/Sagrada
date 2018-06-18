@@ -12,6 +12,7 @@
 package ingsw.model;
 
 import com.google.gson.Gson;
+import ingsw.controller.Controller;
 import ingsw.controller.network.commands.*;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
@@ -37,6 +38,7 @@ public class GameManager {
     private Board board;
     private Round currentRound;
     private boolean brokenWindow;
+    private Controller controller;
     private List<Player> playerList;
     private List<MoveStatus> movesHistory;
     private List<PrivateObjectiveCard> privateObjectiveCards;
@@ -58,9 +60,10 @@ public class GameManager {
      *
      * @param players players that joined the match
      */
-    public GameManager(List<Player> players) {
+    public GameManager(List<Player> players, Controller controller) {
         brokenWindow = false;
         playerList = players;
+        this.controller = controller;
         roundTrack = new ArrayList<>();
         movesHistory = new LinkedList<>();
         stop = new AtomicBoolean(true);
@@ -216,6 +219,10 @@ public class GameManager {
         }
     }
 
+    public void deleteMatch() {
+        controller.removeMatch();
+    }
+
     /**
      * Method that checks if every user is connected to the game.
      */
@@ -250,6 +257,7 @@ public class GameManager {
                     playerList.removeAll(disconnectedPlayers);
                     playerList.get(0).sendResponse(new VictoryNotification(0));
                     stop.set(true);
+                    deleteMatch();
                 }
 
             } catch (RemoteException e) {
@@ -471,6 +479,8 @@ public class GameManager {
             writeHistoryToFile(movesHistory);
 
             stop.set(true);
+
+            deleteMatch();
 
         }).start();
     }
