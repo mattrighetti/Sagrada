@@ -14,9 +14,18 @@ public class Player implements Serializable {
     private PrivateObjectiveCard privateObjectiveCard;
     private PatternCard patternCard;
     private int favorTokens;
+    private int score;
 
     public Player(User user) {
         this.user = user;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public void setPatternCard(PatternCard patternCard) {

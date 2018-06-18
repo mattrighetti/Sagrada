@@ -1,16 +1,17 @@
 package ingsw.model;
 
-import ingsw.model.cards.patterncard.Batllo;
-import ingsw.model.cards.patterncard.PatternCard;
+import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
-import ingsw.model.cards.publicoc.PublicObjectiveCard;
+import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.ToolCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -135,8 +136,5 @@ class GameManagerTest {
 
         actual = (AtomicInteger) noOfAck.get(gameManager);
         assertEquals((new AtomicInteger(0)).get(), actual.get());
-
-        //TODO Why noOfAck is not 0 after the 4th setPatternCardFor Player()?
-
     }
 }

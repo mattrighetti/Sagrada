@@ -38,6 +38,10 @@ public abstract class PatternCard extends Card {
         return grid;
     }
 
+    public Box insertDiceInBox(int rowIndex, int columnIndex) {
+        return grid.get(rowIndex).get(columnIndex);
+    }
+
     private void fillGrid() {
         this.grid = new ArrayList<>(4);
         this.grid.add(new ArrayList<>(5));

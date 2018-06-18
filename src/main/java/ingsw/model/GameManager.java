@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GameManager {
     private Board board;
     private List<MoveStatus> movesHistory;
-    private AtomicInteger noOfAck;
+    private final AtomicInteger noOfAck;
     private List<Player> playerList;
     private List<PrivateObjectiveCard> privateObjectiveCards;
     private List<PublicObjectiveCard> publicObjectiveCards;
@@ -45,11 +45,11 @@ public class GameManager {
     private List<List<Dice>> roundTrack;
     private Round currentRound;
     private boolean brokenWindow;
-    private AtomicBoolean endRound;
-    private AtomicBoolean doubleMove;
+    private final AtomicBoolean endRound;
+    private final AtomicBoolean doubleMove;
     public final Object toolCardLock = new Object();
-    private AtomicInteger turnInRound = new AtomicInteger(0);
-    private AtomicBoolean cancelTimer;
+    private final AtomicInteger turnInRound = new AtomicInteger(0);
+    private final AtomicBoolean cancelTimer;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -219,7 +219,6 @@ public class GameManager {
         Set<Player> disconnectedPlayerSet = new HashSet<>();
         new Thread(() -> {
             do {
-
                 try {
 
                     Thread.sleep(2000);
@@ -433,7 +432,9 @@ public class GameManager {
                 }
             }
 
-            evaluatePointsAndNotifyWinner();
+            assignPointsToPlayers();
+
+            notifyWinner();
 
             writeHistoryToFile(movesHistory);
 
@@ -451,144 +452,146 @@ public class GameManager {
         }
     }
 
-    /**
-     * Method that evaluates the match's winner
-     *
-     * @param scores map of all the scores
-     * @return username of the player who won
-     */
-    private List<String> evaluateWinner(Map<String, Integer> scores) {
-        String winnerUsername = "";
-        List<String> winnerUsernames = new LinkedList<>();
+    private void notifyWinner() {
+        Player winner = evaluateWinner();
 
-        for (String playerUsername : scores.keySet()) {
-            if ("".equals(winnerUsername)) {
-                winnerUsername = playerUsername;
-                winnerUsernames.add(winnerUsername);
-            } else if (scores.get(winnerUsername).equals(scores.get(playerUsername))) {
-                winnerUsernames.add(playerUsername);
-            } else if (scores.get(winnerUsername) < scores.get(playerUsername)) {
-                winnerUsernames.clear();
-                winnerUsername = playerUsername;
-                winnerUsernames.add(winnerUsername);
-            }
-        }
-
-        return winnerUsernames;
-    }
-
-    /**
-     * Method that is first called when two or more players have the score. It calculates which users has the highest
-     * score for their own PrivateObjectiveCard
-     * @param possibleWinners winners with equal maximum score
-     * @return winner/s with maximum score
-     */
-    private List<String> evaluateMaxPrivateObjCardPoints(List<String> possibleWinners) {
-        List<String> candidateWinners = new LinkedList<>();
-        int maxPrivateObjectivePoints = -1;
         for (Player player : playerList) {
-            if (candidateWinners.contains(player.getPlayerUsername())) {
-                if (maxPrivateObjectivePoints < player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid())) {
-                    candidateWinners.clear();
-                    maxPrivateObjectivePoints = player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid());
-                    candidateWinners.add(player.getPlayerUsername());
-                } else if (maxPrivateObjectivePoints == player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid())) {
-                    candidateWinners.add(player.getPlayerUsername());
+            if (winner!= null && winner.equals(player)) {
+                try {
+                    player.getUserObserver().notifyVictory(player.getScore());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    player.getUserObserver().notifyLost(player.getScore());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         }
-
-        return candidateWinners;
     }
 
-    /**
-     * Method that evaluates the most basics points for each player
-     *
-     * @return map of scores mapped by its player's username
-     */
-    private Map<String, Integer> evaluateBasicPoints() {
-        Map<String, Integer> scores = new HashMap<>();
+    private void assignPointsToPlayers() {
         for (Player player : playerList) {
-            int points = 0;
-            for (PublicObjectiveCard publicObjectiveCard : board.getPublicObjectiveCards()) {
-                points += publicObjectiveCard.getScore(player.getPatternCard().getGrid());
+            int score = 0;
+            for (PublicObjectiveCard publicObjectiveCard : publicObjectiveCards) {
+                score += publicObjectiveCard.getScore(player.getPatternCard().getGrid());
             }
-            points += player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid());
-            points -= player.getPatternCard().getNoOfEmptyBoxes();
-            scores.put(player.getPlayerUsername(), points);
+            score -= player.getPatternCard().getNoOfEmptyBoxes();
+            player.setScore(score);
         }
-
-        return scores;
     }
 
-    /**
-     * Method that is called in case two or more players have the score after PublicObjectiveCard's score re-calculation
-     *
-     * @param scores map of each player's score
-     */
-    private void evaluateFavorTokenPoints(Map<String, Integer> scores, List<String> candidateWinners) {
+    private Set<Player> evaluateBasicPoints() {
+        Set<Player> tiePlayers = new HashSet<>();
+        int score = -30;
+        Player winner = null;
         for (Player player : playerList) {
-            if (candidateWinners.contains(player.getPlayerUsername())) {
-                int previousScore = scores.get(player.getPlayerUsername());
-                previousScore += player.getFavourTokens();
-                scores.replace(player.getPlayerUsername(), previousScore);
+            if (score < player.getScore()) {
+                tiePlayers.clear();
+                winner = player;
+                score = player.getScore();
+            } else if (score == player.getScore()) {
+                if (!tiePlayers.contains(winner)) {
+                    tiePlayers.add(winner);
+                }
+                tiePlayers.add(player);
+                winner = player;
             }
         }
+
+        if (!tiePlayers.contains(winner)) {
+            tiePlayers.add(winner);
+        }
+
+        return tiePlayers;
+    }
+
+    private Set<Player> evaluatePrivateObjectiveCardPoints(Set<Player> tiePlayers) {
+        int privateOc = 0;
+        Set<Player> tieAgainPlayers = new HashSet<>();
+        Player winner = null;
+        for (Player player : tiePlayers) {
+            if (privateOc < player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid())) {
+                tieAgainPlayers.clear();
+                winner = player;
+                privateOc = player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid());
+            } else if (privateOc == player.getPrivateObjectiveCard().check(player.getPatternCard().getGrid())) {
+                if (!tieAgainPlayers.contains(winner)) {
+                    tieAgainPlayers.add(winner);
+                }
+                tieAgainPlayers.add(player);
+                winner = player;
+            }
+        }
+
+        if (!tieAgainPlayers.contains(winner)) {
+            tieAgainPlayers.add(winner);
+        }
+
+        return tieAgainPlayers;
+    }
+
+    private Set<Player> evaluateFavourTokenPoints(Set<Player> tieAgainPlayers) {
+        int favorTokens = 0;
+        Player winner = null;
+        Set<Player> tiePlayers = new HashSet<>();
+        for (Player player : tieAgainPlayers) {
+            if (favorTokens < player.getFavourTokens()) {
+                winner = player;
+                tiePlayers.clear();
+                favorTokens = player.getFavourTokens();
+            } else if (favorTokens == player.getFavourTokens()) {
+                if (!tiePlayers.contains(winner)) {
+                    tiePlayers.add(winner);
+                }
+                tiePlayers.add(player);
+                winner = player;
+            }
+        }
+
+        if (!tiePlayers.contains(winner)) {
+            tiePlayers.add(winner);
+        }
+
+        return tiePlayers;
     }
 
     /**
      * Method that computes the winner and notifies each player with their results
      */
-    private void evaluatePointsAndNotifyWinner() {
-        String winnerUsername = "";
-        Map<String, Integer> scores = evaluateBasicPoints();
-        List<String> candidateWinners = evaluateWinner(scores);
+    private Player evaluateWinner() {
+        Player winner = null;
+        boolean found = false;
+        Set<Player> possibleWinners = evaluateBasicPoints();
 
-        if (candidateWinners.size() > 1) {
-            candidateWinners = evaluateMaxPrivateObjCardPoints(candidateWinners);
+        if (possibleWinners.size() > 1) {
+            possibleWinners = evaluatePrivateObjectiveCardPoints(possibleWinners);
+        } else found = true;
 
-            if (candidateWinners.size() > 1) {
-                evaluateFavorTokenPoints(scores, candidateWinners);
-                candidateWinners = evaluateWinner(scores);
+        if (possibleWinners.size() > 1) {
+            possibleWinners = evaluateFavourTokenPoints(possibleWinners);
+        } else found = true;
 
-                if (candidateWinners.size() > 1) {
-                    for (int i = 0; i < playerList.size(); i++) {
-                        if (candidateWinners.contains(playerList.get(i))) {
-                            winnerUsername = playerList.get(i).getPlayerUsername();
-                            break;
-                        }
-                    }
-                } else {
-                    winnerUsername = candidateWinners.get(0);
-                }
-            } else {
-                winnerUsername = candidateWinners.get(0);
-            }
-
-        } else {
-            winnerUsername = candidateWinners.get(0);
-        }
-
-        for (Player player : playerList) {
-            if (player.getPlayerUsername().equals(winnerUsername)) {
-                player.getUser().setNoOfWins(player.getUser().getNoOfWins() + 1);
-                player.getUser().setNoOfLose(player.getUser().getNoOfLose());
-
-                try {
-                    player.getUserObserver().notifyVictory(scores.get(player.getPlayerUsername()));
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                player.getUser().setNoOfWins(player.getUser().getNoOfWins());
-                player.getUser().setNoOfLose(player.getUser().getNoOfLose() + 1);
-                try {
-                    player.getUserObserver().notifyLost(scores.get(player.getPlayerUsername()));
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+        if (possibleWinners.size() > 1) {
+            for (int i = 0; i < playerList.size(); i++) {
+                if (possibleWinners.contains(playerList.get(i))) {
+                    winner = playerList.get(i);
+                    found = true;
+                    break;
                 }
             }
+        } else found = true;
+
+        if (!found) {
+            for (Player player : possibleWinners) {
+                winner = player;
+            }
         }
+
+        return winner;
+
     }
 
     /**
