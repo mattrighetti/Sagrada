@@ -85,10 +85,15 @@
                   <Button fx:id="showPrivateCardButton" mnemonicParsing="false" onAction="#onShowPrivateCardPressed" styleClass="login-button-red" text="Show Private Card" />
                </children>
             </HBox>
-            <HBox fx:id="roundTrackHBox" fillHeight="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="400.0" spacing="5.0" styleClass="roundTrackHBox" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="LEFT">
+            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
                <GridPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </GridPane.margin></HBox>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+               <children>
+                  <HBox fx:id="roundTrackButtonHBox" prefHeight="100.0" prefWidth="200.0" />
+                  <HBox fx:id="roundTrackDiceHBox" prefHeight="100.0" prefWidth="200.0" />
+               </children>
+            </VBox>
          </children>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
