@@ -183,9 +183,9 @@ public class GameManager {
         // Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> toolCards = new ArrayList<>();
-        toolCards.add(new FluxBrush());
-        toolCards.add(new FluxRemover());
-        toolCards.add(new GlazingHammer());
+        toolCards.add(new GrindingStone());
+        toolCards.add(new GrozingPliers());
+        toolCards.add(new Lathekin());
         return toolCards;
     }
 
@@ -232,7 +232,7 @@ public class GameManager {
             try {
 
                 // If there are at least two active players then...
-                if (disconnectedPlayers.size() == playerList.size() - 1) {
+                if (disconnectedPlayers.size() != playerList.size() - 1) {
 
                     // If a user was in the disconnectedPlayers' Set and it's now active
                     // He gets removed from the set and the necessary data will be notified to him
@@ -246,6 +246,7 @@ public class GameManager {
                     } else if (!disconnectedPlayers.contains(player) && !player.getUser().isActive()) {
                         System.out.println("User " + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users");
                         disconnectedPlayers.add(player);
+
                     } else {
                         // Check if the User is disconnected or not
                         // If it's disconnected the catch block will handle the disconnection
@@ -254,7 +255,7 @@ public class GameManager {
 
                     // If there's only a user connected then...
                 } else {
-                    playerList.removeAll(disconnectedPlayers);
+                    //playerList.removeAll(disconnectedPlayers);
                     playerList.get(0).sendResponse(new VictoryNotification(0));
                     stop.set(true);
                     deleteMatch();
@@ -455,7 +456,8 @@ public class GameManager {
             }
 
             for (int i = 0; i < 4; i++) {
-                notifyDraftToPlayer(playerList.get(0));
+                if (playerList.get(0).getUser().isActive())
+                    notifyDraftToPlayer(playerList.get(0));
                 endRound.set(false);
 
                 System.out.println("Round " + i);
@@ -809,7 +811,8 @@ public class GameManager {
      */
     private void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
         movesHistory.add(moveStatus);
-        Broadcaster.updateMovesHistory(playerList, movesHistory);
+//TODO reinsert
+        //        Broadcaster.updateMovesHistory(playerList, movesHistory);
     }
 
     /**
