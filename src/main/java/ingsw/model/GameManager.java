@@ -244,7 +244,7 @@ public class GameManager {
                         Thread.sleep(500);
                         player.getUserObserver().sendResponse(new DraftedDiceResponse(board.getDraftedDice()));
                     } else if (!disconnectedPlayers.contains(player) && !player.getUser().isActive()) {
-                        System.out.println("User" + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users");
+                        System.out.println("User " + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users");
                         disconnectedPlayers.add(player);
                     } else {
                         // Check if the User is disconnected or not

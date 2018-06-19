@@ -18,7 +18,7 @@ public interface RemoteSagradaGame extends Remote {
 
     List<TripleString> createRankingsList() throws RemoteException;
 
-    Map<String, TripleString> createUserStats() throws RemoteException;
+    Map<String, TripleString> createUserStats(String username) throws RemoteException;
 
     void sendFinishedMatchesList(String username) throws RemoteException;
 

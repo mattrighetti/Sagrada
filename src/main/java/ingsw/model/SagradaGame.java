@@ -7,6 +7,7 @@ import ingsw.exceptions.InvalidUsernameException;
 import ingsw.utilities.Broadcaster;
 import ingsw.utilities.DoubleString;
 import ingsw.utilities.TripleString;
+import org.apache.commons.collections.set.ListOrderedSet;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -82,8 +83,26 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     public List<TripleString> createRankingsList() {
         TripleString tripleString;
         List<TripleString> ranking = new ArrayList<>();
+
+        List<User> rankingList = new ArrayList<>(connectedUsers.values());
+        rankingList.sort((user1, user2) -> {
+            if (user1.getNoOfWins() > user2.getNoOfWins()) {
+                return -1;
+            } else if (user1.getNoOfWins() < user2.getNoOfWins()) {
+                return 1;
+            } else
+                return 0;
+        });
+
+        for (int i = 0; i < rankingList.size(); i++) {
+            rankingList.get(i).setPositionInRanking(i);
+        }
+
         for (User user : connectedUsers.values()) {
-            tripleString = new TripleString("?", user.getUsername(), String.valueOf(user.getNoOfWins()));
+            tripleString = new TripleString(String.valueOf(user.getPositionInRanking()),
+                    user.getUsername(),
+                    String.valueOf(user.getNoOfWins()));
+
             ranking.add(tripleString);
         }
 
@@ -91,15 +110,13 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     @Override
-    public Map<String, TripleString> createUserStats() {
+    public Map<String, TripleString> createUserStats(String username) {
         TripleString tripleString;
         Map<String, TripleString> userStats = new HashMap<>();
-        for (User user : connectedUsers.values()) {
-            tripleString = new TripleString(String.valueOf(user.getNoOfWins()),
-                    String.valueOf(user.getNoOfLose()),
-                    String.valueOf(user.getActiveTime()));
-            userStats.put(user.getUsername(), tripleString);
-        }
+        tripleString = new TripleString(String.valueOf(connectedUsers.get(username).getNoOfWins()),
+                String.valueOf(connectedUsers.get(username).getNoOfLose()),
+                String.valueOf(connectedUsers.get(username).getActiveTime()));
+        userStats.put(connectedUsers.get(username).getUsername(), tripleString);
 
         return userStats;
     }
@@ -247,7 +264,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     @Override
     public void sendBundleData(String username) throws RemoteException {
         connectedUsers.get(username).getUserObserver().sendResponse(
-                new BundleDataResponse(connectedUsers.size(), createRankingsList(), createAvailableMatchesList(), createUserStats()));
+                new BundleDataResponse(connectedUsers.size(), createRankingsList(), createAvailableMatchesList(), createUserStats(username)));
     }
 
     @Override

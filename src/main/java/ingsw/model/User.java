@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class User implements Serializable {
     private String username;
+    private int positionInRanking;
     private boolean active;
     private UserObserver userObserver;
     private int noOfWins;
@@ -27,6 +28,14 @@ public class User implements Serializable {
         matchesPlayed = new LinkedList<>();
         this.stopWatch = new StopWatch();
         stopWatch.start();
+    }
+
+    public int getPositionInRanking() {
+        return positionInRanking;
+    }
+
+    public void setPositionInRanking(int positionInRanking) {
+        this.positionInRanking = positionInRanking;
     }
 
     public String getUsername() {
