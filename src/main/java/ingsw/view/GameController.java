@@ -27,7 +27,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -107,7 +106,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     /* Utility Elements */
     private DiceButton toolCardSelectedDice;
-    private boolean placeDiceMoveDone;
+
+    private int turnState; //0: if is not your turn, 1: if is your turn and you have not placed a die
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -383,7 +383,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         windowControllerList.get(0).setSelectedDice(null);
         disableDice();
         disableToolCards();
-        placeDiceMoveDone = false;
+        turnState = 0;
         endTurnButton.setDisable(true);
     }
 
@@ -416,7 +416,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void setAvailablePosition(StartTurnNotification startTurnNotification) {
         Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
         windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
-        placeDiceMoveDone = false;
+        turnState = 1;
         activateCommands();
     }
 
@@ -523,7 +523,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void setPlaceDiceMove() {
-        placeDiceMoveDone = true;
+        turnState = 2;
     }
 
     @Override
@@ -571,7 +571,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
-            if (placeDiceMoveDone){
+            if (turnState != 1 ){
                 disableDice();
                 endTurnButton.setDisable(true);
             } else activateDice();
@@ -590,7 +590,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
             addRoundInRoundTrack(roundDice);
         }
-        if (placeDiceMoveDone){
+        if (turnState != 1){
             disableDice();
             endTurnButton.setDisable(true);
         } else activateDice();
@@ -600,7 +600,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @Override
     public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
         updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
-        if (placeDiceMoveDone){
+        if (turnState != 1){
             disableDice();
             endTurnButton.setDisable(true);
         } else activateDice();
@@ -846,76 +846,16 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
-    @Override
-    public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
-        Platform.runLater(
-                () -> {
-                    ButtonType increase = new ButtonType("Increase");
-                    ButtonType decrease = new ButtonType("Decrease");
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do currentPlayerIndex want to increase \nor decrease the dice value?", increase, decrease);
-                    alert.setTitle("Use Tool card");
-                    alert.setHeaderText("Grozing Pliers");
-                    Optional<ButtonType> result = alert.showAndWait();
 
-                    if (!result.isPresent()) {
-                        System.out.println("no button pressed");
-                    } else {
-                        activateDice();
+    /*
+      GRINDING STONE
 
-                        if ((increase == result.get())) {
-                            System.out.println("increase pressed");
-                            ArrayList<DiceButton> diceButtons = new ArrayList<>();
-                            for (Node button : diceHorizontalBox.getChildren()) {
-                                diceButtons.add((DiceButton) button);
-                            }
-
-                            for (DiceButton button : diceButtons) {
-                                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                    @Override
-                                    public void handle(MouseEvent event) {
-                                        if (button.getDice().toString().indexOf('6') < 0) {
-                                            System.out.println(button.getDice().toString());
-                                            networkType.grozingPliersMove(button.getDice(), true);
-                                        } else {
-                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value SIX can't be increased");
-                                            ErrAlert.showAndWait();
-                                        }
-
-                                    }
-                                });
-                            }
-
-
-                        } else if ((decrease == result.get())) {
-                            System.out.println("decrease pressed");
-                            ArrayList<DiceButton> diceButtons = new ArrayList<>();
-                            for (Node button : diceHorizontalBox.getChildren()) {
-                                diceButtons.add((DiceButton) button);
-                            }
-
-                            for (DiceButton button : diceButtons) {
-                                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                    @Override
-                                    public void handle(MouseEvent event) {
-                                        if (button.getDice().toString().indexOf('1') < 0) {
-                                            System.out.println(button.getDice());
-                                            networkType.grozingPliersMove(button.getDice(), false);
-                                        } else {
-                                            Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value ONE can't be decreased");
-                                            ErrAlert.showAndWait();
-                                        }
-
-                                    }
-                                });
-
-                            }
-                        }
-                    }
-
-                });
-    }
-
-
+      Tool Card that makes choose a die to flipped to the opposite side.
+     */
+    /**
+     *
+     * @param useToolCardResponse empty response
+     */
     public void toolCardAction(GrindingStoneResponse useToolCardResponse) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose which dice has to be flipped\nto the opposite side");
@@ -943,6 +883,84 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
         });
     }
+
+    /*
+       GROZING PLIERS
+
+       Toolcard that makes you choose if you want to increase or decrease the value of one die
+     */
+    @Override
+    public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
+        Platform.runLater(
+                () -> {
+                        ButtonType increase = new ButtonType("Increase");
+                        ButtonType decrease = new ButtonType("Decrease");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do currentPlayerIndex want to increase \nor decrease the dice value?", increase, decrease);
+                        alert.setTitle("Use Tool card");
+                        alert.setHeaderText("Grozing Pliers");
+                        Optional<ButtonType> result = alert.showAndWait();
+
+                        if (!result.isPresent()) {
+                            System.out.println("no button pressed");
+                        } else {
+                            activateDice();
+
+                            //If the user has chosen to increase the die value
+
+                            if ((increase == result.get())) {
+                                System.out.println("increase pressed");
+                                ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                                for (Node button : diceHorizontalBox.getChildren()) {
+                                    diceButtons.add((DiceButton) button);
+                                }
+
+                                for (DiceButton button : diceButtons) {
+                                    button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                        @Override
+                                        public void handle(MouseEvent event) {
+                                            if (button.getDice().toString().indexOf('6') < 0) {
+                                                System.out.println(button.getDice().toString());
+                                                networkType.grozingPliersMove(button.getDice(), true);
+                                            } else {
+                                                Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value SIX can't be increased");
+                                                ErrAlert.showAndWait();
+                                            }
+
+                                        }
+                                    });
+                                }
+
+                            //If the user has chosen to decrease the die value
+
+                            } else if ((decrease == result.get())) {
+                                System.out.println("decrease pressed");
+                                ArrayList<DiceButton> diceButtons = new ArrayList<>();
+                                for (Node button : diceHorizontalBox.getChildren()) {
+                                    diceButtons.add((DiceButton) button);
+                                }
+
+                                for (DiceButton button : diceButtons) {
+                                    button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                        @Override
+                                        public void handle(MouseEvent event) {
+                                            if (button.getDice().toString().indexOf('1') < 0) {
+                                                System.out.println(button.getDice());
+                                                networkType.grozingPliersMove(button.getDice(), false);
+                                            } else {
+                                                Alert ErrAlert = new Alert(Alert.AlertType.ERROR, "The value ONE can't be decreased");
+                                                ErrAlert.showAndWait();
+                                            }
+
+                                        }
+                                    });
+
+                                }
+                            }
+                        }
+                });
+    }
+
+
 
 
     /**
