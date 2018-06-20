@@ -255,8 +255,14 @@ public class GameManager {
 
                     // If there's only a user connected then...
                 } else {
-                    //playerList.removeAll(disconnectedPlayers);
-                    playerList.get(0).sendResponse(new VictoryNotification(0));
+
+                    // TODO crea un metodo testabile, poco reliable nel caso in cui ci siano più utenti nella lista
+                    for (Player winner : playerList) {
+                        if (winner.getUser().isActive()) {
+                            winner.getUserObserver().notifyVictory(0);
+                        }
+                    }
+
                     stop.set(true);
                     deleteMatch();
                 }
@@ -455,22 +461,27 @@ public class GameManager {
                 e.printStackTrace();
             }
 
-            for (int i = 0; i < 4; i++) {
-                if (playerList.get(0).getUser().isActive())
+            int i = 0;
+            while (i < 10) {
+                if (playerList.get(0).getUser().isActive()) {
                     notifyDraftToPlayer(playerList.get(0));
-                endRound.set(false);
+                    endRound.set(false);
 
-                System.out.println("Round " + i);
-                //wait until the end of the round
-                synchronized (endRound) {
-                    while (!endRound.get()) {
-                        try {
-                            endRound.wait();
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            e.printStackTrace();
+                    System.out.println("Round " + i);
+                    //wait until the end of the round
+                    synchronized (endRound) {
+                        while (!endRound.get()) {
+                            try {
+                                endRound.wait();
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                e.printStackTrace();
+                            }
                         }
                     }
+                    i++;
+                } else {
+                    shiftPlayerList();
                 }
             }
 
@@ -683,15 +694,19 @@ public class GameManager {
             notifyUpdatedRoundTrack();
         }
 
-        Player tmp = playerList.get(0);
-        playerList.remove(0);
-        playerList.add(tmp);
-        endRound.set(true);
+        shiftPlayerList();
 
         //wake up the match thread
         synchronized (endRound) {
             endRound.notifyAll();
         }
+    }
+
+    private void shiftPlayerList() {
+        Player tmp = playerList.get(0);
+        playerList.remove(0);
+        playerList.add(tmp);
+        endRound.set(true);
     }
 
     private void startTimer(long time) {
