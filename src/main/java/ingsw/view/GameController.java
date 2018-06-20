@@ -7,6 +7,7 @@ import ingsw.model.Player;
 import ingsw.model.cards.publicoc.PublicObjectiveCard;
 import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.MoveStatus;
+import ingsw.utilities.RoundState;
 import ingsw.view.nodes.DiceButton;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -107,7 +108,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     /* Utility Elements */
     private DiceButton toolCardSelectedDice;
 
-    private int turnState; //0: if is not your turn, 1: if is your turn and you have not placed a die
+    private RoundState roundState; //0: if is not your turn, 1: if is your turn and you have not placed a die
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -391,7 +392,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         windowControllerList.get(0).setSelectedDice(null);
         disableDice();
         disableToolCards();
-        turnState = 0;
+        roundState = RoundState.NOT_YOUR_TURN;
         endTurnButton.setDisable(true);
     }
 
@@ -424,7 +425,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void startTurn(StartTurnNotification startTurnNotification) {
         Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
         windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
-        turnState = 1;
+        roundState = RoundState.YOUR_TURN;
         activateCommands();
     }
 
@@ -529,7 +530,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void setPlaceDiceMove() {
-        turnState = 2;
+        roundState = RoundState.DICE_PLACED;
     }
 
     @Override
@@ -577,7 +578,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
-            if (turnState != 1 ){
+            if (roundState != RoundState.YOUR_TURN ){
                 disableDice();
                 endTurnButton.setDisable(true);
             } else activateDice();
@@ -596,7 +597,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
             addRoundInRoundTrack(roundDice);
         }
-        if (turnState != 1){
+        if (roundState != RoundState.YOUR_TURN){
             disableDice();
             endTurnButton.setDisable(true);
         } else activateDice();
@@ -606,7 +607,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @Override
     public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
         updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
-        if (turnState != 1){
+        if (roundState != RoundState.YOUR_TURN){
             disableDice();
             endTurnButton.setDisable(true);
         } else activateDice();
