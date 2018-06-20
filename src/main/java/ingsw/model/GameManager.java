@@ -219,6 +219,10 @@ public class GameManager {
         }
     }
 
+    public int getNoOfCurrentRound(){
+        return roundTrack.size() + 1;
+    }
+
     public void deleteMatch() {
         controller.removeMatch();
     }

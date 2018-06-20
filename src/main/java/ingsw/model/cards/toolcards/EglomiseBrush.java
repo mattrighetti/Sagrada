@@ -1,5 +1,6 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.EglomiseBrushResponse;
 import ingsw.model.GameManager;
 
@@ -17,15 +18,22 @@ public class EglomiseBrush extends ToolCard {
      */
     @Override
     public void action(GameManager gameManager) {
-        try {
-            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new EglomiseBrushResponse(gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsNoColor()));
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if (gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().getNoOfDice() > 0) {
+            try {
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new EglomiseBrushResponse(gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsNoColor()));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            waitForToolCardAction(gameManager);
+
+            gameManager.eglomiseBrushResponse();
+            gameManager.getCurrentRound().hasMadeAMove();
+        } else {
+            try {
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
-
-        waitForToolCardAction(gameManager);
-
-        gameManager.eglomiseBrushResponse();
-        gameManager.getCurrentRound().hasMadeAMove();
     }
 }

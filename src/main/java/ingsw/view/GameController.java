@@ -566,7 +566,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
 
-    /***************TOOL CARDS**************/
+    /* **************TOOL CARDS************* */
 
 
     /**
@@ -886,6 +886,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                     }
                 });
             }
+            activateDice();
 
         });
     }

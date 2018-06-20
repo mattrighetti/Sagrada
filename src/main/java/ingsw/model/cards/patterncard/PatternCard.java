@@ -185,9 +185,9 @@ public abstract class PatternCard extends Card {
 
         //first case: grid is empty
 
-        if (isGridEmpty()) {
+        if (getNoOfDice() == 0) {
 
-        //Check restrictions
+            //Check restrictions
 
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 5; j++) {
@@ -220,8 +220,7 @@ public abstract class PatternCard extends Card {
                 if (isBlank(i, 4))
                     booleanGrid[i][4] = true;
             }
-        }
-        else {
+        } else {
             //Check dice
 
             for (int i = 0; i < 4; i++) {
@@ -380,5 +379,13 @@ public abstract class PatternCard extends Card {
             }
         }
         return true;
+    }
+
+
+    public int getNoOfDice() {
+        return grid.stream().mapToInt(boxes -> (int) boxes.stream()
+                .filter(box -> box.getDice() != null)
+                .count())
+                .reduce(0,(sum, x) -> sum + x);
     }
 }

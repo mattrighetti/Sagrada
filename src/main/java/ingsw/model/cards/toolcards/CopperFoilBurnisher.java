@@ -1,5 +1,6 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.CopperFoilBurnisherResponse;
 import ingsw.model.Dice;
 import ingsw.model.GameManager;
@@ -21,16 +22,24 @@ public class CopperFoilBurnisher extends ToolCard {
      */
     @Override
     public void action(GameManager gameManager) {
-        try {
-            PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
-            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new CopperFoilBurnisherResponse(patternCard.computeAvailablePositionsNoValue()));
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        if(gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().getNoOfDice() > 0) {
+            try {
+                PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new CopperFoilBurnisherResponse(patternCard.computeAvailablePositionsNoValue()));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
 
-        waitForToolCardAction(gameManager);
-        gameManager.copperFoilBurnisherResponse();
-        gameManager.getCurrentRound().hasMadeAMove();
+            waitForToolCardAction(gameManager);
+            gameManager.copperFoilBurnisherResponse();
+            gameManager.getCurrentRound().hasMadeAMove();
+        } else {
+            try {
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

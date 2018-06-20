@@ -1,5 +1,6 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.LensCutterResponse;
 import ingsw.model.GameManager;
 
@@ -16,14 +17,22 @@ public class LensCutter extends ToolCard {
      */
     @Override
     public void action(GameManager gameManager) {
-        try {
-            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LensCutterResponse());
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if (gameManager.getNoOfCurrentRound() > 1) {
+            try {
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LensCutterResponse());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+            waitForToolCardAction(gameManager);
+
+            gameManager.lensCutterResponse();
+        } else {
+            try {
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
-
-        waitForToolCardAction(gameManager);
-
-        gameManager.lensCutterResponse();
     }
 }
