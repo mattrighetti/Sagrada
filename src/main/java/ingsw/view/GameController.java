@@ -1019,6 +1019,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.showAndWait();
 
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+            windowControllerList.get(0).enableDice(useToolCardResponse.patternCard);
             windowControllerList.get(0).moveDiceinPatternCardLathekin();
         });
     }

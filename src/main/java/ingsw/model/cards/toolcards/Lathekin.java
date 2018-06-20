@@ -1,6 +1,8 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.LathekinResponse;
+import ingsw.controller.network.commands.PatternCardToolCardResponse;
 import ingsw.model.GameManager;
 import ingsw.model.cards.patterncard.PatternCard;
 
@@ -19,11 +21,21 @@ public class Lathekin extends ToolCard {
     @Override
     public void action(GameManager gameManager) {
 
+        if (gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().getNoOfDice() < 2) {
+            try {
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse(gameManager.getCurrentRound().getCurrentPlayer().getFavourTokens()));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            gameManager.getCurrentRound().toolCardMoveDone();
+            return;
+        }
+
         for (int i = 0; i < 2; i++) {
             if(!gameManager.getdoubleMove()) {
                 try {
                     PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
-                    gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(patternCard.computeAvailablePositionsLathekin()));
+                    gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(patternCard, patternCard.computeAvailablePositionsLathekin()));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -33,6 +45,7 @@ public class Lathekin extends ToolCard {
                 gameManager.lathekinResponse();
         }
 
+        gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.setDoubleMove(false);
     }
 }

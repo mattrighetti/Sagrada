@@ -81,7 +81,7 @@ public class Player implements Serializable {
         this.user = user;
     }
 
-    int getFavourTokens() {
+    public int getFavourTokens() {
         return favorTokens;
     }
 

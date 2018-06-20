@@ -1,5 +1,6 @@
 package ingsw.model.cards.toolcards;
 
+import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.TapWheelResponse;
 import ingsw.model.GameManager;
 
@@ -17,6 +18,16 @@ public class TapWheel extends ToolCard {
      */
     @Override
     public void action(GameManager gameManager) {
+
+        if (gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().isGridEmpty()) {
+            try {
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse(gameManager.getCurrentRound().getCurrentPlayer().getFavourTokens()));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            gameManager.getCurrentRound().toolCardMoveDone();
+            return;
+        }
 
         try {
             gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TapWheelResponse(0));

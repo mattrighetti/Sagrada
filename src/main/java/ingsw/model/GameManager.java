@@ -1073,7 +1073,6 @@ public class GameManager {
 
     public void lathekinResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
-        currentRound.toolCardMoveDone();
     }
 
 

@@ -216,6 +216,18 @@ public class WindowController implements Initializable {
 
     }
 
+    public void enableDice(PatternCard patternCard) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (patternCard.getGrid().get(i).get(j).getDice() != null) {
+                    dicePanes[i][j].setDisable(false);
+                } else {
+                    dicePanes[i][j].setDisable(true);
+                }
+            }
+        }
+    }
+
     private void lathekinMouseEvent(DicePane thisDicePane) {
         if (selectedPositions.isEmpty()) {
             if (!thisDicePane.getStyleClass().isEmpty() && !thisDicePane.getStyleClass().contains("grey")) {
