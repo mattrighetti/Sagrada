@@ -76,13 +76,40 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     private Button showPrivateCardButton;
 
     @FXML
+    private Button roundOneButton;
+
+    @FXML
+    private Button roundTwoButton;
+
+    @FXML
+    private Button roundThreeButton;
+
+    @FXML
+    private Button roundFourButton;
+
+    @FXML
+    private Button roundFiveButton;
+
+    @FXML
+    private Button roundSixButton;
+
+    @FXML
+    private Button roundSevenButton;
+
+    @FXML
+    private Button roundEightButton;
+
+    @FXML
+    private Button roundNineButton;
+
+    @FXML
+    private Button roundTenButton;
+
+    @FXML
     private TableView<MoveStatus> movesHistoryTableView;
 
     @FXML
     private TableColumn<MoveStatus, String> storyTableColumn;
-
-    @FXML
-    private HBox roundTrackButtonHBox;
 
     @FXML
     private HBox roundTrackDiceHBox;
@@ -108,6 +135,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     private ObservableList<MoveStatus> playersMoves;
 
     /* Utility Elements */
+    private int currentRound;
     private DiceButton toolCardSelectedDice;
     private boolean placeDiceMoveDone;
     private int selectedRoundTrack;
@@ -130,17 +158,98 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         draftDiceButton.setDisable(true);
         endTurnButton.setDisable(true);
 
-        roundTrackDiceHBox.setDisable(true);
-
         /* Create a list used to iterate through PublicOC */
         publicCardsImageViewsList.add(firstPublicCardImageView);
         publicCardsImageViewsList.add(secondPublicCardImageView);
         publicCardsImageViewsList.add(thirdPublicCardImageView);
+
         toolCardsImageViewsList.add(firstToolCardImageView);
         toolCardsImageViewsList.add(secondToolCardImageView);
         toolCardsImageViewsList.add(thirdToolCardImageView);
 
+        roundOneButton.setId("0");
+        roundTwoButton.setId("1");
+        roundThreeButton.setId("2");
+        roundFourButton.setId("3");
+        roundFiveButton.setId("4");
+        roundSixButton.setId("5");
+        roundSevenButton.setId("6");
+        roundEightButton.setId("7");
+        roundNineButton.setId("8");
+        roundTenButton.setId("9");
 
+        roundOneButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundOneButton.getId())), "");
+            selectedRoundTrack = 0;
+        });
+
+        roundTwoButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundTwoButton.getId())), "");
+            selectedRoundTrack = 1;
+        });
+
+        roundThreeButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundThreeButton.getId())), "");
+            selectedRoundTrack = 2;
+        });
+
+        roundFourButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundFourButton.getId())), "");
+            selectedRoundTrack = 3;
+        });
+
+        roundFiveButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundFiveButton.getId())), "");
+            selectedRoundTrack = 4;
+        });
+
+        roundSixButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundSixButton.getId())), "");
+            selectedRoundTrack = 5;
+        });
+
+        roundSevenButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundSevenButton.getId())), "");
+            selectedRoundTrack = 6;
+        });
+
+        roundEightButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundEightButton.getId())), "");
+            selectedRoundTrack = 7;
+        });
+
+        roundNineButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundNineButton.getId())), "");
+            selectedRoundTrack = 8;
+        });
+
+        roundTenButton.setOnMouseClicked(event -> {
+            roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+            showDiceInRoundTrack(roundTrackDice.get(Integer.parseInt(roundTenButton.getId())), "");
+            selectedRoundTrack = 9;
+        });
+
+        roundTrackButtonList.add(roundOneButton);
+        roundTrackButtonList.add(roundTwoButton);
+        roundTrackButtonList.add(roundThreeButton);
+        roundTrackButtonList.add(roundFourButton);
+        roundTrackButtonList.add(roundFiveButton);
+        roundTrackButtonList.add(roundSixButton);
+        roundTrackButtonList.add(roundSevenButton);
+        roundTrackButtonList.add(roundEightButton);
+        roundTrackButtonList.add(roundNineButton);
+        roundTrackButtonList.add(roundTenButton);
+
+        currentRound = 0;
     }
 
     @FXML
@@ -425,7 +534,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         activateCommands();
     }
 
-    private void activateCommands(){
+    private void activateCommands() {
         activateDice();
         activateToolCard();
         endTurnButton.setDisable(false);
@@ -436,7 +545,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
      * sets null the attribute selectedDice in the WindowController
      * sets the Default Cursor
      */
-    void clearSelectedDice(){
+    private void clearSelectedDice() {
         windowControllerList.get(0).setSelectedDice(null);
         windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
     }
@@ -451,44 +560,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     private void addRoundInRoundTrack(List<Dice> diceToAdd) {
-        int round = roundTrackButtonList.size();
+        currentRound++;
         roundTrackDice.add(diceToAdd);
-
-        Button buttonRound = new Button("Round " + (round + 1));
-        buttonRound.setId(String.valueOf(round));
-        roundTrackButtonList.add(buttonRound);
-        buttonRound.getStyleClass().add("roundtrack-button");
-        buttonRound.setDisable(false);
-
-        /*  Set Event:  */
-        buttonRound.setOnMouseClicked(event -> {
-            System.out.println("Round button clicked");
-            if (buttonRound.getId() != null) {
-                selectedRoundTrack = Integer.parseInt(buttonRound.getId());
-
-                FadeTransition fade = new FadeTransition(Duration.millis(1000));
-
-                if (selectedRoundTrack < roundTrackButtonList.size() && selectedRoundTrack < roundTrackDice.size()) {
-
-                    showDiceInRoundTrack(roundTrackDice.get(selectedRoundTrack), "");
-                    fade.setNode(roundTrackDiceHBox);
-                    fade.setFromValue(0.0);
-                    fade.setToValue(1.0);
-                    fade.setCycleCount(1);
-                    fade.setAutoReverse(false);
-                    roundTrackDiceHBox.setVisible(true);
-                    fade.playFromStart();
-
-                }
-
-            } else System.err.println("Dice has no id");
-        });
-
-        Platform.runLater(
-                () -> {
-                    roundTrackDiceHBox.getChildren().add(buttonRound);
-                }
-        );
+        roundTrackButtonList.get(currentRound - 1).getStyleClass().add("roundtrack-button");
+        roundTrackButtonList.get(currentRound - 1).setDisable(false);
     }
 
     private void showDiceInRoundTrack(List<Dice> diceToAdd, String toolCard) {
@@ -515,11 +590,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             }
 
             diceButtonToAdd.getStyleClass().add(diceToAdd.get(i).toString());
-            diceButtonToAdd.getStyleClass().add("diceImageSize");
-            diceButtonToAdd.setMinSize(70, 70);
+            diceButtonToAdd.getStyleClass().add("roundTrackImageSize");
+            diceButtonToAdd.setMinSize(60, 60);
             roundTrackDiceHBox.setSpacing(5);
             roundTrackDiceHBox.getChildren().add(diceButtonToAdd);
-            diceButtonToAdd.setDisable(false);
         }
     }
 
@@ -569,15 +643,13 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
 
     /**
-     *
-     *
      * @param draftedDiceToolCardResponse
      */
     @Override
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
-            if (placeDiceMoveDone){
+            if (placeDiceMoveDone) {
                 disableDice();
                 endTurnButton.setDisable(true);
             } else activateDice();
@@ -591,14 +663,12 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void toolCardAction(RoundTrackToolCardResponse useToolCardResponse) {
         ObservableList<Node> nodesDice = roundTrackDiceHBox.getChildren();
         Platform.runLater(() -> roundTrackDiceHBox.getChildren().removeAll(nodesDice));
-        ObservableList<Node> nodesButton = roundTrackButtonHBox.getChildren();
-        Platform.runLater(() -> roundTrackDiceHBox.getChildren().removeAll(nodesButton));
 
         roundTrackButtonList.clear();
         for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
             addRoundInRoundTrack(roundDice);
         }
-        if (placeDiceMoveDone){
+        if (placeDiceMoveDone) {
             disableDice();
             endTurnButton.setDisable(true);
         } else activateDice();
@@ -608,7 +678,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @Override
     public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
         updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
-        if (placeDiceMoveDone){
+        if (placeDiceMoveDone) {
             disableDice();
             endTurnButton.setDisable(true);
         } else activateDice();
@@ -617,7 +687,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @Override
     public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
         Platform.runLater(() -> {
-            if (useToolCardResponse.playerTokens >= 0){
+            if (useToolCardResponse.playerTokens >= 0) {
                 createPopUpWindow("Use Tool Card", "Move not allowed", "You can't use this tool card, you haven't got enough favor tokens\n You have " + useToolCardResponse.playerTokens + " tokens").showAndWait();
             } else {
                 createPopUpWindow("Use Tool Card", "Move not allowed ", "You can't use this tool card").showAndWait();
@@ -629,7 +699,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     /**
      * COPPER FOIL BURNISHER
-     *
+     * <p>
      * Tool Card that makes move a die in the Pattern Card in another position
      * ignoring the shade restrictions
      *
@@ -650,7 +720,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     /**
      * CORK BACKED STRAIGHTEDGE
-     *
+     * <p>
      * Tool Card that makes place a die in a spot that is not adjacent to another die
      *
      * @param useToolCardResponse response with the available positions to place dice with specific restriction for this tool card
@@ -670,7 +740,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     /**
      * EGLOMISE BRUSH
-     *
+     * <p>
      * Tool Card that makes move a die in the Pattern Card in another position
      * ignoring the color restrictions
      *
@@ -690,7 +760,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     /**
      * FLUX BRUSH
-     *
+     * <p>
      * Tool Card that makes choose a die to be rolled again, than makes place it
      * if it is possible, otherwise let place it in the drafted pool
      *
@@ -764,7 +834,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                 });
                         }
 
-                    } else  windowControllerList.get(0).fluxBrushMove();
+                    } else windowControllerList.get(0).fluxBrushMove();
                 });
 
         }
@@ -772,7 +842,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     /**
      * FLUX REMOVER
-     *
+     * <p>
      * Tool Card that makes choose a die to be removed from the drafted pool
      * then, received a new one from the dice bag, makes choose its value
      * and place it in the pattern, if it is possible
@@ -843,8 +913,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                 } else button.setDisable(true);
                             }
                         } else disableDice();
-                    }
-                    else System.out.println("Error in available position Flux Remover");
+                    } else System.out.println("Error in available position Flux Remover");
                     windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
                     windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.draftedDie.toString());
                     windowControllerList.get(0).setSelectedDice(useToolCardResponse.draftedDie);
@@ -979,7 +1048,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.setHeaderText("Lens Cutter");
             alert.showAndWait();
 
-            for (Button button: roundTrackButtonList) {
+            for (Button button : roundTrackButtonList) {
                 int selectedRound = Integer.parseInt(button.getId());
                 button.setOnMouseClicked(event -> showDiceInRoundTrack(roundTrackDice.get(selectedRound), "LensCutter"));
             }
