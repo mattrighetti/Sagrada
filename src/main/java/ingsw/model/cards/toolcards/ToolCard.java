@@ -26,5 +26,16 @@ public abstract class ToolCard extends Card {
         price = 2;
     }
 
+    protected void waitForToolCardAction(GameManager gameManager) {
+        synchronized (gameManager.toolCardLock) {
+            try {
+                gameManager.toolCardLock.wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            }
+        }
+    }
+
     public abstract void action(GameManager gameManager);
 }

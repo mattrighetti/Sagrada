@@ -365,12 +365,20 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void timeOut() {
-        Platform.runLater(this::disableCommandsAndReset);
+        Platform.runLater(() -> {
+            createPopUpWindow("Time Out", "Timer ended", "You've been using too much time for your moves\nYour turn is ended").showAndWait();
+            disableCommandsAndReset();
+        });
     }
 
     @Override
     public void endedTurn() {
         disableCommandsAndReset();
+    }
+
+    @Override
+    public void setAvailablePositions(Map<String, Boolean[][]> availablePositions) {
+        windowControllerList.get(0).setAvailablePosition(availablePositions);
     }
 
     private void endTurnButtonReset() {
@@ -413,7 +421,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     @Override
-    public void setAvailablePosition(StartTurnNotification startTurnNotification) {
+    public void startTurn(StartTurnNotification startTurnNotification) {
         Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
         windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
         turnState = 1;
@@ -486,9 +494,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         containerVBox.getChildren().addAll(buttonRound, vBox);
 
         Platform.runLater(
-                () -> {
-                    roundTrackHBox.getChildren().add(containerVBox);
-                }
+                () -> roundTrackHBox.getChildren().add(containerVBox)
         );
     }
 

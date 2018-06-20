@@ -52,15 +52,7 @@ public class GrozingPliers extends ToolCard {
             }
         }
 
-        synchronized (gameManager.toolCardLock) {
-            try {
-                gameManager.toolCardLock.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
-            }
-
-        }
+        waitForToolCardAction(gameManager);
         gameManager.grozingPliersResponse();
     }
 }

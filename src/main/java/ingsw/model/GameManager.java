@@ -255,14 +255,12 @@ public class GameManager {
 
                     // If there's only a user connected then...
                 } else {
-
                     // TODO crea un metodo testabile, poco reliable nel caso in cui ci siano più utenti nella lista
                     for (Player winner : playerList) {
                         if (winner.getUser().isActive()) {
                             winner.getUserObserver().notifyVictory(0);
                         }
                     }
-
                     stop.set(true);
                     deleteMatch();
                 }
@@ -738,7 +736,7 @@ public class GameManager {
                 cancelTimer.set(false);
                 System.out.println("timer ended\n");
             }
-
+            System.out.println("Deleting timer");
             stopTurn();
         }).start();
     }
@@ -878,6 +876,11 @@ public class GameManager {
 
     public void grozingPliersResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+        try {
+            currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(sendAvailablePositions(currentRound.getCurrentPlayer())));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         currentRound.toolCardMoveDone();
     }
 
@@ -969,6 +972,11 @@ public class GameManager {
 
     public void grindingStoneResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+        try {
+            currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(sendAvailablePositions(currentRound.getCurrentPlayer())));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         currentRound.toolCardMoveDone();
     }
 
@@ -1071,6 +1079,7 @@ public class GameManager {
     public void runningPliersResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(getDraftedDice(), true));
+        sendAvailablePositions(currentRound.getCurrentPlayer());
         currentRound.toolCardMoveDone();
     }
 

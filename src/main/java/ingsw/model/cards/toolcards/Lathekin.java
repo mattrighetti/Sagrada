@@ -27,23 +27,12 @@ public class Lathekin extends ToolCard {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                synchronized (gameManager.toolCardLock) {
-                    try {
-                        gameManager.toolCardLock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        e.printStackTrace();
-                    }
-                }
+                waitForToolCardAction(gameManager);
                 gameManager.lathekinResponse();
             } else
                 gameManager.lathekinResponse();
         }
 
         gameManager.setDoubleMove(false);
-        gameManager.getCurrentRound().hasMadeAMove();
-
-
-
     }
 }

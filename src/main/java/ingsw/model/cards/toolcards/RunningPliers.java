@@ -26,14 +26,7 @@ public class RunningPliers extends ToolCard {
                 e.printStackTrace();
             }
 
-            synchronized (gameManager.toolCardLock) {
-                try {
-                    gameManager.toolCardLock.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    e.printStackTrace();
-                }
-            }
+            waitForToolCardAction(gameManager);
             gameManager.getCurrentRound().blockedTurnPlayers.add(gameManager.getCurrentRound().getCurrentPlayer().getPlayerUsername());
             gameManager.runningPliersResponse();
         } else try {

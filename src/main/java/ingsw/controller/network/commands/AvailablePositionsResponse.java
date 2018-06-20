@@ -3,13 +3,13 @@ package ingsw.controller.network.commands;
 import ingsw.utilities.NotificationType;
 
 import java.util.List;
+import java.util.Map;
 
-public class AvailablePositionsNotification extends Notification {
+public class AvailablePositionsResponse implements Response{
 
-    public List<Boolean[][]> availablePositions;
+    public Map<String, Boolean[][]> availablePositions;
 
-    public AvailablePositionsNotification(List<Boolean[][]> availablePositions) {
-        super(NotificationType.DRAFT_DICE);
+    public AvailablePositionsResponse(Map<String, Boolean[][]> availablePositions) {
         this.availablePositions = availablePositions;
     }
 
@@ -19,7 +19,6 @@ public class AvailablePositionsNotification extends Notification {
      */
     @Override
     public void handle(ResponseHandler responseHandler) {
-
-        //TODO return responseHandler.handle(this);
+        responseHandler.handle(this);
     }
 }

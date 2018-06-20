@@ -519,9 +519,14 @@ public class CLI implements SceneUpdater {
     }
 
     @Override
-    public void setAvailablePosition(StartTurnNotification startTurnNotification) {
+    public void startTurn(StartTurnNotification startTurnNotification) {
         availablePosition = startTurnNotification.booleanMapGrid;
         chooseMove();
+    }
+
+    @Override
+    public void setAvailablePositions(Map<String, Boolean[][]> availablePositions) {
+        this.availablePosition = availablePositions;
     }
 
     /**

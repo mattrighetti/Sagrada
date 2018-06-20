@@ -385,7 +385,7 @@ public class ClientController implements ResponseHandler, NetworkType {
                 sceneUpdater.updateMovesHistory((MoveStatusNotification) notification);
                 break;
             case START_TURN:
-                sceneUpdater.setAvailablePosition((StartTurnNotification) notification);
+                sceneUpdater.startTurn((StartTurnNotification) notification);
                 break;
         }
     }
@@ -499,6 +499,11 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(EndTurnResponse endTurnResponse) {
         sceneUpdater.endedTurn();
+    }
+
+    @Override
+    public void handle(AvailablePositionsResponse availablePositionsResponse) {
+        sceneUpdater.setAvailablePositions(availablePositionsResponse.availablePositions);
     }
 
     @Override

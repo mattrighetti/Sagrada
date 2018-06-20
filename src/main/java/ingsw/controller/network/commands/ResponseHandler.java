@@ -45,4 +45,6 @@ public interface ResponseHandler {
     void handle(FinishedMatchesResponse finishedMatchesResponse);
 
     void handle(EndTurnResponse endTurnResponse);
+
+    void handle(AvailablePositionsResponse availablePositionsResponse);
 }

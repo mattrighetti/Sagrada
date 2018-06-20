@@ -26,14 +26,7 @@ public class TapWheel extends ToolCard {
 
         for (int i = 0; i < 2; i++) {
             if (!gameManager.getdoubleMove()) {
-                synchronized (gameManager.toolCardLock) {
-                    try {
-                        gameManager.toolCardLock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        e.printStackTrace();
-                    }
-                }
+                waitForToolCardAction(gameManager);
             } else break;
         }
 

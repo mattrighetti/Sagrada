@@ -9,6 +9,7 @@ import ingsw.utilities.MoveStatus;
 import ingsw.utilities.TripleString;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface implemented by every FXML Controller to control what's going to be displayed on the View.
@@ -128,7 +129,7 @@ public interface SceneUpdater {
      *
      * @param startTurnNotification start turn notification
      */
-    default void setAvailablePosition(StartTurnNotification startTurnNotification) {
+    default void startTurn(StartTurnNotification startTurnNotification) {
         System.out.println("Not overridden");
     }
 
@@ -243,6 +244,10 @@ public interface SceneUpdater {
     }
 
     default void endedTurn(){
+        System.out.println("Not overridden");
+    }
+
+    default void setAvailablePositions(Map<String, Boolean[][]> availablePositions) {
         System.out.println("Not overridden");
     }
 }

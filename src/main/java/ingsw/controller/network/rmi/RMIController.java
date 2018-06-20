@@ -340,7 +340,7 @@ public class RMIController implements ResponseHandler, NetworkType {
                 sceneUpdater.popUpDraftNotification();
                 break;
             case START_TURN:
-                sceneUpdater.setAvailablePosition((StartTurnNotification) notification);
+                sceneUpdater.startTurn((StartTurnNotification) notification);
                 break;
             case HISTORY_UPDATE:
                 sceneUpdater.updateMovesHistory((MoveStatusNotification) notification);
@@ -376,5 +376,10 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(HistoryResponse historyResponse) {
         sceneUpdater.showSelectedMatchHistory(historyResponse.historyJSON);
+    }
+
+    @Override
+    public void handle(AvailablePositionsResponse availablePositionsResponse) {
+        sceneUpdater.setAvailablePositions(availablePositionsResponse.availablePositions);
     }
 }

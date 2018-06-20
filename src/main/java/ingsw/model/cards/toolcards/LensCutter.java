@@ -22,17 +22,8 @@ public class LensCutter extends ToolCard {
             e.printStackTrace();
         }
 
-        synchronized (gameManager.toolCardLock) {
-            try {
-                gameManager.toolCardLock.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
-            }
-        }
+        waitForToolCardAction(gameManager);
 
         gameManager.lensCutterResponse();
-        gameManager.getCurrentRound().hasMadeAMove();
-
     }
 }
