@@ -50,7 +50,7 @@ public class GameManager {
     private final AtomicBoolean endRound;
     private final AtomicBoolean stop;
     private final AtomicBoolean doubleMove;
-    private final AtomicBoolean cancelTimer;
+    final AtomicBoolean cancelTimer;
     private final AtomicInteger turnInRound = new AtomicInteger(0);
     public final Object toolCardLock = new Object();
 
@@ -413,6 +413,7 @@ public class GameManager {
             cancelTimer.set(true);
             cancelTimer.notifyAll();
         }
+        stopTurn();
     }
 
     public void stopTurn() {
@@ -735,9 +736,9 @@ public class GameManager {
 
                 cancelTimer.set(false);
                 System.out.println("timer ended\n");
+                stopTurn();
             }
             System.out.println("Deleting timer");
-            stopTurn();
         }).start();
     }
 

@@ -59,6 +59,11 @@ public class Round implements Runnable {
             endTurnNotification();
             playerEndedTurn.set(true);
 
+            synchronized (gameManager.cancelTimer) {
+                gameManager.cancelTimer.set(true);
+                gameManager.cancelTimer.notifyAll();
+            }
+
             //wake up the round thread
             synchronized (playerEndedTurn) {
                 playerEndedTurn.notifyAll();
