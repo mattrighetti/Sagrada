@@ -246,8 +246,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
                 }
             }
         } else {
-            connectedUsers.get(newUser.getUsername()).getUserObserver().sendResponse(
-                    new LoginUserResponse(connectedUsers.get(newUser.getUsername())));
+            throw new RemoteException("Match has already finished");
         }
     }
 
