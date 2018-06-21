@@ -162,6 +162,7 @@ public class LobbyController implements SceneUpdater, Initializable {
                 !matchTableView.getSelectionModel().getSelectedItem().getFirstField().equals(4)) {
 
             networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField());
+            joinButton.setDisable(true);
             progressForm = new ProgressForm();
             progressForm.activateProgressBar();
         } else {

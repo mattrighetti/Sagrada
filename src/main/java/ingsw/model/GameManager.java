@@ -53,6 +53,7 @@ public class GameManager {
     final AtomicBoolean cancelTimer;
     private final AtomicInteger turnInRound;
     public final Object toolCardLock;
+    private Set<Player> disconnectedPlayers;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -73,6 +74,7 @@ public class GameManager {
         cancelTimer = new AtomicBoolean(false);
         toolCardLock = new Object();
         turnInRound = new AtomicInteger(0);
+        disconnectedPlayers = new HashSet<>();
         setUpGameManager();
     }
 
@@ -264,6 +266,7 @@ public class GameManager {
                     // TODO crea un metodo testabile, poco reliable nel caso in cui ci siano più utenti nella lista
                     for (Player winner : playerList) {
                         if (winner.getUser().isActive()) {
+                            winner.getUser().incrementNoOfWins();
                             winner.getUserObserver().notifyVictory(0);
                         }
                     }
@@ -289,7 +292,6 @@ public class GameManager {
      */
     private void listenForPlayerDisconnection() {
         stop.set(false);
-        Set<Player> disconnectedPlayers = new HashSet<>();
         new Thread(() -> {
             try {
                 do {
@@ -469,25 +471,28 @@ public class GameManager {
 
             int i = 0;
             while (i < 10) {
-                if (playerList.get(0).getUser().isActive()) {
-                    notifyDraftToPlayer(playerList.get(0));
-                    endRound.set(false);
+                if (disconnectedPlayers.size() != (playerList.size() - 1)) {
+                    if (playerList.get(0).getUser().isActive()) {
+                        notifyDraftToPlayer(playerList.get(0));
+                        endRound.set(false);
 
-                    System.out.println("Round " + i);
-                    //wait until the end of the round
-                    synchronized (endRound) {
-                        while (!endRound.get()) {
-                            try {
-                                endRound.wait();
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                                e.printStackTrace();
+                        System.out.println("Round " + i);
+                        //wait until the end of the round
+                        synchronized (endRound) {
+                            while (!endRound.get()) {
+                                try {
+                                    endRound.wait();
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                    e.printStackTrace();
+                                }
                             }
                         }
+                        i++;
+                    } else {
+                        shiftPlayerList();
                     }
-                    i++;
-                } else {
-                    shiftPlayerList();
+
                 }
             }
 

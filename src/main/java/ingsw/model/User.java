@@ -46,12 +46,20 @@ public class User implements Serializable {
         return noOfWins;
     }
 
+    void incrementNoOfWins() {
+        noOfWins++;
+    }
+
     void setNoOfWins(int noOfWins) {
         this.noOfWins = noOfWins;
     }
 
     int getNoOfLose() {
         return noOfLose;
+    }
+
+    void setNoOfLose() {
+        noOfLose++;
     }
 
     void setNoOfLose(int noOfLose) {
