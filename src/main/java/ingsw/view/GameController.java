@@ -582,17 +582,18 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             DiceButton diceButtonToAdd = new DiceButton(diceToAdd.get(i), i);
 
             switch (toolCard) {
-                case "lensCutter":
+                case "LensCutter":
                     diceButtonToAdd.setOnMouseClicked(event -> {
                         if (toolCardSelectedDice != null)
                             networkType.lensCutter(selectedRoundTrack, diceButtonToAdd.getStyleClass().get(1), toolCardSelectedDice.getStyleClass().get(1));
                     });
                     break;
-                case "tapWheel":
+                case "TapWheel":
                     diceButtonToAdd.setOnMouseClicked(event -> {
                         toolCardSelectedDice = diceButtonToAdd;
                         System.out.println("the selected dice is " + toolCardSelectedDice);
                         networkType.tapWheelMove(toolCardSelectedDice.getDice(), 0);
+                        disableRoundTrack();
                     });
                     break;
                 default:
@@ -685,14 +686,22 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         ObservableList<Node> nodesDice = roundTrackDiceHBox.getChildren();
         Platform.runLater(() -> roundTrackDiceHBox.getChildren().removeAll(nodesDice));
 
-        for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
-            addRoundInRoundTrack(roundDice);
+        roundTrackDice = useToolCardResponse.roundTrack;
+        for (Button button : roundTrackButtonList) {
+            int selectedRound = Integer.parseInt(button.getId());
+            button.setOnMouseClicked(event -> {
+                roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+                showDiceInRoundTrack(roundTrackDice.get(selectedRound), "");
+                selectedRoundTrack = selectedRound;
+            });
         }
+
         if (roundState != RoundState.YOUR_TURN) {
             disableDice();
             endTurnButton.setDisable(true);
         } else activateDice();
-        roundTrackDiceHBox.setDisable(true);
+
+        disableRoundTrack();
     }
 
 
@@ -720,7 +729,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     /**
      * COPPER FOIL BURNISHER
-     * <p>
+     *
      * Tool Card that makes move a die in the Pattern Card in another position
      * ignoring the shade restrictions
      *
@@ -1125,6 +1134,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.setHeaderText("Lens Cutter");
             alert.showAndWait();
 
+            Platform.runLater(() -> roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren()));
             activateRoundTrack();
 
             for (Button button : roundTrackButtonList) {
@@ -1191,16 +1201,31 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                             Alert alert = createPopUpWindow("Use Tool card", "Tap Wheel", "Select a dice from the round track and\n move at most two dice of that color in the pattern");
                             alert.showAndWait();
 
+                            Platform.runLater(() -> roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren()));
                             for (Button button : roundTrackButtonList) {
                                 int selectedRound = Integer.parseInt(button.getId());
-                                button.setOnMouseClicked(event -> showDiceInRoundTrack(roundTrackDice.get(selectedRound), "tapWheel"));
+                                button.setOnMouseClicked(event -> {
+                                    roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+                                    showDiceInRoundTrack(roundTrackDice.get(selectedRound), "TapWheel");
+                                    selectedRoundTrack = selectedRound;
+                                });
                             }
+                            activateRoundTrack();
                         });
                 break;
             case 1:
                 System.out.println("phase 1");
                 Platform.runLater(
                         () -> {
+                            for (Button button : roundTrackButtonList) {
+                                int selectedRound = Integer.parseInt(button.getId());
+                                button.setOnMouseClicked(event -> {
+                                    roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+                                    showDiceInRoundTrack(roundTrackDice.get(selectedRound), "");
+                                    selectedRoundTrack = selectedRound;
+                                });
+                            }
+                            disableRoundTrack();
                             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
                             windowControllerList.get(0).activateTapWheelDice(toolCardSelectedDice.getDice().getDiceColor());
                             windowControllerList.get(0).moveDiceinPatternCardTapWheel(1, toolCardSelectedDice.getDice().getDiceColor().toString());

@@ -1042,6 +1042,11 @@ public class GameManager {
     public void lensCutterResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         Broadcaster.broadcastResponseToAll(playerList, new RoundTrackToolCardResponse(roundTrack));
+        try {
+            getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsDraftedDice(getDraftedDice())));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         currentRound.toolCardMoveDone();
     }
 
