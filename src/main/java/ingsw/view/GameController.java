@@ -611,6 +611,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         roundTrackDiceHBox.setDisable(true);
     }
 
+    public void activateRoundTrack() {
+        roundTrackDiceHBox.setDisable(false);
+    }
+
     @Override
     public void setPlaceDiceMove() {
         roundState = RoundState.DICE_PLACED;
@@ -622,21 +626,26 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             endTurnButton.setDisable(true);
             draftDiceButton.setDisable(false);
             createPopUpWindow("Notification",
-                    "It's your turn",
-                    "Click on Draft Dice to draft the diceList").showAndWait();
+                              "It's your turn",
+                              "Click on Draft Dice to draft the diceList").showAndWait();
         });
     }
 
     @Override
     public void showLostNotification(int totalScore) {
-        Platform.runLater(() -> createPopUpWindow("Match has ended", "You lost :(", "Your Score: " + totalScore).showAndWait());
-        application.launchSecondGUI(application.getUsername());
+        Platform.runLater(() -> {
+            createPopUpWindow("Match has ended", "You lost :(", "Your Score: " + totalScore).showAndWait();
+            application.launchSecondGUI(application.getUsername());
+        });
     }
 
     @Override
     public void showWinnerNotification(int totalScore) {
-        Platform.runLater(() -> createPopUpWindow("Match has ended", "You won!", "Your Score: " + totalScore).showAndWait());
-        application.launchSecondGUI(application.getUsername());
+        Platform.runLater(() -> {
+            createPopUpWindow("Match has ended", "You won!", "Your Score: " + totalScore).showAndWait();
+            application.launchSecondGUI(application.getUsername());
+        });
+
     }
 
     private boolean checkAvailablePositions(Boolean[][] availablePositions) {
@@ -661,7 +670,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         Platform.runLater(() -> {
             displayDraftedDice(draftedDiceToolCardResponse.draftedDice);
-            if (roundState != RoundState.YOUR_TURN ){
+            if (roundState != RoundState.YOUR_TURN) {
                 disableDice();
                 endTurnButton.setDisable(true);
             } else activateDice();
@@ -679,17 +688,18 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
             addRoundInRoundTrack(roundDice);
         }
-        if (roundState != RoundState.YOUR_TURN){
+        if (roundState != RoundState.YOUR_TURN) {
             disableDice();
             endTurnButton.setDisable(true);
         } else activateDice();
+        roundTrackDiceHBox.setDisable(true);
     }
 
 
     @Override
     public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
         updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
-        if (roundState != RoundState.YOUR_TURN){
+        if (roundState != RoundState.YOUR_TURN) {
             disableDice();
             endTurnButton.setDisable(true);
         } else activateDice();
@@ -939,8 +949,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
       Tool Card that makes choose a die to flipped to the opposite side.
      */
+
     /**
-     *
      * @param useToolCardResponse empty response
      */
     public void toolCardAction(GrindingStoneResponse useToolCardResponse) {
@@ -1084,10 +1094,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
 
-
-
     /**
-     * LATHEKIN
      *
      * @param useToolCardResponse
      */
@@ -1105,6 +1112,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
+    /*
+        LENS CUTTER
+        Toolcard that makes you choose a die from the drafted pool to swipe up with and another one in roundtrack.
+     */
 
     @Override
     public void toolCardAction(LensCutterResponse useToolCardResponse) {
@@ -1114,29 +1125,50 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.setHeaderText("Lens Cutter");
             alert.showAndWait();
 
+            activateRoundTrack();
+
             for (Button button : roundTrackButtonList) {
                 int selectedRound = Integer.parseInt(button.getId());
-                button.setOnMouseClicked(event -> showDiceInRoundTrack(roundTrackDice.get(selectedRound), "LensCutter"));
+                button.setOnMouseClicked(event ->{
+                    roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+                    showDiceInRoundTrack(roundTrackDice.get(selectedRound), "LensCutter");
+                    selectedRoundTrack = selectedRound;
+                });
             }
 
             for (DiceButton diceButton : draftPool) {
-                diceButton.setOnMouseClicked(mouseEvent -> {
-                    toolCardSelectedDice = diceButton;
-                });
+                diceButton.setOnMouseClicked(mouseEvent -> toolCardSelectedDice = diceButton);
             }
-            disableRoundTrack();
         });
     }
 
+    /*
+        RUNNING PLIERS
+        Toolcard that makes to choose a die and place it before the end of the first turn
+     */
+
+    /**
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(RunningPliersResponse useToolCardResponse) {
         Platform.runLater(() -> {
-            createPopUpWindow("Use Tool Card", "Running Pliers", "Choose and place another die").showAndWait();
+            createPopUpWindow("Use Tool Card", "Running Pliers", "Choose and place a die").showAndWait();
             activateDice();
             windowControllerList.get(0).runningPliersMove();
         });
     }
 
+    /*
+        TAP WHEEL
+
+     */
+
+    /**
+     *
+     * @param useToolCardResponse
+     */
     @Override
     public void toolCardAction(TapWheelResponse useToolCardResponse) {
         switch (useToolCardResponse.phase) {
