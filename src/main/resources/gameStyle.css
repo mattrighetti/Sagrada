@@ -180,6 +180,10 @@
     -fx-background-size: 70 70;
 }
 
+.roundTrackImageSize {
+    -fx-background-size: 60 60;
+}
+
 .dicePaneImageSize {
     -fx-background-size: 100 100;
     -fx-background-repeat: no-repeat;
@@ -314,3 +318,20 @@
 .grey {
     -fx-background-color: #b8b8b8;
 }
+
+
+/* Round Track buttons */
+
+.roundtrack-button {
+    -fx-border-style: none;
+    -fx-background-color: #a32017,
+        linear-gradient(#da3f19, #c7771c);
+}
+
+.roundtrack-button:pressed {
+    -fx-border-style: none;
+    -fx-background-color: #a32017,
+        linear-gradient(#0000 0%, #0000 20%, #0000 100%),
+        linear-gradient(#923c27, #bd6124);
+}
+
