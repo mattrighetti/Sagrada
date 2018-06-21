@@ -51,8 +51,8 @@ public class GameManager {
     private final AtomicBoolean stop;
     private final AtomicBoolean doubleMove;
     final AtomicBoolean cancelTimer;
-    private final AtomicInteger turnInRound = new AtomicInteger(0);
-    public final Object toolCardLock = new Object();
+    private final AtomicInteger turnInRound;
+    public final Object toolCardLock;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -71,6 +71,8 @@ public class GameManager {
         endRound = new AtomicBoolean(false);
         doubleMove = new AtomicBoolean(false);
         cancelTimer = new AtomicBoolean(false);
+        toolCardLock = new Object();
+        turnInRound = new AtomicInteger(0);
         setUpGameManager();
     }
 
@@ -183,9 +185,9 @@ public class GameManager {
         // Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         ArrayList<ToolCard> toolCards = new ArrayList<>();
-        toolCards.add(new GrindingStone());
-        toolCards.add(new GrozingPliers());
-        toolCards.add(new Lathekin());
+        toolCards.add(new LensCutter());
+        toolCards.add(new RunningPliers());
+        toolCards.add(new TapWheel());
         return toolCards;
     }
 
@@ -229,14 +231,14 @@ public class GameManager {
 
     /**
      * Method that checks if every user is connected to the game.
+     * @param disconnectedPlayers
      */
-    private void checkUserConnection() {
-        final Set<Player> disconnectedPlayers = new HashSet<>();
+    private void checkUserConnection(Set<Player> disconnectedPlayers) {
         for (Player player : playerList) {
             try {
 
                 // If there are at least two active players then...
-                if (disconnectedPlayers.size() != playerList.size() - 1) {
+                if (disconnectedPlayers.size() < playerList.size() - 1) {
 
                     // If a user was in the disconnectedPlayers' Set and it's now active
                     // He gets removed from the set and the necessary data will be notified to him
@@ -248,7 +250,7 @@ public class GameManager {
                         Thread.sleep(500);
                         player.getUserObserver().sendResponse(new DraftedDiceResponse(board.getDraftedDice()));
                     } else if (!disconnectedPlayers.contains(player) && !player.getUser().isActive()) {
-                        System.out.println("User " + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users");
+                        System.out.println("User " + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users iterating Player "+ player.getPlayerUsername() + " " + disconnectedPlayers.size() + " " + (playerList.size() - 1));
                         disconnectedPlayers.add(player);
 
                     } else {
@@ -287,13 +289,14 @@ public class GameManager {
      */
     private void listenForPlayerDisconnection() {
         stop.set(false);
+        Set<Player> disconnectedPlayers = new HashSet<>();
         new Thread(() -> {
             try {
                 do {
                     // PING every 2 seconds
                     Thread.sleep(2000);
 
-                    checkUserConnection();
+                    checkUserConnection(disconnectedPlayers);
 
                 } while (!stop.get());
             } catch (InterruptedException e) {

@@ -630,11 +630,13 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @Override
     public void showLostNotification(int totalScore) {
         Platform.runLater(() -> createPopUpWindow("Match has ended", "You lost :(", "Your Score: " + totalScore).showAndWait());
+        application.launchSecondGUI(application.getUsername());
     }
 
     @Override
     public void showWinnerNotification(int totalScore) {
         Platform.runLater(() -> createPopUpWindow("Match has ended", "You won!", "Your Score: " + totalScore).showAndWait());
+        application.launchSecondGUI(application.getUsername());
     }
 
     private boolean checkAvailablePositions(Boolean[][] availablePositions) {
@@ -674,7 +676,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         ObservableList<Node> nodesDice = roundTrackDiceHBox.getChildren();
         Platform.runLater(() -> roundTrackDiceHBox.getChildren().removeAll(nodesDice));
 
-        roundTrackButtonList.clear();
         for (List<Dice> roundDice : useToolCardResponse.roundTrack) {
             addRoundInRoundTrack(roundDice);
         }

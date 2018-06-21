@@ -31,19 +31,30 @@ public class Lathekin extends ToolCard {
             return;
         }
 
-        for (int i = 0; i < 2; i++) {
-            if(!gameManager.getdoubleMove()) {
-                try {
-                    PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
-                    gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(patternCard, patternCard.computeAvailablePositionsLathekin()));
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                waitForToolCardAction(gameManager);
-                gameManager.lathekinResponse();
-            } else
-                gameManager.lathekinResponse();
+
+        if (!gameManager.getdoubleMove()) {
+            try {
+                PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(patternCard, patternCard.computeAvailablePositionsLathekin()));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            waitForToolCardAction(gameManager);
+            gameManager.lathekinResponse();
+        } else {
+            gameManager.lathekinResponse();
+            return;
         }
+
+        try {
+            PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
+            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(patternCard, patternCard.computeAvailablePositions()));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        waitForToolCardAction(gameManager);
+        gameManager.lathekinResponse();
+
 
         gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.setDoubleMove(false);
