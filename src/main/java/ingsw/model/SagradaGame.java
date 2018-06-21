@@ -40,7 +40,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     }
 
     public void removeMatch(Controller controller) {
-        matchesByName.remove(controller);
+        matchesByName.remove(controller.getMatchName(), controller);
         Broadcaster.broadcastResponseToAll(connectedUsers, new CreateMatchResponse(createAvailableMatchesList()));
     }
 
@@ -229,6 +229,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
 
     @Override
     public synchronized void loginPrexistentPlayer(String matchName, User newUser) throws RemoteException {
+        boolean isMatchPresent = matchesByName.containsKey(matchName);
         for (User user : connectedUsers.values()) {
             if (user.getUsername().equals(newUser.getUsername())) {
                 connectedUsers.remove(user);
@@ -236,12 +237,17 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
             }
         }
 
-        for (Player player : matchesByName.get(matchName).getPlayerList()) {
-            if (player.getPlayerUsername().equals(newUser.getUsername()) && !player.getUser().isActive()) {
-                System.out.println("SagradaGame: re-activating User " + newUser.getUsername());
-                player.updateUser(newUser);
-                System.out.println("Player has been updated, it's now back online");
+        if (isMatchPresent) {
+            for (Player player : matchesByName.get(matchName).getPlayerList()) {
+                if (player.getPlayerUsername().equals(newUser.getUsername()) && !player.getUser().isActive()) {
+                    System.out.println("SagradaGame: re-activating User " + newUser.getUsername());
+                    player.updateUser(newUser);
+                    System.out.println("Player has been updated, it's now back online");
+                }
             }
+        } else {
+            connectedUsers.get(newUser.getUsername()).getUserObserver().sendResponse(
+                    new LoginUserResponse(connectedUsers.get(newUser.getUsername())));
         }
     }
 
