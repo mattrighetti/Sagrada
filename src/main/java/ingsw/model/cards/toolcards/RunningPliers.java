@@ -1,7 +1,6 @@
 package ingsw.model.cards.toolcards;
 
 import ingsw.controller.network.commands.AvoidToolCardResponse;
-import ingsw.controller.network.commands.LensCutterResponse;
 import ingsw.controller.network.commands.RunningPliersResponse;
 import ingsw.model.GameManager;
 

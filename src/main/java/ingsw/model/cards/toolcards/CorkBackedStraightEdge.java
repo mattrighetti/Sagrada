@@ -1,6 +1,5 @@
 package ingsw.model.cards.toolcards;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import ingsw.controller.network.commands.CorkBackedStraightedgeResponse;
 import ingsw.model.GameManager;
 

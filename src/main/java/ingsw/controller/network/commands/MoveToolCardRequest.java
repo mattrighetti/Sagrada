@@ -1,7 +1,5 @@
 package ingsw.controller.network.commands;
 
-
-import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.ToolCardType;
 
 public class MoveToolCardRequest implements Request {

@@ -114,7 +114,7 @@ class GameManagerTest {
         assertEquals( "PatternCard{'Batllo'}" , gameManager.getPlayerList().get(0).getPatternCard().toString());
         assertEquals(current.get(), old.getAndIncrement());
     }
-
+/*
     @Test
     void waitForEveryPatternCard() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
         Field noOfAck = gameManager.getClass().getDeclaredField("noOfAck");
@@ -138,5 +138,5 @@ class GameManagerTest {
 
         actual = (AtomicInteger) noOfAck.get(gameManager);
         assertEquals((new AtomicInteger(0)).get(), actual.get());
-    }
+    }*/
 }

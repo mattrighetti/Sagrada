@@ -1,11 +1,8 @@
 package ingsw.controller.network.commands;
 
-import ingsw.utilities.NotificationType;
-
-import java.util.List;
 import java.util.Map;
 
-public class AvailablePositionsResponse implements Response{
+public class AvailablePositionsResponse implements Response {
 
     public Map<String, Boolean[][]> availablePositions;
 
@@ -15,6 +12,7 @@ public class AvailablePositionsResponse implements Response{
 
     /**
      * Method that declares by which this response should be handled
+     *
      * @param responseHandler class that handles the Request
      */
     @Override

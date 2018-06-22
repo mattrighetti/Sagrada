@@ -9,7 +9,6 @@ import ingsw.model.cards.toolcards.ToolCard;
 import ingsw.utilities.MoveStatus;
 import ingsw.utilities.RoundState;
 import ingsw.view.nodes.DiceButton;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,7 +28,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;

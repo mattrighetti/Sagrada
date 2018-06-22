@@ -2,14 +2,10 @@ package ingsw.model.cards.toolcards;
 
 import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.CopperFoilBurnisherResponse;
-import ingsw.model.Dice;
 import ingsw.model.GameManager;
-import ingsw.model.cards.patterncard.Box;
 import ingsw.model.cards.patterncard.PatternCard;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CopperFoilBurnisher extends ToolCard {
 
