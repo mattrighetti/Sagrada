@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import org.apache.commons.lang.StringUtils;
 
@@ -24,9 +23,6 @@ import java.util.*;
 import static javafx.application.Application.launch;
 
 public class LobbyController implements SceneUpdater, Initializable {
-
-    @FXML
-    private GridPane lobbyPane;
 
     @FXML
     private Button exitButton;
@@ -155,10 +151,13 @@ public class LobbyController implements SceneUpdater, Initializable {
     @FXML
     void onJoinPressed(ActionEvent event) {
         if (matchTableView.getSelectionModel().getSelectedItem() != null  &&
-                !matchTableView.getSelectionModel().getSelectedItem().getFirstField().equals(4)) {
+                !matchTableView.getSelectionModel().getSelectedItem().getFirstField().equals(String.valueOf(4))) {
 
             networkType.joinExistingMatch(matchTableView.getSelectionModel().getSelectedItem().getFirstField());
             joinButton.setDisable(true);
+            createButton.setDisable(true);
+            exitButton.setDisable(true);
+            historyButton.setDisable(true);
             progressForm = new ProgressForm();
             progressForm.activateProgressBar();
         } else {

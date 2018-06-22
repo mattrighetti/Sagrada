@@ -37,25 +37,26 @@ public class Dice implements Serializable {
      * Increases the face up value by one
      * Used by a tool card
      */
-    public void increasesByOneValue(){
+    void increasesByOneValue() {
         if (faceUpValue < 6)
-        faceUpValue++;
+            faceUpValue++;
     }
+
     /**
      * Decreases the face up value by one
      * Used by a tool card
      */
-    public void decreasesByOneValue(){
-        if(faceUpValue > 1)
-        faceUpValue--;
+    void decreasesByOneValue() {
+        if (faceUpValue > 1)
+            faceUpValue--;
     }
 
     /**
      * Set the face up value opposite to the one the dice has before
      * Used for a tool card
      */
-    public void setOppositeFace(){
-        switch (faceUpValue){
+    void setOppositeFace() {
+        switch (faceUpValue) {
             case 1:
                 faceUpValue = 6;
                 break;
@@ -73,6 +74,9 @@ public class Dice implements Serializable {
                 break;
             case 6:
                 faceUpValue = 1;
+                break;
+            default:
+                break;
         }
     }
 

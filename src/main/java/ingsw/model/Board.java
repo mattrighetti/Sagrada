@@ -11,7 +11,7 @@ public class Board {
     private List<Dice> diceBag;
     private List<Dice> draftedDice;
 
-    public Board(List<PublicObjectiveCard> publicObjectiveCards, List<ToolCard> toolCards, List<Player> playerList) {
+    public Board(List<PublicObjectiveCard> publicObjectiveCards, List<ToolCard> toolCards) {
         this.publicObjectiveCards = publicObjectiveCards;
         this.toolCards = toolCards;
         setupDiceBag();
@@ -32,8 +32,9 @@ public class Board {
 
     /**
      * Method that drafts five dice from the diceBag
-     * @return
+     *
      * @param noOfPlayers number of players
+     * @return
      */
     protected List<Dice> draftDice(int noOfPlayers) {
         draftedDice = new ArrayList<>();
@@ -48,7 +49,7 @@ public class Board {
         return draftedDice;
     }
 
-    public Dice draftOneDice(){
+    public Dice draftOneDice() {
         Collections.shuffle(diceBag);
         Dice dice = diceBag.get(0);
         diceBag.remove(0);

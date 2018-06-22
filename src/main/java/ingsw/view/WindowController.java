@@ -30,6 +30,9 @@ public class WindowController implements Initializable {
     @FXML
     private GridPane patternCardGridPane;
 
+    private static final String CLICKED = "clicked";
+    private static final String NO_DICE_SELECTED = "No dice selected";
+
     private String username;
 
     private Map<String, Boolean[][]> availablePosition;
@@ -63,13 +66,13 @@ public class WindowController implements Initializable {
 
     private void diceCursorMouseEvent(DicePane dicePane) {
         dicePane.setOnMouseClicked(event -> {
-            System.out.println("clicked");
+            System.out.println(CLICKED);
             if (selectedDice != null) {
                 patternCardGridPane.setCursor(Cursor.DEFAULT);
                 gameUpdater.setPlaceDiceMove();
                 networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
             } else {
-                System.out.println("No dice selected");
+                System.out.println(NO_DICE_SELECTED);
             }
             selectedDice = null;
         });
@@ -79,7 +82,7 @@ public class WindowController implements Initializable {
         this.availablePosition = availablePosition;
     }
 
-    public GridPane getPatternCardGridPane() {
+    GridPane getPatternCardGridPane() {
         return patternCardGridPane;
     }
 
@@ -144,7 +147,7 @@ public class WindowController implements Initializable {
         }
     }
 
-    public void setCursorDice(String dice){
+    void setCursorDice(String dice) {
         Image cursor = new Image("/img/dice/" + dice + ".png", 90, 90, true, true);
         ImageCursor imageCursor = new ImageCursor(cursor);
         patternCardGridPane.setCursor(imageCursor);
@@ -157,7 +160,7 @@ public class WindowController implements Initializable {
     /**
      * Method used by EglomiseBrush, CopperFoilBurnisher toolcards
      */
-    public void moveDiceinPatternCard() {
+    void moveDiceinPatternCard() {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
                 DicePane thisDicePane = dicePanes[j][k];
@@ -187,18 +190,18 @@ public class WindowController implements Initializable {
 
     }
 
-    public void corkBackedStraightedge() {
+    void corkBackedStraightedge() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 DicePane dicePane = dicePanes[i][j];
                 dicePanes[i][j].setOnMouseClicked(event -> {
-                    System.out.println("clicked");
+                    System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
                         gameUpdater.disableDice();
                         networkType.corkBackedStraightedgeMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
                     } else {
-                        System.out.println("No dice selected");
+                        System.out.println(NO_DICE_SELECTED);
                     }
                     selectedDice = null;
                 });
@@ -206,7 +209,7 @@ public class WindowController implements Initializable {
         }
     }
 
-    public void moveDiceinPatternCardLathekin() {
+    void moveDiceinPatternCardLathekin() {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
                 DicePane thisDicePane = dicePanes[j][k];
@@ -216,7 +219,7 @@ public class WindowController implements Initializable {
 
     }
 
-    public void enableDice(PatternCard patternCard) {
+    void enableDice(PatternCard patternCard) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 if (patternCard.getGrid().get(i).get(j).getDice() != null) {
@@ -250,17 +253,17 @@ public class WindowController implements Initializable {
             selectedPositions.clear();
     }
 
-    public void fluxBrushMove() {
+    void fluxBrushMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 DicePane dicePane = new DicePane(i, j);
                 dicePane.setOnMouseClicked(event -> {
-                    System.out.println("clicked");
+                    System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
                         networkType.fluxBrushMove(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
                     } else {
-                        System.out.println("No dice selected");
+                        System.out.println(NO_DICE_SELECTED);
                     }
                     selectedDice = null;
                 });
@@ -269,18 +272,18 @@ public class WindowController implements Initializable {
     }
 
 
-    public void fluxRemoverMove() {
+    void fluxRemoverMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 DicePane dicePane = dicePanes[i][j];
 
                 dicePane.setOnMouseClicked(event -> {
-                    System.out.println("clicked");
+                    System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
                         networkType.fluxRemoverMove(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
                     } else {
-                        System.out.println("No dice selected");
+                        System.out.println(NO_DICE_SELECTED);
                     }
                     selectedDice = null;
                 });
@@ -288,17 +291,17 @@ public class WindowController implements Initializable {
         }
     }
 
-    public void runningPliersMove() {
+    void runningPliersMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 DicePane dicePane = dicePanes[i][j];
                 dicePane.setOnMouseClicked(event -> {
-                    System.out.println("clicked");
+                    System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
                         networkType.runningPliersMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
                     } else {
-                        System.out.println("No dice selected");
+                        System.out.println(NO_DICE_SELECTED);
                     }
                     selectedDice = null;
                 });
@@ -306,7 +309,7 @@ public class WindowController implements Initializable {
         }
     }
 
-    public void activateTapWheelDice(Color diceColor) {
+    void activateTapWheelDice(Color diceColor) {
         System.out.println("Activating dice " + diceColor);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -321,7 +324,7 @@ public class WindowController implements Initializable {
         }
     }
 
-    public void moveDiceinPatternCardTapWheel(int phase, String diceColor) {
+    void moveDiceinPatternCardTapWheel(int phase, String diceColor) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 DicePane thisDicePane = dicePanes[i][j];
@@ -368,15 +371,14 @@ public class WindowController implements Initializable {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                if (i != first || j != second) {
-                    if (dicePanes[i][j].getStyle().contains(diceColor))
-                        dicePanes[i][j].setDisable(false);
+                if ((i != first || j != second) && dicePanes[i][j].getStyle().contains(diceColor)) {
+                    dicePanes[i][j].setDisable(false);
                 }
             }
         }
     }
 
-    public void updatePatternCardTapWheel(PatternCard patternCard) {
+    void updatePatternCardTapWheel(PatternCard patternCard) {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
                 DicePane dicePane = dicePanes[j][k];

@@ -187,7 +187,7 @@ public class View extends Application implements GUIUpdater {
     /**
      * Fourth GUI launcher
      *
-     * @param boardDataResponse
+     * @param boardDataResponse Bundle data sent from the server to display on the view
      */
     @Override
     public void launchFourthGUI(BoardDataResponse boardDataResponse) {

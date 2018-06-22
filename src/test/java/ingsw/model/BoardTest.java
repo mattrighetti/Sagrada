@@ -23,7 +23,7 @@ class BoardTest {
             User user = new User("player" + i);
             playerlist.add(new Player(user));
         }
-        board = new Board(publicObjectiveCards, toolCards, playerlist);
+        board = new Board(publicObjectiveCards, toolCards);
     }
 
     @Test

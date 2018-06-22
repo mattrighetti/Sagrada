@@ -109,7 +109,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         Map<String, TripleString> userStats = new HashMap<>();
         tripleString = new TripleString(String.valueOf(connectedUsers.get(username).getNoOfWins()),
                                         String.valueOf(connectedUsers.get(username).getNoOfLose()),
-                                        String.valueOf(connectedUsers.get(username).getActiveTime()));
+                                        connectedUsers.get(username).getFormattedTime());
         userStats.put(connectedUsers.get(username).getUsername(), tripleString);
 
         return userStats;

@@ -5,6 +5,9 @@ import org.apache.commons.lang.time.StopWatch;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,20 +53,12 @@ public class User implements Serializable {
         noOfWins++;
     }
 
-    void setNoOfWins(int noOfWins) {
-        this.noOfWins = noOfWins;
-    }
-
     int getNoOfLose() {
         return noOfLose;
     }
 
     void incrementNoOfLose() {
         noOfLose++;
-    }
-
-    void setNoOfLose(int noOfLose) {
-        this.noOfLose = noOfLose;
     }
 
     List<String> getMatchesPlayed() {
@@ -80,21 +75,28 @@ public class User implements Serializable {
             return userObserver;
         } catch (RemoteException e) {
             setActive(false);
+            stopWatch.stop();
             return null;
         }
     }
 
     public void setActive(boolean active) {
         this.active = active;
-        //if (active) stopWatch.resume();
-        //else stopWatch.suspend();
+        if (active) stopWatch.resume();
+        else stopWatch.suspend();
     }
 
     public boolean isActive() {
         return active;
     }
 
-    long getActiveTime() {
+    private long getActiveTime() {
         return stopWatch.getTime();
+    }
+
+    String getFormattedTime() {
+        Date formattedTimeActive = new Date(getActiveTime());
+        DateFormat formatter = new SimpleDateFormat("mm:ss");
+        return formatter.format(formattedTimeActive);
     }
 }

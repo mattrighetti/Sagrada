@@ -362,7 +362,7 @@ public class GameManager {
             resetAck();
             BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
             Broadcaster.broadcastResponseToAll(playerList, boardDataResponse);
-            this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards, playerList);
+            this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards);
             listenForPlayerDisconnection();
             startMatch();
         }).start();
@@ -495,7 +495,6 @@ public class GameManager {
                     } else {
                         shiftPlayerList();
                     }
-
                 }
             }
 
@@ -529,12 +528,14 @@ public class GameManager {
         for (Player player : playerList) {
             if (winner != null && winner.equals(player)) {
                 try {
+                    player.getUser().incrementNoOfWins();
                     player.getUserObserver().notifyVictory(player.getScore());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
             } else {
                 try {
+                    player.getUser().incrementNoOfLose();
                     player.getUserObserver().notifyLost(player.getScore());
                 } catch (RemoteException e) {
                     e.printStackTrace();
