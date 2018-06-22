@@ -96,7 +96,7 @@ public class StoppableScanner {
         @Override
         public Integer call() throws Exception {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-            Integer input = -3 ;
+            Integer input;
             do {
                 System.out.println("Waiting for input: ");
                 try {

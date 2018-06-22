@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Round implements Runnable {
-    private Thread playerMoves;
     private Player player;
 
     private final AtomicBoolean hasMadeAMove;

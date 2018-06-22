@@ -30,11 +30,11 @@ public class User implements Serializable {
         stopWatch.start();
     }
 
-    public int getPositionInRanking() {
+    int getPositionInRanking() {
         return positionInRanking;
     }
 
-    public void setPositionInRanking(int positionInRanking) {
+    void setPositionInRanking(int positionInRanking) {
         this.positionInRanking = positionInRanking;
     }
 
@@ -58,7 +58,7 @@ public class User implements Serializable {
         return noOfLose;
     }
 
-    void setNoOfLose() {
+    void incrementNoOfLose() {
         noOfLose++;
     }
 
@@ -90,7 +90,7 @@ public class User implements Serializable {
         //else stopWatch.suspend();
     }
 
-    boolean isActive() {
+    public boolean isActive() {
         return active;
     }
 

@@ -33,7 +33,7 @@ public enum GridJSONPath {
 
     /**
      * Constructor that creates the JSON grid's file path String
-     * @param fileName
+     * @param fileName JSON file's name that defines the PatternCard
      */
     GridJSONPath(String fileName) {
         filePath = "src/main/resources/patterncards-json/" + fileName;

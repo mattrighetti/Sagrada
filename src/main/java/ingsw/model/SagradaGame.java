@@ -21,8 +21,8 @@ import java.util.stream.Stream;
 
 public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGame {
     private static SagradaGame sagradaGameSingleton;
-    Map<String, Controller> matchesByName; // List of all open matches
-    Map<String, User> connectedUsers; // List of connected users
+    transient Map<String, Controller> matchesByName; // List of all open matches
+    private transient Map<String, User> connectedUsers; // List of connected users
 
     private SagradaGame() throws RemoteException {
         super();
@@ -85,22 +85,17 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
 
         List<User> rankingList = new ArrayList<>(connectedUsers.values());
         rankingList.sort((user1, user2) -> {
-            if (user1.getNoOfWins() > user2.getNoOfWins()) {
-                return -1;
-            } else if (user1.getNoOfWins() < user2.getNoOfWins()) {
-                return 1;
-            } else
-                return 0;
+            return Integer.compare(user2.getNoOfWins(), user1.getNoOfWins());
         });
 
         for (int i = 0; i < rankingList.size(); i++) {
-            rankingList.get(i).setPositionInRanking(i);
+            rankingList.get(i).setPositionInRanking(i + 1);
         }
 
         for (User user : connectedUsers.values()) {
             tripleString = new TripleString(String.valueOf(user.getPositionInRanking()),
-                    user.getUsername(),
-                    String.valueOf(user.getNoOfWins()));
+                                            user.getUsername(),
+                                            String.valueOf(user.getNoOfWins()));
 
             ranking.add(tripleString);
         }
@@ -113,8 +108,8 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         TripleString tripleString;
         Map<String, TripleString> userStats = new HashMap<>();
         tripleString = new TripleString(String.valueOf(connectedUsers.get(username).getNoOfWins()),
-                String.valueOf(connectedUsers.get(username).getNoOfLose()),
-                String.valueOf(connectedUsers.get(username).getActiveTime()));
+                                        String.valueOf(connectedUsers.get(username).getNoOfLose()),
+                                        String.valueOf(connectedUsers.get(username).getActiveTime()));
         userStats.put(connectedUsers.get(username).getUsername(), tripleString);
 
         return userStats;
@@ -195,8 +190,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
      * Method that lets the user create a match
      *
      * @param matchName Name of the match to create
-     * @return
-     * @throws RemoteException
+     * @throws RemoteException if the match name has already been taken
      */
     @Override
     public synchronized void createMatch(String matchName) throws RemoteException {
@@ -268,7 +262,10 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     @Override
     public void sendBundleData(String username) throws RemoteException {
         connectedUsers.get(username).getUserObserver().sendResponse(
-                new BundleDataResponse(connectedUsers.size(), createRankingsList(), createAvailableMatchesList(), createUserStats(username)));
+                new BundleDataResponse(connectedUsers.size(),
+                                       createRankingsList(),
+                                       createAvailableMatchesList(),
+                                       createUserStats(username)));
     }
 
     @Override

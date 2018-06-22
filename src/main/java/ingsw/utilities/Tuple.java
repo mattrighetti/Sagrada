@@ -3,10 +3,8 @@ package ingsw.utilities;
 import java.io.Serializable;
 
 public class Tuple implements Serializable {
-
-
     private int firstInt;
-   private int secondInt;
+    private int secondInt;
 
     public Tuple(int firstInt, int secondInt) {
         this.firstInt = firstInt;
@@ -22,7 +20,6 @@ public class Tuple implements Serializable {
     }
 
     public int getFirst() {
-
         return firstInt;
     }
 

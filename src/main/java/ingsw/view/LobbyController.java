@@ -84,10 +84,6 @@ public class LobbyController implements SceneUpdater, Initializable {
     private ObservableList<TripleString> ranking;
     private ProgressForm progressForm;
 
-    private final String FIRST_FIELD = "firstField";
-    private final String SECOND_FIELD = "secondField";
-    private final String THIRD_FIELD = "thirdField";
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         availableMatches = FXCollections.observableArrayList();
@@ -95,18 +91,18 @@ public class LobbyController implements SceneUpdater, Initializable {
         ranking = FXCollections.observableArrayList();
 
         matchTableView.setItems(availableMatches);
-        matchNameColumn.setCellValueFactory(new PropertyValueFactory<>(FIRST_FIELD));
-        matchConnectedUsersColumn.setCellValueFactory(new PropertyValueFactory<>(SECOND_FIELD));
+        matchNameColumn.setCellValueFactory(new PropertyValueFactory<>(DoubleString.FIRST_FIELD));
+        matchConnectedUsersColumn.setCellValueFactory(new PropertyValueFactory<>(DoubleString.SECOND_FIELD));
 
         rankingTableView.setItems(ranking);
-        rankColumn.setCellValueFactory(new PropertyValueFactory<>(FIRST_FIELD));
-        usernameColumn.setCellValueFactory(new PropertyValueFactory<>(SECOND_FIELD));
-        rankWinsColumn.setCellValueFactory(new PropertyValueFactory<>(THIRD_FIELD));
+        rankColumn.setCellValueFactory(new PropertyValueFactory<>(TripleString.FIRST_FIELD));
+        usernameColumn.setCellValueFactory(new PropertyValueFactory<>(TripleString.SECOND_FIELD));
+        rankWinsColumn.setCellValueFactory(new PropertyValueFactory<>(TripleString.THIRD_FIELD));
 
         statisticsTableView.setItems(statistics);
-        statsWinsColumn.setCellValueFactory(new PropertyValueFactory<>(FIRST_FIELD));
-        losesColumn.setCellValueFactory(new PropertyValueFactory<>(SECOND_FIELD));
-        timePlayedColumn.setCellValueFactory(new PropertyValueFactory<>(THIRD_FIELD));
+        statsWinsColumn.setCellValueFactory(new PropertyValueFactory<>(TripleString.FIRST_FIELD));
+        losesColumn.setCellValueFactory(new PropertyValueFactory<>(TripleString.SECOND_FIELD));
+        timePlayedColumn.setCellValueFactory(new PropertyValueFactory<>(TripleString.THIRD_FIELD));
     }
 
     void setApplication(View application) {
@@ -209,8 +205,6 @@ public class LobbyController implements SceneUpdater, Initializable {
     public void updateRankingStatsTableView(List<TripleString> tripleStringList) {
         ranking.clear();
         ranking.addAll(tripleStringList);
-        statistics.clear();
-        statistics.addAll(tripleStringList);
     }
 
     @Override

@@ -227,7 +227,7 @@ public class GameManager {
         return roundTrack.size() + 1;
     }
 
-    public void deleteMatch() {
+    private void deleteMatch() {
         controller.removeMatch();
     }
 
@@ -428,7 +428,7 @@ public class GameManager {
         }
     }
 
-    public void stopTurn() {
+    private void stopTurn() {
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
     }
