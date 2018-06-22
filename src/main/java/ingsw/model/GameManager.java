@@ -840,8 +840,7 @@ public class GameManager {
      */
     private void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
         movesHistory.add(moveStatus);
-//TODO reinsert
-        //        Broadcaster.updateMovesHistory(playerList, movesHistory);
+        Broadcaster.updateMovesHistory(playerList, movesHistory);
     }
 
     /**

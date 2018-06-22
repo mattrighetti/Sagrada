@@ -160,6 +160,16 @@ public final class Broadcaster {
         }
     }
 
+    public static void updateMovesHistory(List<Player> playerList, List<MoveStatus> movesHistory) {
+        for (UserObserver userObserver : playerToBroadcast(playerList)) {
+            try {
+                userObserver.sendResponse(new MoveStatusNotification(movesHistory));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void broadcastResponseToAll(Map<String, User> users, int numberOfConnectedUsers) {
         for (UserObserver userObserver : playerToBroadcast(users)) {
             try {
