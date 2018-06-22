@@ -24,8 +24,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CLI implements SceneUpdater {
-    private AtomicBoolean moveNext = new AtomicBoolean(false);
-    private AtomicBoolean gamePhase = new AtomicBoolean(false);
+    private final AtomicBoolean moveNext;
+    private final AtomicBoolean gamePhase;
     private AtomicInteger integerInput;
     private AtomicReference<String> stringInput;
     private StoppableScanner stoppableScanner;
@@ -37,17 +37,19 @@ public class CLI implements SceneUpdater {
     private NetworkType currentConnectionType;
     private Scanner scanner;
 
-    private ObservableList<TripleString> statistics;
-    private ObservableList<TripleString> ranking;
-    private List<DoubleString> availableMatches = new ArrayList<>();
+    private List<TripleString> statistics;
+    private List<TripleString> ranking;
+    private List<String> matchesPlayed;
+    private List<MoveStatus> moveStatusList;
+    private List<DoubleString> availableMatches;
     private List<Player> players;
     private List<PublicObjectiveCard> publicObjectiveCards;
-    private List<String> toolCards = new ArrayList<>();
+    private List<String> toolCards;
     private List<Dice> draftedDice;
     private Map<String,Boolean[][]> availablePosition;
-    private List<List<Dice>> roundTrack = new ArrayList<>();
-    private List<MoveStatus> moveHistory = new ArrayList<>();
-    private AtomicBoolean toolCardUsed = new AtomicBoolean();
+    private List<List<Dice>> roundTrack;
+    private List<MoveStatus> moveHistory;
+    private AtomicBoolean toolCardUsed;
     private Thread moveThread;
     private Color selectedDiceColorTapWheel;
 
@@ -58,6 +60,17 @@ public class CLI implements SceneUpdater {
         toolCardUsed.set(false);
         moveThread = new Thread();
         stoppableScanner = new StoppableScanner();
+        statistics = new ArrayList<>();
+        ranking = new ArrayList<>();
+        matchesPlayed = new ArrayList<>();
+        moveStatusList = new ArrayList<>();
+        availableMatches = new ArrayList<>();
+        toolCards = new ArrayList<>();
+        moveHistory = new ArrayList<>();
+        roundTrack = new ArrayList<>();
+        toolCardUsed = new AtomicBoolean();
+        gamePhase = new AtomicBoolean(false);
+        moveNext = new AtomicBoolean(false);
     }
 
     void startCLI() {
@@ -254,6 +267,12 @@ public class CLI implements SceneUpdater {
         showLobbyCommandsAndWait();
     }
 
+    @Override
+    public void updateRankingStatsTableView(List<TripleString> tripleStringList) {
+        ranking.clear();
+        ranking.addAll(tripleStringList);
+    }
+
     /**
      * <h1>Lobby View</h1>
      * showLobbyCommandsAndWait shows the commands that the user can choose before the match
@@ -273,8 +292,9 @@ public class CLI implements SceneUpdater {
                 System.out.println("Choose a command:\n" +
                         "1 - Create a match\n" +
                         "2 - Join an existing match\n" +
-                        "3 - Show my statistics\n" +
-                        "4 - Show Ranking");
+                        "3 - Join and watch an old match\n" +
+                        "4 - Show my statistics\n" +
+                        "5 - Show Ranking");
 
                 selectedCommand = userIntegerInput();
 
@@ -295,7 +315,7 @@ public class CLI implements SceneUpdater {
                         moveNext();
                         break;
                     case 3:
-                        showStatistics();
+                        showFinishedMatches();
                         synchronized (gamePhase) {
                             try {
                                 gamePhase.wait();
@@ -306,6 +326,17 @@ public class CLI implements SceneUpdater {
                         }
                         break;
                     case 4:
+                        showStatistics();
+                        synchronized (gamePhase) {
+                            try {
+                                gamePhase.wait();
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                    case 5:
                         showRanking();
                         synchronized (gamePhase) {
                             try {
@@ -388,6 +419,52 @@ public class CLI implements SceneUpdater {
         } else {
             System.out.println("There are no matches. Please create a new one");
         }
+    }
+
+    /**
+     * Show Finished Matches
+     *
+     * showFinishedMatches shows the list of all finished matches and let the user to choose what he wants to replay
+     * Then show all the history moves of the chosen match
+     */
+    private void showFinishedMatches() {
+        requestFinishedMatchesList();
+        //Check if there is at least an old match to show
+        if (!matchesPlayed.isEmpty()) {
+
+            System.out.println("The list of all the played matches: ");
+            for (int i = 0; i < matchesPlayed.size(); i++) {
+                System.out.println((i + 1) + " - " + matchesPlayed.get(i));
+            }
+            System.out.println("Choose what you want to watch: \nInsert the index of the match or insert 0 to exit");
+
+            int selectedMatch;
+            do {
+                selectedMatch = userIntegerInput();
+            } while ( 0 < selectedMatch && selectedMatch < matchesPlayed.size());
+
+            if (selectedMatch != 0) {
+
+                currentConnectionType.requestHistory(matchesPlayed.get(selectedMatch - 1));
+
+                if (!moveStatusList.isEmpty()) {
+                    for (MoveStatus move : moveStatusList) {
+                        System.out.println(move);
+                    }
+                }
+            }
+
+        } else {
+            System.out.println("There are no played matches");
+        }
+
+        synchronized (gamePhase) {
+            gamePhase.notifyAll();
+        }
+    }
+
+    private void requestFinishedMatchesList() {
+        currentConnectionType.requestFinishedMatches();
     }
 
     private void showStatistics() {
@@ -502,12 +579,11 @@ public class CLI implements SceneUpdater {
      */
     @Override
     public void popUpDraftNotification() {
-        String ack;
         notMoveNext();
 
         while (!moveNext.get()) {
             System.out.println("It's time to draft the dice: press Enter to draft");
-            ack = userStringInput();
+            userStringInput();
             currentConnectionType.draftDice();
             moveNext();
         }
@@ -551,8 +627,7 @@ public class CLI implements SceneUpdater {
                 if (!toolCardUsed.get())
                     System.out.println("2 - Use tool card");
 
-                System.out.println("3 - Show Match Story"
-                );
+                System.out.println("3 - Show Match Story");
 
                 System.out.println("4 - End turn");
 
@@ -704,7 +779,7 @@ public class CLI implements SceneUpdater {
     private boolean placeDice() {
         int selectedDice;
         do {
-            selectedDice = 0;
+            selectedDice;
             System.out.println("Select a dice");
             showDraftedDice();
             System.out.println("\n" + (draftedDice.size() + 1) + " - exit");
@@ -777,6 +852,12 @@ public class CLI implements SceneUpdater {
         ranking.addAll(bundleDataResponse.rankings);
         statistics.clear();
         statistics.addAll(bundleDataResponse.userStatistics.values());
+    }
+
+    @Override
+    public void endedTurn() {
+        stoppableScanner.cancel();
+        moveThread.interrupt();
     }
 
     /**
@@ -857,6 +938,19 @@ public class CLI implements SceneUpdater {
         System.out.println("Connected Users: " + usersConnected);
     }
 
+    @Override
+    public void showSelectedMatchHistory(List<MoveStatus> history) {
+        moveStatusList.clear();
+        moveStatusList.addAll(history);
+    }
+
+
+    @Override
+    public void showFinishedMatches(List<String> finishedMatches) {
+        matchesPlayed.clear();
+        matchesPlayed.addAll(finishedMatches);
+    }
+
     /**
      * <h1>List of matches updater</h1>
      * <p>
@@ -869,7 +963,7 @@ public class CLI implements SceneUpdater {
     @Override
     public void updateExistingMatches(List<DoubleString> matches) {
         availableMatches.clear();
-        availableMatches = matches;
+        availableMatches.addAll(matches);
         synchronized (gamePhase) {
             gamePhase.notifyAll();
         }
@@ -1450,6 +1544,27 @@ public class CLI implements SceneUpdater {
                 break;
             default:
         }
+    }
+
+    @Override
+    public void showLostNotification(int totalScore) {
+        System.out.println("Match Ended\nYou Lose!\nYour total score is: " + totalScore + "\n\nType a key to exit.");
+        String input;
+        do {
+            input = userStringInput();
+        } while (input != null);
+        showLobbyCommandsAndWait();
+    }
+
+    @Override
+    public void showWinnerNotification(int totalScore) {
+        System.out.println("Match Ended\nYou Win!\nYour total score is: " + totalScore + "\n\nType a key to exit.");
+        String input;
+        do {
+            input = userStringInput();
+        } while (input != null);
+        showLobbyCommandsAndWait();
+
     }
 
     private void placeDiceTapWheel(Color selectedDiceColor) {
