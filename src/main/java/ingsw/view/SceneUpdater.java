@@ -20,7 +20,7 @@ public interface SceneUpdater {
     /**
      * Method that should update the number of users connected to the game
      *
-     * @param usersConnected
+     * @param usersConnected number of connected users
      */
     default void updateConnectedUsers(int usersConnected) {
         System.out.println("Not overridden");
@@ -78,7 +78,7 @@ public interface SceneUpdater {
     }
 
     default void updateRankingStatsTableView(List<TripleString> tripleStringList) {
-        System.out.printf("Not overridden");
+        System.out.println("Not overridden");
     }
 
     /**

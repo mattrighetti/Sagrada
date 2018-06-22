@@ -47,6 +47,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @FXML
     private ImageView thirdToolCardImageView;
 
+    @SuppressWarnings("unused")
     @FXML
     private VBox publicCardVBox;
 
@@ -71,6 +72,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @FXML
     private Button endTurnButton;
 
+    @SuppressWarnings("unused")
     @FXML
     private Button showPrivateCardButton;
 
@@ -137,7 +139,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     private int currentRound;
     private DiceButton toolCardSelectedDice;
     private RoundState roundState; //0: if is not your turn, 1: if is your turn and you have not placed a die
-    private boolean placeDiceMoveDone;
     private int selectedRoundTrack;
 
     @Override

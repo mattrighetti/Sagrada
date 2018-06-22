@@ -7,37 +7,45 @@
 
 
 */
-.progress-indicator  {
+.progress-indicator {
     -fx-padding: 0 0 -16 5;
 }
 
 .progress-indicator .percentage {
-    -fx-fill:null;
+    -fx-fill: null;
 }
 
 .login-button-red {
     -fx-background-color: #a3190f,
     linear-gradient(#ad400b 0%, #ad2b0e 20%, #ad0907 70%),
     linear-gradient(#ad400b, #ada709);
-    -fx-background-radius: 5,4,3,5;
-    -fx-background-insets: 0,1,2,0;
-    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-background-radius: 5, 4, 3, 5;
+    -fx-background-insets: 0, 1, 2, 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
 }
 
 .login-button-red:hover {
     -fx-background-color: #a3190f,
     linear-gradient(#b9460b 0%, #b92f0e 20%, #b90907 70%),
     linear-gradient(#ad400b, #b9b309);
-    -fx-background-radius: 5,4,3,5;
-    -fx-background-insets: 0,1,2,0;
-    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-background-radius: 5, 4, 3, 5;
+    -fx-background-insets: 0, 1, 2, 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
 }
 
 .login-button-red:pressed {
     -fx-background-color: #a3190f,
     linear-gradient(#9e1b11 0%, #9e1b11 20%, #9e1b11 100%),
     linear-gradient(#9c322a, #ad3830);
-    -fx-background-radius: 5,4,3,5;
-    -fx-background-insets: 0,1,2,0;
-    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-background-radius: 5, 4, 3, 5;
+    -fx-background-insets: 0, 1, 2, 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
+}
+
+.table-view:cell-selection {
+
+}
+
+.table-view {
+    -fx-border-radius: 10%;
 }
