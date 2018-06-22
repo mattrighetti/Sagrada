@@ -165,7 +165,7 @@ public class Round implements Runnable {
     }
 
     @SuppressWarnings("unused")
-    private int getNoOfMoves() {
+    int getNoOfMoves() {
         return noOfMoves;
     }
 }
