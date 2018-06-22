@@ -291,12 +291,12 @@ public class WindowController implements Initializable {
     public void runningPliersMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                DicePane dicePane = new DicePane(i, j);
+                DicePane dicePane = dicePanes[i][j];
                 dicePane.setOnMouseClicked(event -> {
                     System.out.println("clicked");
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
-                        networkType.runningPliersMove(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                        networkType.runningPliersMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
                     } else {
                         System.out.println("No dice selected");
                     }

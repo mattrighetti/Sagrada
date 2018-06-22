@@ -1,6 +1,7 @@
 package ingsw.controller.network;
 
 import ingsw.model.Dice;
+import ingsw.model.Player;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.Tuple;
 import ingsw.view.SceneUpdater;
@@ -49,7 +50,7 @@ public interface NetworkType {
 
     void choosePatternCard(PatternCard patternCard);
 
-    void endTurn();
+    void endTurn(String player);
 
     void grindingStoneMove(Dice dice);
 

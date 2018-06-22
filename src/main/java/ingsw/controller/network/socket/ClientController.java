@@ -141,8 +141,8 @@ public class ClientController implements ResponseHandler, NetworkType {
      * and passes the turn to the next player in line
      */
     @Override
-    public void endTurn() {
-        client.request(new EndTurnRequest());
+    public void endTurn(String player) {
+        client.request(new EndTurnRequest(player));
     }
 
     @Override

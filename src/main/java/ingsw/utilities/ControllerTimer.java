@@ -65,7 +65,7 @@ public class ControllerTimer {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            gameManager.endTurn();
+            gameManager.endTurn(gameManager.getCurrentRound().getCurrentPlayer().getPlayerUsername());
         }
     }
 

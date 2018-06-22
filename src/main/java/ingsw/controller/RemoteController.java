@@ -20,7 +20,7 @@ public interface RemoteController extends Remote {
 
     void deactivateUser(User user) throws RemoteException;
 
-    void endTurn() throws RemoteException;
+    void endTurn(String currentPlayer) throws RemoteException;
 
     void placeDice(Dice dice, int rowIndex, int columnIndex) throws RemoteException;
 

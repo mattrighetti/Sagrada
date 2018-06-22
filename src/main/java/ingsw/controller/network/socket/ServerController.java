@@ -183,6 +183,12 @@ public class ServerController implements RequestHandler, Serializable {
                     e.printStackTrace();
                 }
                 break;
+            case RUNNING_PLIERS:
+                try {
+                    controller.toolCardMove((RunningPliersRequest) moveToolCardRequest);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
         }
         return null;
     }
@@ -222,7 +228,7 @@ public class ServerController implements RequestHandler, Serializable {
     @Override
     public Response handle(EndTurnRequest endTurnRequest) {
         try {
-            controller.endTurn();
+            controller.endTurn(endTurnRequest.player);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

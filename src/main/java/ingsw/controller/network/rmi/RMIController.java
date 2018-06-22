@@ -189,8 +189,8 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public void endTurn() {
-        new EndTurnRequest().handle(rmiHandler);
+    public void endTurn(String player) {
+        new EndTurnRequest(player).handle(rmiHandler);
     }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

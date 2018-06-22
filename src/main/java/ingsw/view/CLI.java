@@ -785,7 +785,7 @@ public class CLI implements SceneUpdater {
      */
     private void endTurnMove() {
 
-        currentConnectionType.endTurn();
+        currentConnectionType.endTurn(username);
         System.out.println("\nNext turn...\n");
     }
 

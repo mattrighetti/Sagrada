@@ -497,7 +497,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     private void endTurnButtonReset() {
         disableCommandsAndReset();
-        networkType.endTurn();
+        networkType.endTurn(application.getUsername());
     }
 
     private void disableCommandsAndReset() {
@@ -675,7 +675,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             } else activateDice();
 
 
-            if (draftedDiceToolCardResponse.endTurn) endTurnButtonReset();
+            if (draftedDiceToolCardResponse.endTurn && !roundState.equals(RoundState.NOT_YOUR_TURN)) endTurnButtonReset();
         });
     }
 
@@ -1147,6 +1147,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             for (DiceButton diceButton : draftPool) {
                 diceButton.setOnMouseClicked(mouseEvent -> toolCardSelectedDice = diceButton);
             }
+            activateDice();
         });
     }
 

@@ -69,8 +69,8 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     }
 
     @Override
-    public void endTurn() throws RemoteException {
-        gameManager.endTurn();
+    public void endTurn(String currentPlayer) throws RemoteException {
+        gameManager.endTurn(currentPlayer);
     }
 
     /**

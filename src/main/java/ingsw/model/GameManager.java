@@ -417,12 +417,15 @@ public class GameManager {
         }
     }
 
-    public void endTurn() {
-        synchronized (cancelTimer) {
-            cancelTimer.set(true);
-            cancelTimer.notifyAll();
+    public void endTurn(String currentPlayer) {
+        if (currentPlayer.equals(currentRound.getCurrentPlayer().getPlayerUsername())) {
+
+            synchronized (cancelTimer) {
+                cancelTimer.set(true);
+                cancelTimer.notifyAll();
+            }
+            stopTurn();
         }
-        stopTurn();
     }
 
     public void stopTurn() {

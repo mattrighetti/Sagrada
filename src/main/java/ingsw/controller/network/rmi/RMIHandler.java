@@ -279,7 +279,7 @@ public class RMIHandler implements RequestHandler {
     @Override
     public Response handle(EndTurnRequest endTurnRequest) {
         try {
-            remoteController.endTurn();
+            remoteController.endTurn(endTurnRequest.player);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
