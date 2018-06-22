@@ -1,5 +1,7 @@
 package ingsw.view;
 
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 import ingsw.controller.network.NetworkType;
 import ingsw.controller.network.commands.BoardDataResponse;
 import ingsw.controller.network.commands.PatternCardNotification;

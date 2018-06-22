@@ -26,6 +26,11 @@ public class SagradaSocketServer {
     }
 
     public void close() {
-
+        try {
+            pool.shutdown();
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

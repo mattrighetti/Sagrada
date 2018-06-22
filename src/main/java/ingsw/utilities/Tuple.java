@@ -15,10 +15,6 @@ public class Tuple implements Serializable {
         this.firstInt = firstInt;
     }
 
-    public void setSecond(int secondInt) {
-        this.secondInt = secondInt;
-    }
-
     public int getFirst() {
         return firstInt;
     }

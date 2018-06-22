@@ -21,6 +21,7 @@ public class MoveStatus implements Serializable {
         return move;
     }
 
+    @SuppressWarnings("unused")
     public String getStatus() {
         return status;
     }

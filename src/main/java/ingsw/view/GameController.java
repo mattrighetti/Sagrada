@@ -610,7 +610,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         roundTrackDiceHBox.setDisable(true);
     }
 
-    public void activateRoundTrack() {
+    private void activateRoundTrack() {
         roundTrackDiceHBox.setDisable(false);
     }
 
@@ -675,7 +675,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             } else activateDice();
 
 
-            if (draftedDiceToolCardResponse.endTurn && !roundState.equals(RoundState.NOT_YOUR_TURN)) endTurnButtonReset();
+            if (draftedDiceToolCardResponse.endTurn && !roundState.equals(RoundState.NOT_YOUR_TURN))
+                endTurnButtonReset();
         });
     }
 
@@ -727,7 +728,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     /**
      * COPPER FOIL BURNISHER
-     *
+     * <p>
      * Tool Card that makes move a die in the Pattern Card in another position
      * ignoring the shade restrictions
      *
@@ -894,13 +895,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                     }
 
                     for (DiceButton button : diceButtons) {
-                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent event) {
-
-                                System.out.println(button.getDice().toString());
-                                networkType.fluxRemoverMove(button.getDice());
-                            }
+                        button.setOnMouseClicked(event -> {
+                            System.out.println(button.getDice().toString());
+                            networkType.fluxRemoverMove(button.getDice());
                         });
                     }
                     activateDice();
@@ -948,6 +945,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                     setCursorDice(useToolCardResponse.draftedDie);
                     windowControllerList.get(0).fluxRemoverMove();
                 });
+                break;
+            default:
+                break;
         }
     }
 
@@ -960,6 +960,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     /**
      * @param useToolCardResponse empty response
      */
+    @Override
     public void toolCardAction(GrindingStoneResponse useToolCardResponse) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Choose which dice has to be flipped\nto the opposite side");
@@ -1080,21 +1081,20 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                     }
 
                                     for (DiceButton button : diceButtons) {
-                                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                            @Override
-                                            public void handle(MouseEvent event) {
-                                                if (button.getDice().toString().indexOf('1') < 0) {
-                                                    System.out.println(button.getDice());
-                                                    networkType.grozingPliersMove(button.getDice(), false);
-                                                } else {
-                                                    Alert errAlert = new Alert(Alert.AlertType.ERROR, "The value ONE can't be decreased");
-                                                    errAlert.showAndWait();
-                                                }
+                                        button.setOnMouseClicked(event -> {
+                                            if (button.getDice().toString().indexOf('1') < 0) {
+                                                System.out.println(button.getDice());
+                                                networkType.grozingPliersMove(button.getDice(), false);
+                                            } else {
+                                                Alert errAlert = new Alert(Alert.AlertType.ERROR, "The value ONE can't be decreased");
+                                                errAlert.showAndWait();
                                             }
                                         });
                                     }
                                 }
                             }
+                            break;
+                        default:
                             break;
                     }
                 });
@@ -1102,9 +1102,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
 
     /**
-     *
      * @param useToolCardResponse
      */
+    @Override
     public void toolCardAction(LathekinResponse useToolCardResponse) {
         Platform.runLater(() -> {
             disableDice();
@@ -1137,7 +1137,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
             for (Button button : roundTrackButtonList) {
                 int selectedRound = Integer.parseInt(button.getId());
-                button.setOnMouseClicked(event ->{
+                button.setOnMouseClicked(event -> {
                     roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
                     showDiceInRoundTrack(roundTrackDice.get(selectedRound), "LensCutter");
                     selectedRoundTrack = selectedRound;
@@ -1157,7 +1157,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
      */
 
     /**
-     *
      * @param useToolCardResponse
      */
     @Override
@@ -1175,7 +1174,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
      */
 
     /**
-     *
      * @param useToolCardResponse
      */
     @Override
@@ -1256,6 +1254,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                 }
                             }
                         });
+                break;
+            default:
                 break;
         }
     }

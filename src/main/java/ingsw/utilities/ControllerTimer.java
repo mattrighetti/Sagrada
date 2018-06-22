@@ -38,14 +38,16 @@ public class ControllerTimer {
 
     public class LaunchMatch extends TimerTask {
         Controller controller;
+        boolean hasStarted;
 
         LaunchMatch(Controller controller, boolean hasStarted) {
             this.controller = controller;
-            hasStarted = true;
+            this.hasStarted = hasStarted;
         }
 
         @Override
         public void run() {
+            hasStarted = true;
             controller.createMatch();
         }
     }
@@ -68,6 +70,4 @@ public class ControllerTimer {
             gameManager.endTurn(gameManager.getCurrentRound().getCurrentPlayer().getPlayerUsername());
         }
     }
-
-
 }

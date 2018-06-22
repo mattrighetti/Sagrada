@@ -17,14 +17,17 @@ public class TripleString implements Serializable {
         this.thirdField = thirdField;
     }
 
+    @SuppressWarnings("unused")
     public String getFirstField() {
         return firstField;
     }
 
+    @SuppressWarnings("unused")
     public String getSecondField() {
         return secondField;
     }
 
+    @SuppressWarnings("unused")
     public String getThirdField() {
         return thirdField;
     }

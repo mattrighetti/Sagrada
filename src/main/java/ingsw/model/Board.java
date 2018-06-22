@@ -34,7 +34,7 @@ public class Board {
      * Method that drafts five dice from the diceBag
      *
      * @param noOfPlayers number of players
-     * @return
+     * @return drafted dice
      */
     protected List<Dice> draftDice(int noOfPlayers) {
         draftedDice = new ArrayList<>();
@@ -49,7 +49,7 @@ public class Board {
         return draftedDice;
     }
 
-    public Dice draftOneDice() {
+    Dice draftOneDice() {
         Collections.shuffle(diceBag);
         Dice dice = diceBag.get(0);
         diceBag.remove(0);
@@ -58,7 +58,7 @@ public class Board {
         return dice;
     }
 
-    public List<Dice> getDraftedDice() {
+    List<Dice> getDraftedDice() {
         return draftedDice;
     }
 

@@ -779,7 +779,6 @@ public class CLI implements SceneUpdater {
     private boolean placeDice() {
         int selectedDice;
         do {
-            selectedDice;
             System.out.println("Select a dice");
             showDraftedDice();
             System.out.println("\n" + (draftedDice.size() + 1) + " - exit");

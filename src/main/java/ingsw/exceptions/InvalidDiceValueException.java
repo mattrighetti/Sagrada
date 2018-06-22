@@ -1,4 +1,4 @@
-package ingsw.model.cards.exceptions;
+package ingsw.exceptions;
 
 public class InvalidDiceValueException extends Exception {
     public InvalidDiceValueException() {

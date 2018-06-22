@@ -32,6 +32,7 @@ public class HistoryController implements SceneUpdater, Initializable {
     @FXML
     private TableColumn<MoveStatus, String> historyTableColumn;
 
+    @SuppressWarnings("unused")
     @FXML
     private Button backButton;
 

@@ -190,6 +190,7 @@ public class ServerController implements RequestHandler, Serializable {
                     e.printStackTrace();
                 }
         }
+
         return null;
     }
 
@@ -200,6 +201,7 @@ public class ServerController implements RequestHandler, Serializable {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 

@@ -14,7 +14,7 @@ public class BroadcastReceiver implements Runnable {
         this.clientController = clientController;
     }
 
-    public void start() {
+    private void start() {
         receiver = new Thread(this);
         running.set(true);
         receiver.start();

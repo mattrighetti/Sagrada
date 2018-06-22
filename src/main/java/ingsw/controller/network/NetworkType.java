@@ -1,7 +1,6 @@
 package ingsw.controller.network;
 
 import ingsw.model.Dice;
-import ingsw.model.Player;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.Tuple;
 import ingsw.view.SceneUpdater;

@@ -21,7 +21,6 @@ public final class GridCreator {
     private static JsonReader jsonReader;
     public static final Type GRID_TYPE = new TypeToken<ArrayList<ArrayList<Box>>>(){}.getType();
 
-
     private GridCreator() {
     }
 
@@ -39,10 +38,12 @@ public final class GridCreator {
         return gson.fromJson(jsonReader, GRID_TYPE);
     }
 
+    @SuppressWarnings("unused")
     public static PatternCard fromString(String string, PatternCard patternCard) {
         return gson.fromJson(string, patternCard.getClass());
     }
 
+    @SuppressWarnings("unused")
     public static String serializePatternCard(Player player) {
         return gson.toJson(player.getPatternCard());
     }

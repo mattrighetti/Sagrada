@@ -9,7 +9,7 @@ import java.net.SocketException;
 import java.util.Map;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
-    private String ERROR_IN = "Errors in closing - ";
+    private static final String ERROR_IN = "Errors in closing - ";
 
     private transient Socket clientSocket;
     private final transient ObjectInputStream objectInputStream;

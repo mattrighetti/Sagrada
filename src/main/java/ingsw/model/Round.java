@@ -113,7 +113,7 @@ public class Round implements Runnable {
         }
     }
 
-    private void endTurnNotification(){
+    private void endTurnNotification() {
         try {
             player.getUserObserver().sendResponse(new EndTurnResponse());
         } catch (RemoteException e) {
@@ -141,7 +141,7 @@ public class Round implements Runnable {
     }
 
     void makeMove(ToolCard toolCard) {
-        if (toolCard.getPrice() <= getCurrentPlayer().getFavourTokens() ) {
+        if (toolCard.getPrice() <= getCurrentPlayer().getFavourTokens()) {
 
             if (toolCard.getPrice() == 1) toolCard.increasePrice();
             getCurrentPlayer().decreaseFavorTokens(toolCard.getPrice());
@@ -164,7 +164,8 @@ public class Round implements Runnable {
         return player;
     }
 
-    public int getNoOfMoves() {
+    @SuppressWarnings("unused")
+    private int getNoOfMoves() {
         return noOfMoves;
     }
 }
