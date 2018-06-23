@@ -329,6 +329,7 @@ public class WindowController implements Initializable {
             for (int j = 0; j < 5; j++) {
                 DicePane thisDicePane = dicePanes[i][j];
                 thisDicePane.setOnMouseClicked(event -> tapWheelMouseEvent(thisDicePane, phase, diceColor));
+
             }
         }
     }
@@ -361,7 +362,7 @@ public class WindowController implements Initializable {
                     networkType.tapWheelMove(selectedPositions.get(0), selectedPositions.get(1), phase, true);
                     selectedPositions.clear();
                 }
-            } else System.err.println("Tapwheel mouse event error");
+            } else selectedPositions.clear();
         } else
             selectedPositions.clear();
     }
@@ -371,8 +372,11 @@ public class WindowController implements Initializable {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                if ((i != first || j != second) && dicePanes[i][j].getStyle().contains(diceColor)) {
-                    dicePanes[i][j].setDisable(false);
+                if (i != first || j != second) {
+                    if (dicePanes[i][j].getStyle().contains(diceColor))
+                        dicePanes[i][j].setDisable(false);
+                    else
+                        dicePanes[i][j].setDisable(true);
                 }
             }
         }

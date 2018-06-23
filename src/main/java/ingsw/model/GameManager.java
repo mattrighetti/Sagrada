@@ -681,6 +681,7 @@ public class GameManager {
             System.out.println("Turn forward " + i + " player " + playerList.get(i));
 
             currentRound.setPlayerEndedTurn(false);
+
             if (playerList.get(i).getUser().isActive()) {
                 currentRound.startForPlayer(playerList.get(i));
                 startTimer(40000);
@@ -1099,8 +1100,6 @@ public class GameManager {
     public void runningPliersResponse() {
         Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(getDraftedDice(), true));
-        sendAvailablePositions(currentRound.getCurrentPlayer());
-        currentRound.toolCardMoveDone();
     }
 
     public boolean getdoubleMove() {
@@ -1115,7 +1114,7 @@ public class GameManager {
         }
         if (phase == 0) {
             System.out.println("Calculating the mask");
-            Map<String, Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsTapWheel(roundTrackDice);
+            Map<String, Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsTapWheel(roundTrackDice, false);
             tapWheelResponse(availablePositions, currentRound.getCurrentPlayer().getPatternCard(), 1);
         }
         if (phase == 1) {
@@ -1126,7 +1125,7 @@ public class GameManager {
                 Dice dice1 = patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice();
                 patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
 
-                Map<String, Boolean[][]> hashMapGrid = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsTapWheel(dice1);
+                Map<String, Boolean[][]> hashMapGrid = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsTapWheel(dice1, true);
                 hashMapGrid.remove(dice1.toString() + position.getFirst() + position.getSecond());
 
                 System.out.println("The dice removed is\t" + dice1.toString() + position.getFirst() + position.getSecond());

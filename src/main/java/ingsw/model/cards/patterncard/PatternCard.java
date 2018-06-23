@@ -67,6 +67,7 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
+
     public Map<String,Boolean[][]> computeAvailablePositions() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
@@ -99,7 +100,11 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
-
+    /**
+     * Compute all available positions for Lathekin toolcard. It uses the standard algorithm and it also computes the available position for the Boxes
+     * in which there is a Dice in order to do the double move.
+     * @return Map with that contains the position in which you can place the dice used as key of the HashMap.
+     */
     public Map<String, Boolean[][]> computeAvailablePositionsLathekin() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
@@ -116,8 +121,14 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
-
-    public Map<String, Boolean[][]> computeAvailablePositionsTapWheel(Dice colorDice) {
+    /**
+     * Compute all available positions for Tap Wheel toolcard. If it is called on the first phase of the toolcard it uses the same algorithm of Lathekin
+     * otherwise the standard algorithm for a dice in the pattern card is called.
+     * @param colorDice The algorithm is executed only for the dice with the same colorDice value
+     * @param firstMoveDone Switch beetwen the two algorithm strategies
+     * @return Map with that contains the position in which you can place the dice used as key of the HashMap.
+     */
+    public Map<String, Boolean[][]> computeAvailablePositionsTapWheel(Dice colorDice, boolean firstMoveDone) {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
         for (int i = 0; i < 4; i++) {
@@ -126,8 +137,12 @@ public abstract class PatternCard extends Card {
                     dice = grid.get(i).get(j).getDice();
                     grid.get(i).get(j).removeDice();
 
-                    //Re use lathekin algorithm for the double move
-                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, true));
+                    if (!firstMoveDone) {
+                        //Re use lathekin algorithm for the double move
+                        hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, true));
+                    } else
+                        hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, false));
+
                     grid.get(i).get(j).insertDice(dice);
 
                     System.out.println(dice.toString() +i +j);

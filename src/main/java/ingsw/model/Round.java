@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Round implements Runnable {
     private Player player;
-
     private final AtomicBoolean hasMadeAMove;
     private GameManager gameManager;
     private final AtomicBoolean playerEndedTurn;
@@ -35,13 +34,13 @@ public class Round implements Runnable {
     @Override
     public void run() {
         new Thread(() -> {
-            try {
-                player.getUserObserver().activateTurnNotification(gameManager.sendAvailablePositions(player));
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-
             if (!blockedTurnPlayers.contains(getCurrentPlayer().getPlayerUsername())) {
+                try {
+                    player.getUserObserver().activateTurnNotification(gameManager.sendAvailablePositions(player));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+
                 noOfMoves = 0;
                 hasMadeAMove.set(false);
                 waitForMove();
@@ -51,11 +50,12 @@ public class Round implements Runnable {
                 waitForMove();
                 noOfMoves++;
                 System.out.println("Second move done");
+
+                endTurnNotification();
             } else {
                 blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
             }
 
-            endTurnNotification();
             playerEndedTurn.set(true);
 
             synchronized (gameManager.cancelTimer) {
