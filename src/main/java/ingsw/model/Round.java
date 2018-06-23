@@ -97,8 +97,7 @@ public class Round implements Runnable {
         }
     }
 
-    void
-    setPlayerEndedTurn(boolean hasPlayerEndedTurn) {
+    void setPlayerEndedTurn(boolean hasPlayerEndedTurn) {
         if (hasPlayerEndedTurn)
             System.out.println("End the turn");
         else System.out.println("Reset PlayerEndedTurn");
