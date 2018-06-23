@@ -18,9 +18,9 @@ import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.*;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
-import ingsw.utilities.Broadcaster;
 import ingsw.utilities.ControllerTimer;
 import ingsw.utilities.MoveStatus;
+import ingsw.utilities.PlayerBroadcaster;
 import ingsw.utilities.Tuple;
 
 import java.io.FileWriter;
@@ -54,6 +54,7 @@ public class GameManager {
     private final AtomicInteger turnInRound;
     public final Object toolCardLock;
     private Set<Player> disconnectedPlayers;
+    private PlayerBroadcaster playerBroadcaster;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -75,6 +76,7 @@ public class GameManager {
         toolCardLock = new Object();
         turnInRound = new AtomicInteger(0);
         disconnectedPlayers = new HashSet<>();
+        playerBroadcaster = new PlayerBroadcaster(players);
         setUpGameManager();
     }
 
@@ -271,6 +273,11 @@ public class GameManager {
                         }
                     }
                     stop.set(true);
+
+                    playerBroadcaster.disableBroadcaster();
+
+
+
                     deleteMatch();
                 }
 
@@ -361,7 +368,7 @@ public class GameManager {
             waitAck();
             resetAck();
             BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
-            Broadcaster.broadcastResponseToAll(playerList, boardDataResponse);
+            playerBroadcaster.broadcastResponseToAll(boardDataResponse);
             this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards);
             listenForPlayerDisconnection();
             startMatch();
@@ -372,7 +379,7 @@ public class GameManager {
      * Method that drafts the dice from the board and sends them to every user view
      */
     public void draftDiceFromBoard() {
-        Broadcaster.broadcastResponseToAll(playerList, board.draftDice(playerList.size()));
+        playerBroadcaster.broadcastResponseToAll(board.draftDice(playerList.size()));
         addMoveToHistoryAndNotify(new MoveStatus(playerList.get(0).getPlayerUsername(), "Drafted dice"));
         waitForDiceAck();
     }
@@ -762,7 +769,7 @@ public class GameManager {
     private void notifyUpdatedRoundTrack() {
         int round = 0;
         if (!roundTrack.isEmpty()) round = roundTrack.size() - 1;
-        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackNotification(roundTrack.get(round)));
+        playerBroadcaster.broadcastResponseToAll(new RoundTrackNotification(roundTrack.get(round)));
     }
 
     private void waitEndTurn() {
@@ -804,14 +811,14 @@ public class GameManager {
             board.getDraftedDice().remove(dice);
 
             // Send updated draftedDice
-            Broadcaster.broadcastResponseToAll(playerList, board.getDraftedDice());
+            playerBroadcaster.broadcastResponseToAll(board.getDraftedDice());
 
             // Update MovesHistory
             addMoveToHistoryAndNotify(new MoveStatus(player.getPlayerUsername(),
                     "Placed dice" + dice + " in [" + rowIndex + ", " + columnIndex + "]"));
 
             // UpdateView response
-            Broadcaster.broadcastResponseToAll(playerList, new UpdateViewResponse(player, sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+            playerBroadcaster.broadcastResponseToAll(new UpdateViewResponse(player, sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
             return true;
         } else
             return false;
@@ -842,7 +849,7 @@ public class GameManager {
      */
     private void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
         movesHistory.add(moveStatus);
-        Broadcaster.updateMovesHistory(playerList, movesHistory);
+        playerBroadcaster.updateMovesHistory(movesHistory);
     }
 
     /**
@@ -866,7 +873,7 @@ public class GameManager {
         }
         boolean endTurnCheck = false;
         if (currentRound.getNoOfMoves() == 0) endTurnCheck = true;
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));
         currentRound.toolCardMoveDone();
     }
 
@@ -892,7 +899,7 @@ public class GameManager {
     }
 
     public void grozingPliersResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         try {
             currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(sendAvailablePositions(currentRound.getCurrentPlayer())));
         } catch (RemoteException e) {
@@ -926,8 +933,8 @@ public class GameManager {
     }
 
     public void fluxBrushResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
-        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         currentRound.toolCardMoveDone();
     }
 
@@ -973,8 +980,8 @@ public class GameManager {
     }
 
     public void fluxRemoverResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
-        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
         currentRound.toolCardMoveDone();
     }
 
@@ -988,7 +995,7 @@ public class GameManager {
     }
 
     public void grindingStoneResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         try {
             currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(sendAvailablePositions(currentRound.getCurrentPlayer())));
         } catch (RemoteException e) {
@@ -1005,7 +1012,7 @@ public class GameManager {
     }
 
     public void copperFoilBurnisherResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         currentRound.toolCardMoveDone();
     }
 
@@ -1017,7 +1024,7 @@ public class GameManager {
     }
 
     public void corkBackedStraightedgeResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
+        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
         currentRound.toolCardMoveDone();
     }
 
@@ -1044,8 +1051,8 @@ public class GameManager {
     }
 
     public void lensCutterResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
-        Broadcaster.broadcastResponseToAll(playerList, new RoundTrackToolCardResponse(roundTrack));
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+        playerBroadcaster.broadcastResponseToAll(new RoundTrackToolCardResponse(roundTrack));
         try {
             getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsDraftedDice(getDraftedDice())));
         } catch (RemoteException e) {
@@ -1064,7 +1071,7 @@ public class GameManager {
     }
 
     public void eglomiseBrushResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
         currentRound.toolCardMoveDone();
         ControllerTimer.get().cancelTimer();
     }
@@ -1089,7 +1096,7 @@ public class GameManager {
     }
 
     public void lathekinResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
     }
 
 
@@ -1098,8 +1105,8 @@ public class GameManager {
     }
 
     public void runningPliersResponse() {
-        Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
-        Broadcaster.broadcastResponseToAll(playerList, new DraftedDiceToolCardResponse(getDraftedDice(), true));
+        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(getDraftedDice(), true));
     }
 
     public boolean getdoubleMove() {
@@ -1194,7 +1201,7 @@ public class GameManager {
         }
 
         if (phase == 3) {
-            Broadcaster.broadcastResponseToAll(playerList, new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+            playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
             currentRound.toolCardMoveDone();
         }
     }
