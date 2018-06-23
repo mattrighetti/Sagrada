@@ -55,7 +55,7 @@ public class GameManager {
     public final Object toolCardLock;
     private Set<Player> disconnectedPlayers;
     private PlayerBroadcaster playerBroadcaster;
-    private boolean endOfMatch;
+    private AtomicBoolean endOfMatch;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -78,7 +78,7 @@ public class GameManager {
         turnInRound = new AtomicInteger(0);
         disconnectedPlayers = new HashSet<>();
         playerBroadcaster = new PlayerBroadcaster(players);
-        endOfMatch = false;
+        endOfMatch = new AtomicBoolean(false);
         setUpGameManager();
     }
 
@@ -278,17 +278,17 @@ public class GameManager {
 
                     playerBroadcaster.disableBroadcaster();
 
-                    while (!endOfMatch) {
+                    while (!endOfMatch.get()) {
                         synchronized (cancelTimer) {
                             cancelTimer.set(true);
                             cancelTimer.notifyAll();
                         }
 
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
 
                         currentRound.setPlayerEndedTurn(true);
 
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
 
                         synchronized (endRound) {
                             endRound.set(true);
@@ -524,7 +524,7 @@ public class GameManager {
                 }
             }
 
-            endOfMatch = true;
+            endOfMatch.set(true);
 
             assignPointsToPlayers();
 
