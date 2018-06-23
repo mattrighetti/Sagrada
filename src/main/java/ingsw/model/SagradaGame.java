@@ -230,14 +230,6 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     public synchronized void loginPrexistentPlayer(String matchName, User newUser) throws RemoteException {
         System.out.println("C");
         boolean isMatchPresent = matchesByName.containsKey(matchName);
-        for (User user : connectedUsers.values()) {
-            if (user.getUsername().equals(newUser.getUsername())) {
-                System.out.println("D");
-                connectedUsers.remove(user);
-                connectedUsers.put(newUser.getUsername(), newUser);
-            }
-        }
-
         if (isMatchPresent) {
             for (Player player : matchesByName.get(matchName).getPlayerList()) {
                 if (player.getPlayerUsername().equals(newUser.getUsername()) && !player.getUser().isActive()) {
@@ -248,6 +240,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
                 }
             }
         } else {
+            System.out.println("Throwing exception");
             throw new RemoteException("Match has already finished");
         }
     }
@@ -277,6 +270,10 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
                                        createUserStats(username)));
     }
 
+    /**
+     * Method that deactivates a user, giving him the possibility to rejoin the match if it still exists
+     * when he reconnects
+     */
     @Override
     public void deactivateUser(User disconnectedUser) {
         for (User user : connectedUsers.values()) {

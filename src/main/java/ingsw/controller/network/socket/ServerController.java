@@ -15,7 +15,7 @@ public class ServerController implements RequestHandler, Serializable {
     private transient Controller controller;
     private User user;
 
-    ServerController(ClientHandler clientHandler) throws RemoteException {
+    public ServerController(ClientHandler clientHandler) throws RemoteException {
         this.clientHandler = clientHandler;
         sagradaGame = SagradaGame.get();
     }
