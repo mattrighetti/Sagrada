@@ -887,27 +887,16 @@ public class GameManager {
 
      */
 
-
-    public void glazingHammerResponse() {
-        for (Dice dice : board.getDraftedDice()) {
-            dice.roll();
-        }
-        boolean endTurnCheck = false;
-        if (currentRound.getNoOfMoves() == 0) endTurnCheck = true;
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));
-        currentRound.toolCardMoveDone();
-    }
-
-    public void grozingPliersMove(Dice dice, Boolean increase) {
-        for (Dice diceInPool : board.getDraftedDice()) {
-            if (dice.toString().equals(diceInPool.toString())) {
-                if (increase) diceInPool.increasesByOneValue();
-                else diceInPool.decreasesByOneValue();
-            }
-        }
-        wakeUpToolCardThread();
-    }
-
+    /**
+     * Place Dice for Tool Cards
+     *
+     * Method that place a die in the pattern card for the tool cards that implement this move
+     * Find the current player and insert the die in the patterncard, if it is possible, then remove the die from draftedDice
+     *
+     * @param dice die to place in Pattern Card
+     * @param rowIndex row index of the position in Pattern Card
+     * @param columnIndex column index of the position in Pattern Card
+     */
     private void placeDiceToolCard(Dice dice, int rowIndex, int columnIndex) {
         Player player = getCurrentRound().getCurrentPlayer();
         if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
@@ -919,6 +908,68 @@ public class GameManager {
         }
     }
 
+    /**
+     * Avoid ToolCard Use
+     *
+     * Notify the player with an AvoidToolCardResponse that he cannot use the selected tool card
+     */
+    public void avoidToolCardUse() {
+        try {
+            currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Wake Up ToolCard Response
+     *
+     * Unlock the tool card thread in wait to finish the tool card move
+     */
+    private void wakeUpToolCardThread() {
+        synchronized (toolCardLock) {
+            toolCardLock.notifyAll();
+        }
+    }
+
+    /**
+     * Glazing Hammer
+     * Method that roll again the drafted dice and send the new drafted pool to all the players
+     */
+    public void glazingHammerResponse() {
+        for (Dice dice : board.getDraftedDice()) {
+            dice.roll();
+        }
+        boolean endTurnCheck = false;
+        if (currentRound.getNoOfMoves() == 0) endTurnCheck = true;
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));
+        currentRound.toolCardMoveDone();
+    }
+
+    /**
+     * GROZING PLIERS: Move Method
+     *
+     * Tool card that increase or decrease by one the value of a selected dice from the drafted dice pool:
+     * Find the selected dice from the draftedDice and call the method for increasing or decreasing, depending on increase boolean parameter
+     *
+     * @param dice the selected die from the player
+     * @param increase if true increase the die value, if false decrease the die value
+     */
+    public void grozingPliersMove(Dice dice, Boolean increase) {
+        for (Dice diceInPool : board.getDraftedDice()) {
+            if (dice.toString().equals(diceInPool.toString())) {
+                if (increase) diceInPool.increasesByOneValue();
+                else diceInPool.decreasesByOneValue();
+            }
+        }
+        wakeUpToolCardThread();
+    }
+
+    /**
+     * GROZING PLIERS: Response
+     *
+     * Sends to the players the updated data:
+     */
     public void grozingPliersResponse() {
         playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
         try {
@@ -1186,22 +1237,8 @@ public class GameManager {
         }
     }
 
-    private void wakeUpToolCardThread() {
-        synchronized (toolCardLock) {
-            toolCardLock.notifyAll();
-        }
-    }
-
     public void setDoubleMove(boolean doubleMove) {
         this.doubleMove.set(doubleMove);
-    }
-
-    public void avoidToolCardUse() {
-        try {
-            currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
     }
 
     private void tapWheelResponse(Map<String, Boolean[][]> availablePositions, PatternCard patternCard, int phase) {
