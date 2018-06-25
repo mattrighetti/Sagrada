@@ -336,26 +336,22 @@ public class CLI implements SceneUpdater {
                     case 1:
                         createMatch();
                         //wait
-                        gamePhaseWait();
                         break;
                     case 2:
                         joinMatch();
-                        moveNext();
+                        //wait
                         break;
                     case 3:
                         showFinishedMatches();
                         //wait
-                        gamePhaseWait();
                         break;
                     case 4:
                         showStatistics();
                         //wait
-                        gamePhaseWait();
                         break;
                     case 5:
                         showRanking();
                         //wait
-                        gamePhaseWait();
                         break;
                     default:
                         System.err.println("Wrong input");
@@ -467,8 +463,6 @@ public class CLI implements SceneUpdater {
         } else {
             System.out.println("There are no played matches");
         }
-        //Notify lock on gamePhase
-        notifyGamePhase();
     }
 
     /**
@@ -498,8 +492,6 @@ public class CLI implements SceneUpdater {
             System.out.println(statistic.toString());
         }
 
-        //Notify lock on gamePhase
-        notifyGamePhase();
     }
 
     /**
@@ -512,8 +504,6 @@ public class CLI implements SceneUpdater {
             System.out.println(rankingList.toString());
         }
 
-        //Notify lock on gamePhase
-        notifyGamePhase();
     }
 
     /**
@@ -521,7 +511,8 @@ public class CLI implements SceneUpdater {
      * <p>Method that creates a client connection to the previously opened server socket
      * </p>
      *
-     * @throws IOException
+     * @throws IOException exception produced by failed or
+     * interrupted I/O operations.
      */
     private void deploySocketClient(String ipAddress) throws IOException {
         Client client = new Client(ipAddress, 8000);
@@ -593,7 +584,7 @@ public class CLI implements SceneUpdater {
         notMoveNext();
 
         while (!moveNext.get()) {
-            System.out.println("It's time to draft the dice: press Enter to draft");
+            System.out.println("It's time to draft the dice: insert 'd' to draft");
             userStringInput();
             networkType.draftDice();
             moveNext();
@@ -680,8 +671,6 @@ public class CLI implements SceneUpdater {
                     case 3:
                         showMoveHistory();
 
-                        //method in wait
-                        gamePhaseWait();
                         break;
                     case 4:
                         endTurnMove();
@@ -748,9 +737,9 @@ public class CLI implements SceneUpdater {
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getPlayerUsername().equals(username)) {
                 currentPlayerIndex = i;
-                System.out.print("\t\tYou\t\t");
+                System.out.print("\t\tYou\t\t\t\t\t\t");
             } else {
-                System.out.print("\t\t" + players.get(i).getPlayerUsername() + "\t\t");
+                System.out.print("\t\t" + players.get(i).getPlayerUsername() + "\t\t\t\t\t\t");
             }
         }
 
@@ -759,7 +748,7 @@ public class CLI implements SceneUpdater {
         for (int i = 0; i < 4; i++) {
             for (Player player : players) {
                 for (int j = 0; j < 5; j++) {
-                    System.out.print(player.getPatternCard().getGrid().get(i).get(j).toString() + "\t");
+                    System.out.print(player.getPatternCard().getGrid().get(i).get(j).toString() + " ");
                 }
                 System.out.print("\t\t");
             }
@@ -779,7 +768,7 @@ public class CLI implements SceneUpdater {
         System.out.println("\tplayer: " + player.getPlayerUsername());
         for (int i = 0; i < player.getPatternCard().getGrid().size(); i++) {
             for (Box box : player.getPatternCard().getGrid().get(i)) {
-                System.out.print(box.toString() + "\t");
+                System.out.print(box.toString() + " ");
             }
             System.out.print("\n\n");
         }
@@ -812,11 +801,12 @@ public class CLI implements SceneUpdater {
             System.out.println("Select a dice");
             showDraftedDice();
             System.out.println("\n" + (draftedDice.size() + 1) + " - exit");
-            selectedDice = userIntegerInput();
+            selectedDice = userIntegerInput() - 1;
 
-            if (selectedDice == (draftedDice.size() + 1)) return false;
+            // in case the player choose 'exit'
+            if (selectedDice == (draftedDice.size())) return false;
 
-            if (0 < selectedDice && selectedDice < (draftedDice.size() + 1)) {
+            if (0 <= selectedDice && selectedDice < draftedDice.size()) {
                 System.out.println("Select a position in the pattern card: \n");
                 showPatternCardPlayer(players.get(currentPlayerIndex));
 
@@ -847,8 +837,8 @@ public class CLI implements SceneUpdater {
 
             int selectedColumn = chooseColumnIndex();
 
-            if (availablePosition.get(draftedDice.get(selectedDice - 1).toString())[selectedRow][selectedColumn].equals(true)) {
-                networkType.placeDice(draftedDice.get(selectedDice - 1), selectedColumn, selectedRow);
+            if (availablePosition.get(draftedDice.get(selectedDice).toString())[selectedRow][selectedColumn].equals(true)) {
+                networkType.placeDice(draftedDice.get(selectedDice), selectedColumn, selectedRow);
                 return true;
             } else System.out.println("Wrong position input");
 
@@ -1059,10 +1049,7 @@ public class CLI implements SceneUpdater {
     @Override
     public void showLostNotification(int totalScore) {
         System.out.println("Match Ended\nYou Lose!\nYour total score is: " + totalScore + "\n\nType a key to exit.");
-        String input;
-        do {
-            input = userStringInput();
-        } while (input != null);
+        userStringInput();
         showLobbyCommandsAndWait();
     }
 
@@ -1074,11 +1061,7 @@ public class CLI implements SceneUpdater {
      */
     @Override
     public void showWinnerNotification(int totalScore) {
-        System.out.println("Match Ended\nYou Win!\nYour total score is: " + totalScore + "\n\nType a key to exit.");
-        String input;
-        do {
-            input = userStringInput();
-        } while (input != null);
+        System.out.println("Match Ended\nYou Win!\nYour total score is: " + totalScore + "\n\nInsert a key to exit.");
         showLobbyCommandsAndWait();
 
     }
@@ -1136,7 +1119,7 @@ public class CLI implements SceneUpdater {
     public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
         System.out.println("Pay Attention\n You can't use this tool card now\n");
 
-        //Notify lock on GamePhase
+        //Notify thread locked on GamePhase
         notifyGamePhase();
     }
 
@@ -1177,20 +1160,28 @@ public class CLI implements SceneUpdater {
 
     /**
      * FLUX BRUSH ToolCard
+     * This method is invoked two times for the two different phases of the tool card move.
      *
-     * @param useToolCardResponse
+     * 1 - Lets the player a dice that has to be rolled again and send to the server the request
+     * 2 - Receives the updated data, it shows the new die and lets the player to  place it in the pattern card
+     *
+     * @param useToolCardResponse contains the identifier "phase" that switch the right part of code,
+     *                            the updated available positions, the dice selected from the player,
+     *                            and the new rolled dice
      */
     @Override
     public void toolCardAction(FluxBrushResponse useToolCardResponse) {
 
         switch (useToolCardResponse.phase) {
+
+            //phase 1 of the tool card move
             case 1:
 
                 System.out.println("Flux Brush\n\nChoose which dice has to be rolled again:\n");
                 int selecteDice = selectDiceFromDrafted();
                 networkType.fluxBrushMove(draftedDice.get(selecteDice));
                 break;
-
+            //phase 2 of the tool card move
             case 2:
 
                 System.out.println("This is the new rolled value: " + useToolCardResponse.selectedDice.toString() + "\n");
@@ -1199,12 +1190,15 @@ public class CLI implements SceneUpdater {
                 boolean dicePlaced = false;
 
                 do {
+                    //place die
                     showPatternCardPlayer(players.get(currentPlayerIndex));
 
                     if (checkAndShowAvailablePositions(useToolCardResponse.selectedDice)) {
 
                         int selecteRow = chooseRowIndex();
+
                         int selectedColumn = chooseColumnIndex();
+
                         if (availablePosition.get(useToolCardResponse.selectedDice.toString())[selecteRow][selectedColumn]) {
                             dicePlaced = true;
                             networkType.fluxBrushMove(useToolCardResponse.selectedDice, selecteRow, selectedColumn);
@@ -1271,8 +1265,7 @@ public class CLI implements SceneUpdater {
     }
 
     /**
-     * Select Dice from Drafted dice
-     *
+     * Select Dice from DraftedDice
      * Method that show to the user the dice from drafted dice pool and makes him choose one
      *
      * @return the index of the die selected from the player
@@ -1280,19 +1273,20 @@ public class CLI implements SceneUpdater {
     public int selectDiceFromDrafted(){
         int selectedDice;
         do {
-            selectedDice = -1;
             System.out.println("Choose a die:\n");
             showDraftedDice();
-            selectedDice = userIntegerInput();
+            selectedDice = userIntegerInput() - 1;
 
-        } while (!(0 < selectedDice && selectedDice <= draftedDice.size()));
-        return selectedDice -1;
+        } while (!(0 <= selectedDice && selectedDice < draftedDice.size()));
+        return selectedDice;
     }
 
     /**
      * GRINDING STONE ToolCard
+     * Method that makes choose a die that has to be flipped to the opposite site (value change)
+     * and sends the request to the server
      *
-     * @param useToolCardResponse
+     * @param useToolCardResponse response for the specific tool card, it does not contain data
      */
     @Override
     public void toolCardAction(GrindingStoneResponse useToolCardResponse) {
@@ -1312,7 +1306,7 @@ public class CLI implements SceneUpdater {
     }
 
     private int chooseRowIndex(){
-        int rowIndex = -1;
+        int rowIndex;
         do {
             System.out.println("Choose the row index:\n");
             rowIndex = userIntegerInput();
@@ -1333,8 +1327,9 @@ public class CLI implements SceneUpdater {
 
     /**
      * EGLOMISE BRUSH ToolCard
+     * Method that makes place a dice in the pattern card without color restrictions
      *
-     * @param useToolCardResponse
+     * @param useToolCardResponse response for the specific tool card, it contains available positions
      */
     @Override
     public void toolCardAction(EglomiseBrushResponse useToolCardResponse) {
@@ -1360,8 +1355,9 @@ public class CLI implements SceneUpdater {
 
     /**
      * COPPER FOIL BURNISHER ToolCard
+     *Method that makes place a dice in the pattern card without value restrictions
      *
-     * @param useToolCardResponse
+     * @param useToolCardResponse response for the specific tool card, it contains available positions
      */
     @Override
     public void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
@@ -1420,7 +1416,7 @@ public class CLI implements SceneUpdater {
 
     }
 
-    public boolean placeDiceWithNoRestricitionsToolCard(int rowOne, int columnOne){
+    private boolean placeDiceWithNoRestricitionsToolCard(int rowOne, int columnOne){
         int rowTwo;
         if (players.get(currentPlayerIndex).getPatternCard().getGrid().get(rowOne).get(columnOne).getDice() != null) {
 
@@ -1454,7 +1450,8 @@ public class CLI implements SceneUpdater {
     /**
      * LATHEKIN ToolCard
      *
-     * @param useToolCardResponse
+     *
+     * @param useToolCardResponse response for the specific tool card, it contains available positions and the pattern card
      */
     @Override
     public void toolCardAction(LathekinResponse useToolCardResponse) {
@@ -1486,12 +1483,14 @@ public class CLI implements SceneUpdater {
     /**
      * CORK BACKED STRAIGHTEDGE ToolCard
      *
-     * @param useToolCardResponse
+     * @param useToolCardResponse response for the specific tool card, it contains available positions
      */
     @Override
     public void toolCardAction(CorkBackedStraightedgeResponse useToolCardResponse) {
         System.out.println("Cork Backed Straightedge\nPlace a dice in a spot that is not adjacent to another die ");
-        int selectedDice, selectedRow, selectedColumn;
+        int selectedDice;
+        int selectedRow;
+        int selectedColumn;
         boolean dicePlaced = false;
         do {
 
@@ -1523,13 +1522,13 @@ public class CLI implements SceneUpdater {
     /**
      * LENS CUTTER ToolCard
      *
-     * @param useToolCardResponse
+     * @param useToolCardResponse response for the specific tool card, it does not contain data
      */
     @Override
     public void toolCardAction(LensCutterResponse useToolCardResponse) {
         System.out.println("Lens Cutter\nSwipe a die from the drafted die with another in the Round Track\n");
         int selectedDraftedDice = selectDiceFromDrafted();
-        int selectedRound = -1;
+        int selectedRound;
 
         System.out.println("Select a die from the Round Track");
         showRoundTrack();
@@ -1540,7 +1539,7 @@ public class CLI implements SceneUpdater {
                 selectedRound = userIntegerInput() - 1;
             } while (!(0 <= selectedRound && selectedRound < roundTrack.size()));
 
-            int selectedTrackDice = -1;
+            int selectedTrackDice;
             do {
                 System.out.println("Choose the die you want to swipe with:\n");
                 selectedTrackDice = userIntegerInput() - 1;
@@ -1555,7 +1554,7 @@ public class CLI implements SceneUpdater {
     /**
      * RUNNING PLIERS ToolCard
      *
-     * @param useToolCardResponse
+     * @param useToolCardResponse response for the specific tool card, it does not contain data
      */
     @Override
     public void toolCardAction(RunningPliersResponse useToolCardResponse) {
@@ -1584,6 +1583,13 @@ public class CLI implements SceneUpdater {
         } while (!dicePlaced);
     }
 
+    /**
+     * TAP WHEEL ToolCard
+     *
+     * @param useToolCardResponse response for the specific tool card,
+     *                            contains the identifier "phase" that switch the right part of code,
+     *                            the updated available positions and the pattern card
+     */
     @Override
     public void toolCardAction(TapWheelResponse useToolCardResponse) {
 

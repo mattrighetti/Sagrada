@@ -45,11 +45,11 @@ public class Box implements Serializable {
     @Override
     public String toString() {
         if (dice == null) {
-            if (isValueSet()) return "[ " + String.valueOf(value) + " ->   ]";
-            else return "[ " + String.valueOf(color.name().charAt(0)) + " ->   ]";
+            if (isValueSet()) return "[" + String.valueOf(value) + " ->  ]";
+            else return "[" + String.valueOf(color.name().charAt(0)) + " ->  ]";
         } else {
-            if (isValueSet()) return "[ " + String.valueOf(value) + " -> " + String.valueOf(dice.getDiceColor().name().charAt(0)) + " " + dice.getFaceUpValue() + "]";
-            else return "[" + String.valueOf(color.name().charAt(0)) + " -> " + String.valueOf(dice.getDiceColor().name().charAt(0)) + " " + dice.getFaceUpValue() + "]" ;
+            if (isValueSet()) return "[" + String.valueOf(value) + " -> " + String.valueOf(dice.getDiceColor().name().charAt(0)) + dice.getFaceUpValue() + "]";
+            else return "[" + String.valueOf(color.name().charAt(0)) + " -> " + String.valueOf(dice.getDiceColor().name().charAt(0)) + dice.getFaceUpValue() + "]" ;
         }
     }
 

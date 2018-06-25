@@ -43,9 +43,9 @@ class BroadcasterTest {
         playerBroadcaster = new PlayerBroadcaster(playerlist);
     }
 
+    /*
     @Test
     void broadcastMessage() {
-
         Message message = new Message("b","test");
 
         playerBroadcaster.broadcastMessage(message);
@@ -152,4 +152,6 @@ class BroadcasterTest {
             e.printStackTrace();
         }
     }
+
+ */
 }
