@@ -1,6 +1,5 @@
 package ingsw.controller.network.socket;
 
-import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.*;
 
 import java.io.*;
@@ -136,16 +135,6 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     @Override
     public void checkIfActive() {
         // Empty, useful only for RMI
-    }
-
-    /**
-     * Method that sends a generic message to the User
-     *
-     * @param message message to be sent
-     */
-    @Override
-    public void sendMessage(Message message) {
-        respond(new MessageResponse(message));
     }
 
     /**

@@ -102,9 +102,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         List<TripleString> ranking = new ArrayList<>();
 
         List<User> rankingList = new ArrayList<>(connectedUsers.values());
-        rankingList.sort((user1, user2) -> {
-            return Integer.compare(user2.getNoOfWins(), user1.getNoOfWins());
-        });
+        rankingList.sort((user1, user2) -> Integer.compare(user2.getNoOfWins(), user1.getNoOfWins()));
 
         for (int i = 0; i < rankingList.size(); i++) {
             rankingList.get(i).setPositionInRanking(i + 1);
@@ -217,7 +215,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     public synchronized void createMatch(String matchName) throws RemoteException {
         Controller controller;
         if (!matchesByName.containsKey(matchName)) {
-            controller = new Controller(matchName, maxJoinMatchSeconds, maxTurnSeconds, this);
+            controller = new Controller(matchName, maxTurnSeconds, maxJoinMatchSeconds,this);
             matchesByName.put(matchName, controller);
 
             try {

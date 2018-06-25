@@ -341,16 +341,6 @@ public class ClientController implements ResponseHandler, NetworkType {
     }
 
     /**
-     * Method that prints a message received by either the Controller or SagradaGame
-     *
-     * @param messageResponse response sent by the Server-side running classes
-     *                        whenever a user sends a message to broadcast
-     */
-    @Override
-    public void handle(MessageResponse messageResponse) {
-    }
-
-    /**
      * Method that passes the four possible pattern cards to the View
      *
      * @param patternCardNotification

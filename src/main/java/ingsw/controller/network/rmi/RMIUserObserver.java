@@ -1,6 +1,5 @@
 package ingsw.controller.network.rmi;
 
-import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.*;
 import ingsw.controller.network.socket.UserObserver;
 
@@ -25,11 +24,6 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     public void checkIfActive() {
         // This method is used by RMI to check if the connection is still active and the user too
         // If this throws a RemoteException the User must be disabled
-    }
-
-    @Override
-    public void sendMessage(Message message) {
-        new MessageResponse(message).handle(rmiController);
     }
 
     @Override

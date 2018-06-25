@@ -6,8 +6,6 @@ public interface ResponseHandler {
 
     void handle(IntegerResponse integerResponse);
 
-    void handle(MessageResponse messageResponse);
-
     void handle(CreateMatchResponse createMatchResponse);
 
     void handle(JoinedMatchResponse joinedMatchResponse);

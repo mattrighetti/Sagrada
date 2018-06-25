@@ -75,7 +75,7 @@ public class User implements Serializable {
             return userObserver;
         } catch (RemoteException e) {
             setActive(false);
-            stopWatch.stop();
+            stopWatch.suspend();
             return null;
         }
     }

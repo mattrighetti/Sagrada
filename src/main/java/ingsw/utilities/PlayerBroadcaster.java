@@ -60,18 +60,6 @@ public class PlayerBroadcaster {
         return playerListToBroadcast;
     }
 
-    public void broadcastMessage(Message message) {
-        if (isBroadcasterActive) {
-            for (UserObserver userObserver : playersToBroadcast(message.sender)) {
-                try {
-                    userObserver.sendMessage(message);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else System.out.println("Broadcaster is not active");
-    }
-
     public void broadcastResponse(String usernameToExclude, List<Dice> dice) {
         if (isBroadcasterActive) {
             for (UserObserver userObserver : playersToBroadcast(usernameToExclude)) {

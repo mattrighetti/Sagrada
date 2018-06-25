@@ -225,11 +225,6 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
-    public void handle(MessageResponse messageResponse) {
-
-    }
-
-    @Override
     public void handle(CreateMatchResponse createMatchResponse) {
         if (createMatchResponse.doubleString != null) {
             System.out.println("Match created");
@@ -252,7 +247,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(JoinedMatchResponse joinedMatchResponse) {
-
+        System.out.println("Received logintomatch");
     }
 
     @Override
