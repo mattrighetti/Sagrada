@@ -20,7 +20,7 @@ import java.util.Map;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
-class PlayerBroadcasterTest {
+class BroadcasterTest {
 
     private ArrayList<Player> playerlist;
     private PlayerBroadcaster playerBroadcaster;

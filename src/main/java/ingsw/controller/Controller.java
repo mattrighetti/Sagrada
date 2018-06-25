@@ -16,13 +16,18 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     private SagradaGame sagradaGame;
     private GameManager gameManager;
     private List<Player> playerList;
+    private int maxTurnSeconds;
+    private int maxJoinMatchSeconds;
 
-    public Controller(String matchName, SagradaGame sagradaGame) throws RemoteException {
+    public Controller(String matchName, int maxTurnSeconds,
+                      int maxJoinMatchSeconds, SagradaGame sagradaGame) throws RemoteException {
         super();
         hasStarted = false;
         this.sagradaGame = sagradaGame;
         this.matchName = matchName;
         playerList = new ArrayList<>();
+        this.maxJoinMatchSeconds = maxJoinMatchSeconds;
+        this.maxTurnSeconds = maxTurnSeconds;
     }
 
     public String getMatchName() {
@@ -46,8 +51,8 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     public void loginUser(User user) throws RemoteException {
         if (!hasStarted) {
             playerList.add(new Player(user));
-            if (playerList.size() == 2) {
-                ControllerTimer.get().startLoginTimer(2, this, hasStarted);
+            if (playerList.size() == 1) {
+                ControllerTimer.get().startLoginTimer(maxJoinMatchSeconds, this, hasStarted);
             }
 
             if (playerList.size() == 4) {
@@ -63,7 +68,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      * Start the first phase of the match, the PatternCards choice
      */
     public void createMatch() {
-        gameManager = new GameManager(playerList, this);
+        gameManager = new GameManager(playerList, maxTurnSeconds, this);
         gameManager.pickPatternCards();
         gameManager.waitForEveryPatternCard();
     }

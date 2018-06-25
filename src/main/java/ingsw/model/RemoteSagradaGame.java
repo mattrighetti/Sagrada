@@ -12,6 +12,10 @@ import java.util.Map;
 
 public interface RemoteSagradaGame extends Remote {
 
+    void setMaxTurnSeconds(int maxTurnSeconds) throws RemoteException;
+
+    void setMaxJoinMatchSeconds(int maxJoinMatchSeconds) throws RemoteException;
+
     int getConnectedUsers() throws RemoteException;
 
     void sendSelectedMatchHistory(String username, String selectedMatchName) throws RemoteException;

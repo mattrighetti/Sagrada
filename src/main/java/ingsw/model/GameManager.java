@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GameManager {
     private Board board;
+    private int maxTurnSeconds;
     private Round currentRound;
     private boolean brokenWindow;
     private Controller controller;
@@ -61,9 +62,10 @@ public class GameManager {
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
      * assigning to each of them a PrivateObjectiveCard and asking them to choose a PatternCard.
      *
-     * @param players players that joined the match
+     * @param players        players that joined the match
+     * @param maxTurnSeconds max seconds that a user should use to complete a turn
      */
-    public GameManager(List<Player> players, Controller controller) {
+    public GameManager(List<Player> players, int maxTurnSeconds, Controller controller) {
         brokenWindow = false;
         playerList = players;
         this.controller = controller;
@@ -188,13 +190,8 @@ public class GameManager {
      * @return three randomly picked ToolCards
      */
     private List<ToolCard> chooseToolCards() {
-        // Collections.shuffle(toolCards);
-        //return new ArrayList<>(this.toolCards.subList(0, 3));
-        ArrayList<ToolCard> toolCards = new ArrayList<>();
-        toolCards.add(new LensCutter());
-        toolCards.add(new RunningPliers());
-        toolCards.add(new TapWheel());
-        return toolCards;
+        Collections.shuffle(toolCards);
+        return new ArrayList<>(this.toolCards.subList(0, 3));
     }
 
     /**
@@ -227,7 +224,7 @@ public class GameManager {
         }
     }
 
-    public int getNoOfCurrentRound(){
+    public int getNoOfCurrentRound() {
         return roundTrack.size() + 1;
     }
 
@@ -237,6 +234,7 @@ public class GameManager {
 
     /**
      * Method that checks if every user is connected to the game.
+     *
      * @param disconnectedPlayers
      */
     private void checkUserConnection(Set<Player> disconnectedPlayers) {
@@ -256,7 +254,7 @@ public class GameManager {
                         Thread.sleep(500);
                         player.getUserObserver().sendResponse(new DraftedDiceResponse(board.getDraftedDice()));
                     } else if (!disconnectedPlayers.contains(player) && !player.getUser().isActive()) {
-                        System.out.println("User " + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users iterating Player "+ player.getPlayerUsername() + " " + disconnectedPlayers.size() + " " + (playerList.size() - 1));
+                        System.out.println("User " + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users iterating Player " + player.getPlayerUsername() + " " + disconnectedPlayers.size() + " " + (playerList.size() - 1));
                         disconnectedPlayers.add(player);
 
                     } else {
@@ -676,7 +674,7 @@ public class GameManager {
      * Method that computes the winner and notifies each player with their results
      */
     private Player evaluateWinner() {
-        Player winner  = null;
+        Player winner = null;
         boolean found = false;
         Set<Player> possibleWinners = evaluateBasicPoints();
         int activeUsers = 0;
@@ -863,7 +861,7 @@ public class GameManager {
 
             // Update MovesHistory
             addMoveToHistoryAndNotify(new MoveStatus(player.getPlayerUsername(),
-                    "Placed dice" + dice + " in [" + rowIndex + ", " + columnIndex + "]"));
+                                                     "Placed dice" + dice + " in [" + rowIndex + ", " + columnIndex + "]"));
 
             // UpdateView response
             playerBroadcaster.broadcastResponseToAll(new UpdateViewResponse(player, sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
@@ -916,12 +914,12 @@ public class GameManager {
 
     /**
      * Place Dice for Tool Cards
-     *
+     * <p>
      * Method that place a die in the pattern card for the tool cards that implement this move
      * Find the current player and insert the die in the patterncard, if it is possible, then remove the die from draftedDice
      *
-     * @param dice die to place in Pattern Card
-     * @param rowIndex row index of the position in Pattern Card
+     * @param dice        die to place in Pattern Card
+     * @param rowIndex    row index of the position in Pattern Card
      * @param columnIndex column index of the position in Pattern Card
      */
     private void placeDiceToolCard(Dice dice, int rowIndex, int columnIndex) {
@@ -937,7 +935,7 @@ public class GameManager {
 
     /**
      * Avoid ToolCard Use
-     *
+     * <p>
      * Notify the player with an AvoidToolCardResponse that he cannot use the selected tool card
      */
     public void avoidToolCardUse() {
@@ -950,7 +948,7 @@ public class GameManager {
 
     /**
      * Wake Up ToolCard Response
-     *
+     * <p>
      * Unlock the tool card thread in wait to finish the tool card move
      */
     private void wakeUpToolCardThread() {
@@ -975,11 +973,11 @@ public class GameManager {
 
     /**
      * GROZING PLIERS: Move Method
-     *
+     * <p>
      * Tool card that increase or decrease by one the value of a selected dice from the drafted dice pool:
      * Find the selected dice from the draftedDice and call the method for increasing or decreasing, depending on increase boolean parameter
      *
-     * @param dice the selected die from the player
+     * @param dice     the selected die from the player
      * @param increase if true increase the die value, if false decrease the die value
      */
     public void grozingPliersMove(Dice dice, Boolean increase) {
@@ -994,7 +992,7 @@ public class GameManager {
 
     /**
      * GROZING PLIERS: Response
-     *
+     * <p>
      * Sends to the players the updated data:
      */
     public void grozingPliersResponse() {

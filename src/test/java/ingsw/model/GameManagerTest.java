@@ -11,9 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +27,7 @@ class GameManagerTest {
         players.add(new Player(new User("b")));
         players.add(new Player(new User("c")));
         players.add(new Player(new User("d")));
-        gameManager = new GameManager(players, new Controller("Match", SagradaGame.get()));
+        gameManager = new GameManager(players, maxTurnSeconds, new Controller("Match", SagradaGame.get()));
     }
 
     @Test

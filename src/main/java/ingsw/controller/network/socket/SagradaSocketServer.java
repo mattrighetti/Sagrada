@@ -9,8 +9,10 @@ import java.util.concurrent.Executors;
 public class SagradaSocketServer {
     private final ServerSocket serverSocket;
     private final ExecutorService pool;
+    private boolean stop;
 
     public SagradaSocketServer(int port) throws IOException {
+        stop = false;
         serverSocket = new ServerSocket(port);
         pool = Executors.newCachedThreadPool();
         System.out.println("Server started on port: " + port);
@@ -22,13 +24,14 @@ public class SagradaSocketServer {
             Socket clientSocket = serverSocket.accept();
             System.out.println("New connection from -> " + clientSocket.getRemoteSocketAddress());
             pool.submit(new ClientHandler(clientSocket));
-        } while (true);
+        } while (!stop);
     }
 
     public void close() {
         try {
-            pool.shutdown();
+            stop = true;
             serverSocket.close();
+            pool.shutdown();
         } catch (IOException e) {
             e.printStackTrace();
         }

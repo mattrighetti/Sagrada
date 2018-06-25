@@ -24,6 +24,9 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     transient Map<String, Controller> matchesByName; // List of all open matches
     private transient Map<String, User> connectedUsers; // List of connected users
 
+    private int maxTurnSeconds;
+    private int maxJoinMatchSeconds;
+
     private UserBroadcaster userBroadcaster;
 
     private SagradaGame() throws RemoteException {
@@ -31,6 +34,8 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         connectedUsers = new HashMap<>();
         matchesByName = new HashMap<>();
         userBroadcaster = new UserBroadcaster(connectedUsers);
+        maxJoinMatchSeconds = 40;
+        maxTurnSeconds = 120;
     }
 
     public static SagradaGame get() throws RemoteException {
@@ -39,6 +44,16 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         }
 
         return sagradaGameSingleton;
+    }
+
+    @Override
+    public void setMaxTurnSeconds(int maxTurnSeconds) {
+        this.maxTurnSeconds = maxTurnSeconds;
+    }
+
+    @Override
+    public void setMaxJoinMatchSeconds(int maxJoinMatchSeconds) {
+        this.maxJoinMatchSeconds = maxJoinMatchSeconds;
     }
 
     public void removeMatch(Controller controller) {
@@ -202,7 +217,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
     public synchronized void createMatch(String matchName) throws RemoteException {
         Controller controller;
         if (!matchesByName.containsKey(matchName)) {
-            controller = new Controller(matchName, this);
+            controller = new Controller(matchName, maxJoinMatchSeconds, maxTurnSeconds, this);
             matchesByName.put(matchName, controller);
 
             try {
