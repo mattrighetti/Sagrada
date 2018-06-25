@@ -33,10 +33,10 @@ public class UserBroadcaster {
             if (!user.getUsername().equals(usernameToExclude) && user.isActive()) {
                 try {
                     user.getUserObserver().checkIfActive();
+                    playerListToBroadcast.add(user.getUserObserver());
                 } catch (RemoteException e) {
                     System.err.println("RMI Player " + user.getUsername() + " is not active, deactivating user");
                 }
-                playerListToBroadcast.add(user.getUserObserver());
             }
         }
         return playerListToBroadcast;

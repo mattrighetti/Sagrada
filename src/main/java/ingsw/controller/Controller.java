@@ -51,7 +51,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     public void loginUser(User user) throws RemoteException {
         if (!hasStarted) {
             playerList.add(new Player(user));
-            if (playerList.size() == 1) {
+            if (playerList.size() == 2) {
                 ControllerTimer.get().startLoginTimer(maxJoinMatchSeconds, this, hasStarted);
             }
 

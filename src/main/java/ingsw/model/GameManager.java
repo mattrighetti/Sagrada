@@ -564,7 +564,7 @@ public class GameManager {
         Player winner = evaluateWinner();
 
         for (Player player : playerList) {
-            if (winner != null && winner.equals(player)) {
+            if (winner != null && winner.equals(player) && winner.getUser().isActive()) {
                 try {
                     player.getUser().incrementNoOfWins();
                     player.getUserObserver().notifyVictory(player.getScore());
@@ -713,8 +713,9 @@ public class GameManager {
                 }
             }
         } else {
-            assert winner != null;
-            winner.setScore(0);
+            if (winner != null) {
+                winner.setScore(0);
+            }
         }
 
         return winner;
@@ -728,33 +729,14 @@ public class GameManager {
         currentRound = new Round(this);
         //Rounds going forward
         turnInRound.set(1);
+
         for (int i = 0; i < playerList.size(); i++) {
-
-            System.out.println("Turn forward " + i + " player " + playerList.get(i));
-
-            currentRound.setPlayerEndedTurn(false);
-
-            if (playerList.get(i).getUser().isActive() && (disconnectedPlayers.size() != (playerList.size() - 1))) {
-                currentRound.startForPlayer(playerList.get(i));
-                startTimer(40000);
-
-                //wait until turn has ended
-                waitEndTurn();
-            }
+            executeTurn(i, "Turn forward ");
         }
         turnInRound.set(2);
+
         for (int i = playerList.size() - 1; i >= 0; i--) {
-
-            System.out.println("Turn backward " + i + " player " + playerList.get(i));
-
-            currentRound.setPlayerEndedTurn(false);
-            if (playerList.get(i).getUser().isActive() && (disconnectedPlayers.size() != (playerList.size() - 1))) {
-                currentRound.startForPlayer(playerList.get(i));
-                startTimer(40000);
-
-                //wait until turn has ended
-                waitEndTurn();
-            }
+            executeTurn(i, "Turn backward ");
         }
 
         System.out.println("End of turn");
@@ -769,6 +751,20 @@ public class GameManager {
         //wake up the match thread
         synchronized (endRound) {
             endRound.notifyAll();
+        }
+    }
+
+    private void executeTurn(int playerIndex, String turnState) {
+        System.out.println(turnState + playerIndex + " player " + playerList.get(playerIndex));
+
+        currentRound.setPlayerEndedTurn(false);
+
+        if (playerList.get(playerIndex).getUser().isActive() && (disconnectedPlayers.size() != (playerList.size() - 1))) {
+            currentRound.startForPlayer(playerList.get(playerIndex));
+            startTimer(40000);
+
+            //wait until turn has ended
+            waitEndTurn();
         }
     }
 
