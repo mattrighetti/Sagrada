@@ -15,6 +15,6 @@ class GridJSONPathTest {
 
     @Test
     void toStringTest() {
-        assertEquals("src/main/resources/patterncards-json/AuroraeMagnificus.json", path.toString());
+        assertEquals("/patterncards-json/AuroraeMagnificus.json", path.toString());
     }
 }

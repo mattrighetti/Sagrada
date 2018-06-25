@@ -1,5 +1,7 @@
 package ingsw.utilities;
 
+import java.io.InputStream;
+
 /**
  * Enumeration that stores every path of every possible grid defined in the Sagrada game
  */
@@ -29,19 +31,23 @@ public enum GridJSONPath {
     VIRTUS("Virtus.json"),
     WATER_OF_LIFE("WaterOfLife.json");
 
-    private String filePath;
+    private InputStream filePath;
 
     /**
      * Constructor that creates the JSON grid's file path String
      * @param fileName JSON file's name that defines the PatternCard
      */
     GridJSONPath(String fileName) {
-        filePath = "src/main/resources/patterncards-json/" + fileName;
+        filePath = getClass().getResourceAsStream("/patterncards-json/" + fileName);
+    }
+
+    public InputStream getFilePath() {
+        return filePath;
     }
 
     @Override
     public String toString() {
-        return filePath;
+        return filePath.toString();
     }
 
 }
