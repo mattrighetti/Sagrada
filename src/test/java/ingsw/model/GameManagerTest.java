@@ -27,7 +27,7 @@ class GameManagerTest {
         players.add(new Player(new User("b")));
         players.add(new Player(new User("c")));
         players.add(new Player(new User("d")));
-        gameManager = new GameManager(players, maxTurnSeconds, new Controller("Match", SagradaGame.get()));
+        gameManager = new GameManager(players, 10, new Controller("Match", 10, 10, SagradaGame.get()));
     }
 
     @Test

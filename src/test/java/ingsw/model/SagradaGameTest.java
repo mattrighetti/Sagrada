@@ -53,7 +53,7 @@ class SagradaGameTest {
     @Test
     void createMatch() throws RemoteException {
         int currentMatchesByNameSize = sagradaGame.matchesByName.size();
-        Controller controller = new Controller("Match", sagradaGame);
+        Controller controller = new Controller("Match", 10, 10, sagradaGame);
         assertNotEquals(null, controller);
         sagradaGame.matchesByName.put(controller.getMatchName(), controller);
         assertEquals(true, sagradaGame.matchesByName.containsKey("Match"));

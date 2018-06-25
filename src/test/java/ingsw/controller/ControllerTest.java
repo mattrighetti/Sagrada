@@ -21,7 +21,7 @@ class ControllerTest {
 
     @BeforeEach
     void setUp() throws RemoteException {
-        controller = new Controller("Test", SagradaGame.get());
+        controller = new Controller("Test",10, 10, SagradaGame.get());
     }
 
     @Test
