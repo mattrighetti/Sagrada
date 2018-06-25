@@ -236,6 +236,7 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(ReJoinResponse reJoinResponse) {
         System.out.println("Response Received, requesting rejoin in match");
+        sceneUpdater.setUsernameInApplication(reJoinResponse.username);
         sceneUpdater.launchProgressForm();
         new ReJoinMatchRequest(reJoinResponse.matchName).handle(rmiHandler);
     }

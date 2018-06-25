@@ -69,15 +69,9 @@ public class User implements Serializable {
         this.userObserver = userObserver;
     }
 
-    public UserObserver getUserObserver() {
-        try {
-            userObserver.checkIfActive();
-            return userObserver;
-        } catch (RemoteException e) {
-            setActive(false);
-            stopWatch.suspend();
-            return null;
-        }
+    public UserObserver getUserObserver() throws RemoteException {
+        userObserver.checkIfActive();
+        return userObserver;
     }
 
     public void setActive(boolean active) {

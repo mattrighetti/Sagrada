@@ -179,8 +179,6 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
                 System.out.println("Not specified");
                 break;
         }
-
-
     }
 
     public void toolCardMove(GrindingStoneRequest grindingStoneRequest) throws RemoteException {

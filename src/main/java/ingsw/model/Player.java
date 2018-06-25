@@ -57,7 +57,7 @@ public class Player implements Serializable {
         return getUser().getUsername();
     }
 
-    public UserObserver getUserObserver() {
+    public UserObserver getUserObserver() throws RemoteException {
         return user.getUserObserver();
     }
 

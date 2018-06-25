@@ -282,6 +282,7 @@ public class GameManager {
             } catch (RemoteException e) {
                 // If a RMI user disconnects, this code will execute
                 System.out.println("RMI User " + player.getPlayerUsername() + " disconnected");
+                player.getUser().setActive(false);
                 disconnectedPlayers.add(player);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
