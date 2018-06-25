@@ -20,9 +20,10 @@ import java.util.Map;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
-class BroadcasterTest {
+class PlayerBroadcasterTest {
 
     private ArrayList<Player> playerlist;
+    private PlayerBroadcaster playerBroadcaster;
 
     @BeforeEach
     void setUp() {
@@ -38,6 +39,8 @@ class BroadcasterTest {
 
         playerlist.add(new Player(new User("d")));
         playerlist.get(3).getUser().addListener(mock(ClientHandler.class));
+
+        playerBroadcaster = new PlayerBroadcaster(playerlist);
     }
 
     @Test
@@ -45,7 +48,7 @@ class BroadcasterTest {
 
         Message message = new Message("b","test");
 
-        Broadcaster.broadcastMessage(playerlist, message);
+        playerBroadcaster.broadcastMessage(message);
         try {
             Mockito.verify(playerlist.get(0).getUserObserver(),times(1)).sendMessage(message);
         } catch (RemoteException e) {
@@ -67,7 +70,7 @@ class BroadcasterTest {
     void broadcastResponse() {
         List<Dice> dice = new ArrayList<>();
 
-        Broadcaster.broadcastResponse(playerlist,"c",dice);
+        playerBroadcaster.broadcastResponse("c",dice);
         try {
             Mockito.verify(playerlist.get(0).getUserObserver(),times(1)).sendResponse(Mockito.any(DraftedDiceResponse.class));
         } catch (RemoteException e) {
@@ -89,7 +92,7 @@ class BroadcasterTest {
     void broadcastResponseToAll() {
         List<Dice> dice = new ArrayList<>();
 
-        Broadcaster.broadcastResponseToAll(playerlist, dice);
+        playerBroadcaster.broadcastResponseToAll(dice);
 
         try {
             Mockito.verify(playerlist.get(0).getUserObserver(),times(1)).sendResponse(Mockito.any(DraftedDiceResponse.class));
@@ -126,7 +129,7 @@ class BroadcasterTest {
         users.put("d",new User("d"));
         users.get("d").addListener(mock(ClientHandler.class));
 
-        Broadcaster.broadcastResponseToAll(users,createMatchResponse);
+        playerBroadcaster.broadcastResponseToAll(createMatchResponse);
 
         try {
             Mockito.verify(users.get("a").getUserObserver(),times(1)).sendResponse(createMatchResponse);

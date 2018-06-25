@@ -20,10 +20,12 @@ public class PlayerBroadcaster {
     }
 
     public void enableBroadcaster() {
+        System.out.println("Activating playerBroadcaster");
         isBroadcasterActive = true;
     }
 
     public void disableBroadcaster() {
+        System.out.println("Shutting down playerBroadcaster");
         isBroadcasterActive = false;
     }
 
@@ -31,7 +33,7 @@ public class PlayerBroadcaster {
     private List<UserObserver> playersToBroadcast(String usernameToExclude) {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (Player player : players) {
-            if (!player.getUser().getUsername().equals(usernameToExclude) && !player.getUser().isActive()) {
+            if (!player.getUser().getUsername().equals(usernameToExclude) && player.getUser().isActive()) {
                 try {
                     player.getUserObserver().checkIfActive();
                 } catch (RemoteException e) {
@@ -46,11 +48,13 @@ public class PlayerBroadcaster {
     private List<UserObserver> playersToBroadcast() {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (Player player : players) {
-            try {
-                player.getUserObserver().checkIfActive();
-                playerListToBroadcast.add(player.getUser().getUserObserver());
-            } catch (RemoteException e) {
-                System.err.println("RMI Player " + player.getPlayerUsername() + " is not active, deactivating user");
+            if (player.getUser().isActive()) {
+                try {
+                    player.getUserObserver().checkIfActive();
+                    playerListToBroadcast.add(player.getUser().getUserObserver());
+                } catch (RemoteException e) {
+                    System.err.println("RMI Player " + player.getPlayerUsername() + " is not active, deactivating user");
+                }
             }
         }
         return playerListToBroadcast;
@@ -82,21 +86,9 @@ public class PlayerBroadcaster {
 
     public void broadcastResponseToAll(List<Dice> dice) {
         if (isBroadcasterActive) {
-            for (Player player : players) {
+            for (UserObserver player : playersToBroadcast()) {
                 try {
-                    player.getUser().getUserObserver().sendResponse(new DraftedDiceResponse(dice));
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else System.out.println("Broadcaster is not active");
-    }
-
-    public void broadcastResponseToAll(UpdateViewResponse updateViewResponse) {
-        if (isBroadcasterActive) {
-            for (Player player : players) {
-                try {
-                    player.getUserObserver().sendResponse(updateViewResponse);
+                    player.sendResponse(new DraftedDiceResponse(dice));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

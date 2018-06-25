@@ -55,7 +55,7 @@ public class GameManager {
     public final Object toolCardLock;
     private Set<Player> disconnectedPlayers;
     private PlayerBroadcaster playerBroadcaster;
-    private AtomicBoolean endOfMatch;
+    private final AtomicBoolean endOfMatch;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -267,37 +267,18 @@ public class GameManager {
 
                     // If there's only a user connected then...
                 } else {
-                    // TODO crea un metodo testabile, poco reliable nel caso in cui ci siano più utenti nella lista
-                    for (Player winner : playerList) {
-                        if (winner.getUser().isActive()) {
-                            winner.getUser().incrementNoOfWins();
-                            winner.getUserObserver().notifyVictory(0);
-                        }
-                    }
+
                     stop.set(true);
 
                     playerBroadcaster.disableBroadcaster();
 
-                    while (!endOfMatch.get()) {
-                        synchronized (cancelTimer) {
-                            cancelTimer.set(true);
-                            cancelTimer.notifyAll();
-                        }
+                    closeThreads();
 
-                        Thread.sleep(1000);
-
-                        currentRound.setPlayerEndedTurn(true);
-
-                        Thread.sleep(1000);
-
-                        synchronized (endRound) {
-                            endRound.set(true);
-                            endRound.notifyAll();
-                        }
+                    synchronized (endOfMatch) {
+                        endOfMatch.notifyAll();
                     }
 
-
-                    deleteMatch();
+                    break;
                 }
 
             } catch (RemoteException e) {
@@ -307,6 +288,25 @@ public class GameManager {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private void closeThreads() throws InterruptedException {
+        while (!endOfMatch.get()) {
+            synchronized (cancelTimer) {
+                cancelTimer.set(true);
+                cancelTimer.notifyAll();
+            }
+
+            synchronized (currentRound.hasPlayerEndedTurn()) {
+                currentRound.setPlayerEndedTurn(true);
+                currentRound.hasPlayerEndedTurn().wait(1000);
+            }
+
+            synchronized (endRound) {
+                endRound.set(true);
+                endRound.notifyAll();
             }
         }
     }
@@ -517,14 +517,25 @@ public class GameManager {
                                 }
                             }
                         }
-                        i++;
                     } else {
                         shiftPlayerList();
                     }
                 }
+                System.out.println("End of Round " + i);
+                i++;
             }
 
+            System.out.println("End of Game");
+
             endOfMatch.set(true);
+
+            synchronized (endOfMatch) {
+                try {
+                    endOfMatch.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
             assignPointsToPlayers();
 
@@ -665,32 +676,46 @@ public class GameManager {
      * Method that computes the winner and notifies each player with their results
      */
     private Player evaluateWinner() {
-        Player winner = null;
+        Player winner  = null;
         boolean found = false;
         Set<Player> possibleWinners = evaluateBasicPoints();
+        int activeUsers = 0;
 
-        if (possibleWinners.size() > 1) {
-            possibleWinners = evaluatePrivateObjectiveCardPoints(possibleWinners);
-        } else found = true;
-
-        if (possibleWinners.size() > 1) {
-            possibleWinners = evaluateFavourTokenPoints(possibleWinners);
-        } else found = true;
-
-        if (possibleWinners.size() > 1) {
-            for (Player player : playerList) {
-                if (possibleWinners.contains(player)) {
-                    winner = player;
-                    found = true;
-                    break;
-                }
-            }
-        } else found = true;
-
-        if (!found) {
-            for (Player player : possibleWinners) {
+        for (Player player : playerList) {
+            if (player.getUser().isActive()) {
+                activeUsers++;
                 winner = player;
             }
+        }
+
+        if (activeUsers > 1) {
+            winner = null;
+            if (possibleWinners.size() > 1) {
+                possibleWinners = evaluatePrivateObjectiveCardPoints(possibleWinners);
+            } else found = true;
+
+            if (possibleWinners.size() > 1) {
+                possibleWinners = evaluateFavourTokenPoints(possibleWinners);
+            } else found = true;
+
+            if (possibleWinners.size() > 1) {
+                for (Player player : playerList) {
+                    if (possibleWinners.contains(player)) {
+                        winner = player;
+                        found = true;
+                        break;
+                    }
+                }
+            } else found = true;
+
+            if (!found) {
+                for (Player player : possibleWinners) {
+                    winner = player;
+                }
+            }
+        } else {
+            assert winner != null;
+            winner.setScore(0);
         }
 
         return winner;
@@ -710,7 +735,7 @@ public class GameManager {
 
             currentRound.setPlayerEndedTurn(false);
 
-            if (playerList.get(i).getUser().isActive()) {
+            if (playerList.get(i).getUser().isActive() && (disconnectedPlayers.size() != (playerList.size() - 1))) {
                 currentRound.startForPlayer(playerList.get(i));
                 startTimer(40000);
 
@@ -724,7 +749,7 @@ public class GameManager {
             System.out.println("Turn backward " + i + " player " + playerList.get(i));
 
             currentRound.setPlayerEndedTurn(false);
-            if (playerList.get(i).getUser().isActive()) {
+            if (playerList.get(i).getUser().isActive() && (disconnectedPlayers.size() != (playerList.size() - 1))) {
                 currentRound.startForPlayer(playerList.get(i));
                 startTimer(40000);
 
@@ -732,6 +757,8 @@ public class GameManager {
                 waitEndTurn();
             }
         }
+
+        System.out.println("End of turn");
 
         if (!board.getDraftedDice().isEmpty()) {
             roundTrack.add(board.getDraftedDice());

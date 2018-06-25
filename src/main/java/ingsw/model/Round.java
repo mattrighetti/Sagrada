@@ -56,6 +56,8 @@ public class Round implements Runnable {
                 blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
             }
 
+            System.out.println("End of Turn");
+
             playerEndedTurn.set(true);
 
             synchronized (gameManager.cancelTimer) {

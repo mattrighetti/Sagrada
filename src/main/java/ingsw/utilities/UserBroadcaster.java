@@ -1,10 +1,7 @@
 package ingsw.utilities;
 
-import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.*;
 import ingsw.controller.network.socket.UserObserver;
-import ingsw.model.Dice;
-import ingsw.model.Player;
 import ingsw.model.User;
 
 import java.rmi.RemoteException;
@@ -33,7 +30,7 @@ public class UserBroadcaster {
     private List<UserObserver> usersToBroadcast(String usernameToExclude) {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (User user : users.values()) {
-            if (!user.getUsername().equals(usernameToExclude) && !user.isActive()) {
+            if (!user.getUsername().equals(usernameToExclude) && user.isActive()) {
                 try {
                     user.getUserObserver().checkIfActive();
                 } catch (RemoteException e) {
@@ -48,11 +45,13 @@ public class UserBroadcaster {
     private List<UserObserver> usersToBroadcast() {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (User user : users.values()) {
-            try {
-                user.getUserObserver().checkIfActive();
-                playerListToBroadcast.add(user.getUserObserver());
-            } catch (RemoteException e) {
-                System.err.println("RMI Player " + user.getUsername() + " is not active, deactivating user");
+            if (user.isActive()) {
+                try {
+                    user.getUserObserver().checkIfActive();
+                    playerListToBroadcast.add(user.getUserObserver());
+                } catch (RemoteException e) {
+                    System.err.println("RMI Player " + user.getUsername() + " is not active, deactivating user");
+                }
             }
         }
         return playerListToBroadcast;
@@ -60,9 +59,9 @@ public class UserBroadcaster {
 
     public void broadcastResponseToAll(List<TripleString> tripleStrings) {
         if (isBroadcasterActive) {
-            for (User user : users.values()) {
+            for (UserObserver user : usersToBroadcast()) {
                 try {
-                    user.getUserObserver().sendResponse(new RankingDataResponse(tripleStrings));
+                    user.sendResponse(new RankingDataResponse(tripleStrings));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -73,10 +72,12 @@ public class UserBroadcaster {
     public void broadcastResponseToAll(CreateMatchResponse createMatchResponse) {
         if (isBroadcasterActive) {
             for (User user : users.values()) {
-                try {
-                    user.getUserObserver().sendResponse(createMatchResponse);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+                if (user.isActive()) {
+                    try {
+                        user.getUserObserver().sendResponse(createMatchResponse);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         } else System.out.println("Broadcaster is not active");
