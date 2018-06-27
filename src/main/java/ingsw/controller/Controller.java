@@ -69,8 +69,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      */
     public void createMatch() {
         gameManager = new GameManager(playerList, maxTurnSeconds, this);
-        gameManager.pickPatternCards();
-        gameManager.waitForEveryPatternCard();
+        gameManager.waitForEveryPatternCard(gameManager.pickPatternCards());
     }
 
     @Override
@@ -122,26 +121,51 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
         gameManager.draftDiceFromBoard();
     }
 
+    /**
+     * Ack received from a player, it is used to control if every player has received data
+     */
     @Override
     public void sendAck() throws RemoteException {
         gameManager.receiveAck();
     }
 
+    /**
+     *
+     * @param dice selected to place from the player
+     * @param rowIndex the row index where to place the die in the pattern card
+     * @param columnIndex the column index where to place the die in the pattern card
+     * @throws RemoteException may occur during the execution of a remote method call
+     */
     @Override
     public void placeDice(Dice dice, int rowIndex, int columnIndex) throws RemoteException {
         gameManager.placeDiceForPlayer(dice, rowIndex, columnIndex);
     }
 
+    /**
+     * Request to use a tool card
+     * @param toolCardName the tool card's name that the player wants to use
+     */
     @Override
     public void useToolCard(String toolCardName) throws RemoteException {
         gameManager.useToolCard(toolCardName);
     }
 
+    /**
+     * GROZING PLIERS Tool Card move
+     * it calls the game Manager tool card move method
+     * @param grozingPliersRequest contains the die and a flag to specify the increasing or the decreasing choice
+     */
     @Override
     public void toolCardMove(GrozingPliersRequest grozingPliersRequest) throws RemoteException {
         gameManager.grozingPliersMove(grozingPliersRequest.selectedDice, grozingPliersRequest.increase);
     }
 
+    /**
+     * FLUX BRUSH Tool Card move
+     * it calls the game Manager tool card move methods based on the phase of the move
+     * @param fluxBrushRequest contains the index to switch the method based on the phase of the move,
+     *                         it can contains dice and the position where place the die
+     */
     @Override
     public void toolCardMove(FluxBrushRequest fluxBrushRequest) throws RemoteException {
         switch (fluxBrushRequest.phase) {
@@ -160,6 +184,12 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
         }
     }
 
+    /**
+     * FLUX REMOVER Tool Card move
+     * it calls the game Manager tool card move method based on the phase of the move
+     * @param fluxRemoverRequest contains the index to switch the method based on the phase of the move and
+     *                           other data needed for tool card move
+     */
     @Override
     public void toolCardMove(FluxRemoverRequest fluxRemoverRequest) throws RemoteException {
         switch (fluxRemoverRequest.phase) {
@@ -181,45 +211,88 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
         }
     }
 
+    /**
+     * GRINDING STONE Tool Card move
+     * it calls the game Manager tool card move method
+     * @param grindingStoneRequest contains the selected die
+     */
     public void toolCardMove(GrindingStoneRequest grindingStoneRequest) throws RemoteException {
         gameManager.grindingStoneMove(grindingStoneRequest.selectedDice);
     }
 
+    /**
+     * COPPER FOIL BURNISHER Tool Card move
+     * it calls the game Manager tool card move method
+     * @param moveToolCardRequest contains the selected die and the indexes of the position where to place it
+     */
     @Override
     public void toolCardMove(CopperFoilBurnisherRequest moveToolCardRequest) throws RemoteException {
         gameManager.copperFoilBurnisherMove(moveToolCardRequest.dicePosition, moveToolCardRequest.position);
     }
 
+    /**
+     * CORK BACKED STRAIGHTEDGE Tool Card move
+     * it calls the game Manager tool card move method
+     * @param moveToolCardRequest contains the selected die and the indexes of the position where to place it
+     */
     @Override
     public void toolCardMove(CorkBackedStraightedgeRequest moveToolCardRequest) throws RemoteException {
         gameManager.corkBackedStraightedgeMove(moveToolCardRequest.selectedDice, moveToolCardRequest.row, moveToolCardRequest.column);
     }
 
+    /**
+     * LENS CUTTER Tool Card move
+     * it calls the game Manager tool card move method
+     * @param moveToolCardRequest contains the selected die from the round track, round track index and the selected die from drafted dice
+     */
     @Override
     public void toolCardMove(LensCutterRequest moveToolCardRequest) throws RemoteException {
         gameManager.lensCutterMove(moveToolCardRequest.roundIndex, moveToolCardRequest.roundTrackDice, moveToolCardRequest.poolDice);
     }
 
+    /**
+     * EGLOMISE BRUSH Tool Card move
+     * it calls the game Manager tool card move method
+     * @param moveToolCardRequest contains the selected die and the position where to place it
+     */
     @Override
     public void toolCardMove(EglomiseBrushRequest moveToolCardRequest) throws RemoteException {
         gameManager.eglomiseBrushMove(moveToolCardRequest.dicePosition, moveToolCardRequest.position);
     }
 
+    /**
+     * LAHEKIN Tool Card move
+     * it calls the game Manager tool card move method
+     * @param lathekinRequest contains the dice position, the new position and the flag for dice switch
+     */
     @Override
     public void toolCardMove(LathekinRequest lathekinRequest) throws RemoteException {
         gameManager.lathekinMove(lathekinRequest.dicePosition, lathekinRequest.position, lathekinRequest.doubleMove);
     }
 
+    /**
+     * RUNNING PLIERS Tool Card move
+     * it calls the game Manager tool card move method
+     * @param moveToolCardRequest contains the selected die and the position where to place it
+     */
     @Override
     public void toolCardMove(RunningPliersRequest moveToolCardRequest) throws RemoteException {
         gameManager.runningPliersMove(moveToolCardRequest.selectedDice, moveToolCardRequest.rowIndex, moveToolCardRequest.ColumnIndex);
     }
 
+    /**
+     * TAP WHEEL tool card move
+     * it calls the game Manager tool card move method
+     * @param moveToolCardRequest request that contains the die and its positions, the new position and the flag for dice switch
+     */
     @Override
     public void toolCardMove(TapWheelRequest moveToolCardRequest) throws RemoteException {
         gameManager.tapWheelMove(moveToolCardRequest.dice, moveToolCardRequest.phase, moveToolCardRequest.dicePosition, moveToolCardRequest.position, moveToolCardRequest.doubleMove);
     }
 
+    /**
+     *
+     */
     public void removeMatch() {
         sagradaGame.removeMatch(this);
     }

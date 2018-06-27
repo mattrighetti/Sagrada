@@ -3,10 +3,10 @@ package ingsw.utilities;
 import ingsw.controller.Controller;
 import ingsw.controller.network.commands.TimeOutResponse;
 import ingsw.model.GameManager;
+import ingsw.model.cards.patterncard.PatternCard;
 
 import java.rmi.RemoteException;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class ControllerTimer {
     private Timer timer;
@@ -32,10 +32,20 @@ public class ControllerTimer {
         timer.schedule(new EndTurn(gameManager), (long) turnSeconds * 1000);
     }
 
+    public void startPatternCardTimer(int patternCardSeconds, GameManager gameManager, Map<String, List<PatternCard>> patternCards) {
+        timer.schedule(new ChoosePatternCard(gameManager, patternCards), (long) patternCardSeconds * 1000 );
+    }
+
+    /**
+     * Method to stop the timer that is running
+     */
     public void cancelTimer() {
         timer.cancel();
     }
 
+    /**
+     * Task class for Launch Match Timer
+     */
     public class LaunchMatch extends TimerTask {
         Controller controller;
         boolean hasStarted;
@@ -52,6 +62,31 @@ public class ControllerTimer {
         }
     }
 
+    /**
+     * Task class for choosing Pattern Card Timer
+     */
+    class ChoosePatternCard extends TimerTask {
+        GameManager gameManager;
+        Map<String, List<PatternCard>> patternCards;
+
+        public ChoosePatternCard(GameManager gameManager, Map<String, List<PatternCard>> patternCards) {
+            this.gameManager = gameManager;
+            this.patternCards = patternCards;
+        }
+
+        /**
+         * When the time to choose the pattern card expires this task runs
+         * It calls the gameManager method to choose randomly the pattern card for the players
+         */
+        @Override
+        public void run() {
+            gameManager.randomizePatternCards(patternCards);
+        }
+    }
+
+    /**
+     * Task class for End Turn Timer
+     */
     class EndTurn extends TimerTask {
         GameManager gameManager;
 

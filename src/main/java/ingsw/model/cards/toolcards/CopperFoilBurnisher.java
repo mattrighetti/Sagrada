@@ -15,6 +15,12 @@ public class CopperFoilBurnisher extends ToolCard {
 
     /**
      * Move any dice in your window ignoring shade restriction.
+     *
+     * First it controls if Tool card can be used
+     * Then it sends to the client the Copper Foil Burnisher tool card response containing the available positions
+     * without shades restrictions.
+     * Wait the end of the tool card move
+     * Finally it calls the response method in game manager to send the new data to the client
      */
     @Override
     public void action(GameManager gameManager) {

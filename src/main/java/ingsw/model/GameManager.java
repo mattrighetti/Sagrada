@@ -207,13 +207,15 @@ public class GameManager {
     /**
      * Method that will distribute four PatternCards to each Player
      */
-    public void pickPatternCards() {
+    public HashMap pickPatternCards() {
+        HashMap<String, List<PatternCard>> patternCardToChoose = new HashMap<>();
         for (Player player : playerList) {
 
             try {
                 //Need to create another List: subList is not Serializable
                 List<PatternCard> patternCardArrayList = new ArrayList<>(patternCards.subList(0, 4));
                 player.getUserObserver().sendResponse(new PatternCardNotification(patternCardArrayList));
+                patternCardToChoose.put(player.getPlayerUsername(),patternCardArrayList);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -222,6 +224,7 @@ public class GameManager {
                 patternCards.remove(0);
             }
         }
+        return patternCardToChoose;
     }
 
     public int getNoOfCurrentRound() {
@@ -349,12 +352,14 @@ public class GameManager {
      * @param patternCard pattern card chosen by the player
      */
     public void setPatternCardForPlayer(String username, PatternCard patternCard) {
-        for (Player player : playerList) {
-            if (player.getPlayerUsername().equals(username)) {
-                player.setPatternCard(patternCard);
-                receiveAck();
-                synchronized (noOfAck) {
-                    noOfAck.notifyAll();
+        if (noOfAck.get() >= 0) {
+            for (Player player : playerList) {
+                if (player.getPlayerUsername().equals(username)) {
+                    player.setPatternCard(patternCard);
+                    receiveAck();
+                    synchronized (noOfAck) {
+                        noOfAck.notifyAll();
+                    }
                 }
             }
         }
@@ -381,16 +386,58 @@ public class GameManager {
     /**
      * Method that waits for every users to choose a patternCard
      */
-    public void waitForEveryPatternCard() {
+    public void waitForEveryPatternCard(Map<String, List<PatternCard>> patternCardToChoose) {
         new Thread(() -> {
+            ControllerTimer.get().startPatternCardTimer(30,this, patternCardToChoose);
             waitAck();
-            resetAck();
-            BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
-            playerBroadcaster.broadcastResponseToAll(boardDataResponse);
-            this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards);
-            listenForPlayerDisconnection();
-            startMatch();
+
+            if (noOfAck.get() == playerList.size()) {
+                ControllerTimer.get().cancelTimer();
+                resetAck();
+                setBoardAndStartMatch();
+            }
         }).start();
+    }
+
+    /**
+     * Method that choose the patter card of the player who didn't choose in time randomly
+     * Then it starts the match
+     *
+     * @param patternCardToChoose
+     */
+    public void randomizePatternCards (Map<String, List<PatternCard>> patternCardToChoose) {
+        noOfAck.set(-1);
+        for (Player player : playerList) {
+            if (player.getPatternCard() == null){
+                Collections.shuffle(patternCardToChoose.get(player.getPlayerUsername()));
+                player.setPatternCard(patternCardToChoose.get(player.getPlayerUsername()).get(0));
+            }
+        }
+        resetAck();
+        setBoardAndStartMatch();
+    }
+
+    private void setBoardAndStartMatch(){
+        BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
+        playerBroadcaster.broadcastResponseToAll(boardDataResponse);
+        this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards);
+        listenForPlayerDisconnection();
+        startMatch();
+    }
+    /**
+     * Method that is used to keep track of how many users chose their pattern card
+     */
+    private void waitAck() {
+        synchronized (noOfAck) {
+            while (noOfAck.get() < playerList.size()) {
+                try {
+                    noOfAck.wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
@@ -414,21 +461,6 @@ public class GameManager {
         }).start();
     }
 
-    /**
-     * Method that is used to keep track of how many users chose their pattern card
-     */
-    private void waitAck() {
-        synchronized (noOfAck) {
-            while (noOfAck.get() < playerList.size()) {
-                try {
-                    noOfAck.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
         if (!brokenWindow) {

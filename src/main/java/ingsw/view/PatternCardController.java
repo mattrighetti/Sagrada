@@ -78,6 +78,9 @@ public class PatternCardController implements SceneUpdater {
         progressForm.activateProgressBar();
     }
 
+    /**
+     * Method that disables the pattern card buttons
+     */
     private void disablePatternCardButtons(){
         patternCardOne.setDisable(true);
         patternCardTwo.setDisable(true);
@@ -110,10 +113,16 @@ public class PatternCardController implements SceneUpdater {
         );
     }
 
+    /**
+     * After have choosen the patter card, this method launches the Game GUI
+     *
+     * @param boardDataResponse class that contains every object needed to play the game
+     */
     @Override
     public void launchFourthGui(BoardDataResponse boardDataResponse) {
         Platform.runLater(() -> {
-            progressForm.getDialogStage().close();
+            if (patternCardOne.isDisabled() || patternCardTwo.isDisabled() || patternCardThree.isDisabled() || patternCardFour.isDisabled())
+                progressForm.getDialogStage().close();
             application.launchFourthGUI(boardDataResponse);
         });
     }
