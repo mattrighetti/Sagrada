@@ -71,6 +71,10 @@ public class StoppableScanner {
             intRead.cancel(true);
     }
 
+    public boolean isReaderCancelled() {
+        return intRead == null;
+    }
+
     class ConsoleReadLineTask implements Callable<String> {
         @Override
         public String call() throws Exception {

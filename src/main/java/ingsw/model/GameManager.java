@@ -413,7 +413,6 @@ public class GameManager {
                 player.setPatternCard(patternCardToChoose.get(player.getPlayerUsername()).get(0));
             }
         }
-        resetAck();
         setBoardAndStartMatch();
     }
 

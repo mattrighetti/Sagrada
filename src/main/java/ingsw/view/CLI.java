@@ -539,24 +539,26 @@ public class CLI implements SceneUpdater {
      */
     @Override
     public void launchThirdGui(PatternCardNotification patternCardNotification) {
-        int chosenPatternCard;
-        notMoveNext();
-        while (!moveNext.get()) {
-            System.out.println("Now select your Pattern Card:");
+        new Thread(() -> {
+            int chosenPatternCard;
+            notMoveNext();
+            do {
+                System.out.println("Now select your Pattern Card:");
 
 
-            for (int i = 0; i < patternCardNotification.patternCards.size(); i++) {
-                System.out.println((i + 1) + " - "
-                        + patternCardNotification.patternCards.get(i).toString());
-            }
-            chosenPatternCard = userIntegerInput();
+                for (int i = 0; i < patternCardNotification.patternCards.size(); i++) {
+                    System.out.println((i + 1) + " - "
+                                               + patternCardNotification.patternCards.get(i).toString());
+                }
+                chosenPatternCard = userIntegerInput();
 
-            if (0 < chosenPatternCard && chosenPatternCard < (patternCardNotification.patternCards.size() + 1)) {
-                networkType.choosePatternCard(patternCardNotification.patternCards.get(chosenPatternCard - 1));
-                moveNext();
-            } else System.out.println("Not valid Pattern Card selected, choose another one");
+                if (0 < chosenPatternCard && chosenPatternCard < (patternCardNotification.patternCards.size() + 1)) {
+                    networkType.choosePatternCard(patternCardNotification.patternCards.get(chosenPatternCard - 1));
+                    moveNext();
+                }
+            } while (!moveNext.get());
+        }).start();
 
-        }
     }
 
     /**
@@ -569,6 +571,10 @@ public class CLI implements SceneUpdater {
      */
     @Override
     public void launchFourthGui(BoardDataResponse boardDataResponse) {
+        if (!stoppableScanner.isReaderCancelled()){
+            moveNext();
+            stoppableScanner.cancel();
+        }
         System.out.println("You're now in the game");
         loadData(boardDataResponse);
 
@@ -632,53 +638,54 @@ public class CLI implements SceneUpdater {
 
             notMoveNext();
             do {
-                int selectedMove;
-                showPatternCards();
-                System.out.println("It's your turn!\nChoose what move currentPlayerIndex want to do:\n");
+                if (!(placeDiceMove && toolCardUsed.get())) {
+                    int selectedMove;
+                    showPatternCards();
+                    System.out.println("It's your turn!\nChoose what move currentPlayerIndex want to do:\n");
 
-                if (!placeDiceMove)
-                    System.out.println("1 - Place dice");
+                    if (!placeDiceMove)
+                        System.out.println("1 - Place dice");
 
-                if (!toolCardUsed.get())
-                    System.out.println("2 - Use tool card");
+                    if (!toolCardUsed.get())
+                        System.out.println("2 - Use tool card");
 
-                System.out.println("3 - Show Match Story");
+                    System.out.println("3 - Show Match Story");
 
-                System.out.println("4 - End turn");
+                    System.out.println("4 - End turn");
 
 
-                selectedMove = userIntegerInput();
+                    selectedMove = userIntegerInput();
 
-                switch (selectedMove) {
-                    case 1:
-                        if (!placeDiceMove) {
-                            placeDiceMove = placeDice();
-                            if (placeDiceMove) {
-                                //method in wait
-                                gamePhaseWait();
-                            }
-                        } else System.out.println("You have already done this move in this turn");
-                        break;
-                    case 2:
-                        if (!toolCardUsed.get()) {
-                            toolCardMove();
+                    switch (selectedMove) {
+                        case 1:
+                            if (!placeDiceMove) {
+                                placeDiceMove = placeDice();
+                                if (placeDiceMove) {
+                                    //method in wait
+                                    gamePhaseWait();
+                                }
+                            } else System.out.println("You have already done this move in this turn");
+                            break;
+                        case 2:
+                            if (!toolCardUsed.get()) {
+                                if (toolCardMove()) {
+                                    //method in wait
+                                    gamePhaseWait();
+                                }
+                            } else System.out.println("You have already done this move in the turn");
+                            break;
+                        case 3:
+                            showMoveHistory();
 
-                            //method in wait
-                            gamePhaseWait();
-
-                        } else System.out.println("You have already done this move in the turn");
-                        break;
-                    case 3:
-                        showMoveHistory();
-
-                        break;
-                    case 4:
-                        endTurnMove();
-                        moveNext();
-                        break;
-                    default:
-                        System.err.println("Wrong input");
-                }
+                            break;
+                        case 4:
+                            endTurnMove();
+                            moveNext();
+                            break;
+                        default:
+                            System.err.println("Wrong input");
+                    }
+                } else moveNext();
 
             } while (!moveNext.get());
         });
@@ -909,6 +916,7 @@ public class CLI implements SceneUpdater {
         moveNext.set(true);
         stoppableScanner.cancel();
         toolCardUsed.set(false);
+        System.out.println("Your Turn is ended!");
     }
 
     /**
@@ -927,7 +935,7 @@ public class CLI implements SceneUpdater {
      *
      * Show available Tool Cards and makes the user choose one to use
      */
-    private void toolCardMove() {
+    private boolean toolCardMove() {
         int chosenToolCard;
         do {
             System.out.println("Choose a Tool Card:\n");
@@ -937,15 +945,15 @@ public class CLI implements SceneUpdater {
             }
             chosenToolCard = userIntegerInput() -1;
 
-            if (chosenToolCard >= 0 && chosenToolCard < toolCards.size())
+            if (chosenToolCard >= 0 && chosenToolCard < toolCards.size()) {
                 networkType.useToolCard(toolCards.get(chosenToolCard));
-            else if (chosenToolCard == 0) {
-
-                //Notify lock on gamePhase
-                notifyGamePhase();
+                return true;
+            } else if ((chosenToolCard + 1) == 0) {
+                return false;
             }
 
-        } while (!(0 <= chosenToolCard && chosenToolCard < toolCards.size()));
+        } while (!(-1 <= chosenToolCard && chosenToolCard < toolCards.size()));
+        return false;
     }
 
     /**
@@ -1199,20 +1207,21 @@ public class CLI implements SceneUpdater {
 
                     if (checkAndShowAvailablePositions(useToolCardResponse.selectedDice.toString())) {
 
-                        int selecteRow = chooseRowIndex();
+                        int selectedRow = chooseRowIndex();
 
                         int selectedColumn = chooseColumnIndex();
 
-                        if (availablePosition.get(useToolCardResponse.selectedDice.toString())[selecteRow][selectedColumn]) {
+                        if (availablePosition.get(useToolCardResponse.selectedDice.toString())[selectedRow][selectedColumn]) {
                             dicePlaced = true;
-                            networkType.fluxBrushMove(useToolCardResponse.selectedDice, selecteRow, selectedColumn);
+                            networkType.fluxBrushMove(useToolCardResponse.selectedDice, selectedRow, selectedColumn);
                         } else System.out.println("You can't place this dice in this position, choose another one\n");
 
                     } else {
                         System.out.println("This die can't be placed\n");
                         networkType.fluxBrushMove();
+                        dicePlaced = true;
                     }
-                } while (dicePlaced);
+                } while (!dicePlaced);
                 break;
         }
         toolCardUsed.set(true);
@@ -1317,18 +1326,18 @@ public class CLI implements SceneUpdater {
         do {
             System.out.println("Choose the row index:\n");
             rowIndex = userIntegerInput();
-            if (rowIndex < 0 || rowIndex >= 4) System.out.println("Wrong input\n");
-        } while (rowIndex < 0 || rowIndex > 4);
+            if (!(0 <= rowIndex && rowIndex < 4)) System.out.println("Wrong input\n");
+        } while (!(0 <= rowIndex && rowIndex < 4));
         return rowIndex;
     }
 
     private int chooseColumnIndex(){
-        int columnIndex = -1;
+        int columnIndex;
         do {
             System.out.println("Choose the column index:\n");
             columnIndex = userIntegerInput();
-            if (columnIndex < 0 || columnIndex >= 5) System.out.println("Wrong input\n");
-        } while (columnIndex < 0 || columnIndex > 5);
+            if (!(0 <= columnIndex && columnIndex < 5)) System.out.println("Wrong input\n");
+        } while (!(0 <= columnIndex && columnIndex < 5));
         return columnIndex;
     }
 
@@ -1355,7 +1364,7 @@ public class CLI implements SceneUpdater {
 
             dicePlaced = moveDiceInPatternCard(rowOne, columnOne);
 
-        } while (dicePlaced);
+        } while (!dicePlaced);
         toolCardUsed.set(true);
     }
 
@@ -1453,7 +1462,10 @@ public class CLI implements SceneUpdater {
                         return true;
                     } else System.out.println("Wrong position input\n");
 
-                } else System.out.println("You can't place this dice, choose another one\n");
+                } else {
+                    System.out.println("You can't place this dice,\n");
+                    return true;
+                }
 
             } while (true);
         }
@@ -1505,6 +1517,7 @@ public class CLI implements SceneUpdater {
         int selectedRow;
         int selectedColumn;
         boolean dicePlaced = false;
+        updateAvailablePositions(useToolCardResponse.availablePositions);
         do {
 
             selectedDice = selectDiceFromDrafted();
