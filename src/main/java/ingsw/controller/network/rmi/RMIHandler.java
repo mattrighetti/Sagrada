@@ -19,6 +19,9 @@ public class RMIHandler implements RequestHandler {
     private RemoteController remoteController;
     private User user;
 
+    private final String RMI_SLASH ="rmi://";
+    private final String RMI_PORT = ":1099/";
+
     /**
      * RMIHandler constructor which retrieves SagradaGame and sets
      *
@@ -28,7 +31,7 @@ public class RMIHandler implements RequestHandler {
     RMIHandler(RMIController rmiController, RMIUserObserver rmiUserObserver, String ipAddress) {
         this.ipAddress = ipAddress;
         try {
-            this.sagradaGame = (RemoteSagradaGame) Naming.lookup("rmi://" + ipAddress + ":1100/sagrada");
+            this.sagradaGame = (RemoteSagradaGame) Naming.lookup(rebindSagradaUrl(ipAddress));
         } catch (RemoteException | MalformedURLException e) {
             System.err.println("Could not retrieve SagradaGame");
             e.printStackTrace();
@@ -38,6 +41,18 @@ public class RMIHandler implements RequestHandler {
         }
         this.rmiController = rmiController;
         this.rmiUserObserver = rmiUserObserver;
+    }
+
+    private String rebindSagradaUrl(String ipAddress) {
+        return RMI_SLASH + ipAddress + RMI_PORT + "sagrada";
+    }
+
+    private String rebindControllerUrl(String ipAddress, JoinMatchRequest joinMatchRequest) {
+        return RMI_SLASH + ipAddress + RMI_PORT + joinMatchRequest.matchName;
+    }
+
+    private String rebindControllerUrl(String ipAddress, ReJoinMatchRequest reJoinMatchRequest) {
+        return RMI_SLASH + ipAddress + RMI_PORT + reJoinMatchRequest.matchName;
     }
 
     @Override
@@ -85,7 +100,7 @@ public class RMIHandler implements RequestHandler {
 
     @Override
     public Response handle(MoveToolCardRequest moveToolCardRequest) {
-        switch (moveToolCardRequest.toolCardType){
+        switch (moveToolCardRequest.toolCardType) {
             case GROZING_PLIERS:
                 try {
                     remoteController.toolCardMove(((GrozingPliersRequest) moveToolCardRequest));
@@ -172,7 +187,7 @@ public class RMIHandler implements RequestHandler {
         try {
             sagradaGame.loginUserToController(joinMatchRequest.matchName, user.getUsername());
             try {
-                remoteController = (RemoteController) Naming.lookup("rmi://"+ ipAddress +":1099/" + joinMatchRequest.matchName);
+                remoteController = (RemoteController) Naming.lookup(rebindControllerUrl(ipAddress, joinMatchRequest));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -187,7 +202,7 @@ public class RMIHandler implements RequestHandler {
     public Response handle(ReJoinMatchRequest reJoinMatchRequest) {
         try {
             sagradaGame.loginPrexistentPlayer(reJoinMatchRequest.matchName, user);
-            remoteController = (RemoteController) Naming.lookup("rmi://" + ipAddress + ":1099/" + reJoinMatchRequest.matchName);
+            remoteController = (RemoteController) Naming.lookup(rebindControllerUrl(ipAddress, reJoinMatchRequest));
         } catch (NotBoundException | RemoteException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
