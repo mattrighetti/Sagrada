@@ -6,11 +6,10 @@ import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.ControllerTimer;
 
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Controller extends UnicastRemoteObject implements RemoteController {
+public class Controller  implements RemoteController {
     private String matchName;
     private boolean hasStarted;
     private SagradaGame sagradaGame;
@@ -20,8 +19,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
     private int maxJoinMatchSeconds;
 
     public Controller(String matchName, int maxTurnSeconds,
-                      int maxJoinMatchSeconds, SagradaGame sagradaGame) throws RemoteException {
-        super();
+                      int maxJoinMatchSeconds, SagradaGame sagradaGame) {
         hasStarted = false;
         this.sagradaGame = sagradaGame;
         this.matchName = matchName;

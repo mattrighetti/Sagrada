@@ -1,6 +1,7 @@
 package ingsw.model;
 
 import ingsw.controller.Controller;
+import ingsw.controller.RemoteController;
 import ingsw.controller.network.commands.*;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -214,10 +216,11 @@ public class SagradaGame implements RemoteSagradaGame {
         Controller controller;
         if (!matchesByName.containsKey(matchName)) {
             controller = new Controller(matchName, maxTurnSeconds, maxJoinMatchSeconds,this);
+            RemoteController remoteController = (RemoteController) UnicastRemoteObject.exportObject(controller, 1100);
             matchesByName.put(matchName, controller);
 
             try {
-                Naming.rebind("rmi://localhost:1099/" + matchName, controller);
+                Naming.rebind("rmi://localhost:1099/" + matchName, remoteController);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
