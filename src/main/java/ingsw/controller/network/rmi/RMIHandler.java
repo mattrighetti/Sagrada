@@ -19,8 +19,8 @@ public class RMIHandler implements RequestHandler {
     private RemoteController remoteController;
     private User user;
 
-    private final String RMI_SLASH ="rmi://";
-    private final String RMI_PORT = ":1099/";
+    private static final String RMI_SLASH = "rmi://";
+    private static final String RMI_PORT = ":1099/";
 
     /**
      * RMIHandler constructor which retrieves SagradaGame and sets
@@ -100,84 +100,46 @@ public class RMIHandler implements RequestHandler {
 
     @Override
     public Response handle(MoveToolCardRequest moveToolCardRequest) {
-        switch (moveToolCardRequest.toolCardType) {
-            case GROZING_PLIERS:
-                try {
+        try {
+            switch (moveToolCardRequest.toolCardType) {
+                case GROZING_PLIERS:
                     remoteController.toolCardMove(((GrozingPliersRequest) moveToolCardRequest));
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case FLUX_REMOVER:
-                try {
+                    break;
+                case FLUX_REMOVER:
                     remoteController.toolCardMove((FluxRemoverRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case FLUX_BRUSH:
-                try {
+                    break;
+                case FLUX_BRUSH:
                     remoteController.toolCardMove((FluxBrushRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case GRINDING_STONE:
-                try {
+                    break;
+                case GRINDING_STONE:
                     remoteController.toolCardMove((GrindingStoneRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case COPPER_FOIL_BURNISHER:
-                try {
+                    break;
+                case COPPER_FOIL_BURNISHER:
                     remoteController.toolCardMove((CopperFoilBurnisherRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case CORK_BACKED_STRAIGHT_EDGE:
-                try {
+                    break;
+                case CORK_BACKED_STRAIGHT_EDGE:
                     remoteController.toolCardMove((CorkBackedStraightedgeRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case LENS_CUTTER:
-                try {
+                    break;
+                case LENS_CUTTER:
                     remoteController.toolCardMove((LensCutterRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case EGLOMISE_BRUSH:
-                try {
+                    break;
+                case EGLOMISE_BRUSH:
                     remoteController.toolCardMove((EglomiseBrushRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case LATHEKIN:
-                try {
+                    break;
+                case LATHEKIN:
                     remoteController.toolCardMove((LathekinRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case RUNNING_PLIERS:
-                try {
+                    break;
+                case RUNNING_PLIERS:
                     remoteController.toolCardMove((RunningPliersRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case TAP_WHEEL:
-                try {
+                    break;
+                case TAP_WHEEL:
                     remoteController.toolCardMove((TapWheelRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
+                    break;
+                default:
+                    break;
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -186,13 +148,9 @@ public class RMIHandler implements RequestHandler {
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {
             sagradaGame.loginUserToController(joinMatchRequest.matchName, user.getUsername());
-            try {
-                remoteController = (RemoteController) Naming.lookup(rebindControllerUrl(ipAddress, joinMatchRequest));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            remoteController = (RemoteController) Naming.lookup(rebindControllerUrl(ipAddress, joinMatchRequest));
             return new JoinedMatchResponse(true);
-        } catch (RemoteException | NotBoundException e) {
+        } catch (RemoteException | NotBoundException | MalformedURLException e) {
             e.printStackTrace();
             return new JoinedMatchResponse(false);
         }

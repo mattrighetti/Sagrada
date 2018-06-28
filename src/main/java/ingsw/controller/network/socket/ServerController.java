@@ -15,7 +15,7 @@ public class ServerController implements RequestHandler, Serializable {
     private transient Controller controller;
     private User user;
 
-    public ServerController(ClientHandler clientHandler) throws RemoteException {
+    ServerController(ClientHandler clientHandler) {
         this.clientHandler = clientHandler;
         sagradaGame = SagradaGame.get();
     }
@@ -119,78 +119,47 @@ public class ServerController implements RequestHandler, Serializable {
 
     @Override
     public Response handle(MoveToolCardRequest moveToolCardRequest) {
-        switch (moveToolCardRequest.toolCardType){
-            case GROZING_PLIERS:
-                try {
+        try {
+            switch (moveToolCardRequest.toolCardType) {
+                case GROZING_PLIERS:
                     controller.toolCardMove(((GrozingPliersRequest) moveToolCardRequest));
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case FLUX_BRUSH:
-                try {
+                    break;
+                case FLUX_BRUSH:
                     controller.toolCardMove((FluxBrushRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case FLUX_REMOVER:
-                try {
+                    break;
+                case FLUX_REMOVER:
                     controller.toolCardMove((FluxRemoverRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case GRINDING_STONE:
-                try {
+                    break;
+                case GRINDING_STONE:
                     controller.toolCardMove((GrindingStoneRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case COPPER_FOIL_BURNISHER:
-                try {
+                    break;
+                case COPPER_FOIL_BURNISHER:
                     controller.toolCardMove((CopperFoilBurnisherRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case CORK_BACKED_STRAIGHT_EDGE:
-                try {
+                    break;
+                case CORK_BACKED_STRAIGHT_EDGE:
                     controller.toolCardMove((CorkBackedStraightedgeRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case LENS_CUTTER:
-                try {
+                    break;
+                case LENS_CUTTER:
                     controller.toolCardMove((LensCutterRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case LATHEKIN:
-                try {
+                    break;
+                case EGLOMISE_BRUSH:
+                    controller.toolCardMove((EglomiseBrushRequest) moveToolCardRequest);
+                    break;
+                case LATHEKIN:
                     controller.toolCardMove((LathekinRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case TAP_WHEEL:
-                try {
-                    controller.toolCardMove((TapWheelRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case RUNNING_PLIERS:
-                try {
+                    break;
+                case RUNNING_PLIERS:
                     controller.toolCardMove((RunningPliersRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+                    break;
+                case TAP_WHEEL:
+                    controller.toolCardMove((TapWheelRequest) moveToolCardRequest);
+                    break;
+                default:
+                    break;
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
-
         return null;
     }
 
