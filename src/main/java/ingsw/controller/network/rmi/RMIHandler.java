@@ -28,7 +28,7 @@ public class RMIHandler implements RequestHandler {
     RMIHandler(RMIController rmiController, RMIUserObserver rmiUserObserver, String ipAddress) {
         this.ipAddress = ipAddress;
         try {
-            this.sagradaGame = (RemoteSagradaGame) Naming.lookup("rmi://" + ipAddress + ":1099/sagrada");
+            this.sagradaGame = (RemoteSagradaGame) Naming.lookup("rmi://" + ipAddress + ":1100/sagrada");
         } catch (RemoteException | MalformedURLException e) {
             System.err.println("Could not retrieve SagradaGame");
             e.printStackTrace();

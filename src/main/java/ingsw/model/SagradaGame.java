@@ -15,22 +15,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGame {
+public class SagradaGame implements RemoteSagradaGame {
     private static SagradaGame sagradaGameSingleton;
-    transient Map<String, Controller> matchesByName; // List of all open matches
-    private transient Map<String, User> connectedUsers; // List of connected users
+    Map<String, Controller> matchesByName; // List of all open matches
+    private Map<String, User> connectedUsers; // List of connected users
 
     private int maxTurnSeconds;
     private int maxJoinMatchSeconds;
 
     private UserBroadcaster userBroadcaster;
 
-    private SagradaGame() throws RemoteException {
-        super();
+    private SagradaGame() {
         connectedUsers = new HashMap<>();
         matchesByName = new HashMap<>();
         userBroadcaster = new UserBroadcaster(connectedUsers);
@@ -38,7 +36,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         maxTurnSeconds = 120;
     }
 
-    public static SagradaGame get() throws RemoteException {
+    public static SagradaGame get() {
         if (sagradaGameSingleton == null) {
             sagradaGameSingleton = new SagradaGame();
         }
