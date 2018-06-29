@@ -2,9 +2,12 @@ package ingsw.model.cards.toolcards;
 
 import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.TapWheelResponse;
+import ingsw.model.Dice;
 import ingsw.model.GameManager;
 
 import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Optional;
 
 public class TapWheel extends ToolCard {
 
@@ -19,13 +22,19 @@ public class TapWheel extends ToolCard {
     @Override
     public void action(GameManager gameManager) {
 
-        if (gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().isGridEmpty()) {
+
+        int diceInRoundTrack = gameManager.getRoundTrack().stream()
+                .mapToInt(List::size)
+                .reduce(0, (sum,x) -> sum + x);
+
+        System.out.println("Dices in round track\t\t\t" + diceInRoundTrack);
+
+        if (gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().isGridEmpty() || (diceInRoundTrack < 1)) {
             try {
                 gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse(gameManager.getCurrentRound().getCurrentPlayer().getFavourTokens()));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            gameManager.getCurrentRound().toolCardMoveDone();
             return;
         }
 

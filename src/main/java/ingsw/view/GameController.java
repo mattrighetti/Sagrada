@@ -1115,7 +1115,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.showAndWait();
 
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
-            windowControllerList.get(0).enableDice(useToolCardResponse.patternCard);
+            windowControllerList.get(0).enableDice(useToolCardResponse.player.getPatternCard());
             windowControllerList.get(0).moveDiceinPatternCardLathekin();
         });
     }
@@ -1233,7 +1233,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             case 2:
                 Platform.runLater(
                         () -> {
-                            windowControllerList.get(0).updatePatternCardTapWheel(useToolCardResponse.patternCard);
+                            windowControllerList.get(0).updatePatternCardTapWheel(useToolCardResponse.player.getPatternCard());
                             ButtonType yes = new ButtonType("Yes");
                             ButtonType no = new ButtonType("No");
                             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you want to place another dice?", yes, no);

@@ -976,6 +976,46 @@ class PatternCardTest {
 
     @Test
     void computeAvailablePositionsTapWheel() {
+        patternCard = new Bellesguard();
+        List<Dice> diceList = new ArrayList<>();
+        Map<String,Boolean[][]> resultMap;
+
+
+        Dice dice = new Dice(Color.BLUE);
+        dice.setFaceUpValue(6);
+        patternCard.grid.get(0).get(1).insertDice(dice);
+
+        dice = new Dice(Color.BLUE);
+        dice.setFaceUpValue(6);
+        patternCard.grid.get(1).get(2).insertDice(dice);
+
+        dice = new Dice(Color.GREEN);
+        dice.setFaceUpValue(1);
+        patternCard.grid.get(2).get(0).insertDice(dice);
+
+        dice = new Dice(Color.YELLOW);
+        dice.setFaceUpValue(2);
+        patternCard.grid.get(3).get(0).insertDice(dice);
+
+        resultMap = patternCard.computeAvailablePositionsTapWheel(new Dice(Color.BLUE), true);
+
+        //Grid expected for 1-2
+        Boolean[][] resultGrid = new Boolean[4][5];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                resultGrid[i][j] = false;
+            }
+        }
+        resultGrid[0][1] = true;
+        resultGrid[1][0] = true;
+
+        //assert for 1-2
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                System.out.println(i +" " + j);
+                assertEquals(resultGrid[i][j], resultMap.get("Blue601")[i][j]);
+            }
+        }
     }
 
     @Test

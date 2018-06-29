@@ -49,12 +49,14 @@ public class StoppableScanner {
                 inputInt = -1;
             } catch (IllegalStateException e) {
                 System.err.println("Time OUT triggers (Illegal State Exception)");
+                inputInt = -1;
             } catch (ExecutionException e) {
                 System.err.println("Interrupted READ INT");
+                inputInt = -1;
             } catch (InterruptedException e) {
                 System.err.println("Interrupted READ INT");
                 Thread.currentThread().interrupt();
-                executorService.shutdown();
+                inputInt = -1;
             }
 
         } finally {

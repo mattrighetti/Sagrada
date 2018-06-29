@@ -57,15 +57,16 @@ public class GameManager {
     private Set<Player> disconnectedPlayers;
     private PlayerBroadcaster playerBroadcaster;
     private final AtomicBoolean endOfMatch;
+    private final ControllerTimer controllerTimer;
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
      * assigning to each of them a PrivateObjectiveCard and asking them to choose a PatternCard.
-     *
-     * @param players        players that joined the match
+     *  @param players        players that joined the match
      * @param maxTurnSeconds max seconds that a user should use to complete a turn
+     * @param controllerTimer
      */
-    public GameManager(List<Player> players, int maxTurnSeconds, Controller controller) {
+    public GameManager(List<Player> players, int maxTurnSeconds, Controller controller, ControllerTimer controllerTimer) {
         brokenWindow = false;
         playerList = players;
         this.controller = controller;
@@ -81,6 +82,7 @@ public class GameManager {
         disconnectedPlayers = new HashSet<>();
         playerBroadcaster = new PlayerBroadcaster(players);
         endOfMatch = new AtomicBoolean(false);
+        this.controllerTimer = controllerTimer;
         setUpGameManager();
     }
 
@@ -190,8 +192,14 @@ public class GameManager {
      * @return three randomly picked ToolCards
      */
     private List<ToolCard> chooseToolCards() {
-        Collections.shuffle(toolCards);
-        return new ArrayList<>(this.toolCards.subList(0, 3));
+        //Collections.shuffle(toolCards);
+        //return new ArrayList<>(this.toolCards.subList(0, 3));
+        List<ToolCard> toolCardList = new LinkedList<>();
+        toolCardList.add(new Lathekin());
+        toolCardList.add(new RunningPliers());
+        toolCardList.add(new TapWheel());
+        return toolCardList;
+
     }
 
     /**
@@ -229,6 +237,11 @@ public class GameManager {
 
     public int getNoOfCurrentRound() {
         return roundTrack.size() + 1;
+    }
+
+
+    public List<List<Dice>> getRoundTrack() {
+        return roundTrack;
     }
 
     private void deleteMatch() {
@@ -388,11 +401,11 @@ public class GameManager {
      */
     public void waitForEveryPatternCard(Map<String, List<PatternCard>> patternCardToChoose) {
         new Thread(() -> {
-            ControllerTimer.get().startPatternCardTimer(30,this, patternCardToChoose);
+            controllerTimer.startPatternCardTimer(30,this, patternCardToChoose);
             waitAck();
 
             if (noOfAck.get() == playerList.size()) {
-                ControllerTimer.get().cancelTimer();
+                controllerTimer.cancelTimer();
                 resetAck();
                 setBoardAndStartMatch();
             }
@@ -406,7 +419,6 @@ public class GameManager {
      * @param patternCardToChoose
      */
     public void randomizePatternCards (Map<String, List<PatternCard>> patternCardToChoose) {
-        noOfAck.set(-1);
         for (Player player : playerList) {
             if (player.getPatternCard() == null){
                 Collections.shuffle(patternCardToChoose.get(player.getPlayerUsername()));
@@ -414,6 +426,11 @@ public class GameManager {
             }
         }
         setBoardAndStartMatch();
+        resetAck();
+
+        synchronized (noOfAck) {
+            noOfAck.notifyAll();
+        }
     }
 
     private void setBoardAndStartMatch(){
@@ -786,13 +803,13 @@ public class GameManager {
     }
 
     private void executeTurn(int playerIndex, String turnState) {
-        System.out.println(turnState + playerIndex + " player " + playerList.get(playerIndex));
+        System.out.println(turnState + playerIndex + " player " + playerList.get(playerIndex).getPlayerUsername());
 
         currentRound.setPlayerEndedTurn(false);
 
         if (playerList.get(playerIndex).getUser().isActive() && (disconnectedPlayers.size() != (playerList.size() - 1))) {
             currentRound.startForPlayer(playerList.get(playerIndex));
-            startTimer(40000);
+            startTimer(10000000);
 
             //wait until turn has ended
             waitEndTurn();
@@ -1198,16 +1215,19 @@ public class GameManager {
     public void eglomiseBrushResponse() {
         playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
         currentRound.toolCardMoveDone();
-        ControllerTimer.get().cancelTimer();
+        //todo Check what is this for
+        controllerTimer.cancelTimer();
     }
 
     public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
         List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
         if (patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
             if (!doubleMove) {
+                System.out.println("Lathekin single move");
                 patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
                 patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
             } else {
+                System.out.println("Lathekin second move");
                 Dice dice = patternCard.get(position.getFirst()).get(position.getSecond()).getDice();
                 patternCard.get(position.getFirst()).get(position.getSecond()).removeDice();
                 patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
@@ -1217,10 +1237,13 @@ public class GameManager {
             }
         } else
             System.out.println("Lathekin: Error invalid selected dice");
+
+        System.out.println("Waking up toolcard thread");
         wakeUpToolCardThread();
     }
 
     public void lathekinResponse() {
+        System.out.println("sending Lathekin response");
         playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
     }
 
@@ -1230,6 +1253,7 @@ public class GameManager {
     }
 
     public void runningPliersResponse() {
+        currentRound.toolCardMoveDone();
         playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(getDraftedDice(), true));
     }
@@ -1242,12 +1266,12 @@ public class GameManager {
         if (phase == -1) {
             setDoubleMove(true);
             wakeUpToolCardThread();
-            tapWheelResponse(null, getCurrentRound().getCurrentPlayer().getPatternCard(), 3);
+            tapWheelResponse(null, 3);
         }
         if (phase == 0) {
             System.out.println("Calculating the mask");
             Map<String, Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsTapWheel(roundTrackDice, false);
-            tapWheelResponse(availablePositions, currentRound.getCurrentPlayer().getPatternCard(), 1);
+            tapWheelResponse(availablePositions, 1);
         }
         if (phase == 1) {
             List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
@@ -1264,7 +1288,7 @@ public class GameManager {
 
                 wakeUpToolCardThread();
 
-                tapWheelResponse(hashMapGrid, currentRound.getCurrentPlayer().getPatternCard(), 2);
+                tapWheelResponse(hashMapGrid, 2);
             } else {
                 System.out.println("doubleMove");
                 Dice dice = patternCard.get(position.getFirst()).get(position.getSecond()).getDice();
@@ -1274,7 +1298,7 @@ public class GameManager {
                 patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).insertDice(dice);
                 setDoubleMove(true);
                 wakeUpToolCardThread();
-                tapWheelResponse(null, getCurrentRound().getCurrentPlayer().getPatternCard(), 3);
+                tapWheelResponse(null, 3);
             }
         }
         if (phase == 2) {
@@ -1284,7 +1308,7 @@ public class GameManager {
                 patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
 
                 wakeUpToolCardThread();
-                tapWheelResponse(null, getCurrentRound().getCurrentPlayer().getPatternCard(), 3);
+                tapWheelResponse(null, 3);
 
             }
         }
@@ -1294,10 +1318,10 @@ public class GameManager {
         this.doubleMove.set(doubleMove);
     }
 
-    private void tapWheelResponse(Map<String, Boolean[][]> availablePositions, PatternCard patternCard, int phase) {
+    private void tapWheelResponse(Map<String, Boolean[][]> availablePositions, int phase) {
         if (phase == 1) {
             try {
-                getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TapWheelResponse(availablePositions, patternCard, 1));
+                getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TapWheelResponse(availablePositions,  getCurrentRound().getCurrentPlayer(), 1));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -1305,7 +1329,7 @@ public class GameManager {
 
         if (phase == 2) {
             try {
-                getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TapWheelResponse(availablePositions, patternCard, 2));
+                getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TapWheelResponse(availablePositions, getCurrentRound().getCurrentPlayer(), 2));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

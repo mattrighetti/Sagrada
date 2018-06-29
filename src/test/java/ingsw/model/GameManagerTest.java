@@ -5,6 +5,7 @@ import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.ToolCard;
+import ingsw.utilities.ControllerTimer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,8 @@ class GameManagerTest {
         players.add(new Player(new User("b")));
         players.add(new Player(new User("c")));
         players.add(new Player(new User("d")));
-        gameManager = new GameManager(players, 10, new Controller("Match", 10, 10, SagradaGame.get()));
+        ControllerTimer controllerTimer = new ControllerTimer();
+        gameManager = new GameManager(players, 10, new Controller("Match", 10, 10, SagradaGame.get()), controllerTimer);
     }
 
     @Test

@@ -31,29 +31,35 @@ public class Lathekin extends ToolCard {
         }
 
 
-        if (!gameManager.getdoubleMove()) {
-            try {
-                PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
-                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(patternCard, patternCard.computeAvailablePositionsLathekin()));
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-            waitForToolCardAction(gameManager);
-            gameManager.lathekinResponse();
-        } else {
-            gameManager.lathekinResponse();
-            return;
-        }
-
         try {
             PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
-            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(patternCard, patternCard.computeAvailablePositions()));
+            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(gameManager.getCurrentRound().getCurrentPlayer(), patternCard.computeAvailablePositions(), false));
+            System.out.println("sending data for the first lathekin move");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        System.out.println("thread goes in wait 1");
         waitForToolCardAction(gameManager);
-        gameManager.lathekinResponse();
+        System.out.println("thread is now awake 1");
 
+
+        if (!gameManager.getdoubleMove()) {
+            try {
+                PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
+                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(gameManager.getCurrentRound().getCurrentPlayer(), patternCard.computeAvailablePositionsLathekin(), true));
+                System.out.println("sending data for the second lathekin move");
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            System.out.println("thread goes in wait 2");
+            waitForToolCardAction(gameManager);
+            System.out.println("thread is now awake 2");
+            gameManager.lathekinResponse();
+        } else {
+            System.out.println("Double move done");
+            gameManager.lathekinResponse();
+            return;
+        }
 
         gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.setDoubleMove(false);

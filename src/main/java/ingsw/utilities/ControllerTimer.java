@@ -12,16 +12,8 @@ public class ControllerTimer {
     private Timer timer;
     private static ControllerTimer controllerTimer;
 
-    private ControllerTimer() {
+    public ControllerTimer() {
         this.timer = new Timer("TimerThread");
-    }
-
-    public static ControllerTimer get() {
-        if (controllerTimer == null) {
-            controllerTimer = new ControllerTimer();
-        }
-
-        return controllerTimer;
     }
 
     public void startLoginTimer(int loginSeconds, Controller controller, boolean hasStarted) {
