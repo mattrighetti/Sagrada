@@ -722,10 +722,10 @@ public class CLI implements SceneUpdater {
      */
     private void showRoundTrack(){
         if (!roundTrack.isEmpty()) {
-            for (int i = 1; i <= roundTrack.size(); i++) {
-                System.out.println("Round " + i + ":\t");
-                for (int j = 1; j <= roundTrack.get(i).size(); j++) {
-                    System.out.println(j + " - " + roundTrack.get(i).get(j).toString() + "\t");
+            for (int i = 0; i < roundTrack.size(); i++) {
+                System.out.println("Round " + (i + 1) + ":\t");
+                for (int j = 0; j < roundTrack.get(i).size(); j++) {
+                    System.out.println( (j + 1) + " - " + roundTrack.get(i).get(j).toString() + "\t");
                 }
                 System.out.println("\n");
             }
@@ -987,6 +987,7 @@ public class CLI implements SceneUpdater {
     @Override
     public void updateView(UpdateViewResponse updateViewResponse) {
         updatePatternCard(updateViewResponse.player);
+        updateAvailablePositions(updateViewResponse.availablePositions);
         System.out.println(updateViewResponse.player.getPlayerUsername() + " placed a die");
         showPatternCardPlayer(updateViewResponse.player);
 
@@ -1626,7 +1627,7 @@ public class CLI implements SceneUpdater {
 
         switch (useToolCardResponse.phase) {
             case 0:
-                int selectedRound = -1;
+                int selectedRound;
                 System.out.println("Tap Wheel\nChoose a dice from the round track and move at most two dice in the pattern with the same color");
                 showRoundTrack();
                 if (!roundTrack.isEmpty()) {
