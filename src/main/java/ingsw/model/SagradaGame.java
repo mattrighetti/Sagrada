@@ -249,6 +249,7 @@ public class SagradaGame implements RemoteSagradaGame {
                 if (player.getPlayerUsername().equals(newUser.getUsername()) && !player.getUser().isActive()) {
                     System.out.println("n");
                     System.out.println("SagradaGame: re-activating User " + newUser.getUsername());
+                    newUser.setReady(true);
                     player.updateUser(newUser);
                     System.out.println("Player has been updated, it's now back online");
                 }
@@ -294,6 +295,7 @@ public class SagradaGame implements RemoteSagradaGame {
             if (user.getUsername().equals(disconnectedUser.getUsername())) {
                 System.out.println("F");
                 user.setActive(false);
+                user.setReady(false);
             }
         }
     }

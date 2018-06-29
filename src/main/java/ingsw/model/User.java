@@ -19,6 +19,7 @@ public class User implements Serializable {
     private String username;
     private int positionInRanking;
     private boolean active;
+    private boolean ready;
     private UserObserver userObserver;
     private int noOfWins;
     private int noOfLose;
@@ -26,10 +27,11 @@ public class User implements Serializable {
     private transient StopWatch stopWatch;
 
     public User(String username) {
-        this.username = username;
-        this.active = true;
+        active = true;
+        ready = true;
         matchesPlayed = new LinkedList<>();
         this.stopWatch = new StopWatch();
+        this.username = username;
         stopWatch.start();
     }
 
@@ -82,6 +84,14 @@ public class User implements Serializable {
 
     public boolean isActive() {
         return active;
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 
     private long getActiveTime() {
