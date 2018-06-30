@@ -1067,12 +1067,15 @@ public class GameManager {
 
             FluxBrush fluxBrush = null;
             for (ToolCard toolCard : toolCards ) {
-                if (toolCard.getName().equals("FluxBrush"));
-                fluxBrush = (FluxBrush) toolCard;
+                if (toolCard.getName().equals("FluxBrush"))
+                    fluxBrush = (FluxBrush) toolCard;
             }
 
             assert fluxBrush != null;
-            fluxBrush.setTemporaryDraftedDice(getDraftedDice());
+
+            List<Dice> list = new ArrayList<>();
+            list.addAll(getDraftedDice());
+            fluxBrush.setTemporaryDraftedDice(list);
 
             for (Dice diceInPool : fluxBrush.getTemporaryDraftedDice()) {
                 if (selectedDice.toString().equals(diceInPool.toString())) {
@@ -1090,16 +1093,18 @@ public class GameManager {
     }
 
     public void fluxBrushMove(Dice dice, int rowIndex, int columnIndex) {
-        if(toolCardLock.get()){
+        if (toolCardLock.get()) {
             FluxBrush fluxBrush = null;
             for (ToolCard toolCard : toolCards) {
-                fluxBrush = (FluxBrush) toolCard;
+                if (toolCard.getName().equals("FluxBrush")) {
+                    fluxBrush = (FluxBrush) toolCard;
+                }
+                assert fluxBrush != null;
+                board.setDraftedDice(fluxBrush.getTemporaryDraftedDice());
+
+                placeDiceToolCard(dice, rowIndex, columnIndex);
+
             }
-            assert fluxBrush != null;
-            board.setDraftedDice(fluxBrush.getTemporaryDraftedDice());
-
-            placeDiceToolCard(dice,rowIndex,columnIndex);
-
         }
     }
 
@@ -1107,8 +1112,10 @@ public class GameManager {
         if (toolCardLock.get()) {
             FluxBrush fluxBrush = null;
             for (ToolCard toolCard : toolCards) {
-                fluxBrush = (FluxBrush) toolCard;
-                board.setDraftedDice(fluxBrush.getTemporaryDraftedDice());
+                if (toolCard.getName().equals("FluxBrush")) {
+                    fluxBrush = (FluxBrush) toolCard;
+                    board.setDraftedDice(fluxBrush.getTemporaryDraftedDice());
+                }
             }
             wakeUpToolCardThread();
         }
@@ -1123,11 +1130,23 @@ public class GameManager {
         if(toolCardLock.get()) {
             FluxRemover fluxRemover = null;
             for (ToolCard toolCard : toolCards) {
-                fluxRemover = (FluxRemover) toolCard;
+                if (toolCard.getName().equals("FluxRemover")) {
+                    fluxRemover = (FluxRemover) toolCard;
+                }
 
             }
 
             fluxRemover.setDiceFromBag(board.draftOneDice());
+            List<Dice> list = new ArrayList<>();
+            list.addAll(getDraftedDice());
+            fluxRemover.setDraftedDice(list);
+            for (Dice dice : fluxRemover.getDraftedDice()) {
+                if (dice.toString().equals(selectedDice.toString())) {
+                    fluxRemover.getDraftedDice().remove(dice);
+                    break;
+                }
+            }
+
 
             try {
                 getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new FluxRemoverResponse(fluxRemover.getDiceFromBag()));
@@ -1141,11 +1160,12 @@ public class GameManager {
         if(toolCardLock.get()) {
             FluxRemover fluxRemover = null;
             for (ToolCard toolCard : toolCards) {
-                fluxRemover = (FluxRemover) toolCard;
+                if (toolCard.getName().equals("FluxRemover"))
+                    fluxRemover = (FluxRemover) toolCard;
 
             }
 
-            fluxRemover.setDraftedDice(getDraftedDice());
+
             for (Dice dice : fluxRemover.getDraftedDice()) {
                 if (selectedDice.toString().equals(dice.toString())) {
                     dice.setFaceUpValue(chosenValue);
@@ -1166,9 +1186,11 @@ public class GameManager {
 
             FluxRemover fluxRemover = null;
             for (ToolCard toolCard : toolCards) {
-                fluxRemover = (FluxRemover) toolCard;
-                board.addDiceToBag(fluxRemover.getDiceFromBag());
-                board.setDraftedDice(fluxRemover.getDraftedDice());
+                if (toolCard.getName().equals("FluxRemover")) {
+                    fluxRemover = (FluxRemover) toolCard;
+                    board.addDiceToBag(fluxRemover.getDiceFromBag());
+                    board.setDraftedDice(fluxRemover.getDraftedDice());
+                }
             }
             placeDiceToolCard(selectedDice, rowIndex, columnIndex);
         }
@@ -1179,13 +1201,17 @@ public class GameManager {
      *
      */
     public void fluxRemoverMove() {
-        FluxRemover fluxRemover = null;
-        for (ToolCard toolCard : toolCards) {
-            fluxRemover = (FluxRemover) toolCard;
-            board.addDiceToBag(fluxRemover.getDiceFromBag());
-            board.setDraftedDice(fluxRemover.getDraftedDice());
+        if (toolCardLock.get()) {
+            FluxRemover fluxRemover = null;
+            for (ToolCard toolCard : toolCards) {
+                if (toolCard.getName().equals("FluxRemover")) {
+                    fluxRemover = (FluxRemover) toolCard;
+                    board.addDiceToBag(fluxRemover.getDiceFromBag());
+                    board.setDraftedDice(fluxRemover.getDraftedDice());
+                }
+            }
+            wakeUpToolCardThread();
         }
-        wakeUpToolCardThread();
     }
 
     public void fluxRemoverResponse() {
@@ -1282,6 +1308,8 @@ public class GameManager {
 
     public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
         List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
+
+
         if (patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
             if (!doubleMove) {
                 System.out.println("Lathekin single move");
@@ -1302,6 +1330,7 @@ public class GameManager {
         System.out.println("Waking up toolcard thread");
         wakeUpToolCardThread();
     }
+
 
     public void lathekinResponse() {
         System.out.println("sending Lathekin response");

@@ -9,6 +9,8 @@ import java.rmi.RemoteException;
 
 public class Lathekin extends ToolCard {
 
+    private PatternCard patternCard;
+
 
     public Lathekin() {
         super("Lathekin");
@@ -73,4 +75,12 @@ public class Lathekin extends ToolCard {
         gameManager.setDoubleMove(false);
         gameManager.toolCardLock.set(false);
     }
+
+
+    public Lathekin(String name, PatternCard patternCard) {
+        super(name);
+        this.patternCard = patternCard;
+    }
+
+
 }
