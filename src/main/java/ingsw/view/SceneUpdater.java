@@ -231,7 +231,7 @@ public interface SceneUpdater {
         System.out.println("Not overridden");
     }
 
-    default void timeOut() {
+    default void timeOut(TimeOutResponse timeOutResponse) {
         System.out.println("Not overridden");
     }
 

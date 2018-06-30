@@ -58,6 +58,10 @@ public class Board {
         return dice;
     }
 
+    void addDiceToBag(Dice dice) {
+        diceBag.add(dice);
+    }
+
     List<Dice> getDraftedDice() {
         return draftedDice;
     }

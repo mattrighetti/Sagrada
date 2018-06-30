@@ -33,14 +33,13 @@ public class CopperFoilBurnisher extends ToolCard {
             }
 
             waitForToolCardAction(gameManager);
-            gameManager.copperFoilBurnisherResponse();
-            gameManager.getCurrentRound().hasMadeAMove();
-        } else {
-            try {
-                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
-            } catch (RemoteException e) {
-                e.printStackTrace();
+
+            if (gameManager.toolCardLock.get()) {
+                gameManager.copperFoilBurnisherResponse();
+                gameManager.getCurrentRound().hasMadeAMove();
             }
+        } else {
+            gameManager.avoidToolCardUse();
         }
     }
 

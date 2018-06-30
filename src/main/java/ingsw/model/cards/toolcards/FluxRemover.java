@@ -25,7 +25,11 @@ public class FluxRemover extends ToolCard {
 
         waitForToolCardAction(gameManager);
 
+        if (!gameManager.toolCardLock.get())
+            return;
+
         gameManager.fluxRemoverResponse();
         gameManager.getCurrentRound().hasMadeAMove();
+        gameManager.toolCardLock.set(false);
     }
 }

@@ -53,11 +53,13 @@ public class GameManager {
     private final AtomicBoolean doubleMove;
     final AtomicBoolean cancelTimer;
     private final AtomicInteger turnInRound;
-    public final Object toolCardLock;
+    public final AtomicBoolean toolCardLock;
     private Set<Player> disconnectedPlayers;
     private PlayerBroadcaster playerBroadcaster;
     private final AtomicBoolean endOfMatch;
     private final ControllerTimer controllerTimer;
+    private Thread toolCardThread;
+
 
     /**
      * Creates an instance of GameManager with every object needed by the game itself and initializes its players
@@ -77,7 +79,7 @@ public class GameManager {
         endRound = new AtomicBoolean(false);
         doubleMove = new AtomicBoolean(false);
         cancelTimer = new AtomicBoolean(false);
-        toolCardLock = new Object();
+        toolCardLock = new AtomicBoolean(false);
         turnInRound = new AtomicInteger(0);
         disconnectedPlayers = new HashSet<>();
         playerBroadcaster = new PlayerBroadcaster(players);
@@ -504,6 +506,11 @@ public class GameManager {
     private void stopTurn() {
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
+
+        if (toolCardThread.isAlive()){
+            toolCardLock.set(false);
+            wakeUpToolCardThread();
+        }
     }
 
     /**
@@ -840,7 +847,9 @@ public class GameManager {
             if (!cancelTimer.get()) {
 
                 try {
-                    currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
+                    if(toolCardLock.get())
+                        currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse(getDraftedDice(),getRoundTrack(),getCurrentRound().getCurrentPlayer()));
+                    else  currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -921,8 +930,9 @@ public class GameManager {
      * @param toolCardName name of the ToolCard to use
      */
     public void useToolCard(String toolCardName) {
-        new Thread(
+        toolCardThread = new Thread(
                 () -> {
+                    toolCardLock.set(true);
                     for (ToolCard toolCard : toolCards) {
                         if (toolCard.getName().equals(toolCardName)) {
                             addMoveToHistoryAndNotify(new MoveStatus("Get the name", "Used toolcard " + toolCardName));
@@ -930,7 +940,8 @@ public class GameManager {
 
                         }
                     }
-                }).start();
+                });
+        toolCardThread.start();
     }
 
     /**
@@ -989,6 +1000,7 @@ public class GameManager {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        toolCardLock.set(false);
     }
 
     /**
@@ -1018,9 +1030,9 @@ public class GameManager {
 
     /**
      * GROZING PLIERS: Move Method
-     * <p>
+     *
      * Tool card that increase or decrease by one the value of a selected dice from the drafted dice pool:
-     * Find the selected dice from the draftedDice and call the method for increasing or decreasing, depending on increase boolean parameter
+     * Find the selected dice from the draftedDice and call the method for increasing or decreasing the die's value, depending on increase boolean parameter
      *
      * @param dice     the selected die from the player
      * @param increase if true increase the die value, if false decrease the die value
@@ -1082,14 +1094,10 @@ public class GameManager {
 
     public void fluxRemoverMove(Dice selectedDice) {
         for (int i = 0; i < board.getDraftedDice().size(); i++) {
-            if (board.getDraftedDice().get(i).toString().equals(selectedDice.toString()))
+            if (board.getDraftedDice().get(i).toString().equals(selectedDice.toString())) {
+                board.addDiceToBag(board.getDraftedDice().get(i));
                 board.getDraftedDice().remove(i);
-        }
-        List<Dice> diceList = new ArrayList<>();
-        for (int i = 1; i < 7; i++) {
-            Dice dice = new Dice(selectedDice.getDiceColor());
-            dice.setFaceUpValue(i);
-            diceList.add(dice);
+            }
         }
         try {
             getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new FluxRemoverResponse(board.draftOneDice()));

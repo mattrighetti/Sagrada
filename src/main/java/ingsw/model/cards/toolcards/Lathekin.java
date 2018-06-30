@@ -40,6 +40,10 @@ public class Lathekin extends ToolCard {
         }
         System.out.println("thread goes in wait 1");
         waitForToolCardAction(gameManager);
+
+        if (!gameManager.toolCardLock.get())
+            return;
+
         System.out.println("thread is now awake 1");
 
 
@@ -53,6 +57,10 @@ public class Lathekin extends ToolCard {
             }
             System.out.println("thread goes in wait 2");
             waitForToolCardAction(gameManager);
+
+            if (!gameManager.toolCardLock.get())
+                return;
+
             System.out.println("thread is now awake 2");
             gameManager.lathekinResponse();
         } else {
@@ -63,5 +71,6 @@ public class Lathekin extends ToolCard {
 
         gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.setDoubleMove(false);
+        gameManager.toolCardLock.set(false);
     }
 }

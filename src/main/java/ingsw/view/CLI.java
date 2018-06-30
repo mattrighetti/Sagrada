@@ -264,7 +264,6 @@ public class CLI implements SceneUpdater {
         for (ToolCard toolCard : boardDataResponse.toolCards) {
             toolCards.add((toolCard.getName()));
         }
-
     }
 
     /**
@@ -897,9 +896,15 @@ public class CLI implements SceneUpdater {
      * <p>
      * Method that notify the player and stops the turn
      * Triggered from the server
+     * @param timeOutResponse
      */
     @Override
-    public void timeOut() {
+    public void timeOut(TimeOutResponse timeOutResponse) {
+        if (timeOutResponse.toolCardMoveActive) {
+            roundTrack = timeOutResponse.roundTrack;
+            updatePatternCard(timeOutResponse.currentPlayer);
+            draftedDice = timeOutResponse.draftedDice;
+        }
         stoppableScanner.cancel();
         moveNext.set(true);
         notifyGamePhase();

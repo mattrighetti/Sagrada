@@ -479,9 +479,16 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     @Override
-    public void timeOut() {
+    public void timeOut(TimeOutResponse timeOutResponse) {
         Platform.runLater(() -> {
             createPopUpWindow("Time Out", "Timer ended", "You've been using too much time for your moves\nYour turn is ended").showAndWait();
+
+            if (timeOutResponse.toolCardMoveActive) {
+                this.roundTrackDice = timeOutResponse.roundTrack;
+                roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+                displayDraftedDice(timeOutResponse.draftedDice);
+                windowControllerList.get(0).updatePatternCard(timeOutResponse.currentPlayer.getPatternCard());
+            }
             disableCommandsAndReset();
         });
     }
