@@ -49,6 +49,10 @@ public class Board {
         return draftedDice;
     }
 
+    void setDraftedDice(List<Dice> draftedDice){
+        this.draftedDice = draftedDice;
+    }
+
     Dice draftOneDice() {
         Collections.shuffle(diceBag);
         Dice dice = diceBag.get(0);

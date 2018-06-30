@@ -26,7 +26,10 @@ public class CorkBackedStraightEdge extends ToolCard {
         }
 
         waitForToolCardAction(gameManager);
-        gameManager.corkBackedStraightedgeResponse();
-        gameManager.getCurrentRound().hasMadeAMove();
+        if (gameManager.toolCardLock.get()) {
+            gameManager.corkBackedStraightedgeResponse();
+            gameManager.getCurrentRound().toolCardMoveDone();
+            gameManager.toolCardLock.set(false);
+        }
     }
 }

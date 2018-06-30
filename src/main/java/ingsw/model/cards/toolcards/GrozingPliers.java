@@ -53,6 +53,9 @@ public class GrozingPliers extends ToolCard {
         }
 
         waitForToolCardAction(gameManager);
-        gameManager.grozingPliersResponse();
+        if (gameManager.toolCardLock.get()) {
+            gameManager.grozingPliersResponse();
+            gameManager.toolCardLock.set(false);
+        }
     }
 }

@@ -36,7 +36,8 @@ public class CopperFoilBurnisher extends ToolCard {
 
             if (gameManager.toolCardLock.get()) {
                 gameManager.copperFoilBurnisherResponse();
-                gameManager.getCurrentRound().hasMadeAMove();
+                gameManager.getCurrentRound().toolCardMoveDone();
+                gameManager.toolCardLock.set(false);
             }
         } else {
             gameManager.avoidToolCardUse();

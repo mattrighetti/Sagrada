@@ -1,11 +1,25 @@
 package ingsw.model.cards.toolcards;
 
 import ingsw.controller.network.commands.FluxRemoverResponse;
+import ingsw.model.Dice;
 import ingsw.model.GameManager;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class FluxRemover extends ToolCard {
+
+    private List<Dice> draftedDice;
+    private Dice diceFromBag;
+
+    public void setDiceFromBag(Dice diceFromBag) {
+        this.diceFromBag = diceFromBag;
+    }
+
+    public Dice getDiceFromBag() {
+
+        return diceFromBag;
+    }
 
     public FluxRemover() {
         super("FluxRemover");
@@ -29,7 +43,17 @@ public class FluxRemover extends ToolCard {
             return;
 
         gameManager.fluxRemoverResponse();
-        gameManager.getCurrentRound().hasMadeAMove();
+        gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.toolCardLock.set(false);
     }
+
+    public void setDraftedDice(List<Dice> draftedDice) {
+        this.draftedDice = draftedDice;
+    }
+
+
+    public List<Dice> getDraftedDice() {
+        return draftedDice;
+    }
+
 }

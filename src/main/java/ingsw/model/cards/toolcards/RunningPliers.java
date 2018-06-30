@@ -26,10 +26,16 @@ public class RunningPliers extends ToolCard {
             }
 
             waitForToolCardAction(gameManager);
-            gameManager.getCurrentRound().blockedTurnPlayers.add(gameManager.getCurrentRound().getCurrentPlayer().getPlayerUsername());
-            gameManager.runningPliersResponse();
+
+            if (gameManager.toolCardLock.get()) {
+                gameManager.getCurrentRound().blockedTurnPlayers.add(gameManager.getCurrentRound().getCurrentPlayer().getPlayerUsername());
+                gameManager.runningPliersResponse();
+                gameManager.getCurrentRound().toolCardMoveDone();
+                gameManager.toolCardLock.set(false);
+            }
         } else try {
             gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
+            gameManager.toolCardLock.set(false);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
