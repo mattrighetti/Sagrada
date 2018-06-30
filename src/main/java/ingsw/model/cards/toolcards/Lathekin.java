@@ -3,14 +3,15 @@ package ingsw.model.cards.toolcards;
 import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.LathekinResponse;
 import ingsw.model.GameManager;
+import ingsw.model.cards.patterncard.Box;
 import ingsw.model.cards.patterncard.PatternCard;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class Lathekin extends ToolCard {
 
-    private PatternCard patternCard;
-
+    private List<List<Box>> patternCardGrid;
 
     public Lathekin() {
         super("Lathekin");
@@ -76,11 +77,11 @@ public class Lathekin extends ToolCard {
         gameManager.toolCardLock.set(false);
     }
 
-
-    public Lathekin(String name, PatternCard patternCard) {
-        super(name);
-        this.patternCard = patternCard;
+    public List<List<Box>> getPatternCardGrid() {
+        return patternCardGrid;
     }
 
-
+    public void setPatternCardGrid(List<List<Box>> patternCardGrid) {
+        this.patternCardGrid = patternCardGrid;
+    }
 }

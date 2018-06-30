@@ -58,7 +58,6 @@ public class Board {
         Dice dice = diceBag.get(0);
         diceBag.remove(0);
         dice.roll();
-        draftedDice.add(dice);
         return dice;
     }
 

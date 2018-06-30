@@ -1065,16 +1065,15 @@ public class GameManager {
     public void fluxBrushMove(Dice selectedDice) {
         if (toolCardLock.get()) {
 
-            FluxBrush fluxBrush = null;
-            for (ToolCard toolCard : toolCards ) {
-                if (toolCard.getName().equals("FluxBrush"))
-                    fluxBrush = (FluxBrush) toolCard;
-            }
+            FluxBrush fluxBrush = (FluxBrush) getSelectedToolCard("FluxBrush");
 
             assert fluxBrush != null;
 
             List<Dice> list = new ArrayList<>();
-            list.addAll(getDraftedDice());
+            for (Dice dice : getDraftedDice()) {
+                list.add(new Dice(dice.getFaceUpValue(),dice.getDiceColor()));
+            }
+
             fluxBrush.setTemporaryDraftedDice(list);
 
             for (Dice diceInPool : fluxBrush.getTemporaryDraftedDice()) {
@@ -1094,29 +1093,15 @@ public class GameManager {
 
     public void fluxBrushMove(Dice dice, int rowIndex, int columnIndex) {
         if (toolCardLock.get()) {
-            FluxBrush fluxBrush = null;
-            for (ToolCard toolCard : toolCards) {
-                if (toolCard.getName().equals("FluxBrush")) {
-                    fluxBrush = (FluxBrush) toolCard;
-                }
-                assert fluxBrush != null;
+            FluxBrush fluxBrush = (FluxBrush) getSelectedToolCard("FluxBrush");
                 board.setDraftedDice(fluxBrush.getTemporaryDraftedDice());
-
                 placeDiceToolCard(dice, rowIndex, columnIndex);
-
-            }
         }
     }
 
     public void fluxBrushMove() {
         if (toolCardLock.get()) {
-            FluxBrush fluxBrush = null;
-            for (ToolCard toolCard : toolCards) {
-                if (toolCard.getName().equals("FluxBrush")) {
-                    fluxBrush = (FluxBrush) toolCard;
-                    board.setDraftedDice(fluxBrush.getTemporaryDraftedDice());
-                }
-            }
+            FluxBrush fluxBrush = (FluxBrush) getSelectedToolCard("FluxBrush");
             wakeUpToolCardThread();
         }
     }
@@ -1128,18 +1113,13 @@ public class GameManager {
 
     public void fluxRemoverMove(Dice selectedDice) {
         if(toolCardLock.get()) {
-            FluxRemover fluxRemover = null;
-            for (ToolCard toolCard : toolCards) {
-                if (toolCard.getName().equals("FluxRemover")) {
-                    fluxRemover = (FluxRemover) toolCard;
-                }
-
-            }
+            FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
 
             fluxRemover.setDiceFromBag(board.draftOneDice());
             List<Dice> list = new ArrayList<>();
             list.addAll(getDraftedDice());
             fluxRemover.setDraftedDice(list);
+
             for (Dice dice : fluxRemover.getDraftedDice()) {
                 if (dice.toString().equals(selectedDice.toString())) {
                     fluxRemover.getDraftedDice().remove(dice);
@@ -1158,13 +1138,7 @@ public class GameManager {
 
     public void fluxRemoverMove(Dice selectedDice, int chosenValue) {
         if(toolCardLock.get()) {
-            FluxRemover fluxRemover = null;
-            for (ToolCard toolCard : toolCards) {
-                if (toolCard.getName().equals("FluxRemover"))
-                    fluxRemover = (FluxRemover) toolCard;
-
-            }
-
+            FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
 
             for (Dice dice : fluxRemover.getDraftedDice()) {
                 if (selectedDice.toString().equals(dice.toString())) {
@@ -1183,17 +1157,19 @@ public class GameManager {
 
     public void fluxRemoverMove(Dice selectedDice, int rowIndex, int columnIndex) {
         if(toolCardLock.get()) {
+            FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
 
-            FluxRemover fluxRemover = null;
-            for (ToolCard toolCard : toolCards) {
-                if (toolCard.getName().equals("FluxRemover")) {
-                    fluxRemover = (FluxRemover) toolCard;
-                    board.addDiceToBag(fluxRemover.getDiceFromBag());
-                    board.setDraftedDice(fluxRemover.getDraftedDice());
-                }
-            }
+            board.addDiceToBag(fluxRemover.getDiceFromBag());
+            board.setDraftedDice(fluxRemover.getDraftedDice());
             placeDiceToolCard(selectedDice, rowIndex, columnIndex);
         }
+    }
+
+    private ToolCard getSelectedToolCard(String toolCardName){
+        for (ToolCard toolCard : toolCards) {
+             if (toolCard.getName().equals(toolCardName)) return toolCard;
+        }
+        return null;
     }
 
     /**
@@ -1202,14 +1178,9 @@ public class GameManager {
      */
     public void fluxRemoverMove() {
         if (toolCardLock.get()) {
-            FluxRemover fluxRemover = null;
-            for (ToolCard toolCard : toolCards) {
-                if (toolCard.getName().equals("FluxRemover")) {
-                    fluxRemover = (FluxRemover) toolCard;
-                    board.addDiceToBag(fluxRemover.getDiceFromBag());
-                    board.setDraftedDice(fluxRemover.getDraftedDice());
-                }
-            }
+            FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
+            board.addDiceToBag(fluxRemover.getDiceFromBag());
+            board.setDraftedDice(fluxRemover.getDraftedDice());
             wakeUpToolCardThread();
         }
     }
@@ -1307,36 +1278,57 @@ public class GameManager {
     }
 
     public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
-        List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
+        if (toolCardLock.get()) {
+            Lathekin lathekin = (Lathekin) getSelectedToolCard("Lathekin");
 
+            lathekin.setPatternCardGrid(copyPatternCard());
 
-        if (patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
-            if (!doubleMove) {
-                System.out.println("Lathekin single move");
-                patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
-                patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
-            } else {
-                System.out.println("Lathekin second move");
-                Dice dice = patternCard.get(position.getFirst()).get(position.getSecond()).getDice();
-                patternCard.get(position.getFirst()).get(position.getSecond()).removeDice();
-                patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
-                patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
-                patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).insertDice(dice);
-                this.doubleMove.set(true);
-            }
-        } else
-            System.out.println("Lathekin: Error invalid selected dice");
+            if (lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
+                if (!doubleMove) {
+                    System.out.println("Lathekin single move");
+                    lathekin.getPatternCardGrid().get(position.getFirst()).get(position.getSecond()).insertDice(lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+                    lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
+                } else {
+                    System.out.println("Lathekin second move");
+                    Dice dice = lathekin.getPatternCardGrid().get(position.getFirst()).get(position.getSecond()).getDice();
+                    lathekin.getPatternCardGrid().get(position.getFirst()).get(position.getSecond()).removeDice();
+                    lathekin.getPatternCardGrid().get(position.getFirst()).get(position.getSecond()).insertDice(lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+                    lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
+                    lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).insertDice(dice);
+                    this.doubleMove.set(true);
+                }
+            } else
+                System.out.println("Lathekin: Error invalid selected dice");
 
-        System.out.println("Waking up toolcard thread");
-        wakeUpToolCardThread();
+            System.out.println("Waking up toolcard thread");
+            wakeUpToolCardThread();
+        }
     }
 
 
     public void lathekinResponse() {
         System.out.println("sending Lathekin response");
+        Lathekin lathekin = (Lathekin) getSelectedToolCard("Lathekin");
+        if(lathekin != null)
+            currentRound.getCurrentPlayer().getPatternCard().setGrid(lathekin.getPatternCardGrid());
         playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
     }
 
+    private List<List<Box>> copyPatternCard(){
+        List<List<Box>> gridPattern = new ArrayList<>();
+        for (int i = 0; i < currentRound.getCurrentPlayer().getPatternCard().getGrid().size(); i++) {
+            gridPattern.add(new ArrayList<>());
+            for (int j = 0; j < currentRound.getCurrentPlayer().getPatternCard().getGrid().get(i).size(); j++) {
+                Box box = currentRound.getCurrentPlayer().getPatternCard().getGrid().get(i).get(j);
+                if (box.isValueSet()){
+                    gridPattern.get(i).add(new Box(box.getValue()));
+                } else gridPattern.get(i).add(new Box(box.getColor()));
+                if (box.getDice() != null)
+                    gridPattern.get(i).get(j).insertDice(box.getDice());
+            }
+        }
+        return gridPattern;
+    }
 
     public void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
         placeDiceToolCard(selectedDice, rowIndex, columnIndex);
