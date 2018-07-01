@@ -1054,14 +1054,17 @@ public class GameManager {
      * @param dice     the selected die from the player
      * @param increase if true increase the die value, if false decrease the die value
      */
+
     public synchronized void grozingPliersMove(Dice dice, Boolean increase) {
-        for (Dice diceInPool : board.getDraftedDice()) {
-            if (dice.toString().equals(diceInPool.toString())) {
-                if (increase) diceInPool.increasesByOneValue();
-                else diceInPool.decreasesByOneValue();
+        if (toolCardLock.get()) {
+            for (Dice diceInPool : board.getDraftedDice()) {
+                if (dice.toString().equals(diceInPool.toString())) {
+                    if (increase) diceInPool.increasesByOneValue();
+                    else diceInPool.decreasesByOneValue();
+                }
             }
+            wakeUpToolCardThread();
         }
-        wakeUpToolCardThread();
     }
 
     /**
@@ -1070,11 +1073,13 @@ public class GameManager {
      * Sends to the players the updated data:
      */
     public void grozingPliersResponse() {
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
-        try {
-            currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(sendAvailablePositions(currentRound.getCurrentPlayer())));
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if(toolCardLock.get()) {
+            playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+            try {
+                currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(sendAvailablePositions(currentRound.getCurrentPlayer())));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1123,8 +1128,10 @@ public class GameManager {
     }
 
     public void fluxBrushResponse() {
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
-        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        if (toolCardLock.get()) {
+            playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+            playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        }
     }
 
     public synchronized void fluxRemoverMove(Dice selectedDice) {
@@ -1203,93 +1210,116 @@ public class GameManager {
     }
 
     public void fluxRemoverResponse() {
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
-        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        if (toolCardLock.get()) {
+            playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+            playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        }
     }
 
+
     public synchronized void grindingStoneMove(Dice selectedDice) {
-        for (Dice diceInPool : board.getDraftedDice()) {
-            if (selectedDice.toString().equals(diceInPool.toString())) {
-                diceInPool.setOppositeFace();
+        if (toolCardLock.get()) {
+            for (Dice diceInPool : board.getDraftedDice()) {
+                if (selectedDice.toString().equals(diceInPool.toString())) {
+                    diceInPool.setOppositeFace();
+                }
             }
+            wakeUpToolCardThread();
         }
-        wakeUpToolCardThread();
     }
 
     public void grindingStoneResponse() {
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
-        try {
-            currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(sendAvailablePositions(currentRound.getCurrentPlayer())));
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if (toolCardLock.get()) {
+            playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+            try {
+                currentRound.getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(sendAvailablePositions(currentRound.getCurrentPlayer())));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public synchronized void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
-        List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
-        patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
-        patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
-        wakeUpToolCardThread();
+        if (toolCardLock.get()) {
+            List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
+            patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+            patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
+            wakeUpToolCardThread();
+        }
     }
 
     public void copperFoilBurnisherResponse() {
-        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        if (toolCardLock.get()) {
+            playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+        }
     }
 
     public synchronized void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
-        Map<String, Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsNoDiceAround(board.getDraftedDice());
-        if (availablePositions.get(selectedDice.toString())[row][column])
-            placeDiceForPlayer(selectedDice, row, column);
-        wakeUpToolCardThread();
+        if (toolCardLock.get()) {
+            Map<String, Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsNoDiceAround(board.getDraftedDice());
+            if (availablePositions.get(selectedDice.toString())[row][column])
+                placeDiceForPlayer(selectedDice, row, column);
+            wakeUpToolCardThread();
+        }
     }
 
     public void corkBackedStraightedgeResponse() {
-        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
+        if (toolCardLock.get()) {
+            playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
+        }
     }
 
     public synchronized void lensCutterMove(int roundIndex, String roundTrackDice, String poolDice) {
-        Dice fromTrackDice;
-        Dice fromPoolDice;
-        for (int i = 0; i < roundTrack.get(roundIndex).size(); i++) {
-            if (roundTrack.get(roundIndex).get(i).toString().equals(roundTrackDice)) {
-                fromTrackDice = roundTrack.get(roundIndex).get(i);
-                roundTrack.get(roundIndex).remove(i);
-                for (int j = 0; j < getDraftedDice().size(); j++) {
-                    if (getDraftedDice().get(j).toString().equals(poolDice)) {
-                        fromPoolDice = getDraftedDice().get(j);
-                        getDraftedDice().remove(j);
-                        getDraftedDice().add(fromTrackDice);
-                        roundTrack.get(roundIndex).add(fromPoolDice);
-                        break;
+        if (toolCardLock.get()) {
+            Dice fromTrackDice;
+            Dice fromPoolDice;
+            for (int i = 0; i < roundTrack.get(roundIndex).size(); i++) {
+                if (roundTrack.get(roundIndex).get(i).toString().equals(roundTrackDice)) {
+                    fromTrackDice = roundTrack.get(roundIndex).get(i);
+                    roundTrack.get(roundIndex).remove(i);
+                    for (int j = 0; j < getDraftedDice().size(); j++) {
+                        if (getDraftedDice().get(j).toString().equals(poolDice)) {
+                            fromPoolDice = getDraftedDice().get(j);
+                            getDraftedDice().remove(j);
+                            getDraftedDice().add(fromTrackDice);
+                            roundTrack.get(roundIndex).add(fromPoolDice);
+                            break;
+                        }
                     }
                 }
+                System.err.println("Error: selected dice does not exist");
             }
-            System.err.println("Error: selected dice does not exist");
+            wakeUpToolCardThread();
         }
-        wakeUpToolCardThread();
     }
 
     public void lensCutterResponse() {
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
-        playerBroadcaster.broadcastResponseToAll(new RoundTrackToolCardResponse(roundTrack));
-        try {
-            getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsDraftedDice(getDraftedDice())));
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if (toolCardLock.get()) {
+            playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
+            playerBroadcaster.broadcastResponseToAll(new RoundTrackToolCardResponse(roundTrack));
+            try {
+                getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvailablePositionsResponse(getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsDraftedDice(getDraftedDice())));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public synchronized void eglomiseBrushMove(Tuple dicePosition, Tuple position) {
-        List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
-        if (patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
-            patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
-            patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
-        } else System.out.println("Eglomise Brusher: Error invalid selected dice");
-        wakeUpToolCardThread();
+        if (toolCardLock.get()) {
+            List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
+            if (patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
+                patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+                patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
+            } else System.out.println("Eglomise Brusher: Error invalid selected dice");
+            wakeUpToolCardThread();
+        }
     }
 
     public void eglomiseBrushResponse() {
-        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        if (toolCardLock.get()) {
+            playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        }
     }
 
     public synchronized void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
@@ -1322,11 +1352,13 @@ public class GameManager {
 
 
     public void lathekinResponse() {
-        System.out.println("sending Lathekin response");
-        Lathekin lathekin = (Lathekin) getSelectedToolCard("Lathekin");
-        if (lathekin != null)
-            currentRound.getCurrentPlayer().getPatternCard().setGrid(lathekin.getPatternCardGrid());
-        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        if (toolCardLock.get()) {
+            System.out.println("sending Lathekin response");
+            Lathekin lathekin = (Lathekin) getSelectedToolCard("Lathekin");
+            if (lathekin != null)
+                currentRound.getCurrentPlayer().getPatternCard().setGrid(lathekin.getPatternCardGrid());
+            playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
+        }
     }
 
     private synchronized List<List<Box>> copyPatternCard() {
@@ -1346,7 +1378,9 @@ public class GameManager {
     }
 
     public synchronized void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
-        placeDiceToolCard(selectedDice, rowIndex, columnIndex);
+        if (toolCardLock.get()) {
+            placeDiceToolCard(selectedDice, rowIndex, columnIndex);
+        }
     }
 
     public void runningPliersResponse() {
