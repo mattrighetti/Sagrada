@@ -164,8 +164,6 @@ public class SagradaGame implements RemoteSagradaGame {
         // Check if the username is present and inactive
         if (connectedUsers.containsKey(username) && !connectedUsers.get(username).isActive()) {
             System.out.println("A");
-            // Update the UserObserver
-            connectedUsers.get(username).addListener(userObserver);
             connectedUsers.get(username).setActive(true);
             //Check in which match the user was playing before disconnecting
             for (Controller controller : matchesByName.values()) {
@@ -215,7 +213,7 @@ public class SagradaGame implements RemoteSagradaGame {
     public synchronized void createMatch(String matchName) throws RemoteException {
         Controller controller;
         if (!matchesByName.containsKey(matchName)) {
-            controller = new Controller(matchName, maxTurnSeconds, maxJoinMatchSeconds,this);
+            controller = new Controller(matchName, maxTurnSeconds, maxJoinMatchSeconds, this);
             RemoteController remoteController = (RemoteController) UnicastRemoteObject.exportObject(controller, 1100);
             matchesByName.put(matchName, controller);
 

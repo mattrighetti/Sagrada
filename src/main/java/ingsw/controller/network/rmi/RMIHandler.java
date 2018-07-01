@@ -55,17 +55,31 @@ public class RMIHandler implements RequestHandler {
         return RMI_SLASH + ipAddress + RMI_PORT + reJoinMatchRequest.matchName;
     }
 
+    /**
+     * Method that sends a LoginRequest to Sagrada
+     *
+     * @param loginUserRequest login request
+     * @return null
+     */
     @Override
     public Response handle(LoginUserRequest loginUserRequest) {
-        try {
-            user = sagradaGame.loginUser(loginUserRequest.username, rmiUserObserver);
-        } catch (InvalidUsernameException | RemoteException e) {
-            new LoginUserResponse(null).handle(rmiController);
-        }
+        new Thread(() -> {
+            try {
+                user = sagradaGame.loginUser(loginUserRequest.username, rmiUserObserver);
+            } catch (InvalidUsernameException | RemoteException e) {
+                new LoginUserResponse(null).handle(rmiController);
+            }
+        }).start();
 
         return null;
     }
 
+    /**
+     * Method that sends a LogoutRequest to Sagrada
+     *
+     * @param logoutRequest logout request
+     * @return
+     */
     @Override
     public Response handle(LogoutRequest logoutRequest) {
         try {
@@ -76,6 +90,12 @@ public class RMIHandler implements RequestHandler {
         }
     }
 
+    /**
+     * Method that sends a CreateMatchRequest to Sagrada
+     *
+     * @param createMatchRequest create match request
+     * @return
+     */
     @Override
     public Response handle(CreateMatchRequest createMatchRequest) {
         try {
@@ -87,6 +107,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that sends a BundleDataRequest to Sagrada
+     *
+     * @param bundleDataRequest bundle data request
+     * @return
+     */
     @Override
     public Response handle(BundleDataRequest bundleDataRequest) {
         try {
@@ -144,6 +170,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that sends a JoinMatchRequest to Sagrada
+     *
+     * @param joinMatchRequest join match request
+     * @return
+     */
     @Override
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {
