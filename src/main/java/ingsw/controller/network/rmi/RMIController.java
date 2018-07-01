@@ -202,7 +202,7 @@ public class RMIController implements ResponseHandler, NetworkType {
     @Override
     public void handle(LoginUserResponse loginUserResponse) {
         if (loginUserResponse.user != null) {
-            loginUserResponse.user.addListener(rmiUserObserver);
+            loginUserResponse.user.attachUserObserver(rmiUserObserver);
             System.out.println("New connection >>> " + loginUserResponse.user.getUsername());
 
             sceneUpdater.launchSecondGui(loginUserResponse.user.getUsername());

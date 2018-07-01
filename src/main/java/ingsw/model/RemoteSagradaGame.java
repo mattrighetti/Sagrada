@@ -32,7 +32,7 @@ public interface RemoteSagradaGame extends Remote {
 
     void createMatch(String matchName) throws RemoteException;
 
-    void loginPrexistentPlayer(String matchName, User user) throws RemoteException;
+    void loginPrexistentPlayer(String matchName, String username) throws RemoteException;
 
     void deactivateUser(User user) throws RemoteException;
 

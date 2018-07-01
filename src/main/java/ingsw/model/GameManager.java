@@ -251,7 +251,7 @@ public class GameManager {
     /**
      * Method that checks if every user is connected to the game.
      *
-     * @param disconnectedPlayers
+     * @param disconnectedPlayers set of users than disconnected from the game
      */
     private void checkUserConnection(Set<Player> disconnectedPlayers) {
         for (Player player : playerList) {
@@ -262,7 +262,7 @@ public class GameManager {
 
                     // If a user was in the disconnectedPlayers' Set and it's now active
                     // He gets removed from the set and the necessary data will be notified to him
-                    if (disconnectedPlayers.contains(player) && player.getUser().isActive()) {
+                    if (disconnectedPlayers.contains(player) && player.getUser().isActive() && player.getUser().isReady()) {
                         System.out.println("User: " + player.getPlayerUsername() + " is back online! ---> Sending data");
                         disconnectedPlayers.remove(player);
                         player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
@@ -273,7 +273,7 @@ public class GameManager {
                         System.out.println("User " + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users iterating Player " + player.getPlayerUsername() + " " + disconnectedPlayers.size() + " " + (playerList.size() - 1));
                         disconnectedPlayers.add(player);
 
-                    } else {
+                    } else if (!disconnectedPlayers.contains(player) && player.getUser().isActive()) {
                         // Check if the User is disconnected or not
                         // If it's disconnected the catch block will handle the disconnection
                         player.getUserObserver();
@@ -299,6 +299,7 @@ public class GameManager {
                 // If a RMI user disconnects, this code will execute
                 System.out.println("RMI User " + player.getPlayerUsername() + " disconnected");
                 player.getUser().setActive(false);
+                player.getUser().setReady(false);
                 disconnectedPlayers.add(player);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

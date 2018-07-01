@@ -28,11 +28,11 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
 
     @Override
     public void sendResponse(Response response) {
-        response.handle(rmiController);
+        new Thread(() -> response.handle(rmiController)).start();
     }
 
     @Override
-    public void activateTurnNotification(Map<String,Boolean[][]> booleanMapGrid) {
+    public void activateTurnNotification(Map<String, Boolean[][]> booleanMapGrid) {
         new StartTurnNotification(booleanMapGrid).handle(rmiController);
     }
 

@@ -19,6 +19,9 @@ public class RMIHandler implements RequestHandler {
     private RemoteController remoteController;
     private User user;
 
+    private static final String RMI_SLASH = "rmi://";
+    private static final String RMI_PORT = ":1099/";
+
     /**
      * RMIHandler constructor which retrieves SagradaGame and sets
      *
@@ -28,7 +31,7 @@ public class RMIHandler implements RequestHandler {
     RMIHandler(RMIController rmiController, RMIUserObserver rmiUserObserver, String ipAddress) {
         this.ipAddress = ipAddress;
         try {
-            this.sagradaGame = (RemoteSagradaGame) Naming.lookup("rmi://" + ipAddress + ":1099/sagrada");
+            this.sagradaGame = (RemoteSagradaGame) Naming.lookup(rebindSagradaUrl(ipAddress));
         } catch (RemoteException | MalformedURLException e) {
             System.err.println("Could not retrieve SagradaGame");
             e.printStackTrace();
@@ -40,6 +43,24 @@ public class RMIHandler implements RequestHandler {
         this.rmiUserObserver = rmiUserObserver;
     }
 
+    private String rebindSagradaUrl(String ipAddress) {
+        return RMI_SLASH + ipAddress + RMI_PORT + "sagrada";
+    }
+
+    private String rebindControllerUrl(String ipAddress, JoinMatchRequest joinMatchRequest) {
+        return RMI_SLASH + ipAddress + RMI_PORT + joinMatchRequest.matchName;
+    }
+
+    private String rebindControllerUrl(String ipAddress, ReJoinMatchRequest reJoinMatchRequest) {
+        return RMI_SLASH + ipAddress + RMI_PORT + reJoinMatchRequest.matchName;
+    }
+
+    /**
+     * Method that sends a LoginRequest to Sagrada
+     *
+     * @param loginUserRequest login request
+     * @return null
+     */
     @Override
     public Response handle(LoginUserRequest loginUserRequest) {
         try {
@@ -51,6 +72,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that sends a LogoutRequest to Sagrada
+     *
+     * @param logoutRequest logout request
+     * @return
+     */
     @Override
     public Response handle(LogoutRequest logoutRequest) {
         try {
@@ -61,6 +88,12 @@ public class RMIHandler implements RequestHandler {
         }
     }
 
+    /**
+     * Method that sends a CreateMatchRequest to Sagrada
+     *
+     * @param createMatchRequest create match request
+     * @return
+     */
     @Override
     public Response handle(CreateMatchRequest createMatchRequest) {
         try {
@@ -72,6 +105,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that sends a BundleDataRequest to Sagrada
+     *
+     * @param bundleDataRequest bundle data request
+     * @return
+     */
     @Override
     public Response handle(BundleDataRequest bundleDataRequest) {
         try {
@@ -85,99 +124,63 @@ public class RMIHandler implements RequestHandler {
 
     @Override
     public Response handle(MoveToolCardRequest moveToolCardRequest) {
-        switch (moveToolCardRequest.toolCardType){
-            case GROZING_PLIERS:
-                try {
+        try {
+            switch (moveToolCardRequest.toolCardType) {
+                case GROZING_PLIERS:
                     remoteController.toolCardMove(((GrozingPliersRequest) moveToolCardRequest));
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case FLUX_REMOVER:
-                try {
+                    break;
+                case FLUX_REMOVER:
                     remoteController.toolCardMove((FluxRemoverRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case FLUX_BRUSH:
-                try {
+                    break;
+                case FLUX_BRUSH:
                     remoteController.toolCardMove((FluxBrushRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case GRINDING_STONE:
-                try {
+                    break;
+                case GRINDING_STONE:
                     remoteController.toolCardMove((GrindingStoneRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case COPPER_FOIL_BURNISHER:
-                try {
+                    break;
+                case COPPER_FOIL_BURNISHER:
                     remoteController.toolCardMove((CopperFoilBurnisherRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case CORK_BACKED_STRAIGHT_EDGE:
-                try {
+                    break;
+                case CORK_BACKED_STRAIGHT_EDGE:
                     remoteController.toolCardMove((CorkBackedStraightedgeRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case LENS_CUTTER:
-                try {
+                    break;
+                case LENS_CUTTER:
                     remoteController.toolCardMove((LensCutterRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case EGLOMISE_BRUSH:
-                try {
+                    break;
+                case EGLOMISE_BRUSH:
                     remoteController.toolCardMove((EglomiseBrushRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case LATHEKIN:
-                try {
+                    break;
+                case LATHEKIN:
                     remoteController.toolCardMove((LathekinRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case RUNNING_PLIERS:
-                try {
+                    break;
+                case RUNNING_PLIERS:
                     remoteController.toolCardMove((RunningPliersRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case TAP_WHEEL:
-                try {
+                    break;
+                case TAP_WHEEL:
                     remoteController.toolCardMove((TapWheelRequest) moveToolCardRequest);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
+                    break;
+                default:
+                    break;
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Method that sends a JoinMatchRequest to Sagrada
+     *
+     * @param joinMatchRequest join match request
+     * @return
+     */
     @Override
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {
             sagradaGame.loginUserToController(joinMatchRequest.matchName, user.getUsername());
-            try {
-                remoteController = (RemoteController) Naming.lookup("rmi://"+ ipAddress +":1099/" + joinMatchRequest.matchName);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            remoteController = (RemoteController) Naming.lookup(rebindControllerUrl(ipAddress, joinMatchRequest));
             return new JoinedMatchResponse(true);
-        } catch (RemoteException | NotBoundException e) {
+        } catch (RemoteException | NotBoundException | MalformedURLException e) {
             e.printStackTrace();
             return new JoinedMatchResponse(false);
         }
@@ -186,14 +189,15 @@ public class RMIHandler implements RequestHandler {
     @Override
     public Response handle(ReJoinMatchRequest reJoinMatchRequest) {
         try {
-            sagradaGame.loginPrexistentPlayer(reJoinMatchRequest.matchName, user);
-            remoteController = (RemoteController) Naming.lookup("rmi://" + ipAddress + ":1099/" + reJoinMatchRequest.matchName);
+            sagradaGame.loginPrexistentPlayer(reJoinMatchRequest.matchName, user.getUsername());
+            remoteController = (RemoteController) Naming.lookup(rebindControllerUrl(ipAddress, reJoinMatchRequest));
         } catch (NotBoundException | RemoteException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
             System.err.println("Error in URL String");
             e.printStackTrace();
         }
+
         return null;
     }
 
