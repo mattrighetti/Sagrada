@@ -75,7 +75,7 @@ public class ServerController implements RequestHandler, Serializable {
     @Override
     public Response handle(ReJoinMatchRequest reJoinMatchRequest) {
         try {
-            sagradaGame.loginPrexistentPlayer(reJoinMatchRequest.matchName, user);
+            sagradaGame.loginPrexistentPlayer(reJoinMatchRequest.matchName, user.getUsername());
             controller = sagradaGame.getMatchController(reJoinMatchRequest.matchName);
         } catch (RemoteException e) {
             return new LoginUserResponse(user);

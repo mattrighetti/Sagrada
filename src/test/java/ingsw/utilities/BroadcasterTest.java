@@ -1,24 +1,13 @@
 package ingsw.utilities;
 
-import ingsw.controller.network.Message;
-import ingsw.controller.network.commands.CreateMatchResponse;
-import ingsw.controller.network.commands.DraftedDiceResponse;
 import ingsw.controller.network.socket.ClientHandler;
-import ingsw.model.Dice;
 import ingsw.model.Player;
 import ingsw.model.User;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 
 class BroadcasterTest {
 
@@ -29,16 +18,16 @@ class BroadcasterTest {
     void setUp() {
         playerlist = new ArrayList<>();
         playerlist.add(new Player(new User("a")));
-        playerlist.get(0).getUser().addListener(mock(ClientHandler.class));
+        playerlist.get(0).getUser().attachUserObserver(mock(ClientHandler.class));
 
         playerlist.add(new Player(new User("b")));
-        playerlist.get(1).getUser().addListener(mock(ClientHandler.class));
+        playerlist.get(1).getUser().attachUserObserver(mock(ClientHandler.class));
 
         playerlist.add(new Player(new User("c")));
-        playerlist.get(2).getUser().addListener(mock(ClientHandler.class));
+        playerlist.get(2).getUser().attachUserObserver(mock(ClientHandler.class));
 
         playerlist.add(new Player(new User("d")));
-        playerlist.get(3).getUser().addListener(mock(ClientHandler.class));
+        playerlist.get(3).getUser().attachUserObserver(mock(ClientHandler.class));
 
         playerBroadcaster = new PlayerBroadcaster(playerlist);
     }
@@ -121,13 +110,13 @@ class BroadcasterTest {
         Map<String,User> users = new HashMap<>();
         CreateMatchResponse createMatchResponse = mock(CreateMatchResponse.class);
         users.put("a",new User("a"));
-        users.get("a").addListener(mock(ClientHandler.class));
+        users.get("a").attachUserObserver(mock(ClientHandler.class));
         users.put("b",new User("b"));
-        users.get("b").addListener(mock(ClientHandler.class));
+        users.get("b").attachUserObserver(mock(ClientHandler.class));
         users.put("c",new User("c"));
-        users.get("c").addListener(mock(ClientHandler.class));
+        users.get("c").attachUserObserver(mock(ClientHandler.class));
         users.put("d",new User("d"));
-        users.get("d").addListener(mock(ClientHandler.class));
+        users.get("d").attachUserObserver(mock(ClientHandler.class));
 
         playerBroadcaster.broadcastResponseToAll(createMatchResponse);
 

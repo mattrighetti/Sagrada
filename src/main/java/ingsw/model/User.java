@@ -67,7 +67,7 @@ public class User implements Serializable {
         return matchesPlayed;
     }
 
-    public void addListener(UserObserver userObserver) {
+    public void attachUserObserver(UserObserver userObserver) {
         this.userObserver = userObserver;
     }
 
@@ -78,8 +78,8 @@ public class User implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
-        if (active) stopWatch.resume();
-        else stopWatch.suspend();
+        //if (active) stopWatch.resume();
+        //else stopWatch.suspend();
     }
 
     public boolean isActive() {

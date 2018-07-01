@@ -18,6 +18,8 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 public class SagradaGame implements RemoteSagradaGame {
@@ -166,15 +168,7 @@ public class SagradaGame implements RemoteSagradaGame {
             System.out.println("A");
             connectedUsers.get(username).setActive(true);
             //Check in which match the user was playing before disconnecting
-            for (Controller controller : matchesByName.values()) {
-                for (Player player : controller.getPlayerList()) {
-                    if (player.getPlayerUsername().equals(username)) {
-                        System.out.println("G");
-                        player.getUser().addListener(userObserver);
-                        player.getUserObserver().sendResponse(new ReJoinResponse(controller.getMatchName(), player.getPlayerUsername()));
-                    }
-                }
-            }
+            Executors.newSingleThreadExecutor().execute(() -> sendRejoinResponse(userObserver, username));
             // Return the same user with the updated UserObserver
             return connectedUsers.get(username);
         }
@@ -183,7 +177,7 @@ public class SagradaGame implements RemoteSagradaGame {
         // In case there is no username | the username is active
         User currentUser = new User(username);
         if (!connectedUsers.containsKey(username)) {
-            currentUser.addListener(userObserver);
+            currentUser.attachUserObserver(userObserver);
             connectedUsers.put(username, currentUser);
             connectedUsers.get(username).getUserObserver().sendResponse(new LoginUserResponse(currentUser));
             broadcastUsersConnected(username);
@@ -191,6 +185,30 @@ public class SagradaGame implements RemoteSagradaGame {
         }
 
         throw new InvalidUsernameException("Username has been taken already");
+    }
+
+    private void sendRejoinResponse(UserObserver userObserver, String username) {
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
+
+        for (Controller controller : matchesByName.values()) {
+            for (Player player : controller.getPlayerList()) {
+                if (player.getPlayerUsername().equals(username)) {
+                    System.out.println("G");
+                    player.getUser().attachUserObserver(userObserver);
+                    try {
+                        player.getUserObserver().sendResponse(new ReJoinResponse(controller.getMatchName(), player.getPlayerUsername()));
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -239,16 +257,16 @@ public class SagradaGame implements RemoteSagradaGame {
     }
 
     @Override
-    public synchronized void loginPrexistentPlayer(String matchName, User newUser) throws RemoteException {
+    public synchronized void loginPrexistentPlayer(String matchName, String username) throws RemoteException {
         System.out.println("C");
         boolean isMatchPresent = matchesByName.containsKey(matchName);
+        System.out.println(isMatchPresent);
         if (isMatchPresent) {
             for (Player player : matchesByName.get(matchName).getPlayerList()) {
-                if (player.getPlayerUsername().equals(newUser.getUsername()) && !player.getUser().isActive()) {
-                    System.out.println("n");
-                    System.out.println("SagradaGame: re-activating User " + newUser.getUsername());
-                    newUser.setReady(true);
-                    player.updateUser(newUser);
+                if (player.getPlayerUsername().equals(username) && player.getUser().isActive()) {
+                    System.out.println("SagradaGame: re-activating User " + username);
+                    connectedUsers.get(username).setActive(true);
+                    connectedUsers.get(username).setReady(true);
                     System.out.println("Player has been updated, it's now back online");
                 }
             }

@@ -260,7 +260,7 @@ public class GameManager {
                         System.out.println("User " + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users iterating Player " + player.getPlayerUsername() + " " + disconnectedPlayers.size() + " " + (playerList.size() - 1));
                         disconnectedPlayers.add(player);
 
-                    } else {
+                    } else if (!disconnectedPlayers.contains(player) && player.getUser().isActive()) {
                         // Check if the User is disconnected or not
                         // If it's disconnected the catch block will handle the disconnection
                         player.getUserObserver();
@@ -286,6 +286,7 @@ public class GameManager {
                 // If a RMI user disconnects, this code will execute
                 System.out.println("RMI User " + player.getPlayerUsername() + " disconnected");
                 player.getUser().setActive(false);
+                player.getUser().setReady(false);
                 disconnectedPlayers.add(player);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
