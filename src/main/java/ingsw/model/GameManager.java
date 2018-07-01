@@ -1118,6 +1118,7 @@ public class GameManager {
             fluxRemover.setDiceFromBag(board.draftOneDice());
             List<Dice> list = new ArrayList<>();
             list.addAll(getDraftedDice());
+            list.add(fluxRemover.getDiceFromBag());
             fluxRemover.setDraftedDice(list);
 
             for (Dice dice : fluxRemover.getDraftedDice()) {

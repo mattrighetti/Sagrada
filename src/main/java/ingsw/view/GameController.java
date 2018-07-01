@@ -138,7 +138,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     /* Utility Elements */
     private int currentRound;
     private DiceButton toolCardSelectedDice;
-    private RoundState roundState; //0: if is not your turn, 1: if is your turn and you have not placed a die
+    private RoundState roundState;
     private int selectedRoundTrack;
 
     @Override
@@ -251,6 +251,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         roundTrackButtonList.add(roundTenButton);
 
         currentRound = 0;
+
+        roundState = RoundState.NOT_YOUR_TURN;
     }
 
     @FXML
@@ -481,7 +483,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @Override
     public void timeOut(TimeOutResponse timeOutResponse) {
         Platform.runLater(() -> {
-            createPopUpWindow("Time Out", "Timer ended", "You've been using too much time for your moves\nYour turn is ended").showAndWait();
 
             if (timeOutResponse.toolCardMoveActive) {
                 this.roundTrackDice = timeOutResponse.roundTrack;
@@ -490,6 +491,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 windowControllerList.get(0).updatePatternCard(timeOutResponse.currentPlayer.getPatternCard());
             }
             disableCommandsAndReset();
+            createPopUpWindow("Time Out", "Timer ended", "You've been using too much time for your moves\nYour turn is ended").showAndWait();
         });
     }
 
@@ -544,10 +546,12 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void startTurn(StartTurnNotification startTurnNotification) {
-        Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
-        windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
-        roundState = RoundState.YOUR_TURN;
-        activateCommands();
+        Platform.runLater(() -> {
+            createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait();
+            windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
+            roundState = RoundState.YOUR_TURN;
+            activateCommands();
+        });
     }
 
     private void activateCommands() {
@@ -844,6 +848,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                     windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
                     windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.selectedDice.toString());
                     displayDraftedDice(useToolCardResponse.draftedDice);
+                    windowControllerList.get(0).fluxBrushMove();
 
                     boolean noAvailable = false;
 

@@ -256,7 +256,8 @@ public class WindowController implements Initializable {
     void fluxBrushMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                DicePane dicePane = new DicePane(i, j);
+
+                DicePane dicePane = dicePanes[i][j];
                 dicePane.setOnMouseClicked(event -> {
                     System.out.println(CLICKED);
                     if (selectedDice != null) {
@@ -275,8 +276,8 @@ public class WindowController implements Initializable {
     void fluxRemoverMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                DicePane dicePane = dicePanes[i][j];
 
+                DicePane dicePane = dicePanes[i][j];
                 dicePane.setOnMouseClicked(event -> {
                     System.out.println(CLICKED);
                     if (selectedDice != null) {
