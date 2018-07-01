@@ -23,7 +23,6 @@ import ingsw.utilities.MoveStatus;
 import ingsw.utilities.PlayerBroadcaster;
 import ingsw.utilities.Tuple;
 
-import javax.tools.Tool;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -802,7 +801,7 @@ public class GameManager {
             executeTurn(i, "Turn backward ");
         }
 
-        System.out.println("End of turn");
+        System.out.println("End of turn gm");
 
         if (!board.getDraftedDice().isEmpty()) {
             roundTrack.add(board.getDraftedDice());
@@ -1326,26 +1325,48 @@ public class GameManager {
         if (toolCardLock.get()) {
             Lathekin lathekin = (Lathekin) getSelectedToolCard("Lathekin");
 
-            lathekin.setPatternCardGrid(copyPatternCard());
+            if (lathekin.getNewGrid() == null) {
+                lathekin.setOldGrid(copyPatternCard());
+            } else {
+                getCurrentRound().getCurrentPlayer().getPatternCard().setGrid(lathekin.getNewGrid());
+            }
 
-            if (lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
+            List<List<Box>> grid = currentRound.getCurrentPlayer().getPatternCard().getGrid();
+
+            if (grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
                 if (!doubleMove) {
                     System.out.println("Lathekin single move");
-                    lathekin.getPatternCardGrid().get(position.getFirst()).get(position.getSecond()).insertDice(lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
-                    lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
+                    grid.get(position.getFirst()).get(position.getSecond()).insertDice(grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+                    grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
                 } else {
                     System.out.println("Lathekin second move");
-                    Dice dice = lathekin.getPatternCardGrid().get(position.getFirst()).get(position.getSecond()).getDice();
-                    lathekin.getPatternCardGrid().get(position.getFirst()).get(position.getSecond()).removeDice();
-                    lathekin.getPatternCardGrid().get(position.getFirst()).get(position.getSecond()).insertDice(lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
-                    lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
-                    lathekin.getPatternCardGrid().get(dicePosition.getFirst()).get(dicePosition.getSecond()).insertDice(dice);
+                    Dice dice = grid.get(position.getFirst()).get(position.getSecond()).getDice();
+                    grid.get(position.getFirst()).get(position.getSecond()).removeDice();
+                    grid.get(position.getFirst()).get(position.getSecond()).insertDice(grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
+                    grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
+                    grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).insertDice(dice);
                     this.doubleMove.set(true);
                 }
             } else
                 System.out.println("Lathekin: Error invalid selected dice");
 
             System.out.println("Waking up toolcard thread");
+
+            if (lathekin.getNewGrid() == null) {
+                try {
+                    PatternCard patternCard =getCurrentRound().getCurrentPlayer().getPatternCard();
+                    getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(getCurrentRound().getCurrentPlayer().getPlayerUsername(), patternCard, patternCard.computeAvailablePositionsLathekin(), true));
+
+
+                    lathekin.setNewGrid(getCurrentRound().getCurrentPlayer().getPatternCard().getGrid());
+                    getCurrentRound().getCurrentPlayer().getPatternCard().setGrid(lathekin.getOldGrid());
+
+                    System.out.println("sending data for the second lathekin move");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+
             wakeUpToolCardThread();
         }
     }
@@ -1354,9 +1375,6 @@ public class GameManager {
     public void lathekinResponse() {
         if (toolCardLock.get()) {
             System.out.println("sending Lathekin response");
-            Lathekin lathekin = (Lathekin) getSelectedToolCard("Lathekin");
-            if (lathekin != null)
-                currentRound.getCurrentPlayer().getPatternCard().setGrid(lathekin.getPatternCardGrid());
             playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
         }
     }

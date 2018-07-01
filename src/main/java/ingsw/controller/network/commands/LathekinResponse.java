@@ -9,13 +9,15 @@ import java.util.Map;
 public class LathekinResponse extends UseToolCardResponse {
 
     public Map<String, Boolean[][]> availablePositions;
-    public Player player;
+    public String playerUsername;
+    public PatternCard patternCard;
     public boolean secondMove;
 
-    public LathekinResponse(Player player, Map<String, Boolean[][]> availablePositions, boolean secondMove) {
+    public LathekinResponse(String playerUsername, PatternCard patternCard, Map<String, Boolean[][]> availablePositions, boolean secondMove) {
         super(ToolCardType.LATHEKIN);
         this.availablePositions = availablePositions;
-        this.player = player;
+        this.playerUsername = playerUsername;
+        this.patternCard = patternCard;
         this.secondMove = secondMove;
     }
 }

@@ -492,6 +492,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 windowControllerList.get(0).updatePatternCard(timeOutResponse.currentPlayer.getPatternCard());
             }
             disableCommandsAndReset();
+            endTurnButton.setOnMouseClicked(event -> endTurnButtonReset());
             createPopUpWindow("Time Out", "Timer ended", "You've been using too much time for your moves\nYour turn is ended").showAndWait();
         });
     }
@@ -518,7 +519,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         disableToolCards();
         roundState = RoundState.NOT_YOUR_TURN;
         endTurnButton.setDisable(true);
-        endTurnButton.setOnMouseClicked(event -> endTurnButtonReset());
     }
 
     @Override
@@ -1129,7 +1129,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.showAndWait();
 
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
-            windowControllerList.get(0).enableDice(useToolCardResponse.player.getPatternCard());
+            windowControllerList.get(0).updatePatternCard(useToolCardResponse.patternCard);
+            windowControllerList.get(0).enableDice(useToolCardResponse.patternCard);
             windowControllerList.get(0).moveDiceinPatternCardLathekin();
         });
     }

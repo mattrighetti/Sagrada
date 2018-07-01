@@ -11,7 +11,8 @@ import java.util.List;
 
 public class Lathekin extends ToolCard {
 
-    private List<List<Box>> patternCardGrid;
+    private List<List<Box>> oldGrid;
+    private List<List<Box>> newGrid;
 
     public Lathekin() {
         super("Lathekin");
@@ -36,7 +37,7 @@ public class Lathekin extends ToolCard {
 
         try {
             PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
-            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(gameManager.getCurrentRound().getCurrentPlayer(), patternCard.computeAvailablePositions(), false));
+            gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(gameManager.getCurrentRound().getCurrentPlayer().getPlayerUsername(), gameManager.getCurrentRound().getCurrentPlayer().getPatternCard(), patternCard.computeAvailablePositions(), false));
             System.out.println("sending data for the first lathekin move");
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -44,45 +45,61 @@ public class Lathekin extends ToolCard {
         System.out.println("thread goes in wait 1");
         waitForToolCardAction(gameManager);
 
-        if (!gameManager.toolCardLock.get())
-            return;
+        if (resetValues(gameManager)) return;
 
         System.out.println("thread is now awake 1");
 
 
         if (!gameManager.getdoubleMove()) {
-            try {
-                PatternCard patternCard = gameManager.getCurrentRound().getCurrentPlayer().getPatternCard();
-                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(gameManager.getCurrentRound().getCurrentPlayer(), patternCard.computeAvailablePositionsLathekin(), true));
-                System.out.println("sending data for the second lathekin move");
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
             System.out.println("thread goes in wait 2");
             waitForToolCardAction(gameManager);
 
-            if (!gameManager.toolCardLock.get())
-                return;
+            if (resetValues(gameManager)) return;
 
             System.out.println("thread is now awake 2");
             gameManager.lathekinResponse();
         } else {
             System.out.println("Double move done");
             gameManager.lathekinResponse();
+            gameManager.setDoubleMove(false);
+            gameManager.toolCardLock.set(false);
+            setNewGrid(null);
+            setOldGrid(null);
             return;
         }
 
         gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.setDoubleMove(false);
         gameManager.toolCardLock.set(false);
+        setNewGrid(null);
+        setOldGrid(null);
         System.out.println("end Lathekin");
     }
 
-    public List<List<Box>> getPatternCardGrid() {
-        return patternCardGrid;
+    private boolean resetValues(GameManager gameManager) {
+        if (!gameManager.toolCardLock.get()) {
+            gameManager.setDoubleMove(false);
+            gameManager.toolCardLock.set(false);
+            setNewGrid(null);
+            setOldGrid(null);
+            return true;
+        }
+        return false;
     }
 
-    public void setPatternCardGrid(List<List<Box>> patternCardGrid) {
-        this.patternCardGrid = patternCardGrid;
+    public List<List<Box>> getOldGrid() {
+        return oldGrid;
+    }
+
+    public void setOldGrid(List<List<Box>> oldGrid) {
+        this.oldGrid = oldGrid;
+    }
+
+    public List<List<Box>> getNewGrid() {
+        return newGrid;
+    }
+
+    public void setNewGrid(List<List<Box>> newGrid) {
+        this.newGrid = newGrid;
     }
 }

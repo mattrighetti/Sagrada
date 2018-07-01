@@ -262,7 +262,7 @@ public class WindowController implements Initializable {
                     System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
-                        networkType.fluxBrushMove(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                        networkType.fluxBrushMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
                     } else {
                         System.out.println(NO_DICE_SELECTED);
                     }

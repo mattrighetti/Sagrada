@@ -1531,7 +1531,8 @@ public class CLI implements SceneUpdater {
     @Override
     public void toolCardAction(LathekinResponse useToolCardResponse) {
         updateAvailablePositions(useToolCardResponse.availablePositions);
-        updatePatternCard(useToolCardResponse.player);
+        //todo fix it
+        /*updatePatternCard(useToolCardResponse.);*/
         System.out.println("Lathekin\nMove the first dice. You must pay attention to all restrictions");
 
         placeDiceLathekin();

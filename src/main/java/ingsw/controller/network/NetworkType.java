@@ -29,7 +29,7 @@ public interface NetworkType {
 
     void fluxBrushMove (Dice dice);
 
-    void fluxBrushMove(Dice selectedDice, int columnIndex, int rowIndex);
+    void fluxBrushMove(Dice selectedDice, int rowIndex, int columnIndex);
 
     void fluxBrushMove();
 
