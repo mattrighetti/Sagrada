@@ -27,7 +27,7 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
-    public void sendResponse(Response response) {
+    public synchronized void sendResponse(Response response) {
         response.handle(rmiController);
     }
 

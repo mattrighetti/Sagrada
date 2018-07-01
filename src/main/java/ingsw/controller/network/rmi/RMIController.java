@@ -307,6 +307,9 @@ public class RMIController implements ResponseHandler, NetworkType {
             case LENS_CUTTER:
                 sceneUpdater.toolCardAction((LensCutterResponse) useToolCardResponse);
                 break;
+            case TAP_WHEEL:
+                sceneUpdater.toolCardAction((TapWheelResponse) useToolCardResponse);
+                break;
             case EGLOMISE_BRUSH:
                 sceneUpdater.toolCardAction((EglomiseBrushResponse) useToolCardResponse);
                 break;
