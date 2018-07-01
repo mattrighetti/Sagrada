@@ -185,6 +185,7 @@ public class SagradaGame extends UnicastRemoteObject implements RemoteSagradaGam
         // In case there is no username | the username is active
         User currentUser = new User(username);
         if (!connectedUsers.containsKey(username)) {
+            System.out.println("contains username");
             currentUser.addListener(userObserver);
             connectedUsers.put(username, currentUser);
             connectedUsers.get(username).getUserObserver().sendResponse(new LoginUserResponse(currentUser));

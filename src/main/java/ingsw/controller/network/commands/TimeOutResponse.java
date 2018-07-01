@@ -20,7 +20,6 @@ public class TimeOutResponse implements Response {
     public TimeOutResponse(List<Dice> draftedDice, List<List<Dice>> roundTrack, Player currentPlayer) {
         toolCardMoveActive = true;
 
-        this.toolCardMoveActive = toolCardMoveActive;
         this.draftedDice = draftedDice;
         this.roundTrack = roundTrack;
         this.currentPlayer = currentPlayer;

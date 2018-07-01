@@ -75,6 +75,7 @@ public class Lathekin extends ToolCard {
         gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.setDoubleMove(false);
         gameManager.toolCardLock.set(false);
+        System.out.println("end Lathekin");
     }
 
     public List<List<Box>> getPatternCardGrid() {

@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -517,6 +518,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         disableToolCards();
         roundState = RoundState.NOT_YOUR_TURN;
         endTurnButton.setDisable(true);
+        endTurnButton.setOnMouseClicked(event -> endTurnButtonReset());
     }
 
     @Override

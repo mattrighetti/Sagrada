@@ -116,7 +116,7 @@ public class Round implements Runnable {
 
     private void endTurnNotification() {
         try {
-            if (!gameManager.toolCardLock.get())
+            if (gameManager.cancelTimer.get())
                 player.getUserObserver().sendResponse(new EndTurnResponse());
         } catch (RemoteException e) {
             e.printStackTrace();

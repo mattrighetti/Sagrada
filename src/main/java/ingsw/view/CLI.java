@@ -277,6 +277,7 @@ public class CLI implements SceneUpdater {
     @Override
     public void launchSecondGui(String username) {
         this.username = username;
+
         showLobbyCommandsAndWait();
     }
 
@@ -316,6 +317,11 @@ public class CLI implements SceneUpdater {
      */
     private void showLobbyCommandsAndWait() {
         new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             networkType.requestBundleData();
             int selectedCommand;
             notMoveNext();

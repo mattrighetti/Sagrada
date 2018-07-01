@@ -27,8 +27,6 @@ public class TapWheel extends ToolCard {
                 .mapToInt(List::size)
                 .reduce(0, (sum,x) -> sum + x);
 
-        System.out.println("Dices in round track\t\t\t" + diceInRoundTrack);
-
         if (gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().isGridEmpty() || (diceInRoundTrack < 1)) {
             try {
                 gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse(gameManager.getCurrentRound().getCurrentPlayer().getFavourTokens()));

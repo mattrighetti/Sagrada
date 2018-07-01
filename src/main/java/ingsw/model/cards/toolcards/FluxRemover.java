@@ -45,6 +45,7 @@ public class FluxRemover extends ToolCard {
         gameManager.fluxRemoverResponse();
         gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.toolCardLock.set(false);
+        System.out.println("end FluxRemover");
     }
 
     public void setDraftedDice(List<Dice> draftedDice) {

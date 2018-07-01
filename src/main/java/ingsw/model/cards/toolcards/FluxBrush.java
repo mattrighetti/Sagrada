@@ -35,6 +35,7 @@ public class FluxBrush extends ToolCard {
             gameManager.getCurrentRound().toolCardMoveDone();
             gameManager.toolCardLock.set(false);
         }
+        System.out.println("end FluxBrush");
     }
 
     public List<Dice> getTemporaryDraftedDice() {
