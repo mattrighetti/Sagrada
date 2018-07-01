@@ -1388,6 +1388,7 @@ public class GameManager {
                 if (box.isValueSet()) {
                     gridPattern.get(i).add(new Box(box.getValue()));
                 } else gridPattern.get(i).add(new Box(box.getColor()));
+
                 if (box.getDice() != null)
                     gridPattern.get(i).get(j).insertDice(box.getDice());
             }

@@ -492,7 +492,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 windowControllerList.get(0).updatePatternCard(timeOutResponse.currentPlayer.getPatternCard());
             }
             disableCommandsAndReset();
-            endTurnButton.setOnMouseClicked(event -> endTurnButtonReset());
+            endTurnButton.setOnAction(null);
+            endTurnButton.setOnAction(event -> endTurnButtonReset());
             createPopUpWindow("Time Out", "Timer ended", "You've been using too much time for your moves\nYour turn is ended").showAndWait();
         });
     }
@@ -1201,11 +1202,13 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                             disableRoundTrack();
                             disableDice();
                             disableToolCards();
+                            endTurnButton.setOnAction(null);
                             endTurnButton.setOnAction(event1 -> {
                                 windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
                                 windowControllerList.get(0).setSelectedDice(null);
                                 networkType.tapWheelMove(-1);
                                 disableDice();
+                                endTurnButton.setOnAction(null);
                                 endTurnButton.setOnAction(event2 -> endTurnButtonReset());
                                 endTurnButton.setDisable(true);
                                 disableRoundTrack();
