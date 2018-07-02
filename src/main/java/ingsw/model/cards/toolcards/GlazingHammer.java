@@ -14,9 +14,13 @@ public class GlazingHammer extends ToolCard {
      */
     @Override
     public void action(GameManager gameManager) {
-        if (gameManager.getTurnInRound() == 2)
+        if (gameManager.getTurnInRound() == 2) {
+            gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
             gameManager.glazingHammerResponse();
+        }
         else
             gameManager.avoidToolCardUse();
+
+        gameManager.toolCardLock.set(false);
     }
 }

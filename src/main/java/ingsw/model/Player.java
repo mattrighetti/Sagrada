@@ -85,7 +85,7 @@ public class Player implements Serializable {
         return favorTokens;
     }
 
-    void decreaseFavorTokens(int favorTokens) {
+    public void decreaseFavorTokens(int favorTokens) {
         this.favorTokens = this.favorTokens - favorTokens;
     }
 

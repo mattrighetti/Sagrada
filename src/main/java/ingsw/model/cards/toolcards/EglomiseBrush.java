@@ -26,8 +26,12 @@ public class EglomiseBrush extends ToolCard {
             }
             waitForToolCardAction(gameManager);
 
-            gameManager.eglomiseBrushResponse();
-            gameManager.getCurrentRound().hasMadeAMove();
+            if (gameManager.toolCardLock.get()) {
+                gameManager.eglomiseBrushResponse();
+                gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
+                gameManager.getCurrentRound().toolCardMoveDone();
+                gameManager.toolCardLock.set(false);
+            }
         } else {
             try {
                 gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());

@@ -243,7 +243,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(TimeOutResponse timeOutResponse) {
-        sceneUpdater.timeOut();
+        sceneUpdater.timeOut(timeOutResponse);
     }
 
     @Override
@@ -306,6 +306,9 @@ public class RMIController implements ResponseHandler, NetworkType {
                 break;
             case LENS_CUTTER:
                 sceneUpdater.toolCardAction((LensCutterResponse) useToolCardResponse);
+                break;
+            case TAP_WHEEL:
+                sceneUpdater.toolCardAction((TapWheelResponse) useToolCardResponse);
                 break;
             case EGLOMISE_BRUSH:
                 sceneUpdater.toolCardAction((EglomiseBrushResponse) useToolCardResponse);

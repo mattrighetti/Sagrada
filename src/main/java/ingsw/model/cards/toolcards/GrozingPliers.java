@@ -53,6 +53,11 @@ public class GrozingPliers extends ToolCard {
         }
 
         waitForToolCardAction(gameManager);
-        gameManager.grozingPliersResponse();
+        if (gameManager.toolCardLock.get()) {
+            gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
+            gameManager.grozingPliersResponse();
+            gameManager.toolCardLock.set(false);
+            gameManager.getCurrentRound().toolCardMoveDone();
+        }
     }
 }

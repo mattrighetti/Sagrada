@@ -27,8 +27,6 @@ public class TapWheel extends ToolCard {
                 .mapToInt(List::size)
                 .reduce(0, (sum,x) -> sum + x);
 
-        System.out.println("Dices in round track\t\t\t" + diceInRoundTrack);
-
         if (gameManager.getCurrentRound().getCurrentPlayer().getPatternCard().isGridEmpty() || (diceInRoundTrack < 1)) {
             try {
                 gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse(gameManager.getCurrentRound().getCurrentPlayer().getFavourTokens()));
@@ -37,6 +35,8 @@ public class TapWheel extends ToolCard {
             }
             return;
         }
+
+        gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
 
         try {
             gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TapWheelResponse(0));
@@ -47,9 +47,14 @@ public class TapWheel extends ToolCard {
         for (int i = 0; i < 2; i++) {
             if (!gameManager.getdoubleMove()) {
                 waitForToolCardAction(gameManager);
+
+                if (!gameManager.toolCardLock.get())
+                    return;
+
             } else break;
         }
 
         System.out.println("end tapwheel");
+        gameManager.toolCardLock.set(false);
     }
 }

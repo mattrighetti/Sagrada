@@ -1,6 +1,5 @@
 package ingsw.model.cards.toolcards;
 
-import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.CopperFoilBurnisherResponse;
 import ingsw.model.GameManager;
 import ingsw.model.cards.patterncard.PatternCard;
@@ -33,14 +32,15 @@ public class CopperFoilBurnisher extends ToolCard {
             }
 
             waitForToolCardAction(gameManager);
-            gameManager.copperFoilBurnisherResponse();
-            gameManager.getCurrentRound().hasMadeAMove();
-        } else {
-            try {
-                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
-            } catch (RemoteException e) {
-                e.printStackTrace();
+
+            if (gameManager.toolCardLock.get()) {
+                gameManager.copperFoilBurnisherResponse();
+                gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
+                gameManager.getCurrentRound().toolCardMoveDone();
+                gameManager.toolCardLock.set(false);
             }
+        } else {
+            gameManager.avoidToolCardUse();
         }
     }
 

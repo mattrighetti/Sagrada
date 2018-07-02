@@ -121,6 +121,7 @@ public class WindowController implements Initializable {
                 DicePane dicePane = dicePanes[j][k];
                 dicePane.getStyleClass().clear();
                 if (patternCard.getGrid().get(j).get(k).getDice() != null) {
+                    dicePane.setDice(patternCard.getGrid().get(j).get(k).getDice());
                     dicePane.getStyleClass().add(patternCard.getGrid().get(j).get(k).getDice().toString());
                     dicePane.getStyleClass().add("dicePaneImageSize");
                 }
@@ -165,6 +166,7 @@ public class WindowController implements Initializable {
             for (int k = 0; k < 5; k++) {
                 DicePane thisDicePane = dicePanes[j][k];
 
+                //set the onMouseClicked of the Pattern Card
                 thisDicePane.setOnMouseClicked(event -> {
                     if (selectedPositions.isEmpty()) {
                         if (!thisDicePane.getStyleClass().isEmpty()) {
@@ -219,10 +221,10 @@ public class WindowController implements Initializable {
 
     }
 
-    void enableDice(PatternCard patternCard) {
+    void enableDiceInPatternCard() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                if (patternCard.getGrid().get(i).get(j).getDice() != null) {
+                if (dicePanes[i][j].getDice() != null) {
                     dicePanes[i][j].setDisable(false);
                 } else {
                     dicePanes[i][j].setDisable(true);
@@ -256,12 +258,13 @@ public class WindowController implements Initializable {
     void fluxBrushMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                DicePane dicePane = new DicePane(i, j);
+
+                DicePane dicePane = dicePanes[i][j];
                 dicePane.setOnMouseClicked(event -> {
                     System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
-                        networkType.fluxBrushMove(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
+                        networkType.fluxBrushMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
                     } else {
                         System.out.println(NO_DICE_SELECTED);
                     }
@@ -275,8 +278,8 @@ public class WindowController implements Initializable {
     void fluxRemoverMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                DicePane dicePane = dicePanes[i][j];
 
+                DicePane dicePane = dicePanes[i][j];
                 dicePane.setOnMouseClicked(event -> {
                     System.out.println(CLICKED);
                     if (selectedDice != null) {

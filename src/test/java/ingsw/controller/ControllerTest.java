@@ -1,5 +1,6 @@
 package ingsw.controller;
 
+import ingsw.model.GameManager;
 import ingsw.model.Player;
 import ingsw.model.SagradaGame;
 import ingsw.model.User;
@@ -8,12 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 class ControllerTest {
 
@@ -34,6 +32,19 @@ class ControllerTest {
             assertEquals(playerList.size(), i+1);
         }
         field.setAccessible(false);
+    }
+
+    @Test
+    void createMatch() throws NoSuchFieldException, IllegalAccessException {
+        Field field = controller.getClass().getDeclaredField("gameManager");
+        field.setAccessible(true);
+
+        GameManager gameManager = (GameManager) field.get(controller);
+        assertTrue(gameManager == null);
+
+        controller.createMatch();
+        gameManager = (GameManager) field.get(controller);
+        assertTrue(gameManager != null);
     }
 
 }

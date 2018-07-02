@@ -478,7 +478,7 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(TimeOutResponse timeOutResponse) {
-        sceneUpdater.timeOut();
+        sceneUpdater.timeOut(timeOutResponse);
     }
 
     @Override

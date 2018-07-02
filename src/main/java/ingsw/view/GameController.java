@@ -138,7 +138,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     /* Utility Elements */
     private int currentRound;
     private DiceButton toolCardSelectedDice;
-    private RoundState roundState; //0: if is not your turn, 1: if is your turn and you have not placed a die
+    private RoundState roundState;
     private int selectedRoundTrack;
 
     @Override
@@ -251,6 +251,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         roundTrackButtonList.add(roundTenButton);
 
         currentRound = 0;
+
+        roundState = RoundState.NOT_YOUR_TURN;
     }
 
     @FXML
@@ -319,7 +321,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     /**
-     * Method that disables every ToolCard
+     * Method that activates the ToolCard ImageViews
      */
     private void activateToolCard() {
         Platform.runLater(
@@ -331,6 +333,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         );
     }
 
+    /**
+     * Method that disables the ToolCards
+     */
     private void disableToolCards() {
         Platform.runLater(
                 () -> {
@@ -341,6 +346,13 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         );
     }
 
+    /**
+     * Creates an Alert of type <code>AlertType.INFORMATION</code>.
+     * @param title Title of the alert
+     * @param headerText Header of the alert
+     * @param contentText Context message of the alert
+     * @return The alert setted
+     */
     private Alert createPopUpWindow(String title, String headerText, String contentText) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -479,10 +491,19 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     @Override
-    public void timeOut() {
+    public void timeOut(TimeOutResponse timeOutResponse) {
         Platform.runLater(() -> {
-            createPopUpWindow("Time Out", "Timer ended", "You've been using too much time for your moves\nYour turn is ended").showAndWait();
+
+            if (timeOutResponse.toolCardMoveActive) {
+                this.roundTrackDice = timeOutResponse.roundTrack;
+                roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());
+                displayDraftedDice(timeOutResponse.draftedDice);
+                windowControllerList.get(0).updatePatternCard(timeOutResponse.currentPlayer.getPatternCard());
+            }
             disableCommandsAndReset();
+            endTurnButton.setOnAction(null);
+            endTurnButton.setOnAction(event -> endTurnButtonReset());
+            createPopUpWindow("Time Out", "Timer ended", "You've been using too much time for your moves\nYour turn is ended").showAndWait();
         });
     }
 
@@ -537,10 +558,12 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void startTurn(StartTurnNotification startTurnNotification) {
-        Platform.runLater(() -> createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait());
+        Platform.runLater(() -> {
+            createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait();
+            roundState = RoundState.YOUR_TURN;
+            activateCommands();
+        });
         windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
-        roundState = RoundState.YOUR_TURN;
-        activateCommands();
     }
 
     private void activateCommands() {
@@ -743,7 +766,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.setHeaderText("Copper Foil Burnisher");
             alert.showAndWait();
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
-
+            windowControllerList.get(0).enableDiceInPatternCard();
             windowControllerList.get(0).moveDiceinPatternCard();
         });
     }
@@ -764,6 +787,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.showAndWait();
             activateDice();
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+            windowControllerList.get(0).enableDiceInPatternCard();
             windowControllerList.get(0).corkBackedStraightedge();
         });
     }
@@ -783,8 +807,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.setTitle("Use Tool card");
             alert.setHeaderText("Eglomise Brush");
             alert.showAndWait();
-            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
         });
+        windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+        windowControllerList.get(0).enableDiceInPatternCard();
         windowControllerList.get(0).moveDiceinPatternCard();
     }
 
@@ -862,6 +887,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                         windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
                                     }
                                 });
+                            button.setDisable(false);
                         }
 
                     } else windowControllerList.get(0).fluxBrushMove();
@@ -1101,6 +1127,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 });
     }
 
+    /*
+    * LATHEKIN
+    *
+    * Place exactly two dice. Must pay attention to all restrictions.
+    * */
 
     /**
      * @param useToolCardResponse
@@ -1115,7 +1146,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.showAndWait();
 
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
-            windowControllerList.get(0).enableDice(useToolCardResponse.player.getPatternCard());
+            windowControllerList.get(0).updatePatternCard(useToolCardResponse.patternCard);
+            windowControllerList.get(0).enableDiceInPatternCard();
             windowControllerList.get(0).moveDiceinPatternCardLathekin();
         });
     }
@@ -1186,11 +1218,13 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                             disableRoundTrack();
                             disableDice();
                             disableToolCards();
+                            endTurnButton.setOnAction(null);
                             endTurnButton.setOnAction(event1 -> {
                                 windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
                                 windowControllerList.get(0).setSelectedDice(null);
                                 networkType.tapWheelMove(-1);
                                 disableDice();
+                                endTurnButton.setOnAction(null);
                                 endTurnButton.setOnAction(event2 -> endTurnButtonReset());
                                 endTurnButton.setDisable(true);
                                 disableRoundTrack();

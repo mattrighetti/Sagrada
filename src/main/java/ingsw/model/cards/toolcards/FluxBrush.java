@@ -1,11 +1,15 @@
 package ingsw.model.cards.toolcards;
 
 import ingsw.controller.network.commands.FluxBrushResponse;
+import ingsw.model.Dice;
 import ingsw.model.GameManager;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class FluxBrush extends ToolCard {
+
+    private List<Dice> temporaryDraftedDice;
 
     public FluxBrush() {
         super("FluxBrush");
@@ -25,8 +29,22 @@ public class FluxBrush extends ToolCard {
 
         waitForToolCardAction(gameManager);
 
-        gameManager.fluxBrushResponse();
-        gameManager.getCurrentRound().hasMadeAMove();
+        if (gameManager.toolCardLock.get()) {
+
+            gameManager.fluxBrushResponse();
+            gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
+            gameManager.getCurrentRound().toolCardMoveDone();
+            gameManager.toolCardLock.set(false);
+        }
+        System.out.println("end FluxBrush");
+    }
+
+    public List<Dice> getTemporaryDraftedDice() {
+        return temporaryDraftedDice;
+    }
+
+    public void setTemporaryDraftedDice(List<Dice> temporaryDraftedDice) {
+        this.temporaryDraftedDice = temporaryDraftedDice;
     }
 
 }

@@ -231,8 +231,8 @@ public interface SceneUpdater {
         System.out.println("Not overridden -> showWinnerNotification");
     }
 
-    default void timeOut() {
-        System.out.println("Not overridden -> timeOut");
+    default void timeOut(TimeOutResponse timeOutResponse) {
+        System.out.println("Not overridden");
     }
 
     default void loadLobbyData(BundleDataResponse bundleDataResponse) {

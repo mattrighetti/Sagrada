@@ -3,6 +3,7 @@ package ingsw.utilities;
 import ingsw.controller.Controller;
 import ingsw.controller.network.commands.TimeOutResponse;
 import ingsw.model.GameManager;
+import ingsw.model.Player;
 import ingsw.model.cards.patterncard.PatternCard;
 
 import java.rmi.RemoteException;
@@ -17,15 +18,23 @@ public class ControllerTimer {
     }
 
     public void startLoginTimer(int loginSeconds, Controller controller, boolean hasStarted) {
+        timer = new Timer("TimerThread");
         timer.schedule(new LaunchMatch(controller, hasStarted), (long) loginSeconds * 1000);
     }
 
     public void startTurnTimer(int turnSeconds, GameManager gameManager) {
+        timer = new Timer("TimerThread");
         timer.schedule(new EndTurn(gameManager), (long) turnSeconds * 1000);
     }
 
     public void startPatternCardTimer(int patternCardSeconds, GameManager gameManager, Map<String, List<PatternCard>> patternCards) {
-        timer.schedule(new ChoosePatternCard(gameManager, patternCards), (long) patternCardSeconds * 1000 );
+        timer = new Timer("TimerThread");
+        timer.schedule(new ChoosePatternCard(gameManager, patternCards), (long) patternCardSeconds * 1000);
+    }
+
+    public void startDraftedDiceTimer(GameManager gameManager){
+        timer = new Timer("TimerThread");
+        timer.schedule(new DraftDiceTask(gameManager),(long) 20 * 1000);
     }
 
     /**
@@ -33,6 +42,7 @@ public class ControllerTimer {
      */
     public void cancelTimer() {
         timer.cancel();
+        timer.purge();
     }
 
     /**
@@ -61,7 +71,7 @@ public class ControllerTimer {
         GameManager gameManager;
         Map<String, List<PatternCard>> patternCards;
 
-        public ChoosePatternCard(GameManager gameManager, Map<String, List<PatternCard>> patternCards) {
+        ChoosePatternCard(GameManager gameManager, Map<String, List<PatternCard>> patternCards) {
             this.gameManager = gameManager;
             this.patternCards = patternCards;
         }
@@ -77,6 +87,23 @@ public class ControllerTimer {
     }
 
     /**
+     * Task class for draft the Dice automatically if player waits too much time
+     */
+    class DraftDiceTask extends TimerTask {
+
+        GameManager gameManager;
+
+        public DraftDiceTask(GameManager gameManager){
+            this.gameManager = gameManager;
+        }
+
+        @Override
+        public void run() {
+            gameManager.draftDiceFromBoard();
+        }
+    }
+
+    /**
      * Task class for End Turn Timer
      */
     class EndTurn extends TimerTask {
@@ -84,17 +111,41 @@ public class ControllerTimer {
 
         EndTurn(GameManager gameManager) {
             this.gameManager = gameManager;
+
         }
 
         @Override
         public void run() {
+            //if the timer expires, execute this code
+
+            Player currentPlayer = gameManager.getCurrentRound().getCurrentPlayer();
 
             try {
-                gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
+
+                if (gameManager.getToolCardLock().get())
+                    currentPlayer.getUserObserver().sendResponse(new TimeOutResponse(gameManager.getDraftedDice(), gameManager.getRoundTrack(), currentPlayer));
+                else
+                    currentPlayer.getUserObserver().sendResponse(new TimeOutResponse());
+
+                synchronized (this) {
+                    wait(500);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            gameManager.endTurn(gameManager.getCurrentRound().getCurrentPlayer().getPlayerUsername());
+
+            System.out.println("timer ended\n");
+
+            gameManager.addMoveToHistoryAndNotify(new MoveStatus(currentPlayer.getPlayerUsername(), "ended the turn due to time out"));
+
+            gameManager.stopTurn();
+
+            //otherwise do nothing
+
+            System.out.println("Deleting timer");
         }
     }
 }
