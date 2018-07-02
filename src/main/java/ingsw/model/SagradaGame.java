@@ -15,10 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
@@ -60,6 +60,13 @@ public class SagradaGame implements RemoteSagradaGame {
 
     public void removeMatch(Controller controller) {
         matchesByName.remove(controller.getMatchName(), controller);
+
+        try {
+            Naming.unbind(controller.getMatchName());
+        } catch (RemoteException | NotBoundException | MalformedURLException e) {
+            e.printStackTrace();
+        }
+
         userBroadcaster.broadcastResponseToAll(new CreateMatchResponse(createAvailableMatchesList()));
     }
 
@@ -203,11 +210,19 @@ public class SagradaGame implements RemoteSagradaGame {
                     player.getUser().attachUserObserver(userObserver);
                     try {
                         player.getUserObserver().sendResponse(new ReJoinResponse(controller.getMatchName(), player.getPlayerUsername()));
+                        return;
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
                 }
             }
+        }
+
+        try {
+            connectedUsers.get(username).attachUserObserver(userObserver);
+            connectedUsers.get(username).getUserObserver().sendResponse(new LoginUserResponse(connectedUsers.get(username)));
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -270,9 +285,6 @@ public class SagradaGame implements RemoteSagradaGame {
                     System.out.println("Player has been updated, it's now back online");
                 }
             }
-        } else {
-            System.out.println("Throwing exception");
-            throw new RemoteException("Match has already finished");
         }
     }
 

@@ -192,7 +192,7 @@ public class RMIHandler implements RequestHandler {
             sagradaGame.loginPrexistentPlayer(reJoinMatchRequest.matchName, user.getUsername());
             remoteController = (RemoteController) Naming.lookup(rebindControllerUrl(ipAddress, reJoinMatchRequest));
         } catch (NotBoundException | RemoteException e) {
-            e.printStackTrace();
+
         } catch (MalformedURLException e) {
             System.err.println("Error in URL String");
             e.printStackTrace();
