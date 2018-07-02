@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import static java.lang.Thread.sleep;
 
@@ -62,6 +63,7 @@ public class GameManager {
     private Thread toolCardThread;
     private final AtomicBoolean patternCardsChosen;
     private final AtomicBoolean draftedDiceSet;
+    private AtomicBoolean endGameDueToDisconnection;
 
 
     /**
@@ -91,6 +93,7 @@ public class GameManager {
         patternCardsChosen = new AtomicBoolean(false);
         this.maxTurnSeconds = maxTurnSeconds;
         draftedDiceSet = new AtomicBoolean(false);
+        endGameDueToDisconnection = new AtomicBoolean(false);
         setUpGameManager();
     }
 
@@ -288,6 +291,8 @@ public class GameManager {
 
                     // If there's only a user connected then...
                 } else {
+
+                    endGameDueToDisconnection.set(true);
 
                     stop.set(true);
 
@@ -596,7 +601,7 @@ public class GameManager {
             }
 
             int i = 0;
-            while (i < 10) {
+            while (i < 2) {
                 if (disconnectedPlayers.size() != (playerList.size() - 1)) {
                     if (playerList.get(0).getUser().isActive()) {
 
@@ -627,11 +632,13 @@ public class GameManager {
 
             endOfMatch.set(true);
 
-            synchronized (endOfMatch) {
-                try {
-                    endOfMatch.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            if (endGameDueToDisconnection.get()) {
+                synchronized (endOfMatch) {
+                    try {
+                        endOfMatch.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
