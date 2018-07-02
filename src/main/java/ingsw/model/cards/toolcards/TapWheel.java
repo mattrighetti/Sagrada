@@ -36,6 +36,8 @@ public class TapWheel extends ToolCard {
             return;
         }
 
+        gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
+
         try {
             gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new TapWheelResponse(0));
         } catch (RemoteException e) {

@@ -57,9 +57,13 @@ public class Lathekin extends ToolCard {
             if (resetValues(gameManager)) return;
 
             System.out.println("thread is now awake 2");
+
+            gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
             gameManager.lathekinResponse();
+
         } else {
             System.out.println("Double move done");
+            gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
             gameManager.lathekinResponse();
             gameManager.setDoubleMove(false);
             gameManager.toolCardLock.set(false);

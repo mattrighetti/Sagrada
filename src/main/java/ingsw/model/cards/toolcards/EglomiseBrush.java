@@ -28,6 +28,7 @@ public class EglomiseBrush extends ToolCard {
 
             if (gameManager.toolCardLock.get()) {
                 gameManager.eglomiseBrushResponse();
+                gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
                 gameManager.getCurrentRound().toolCardMoveDone();
                 gameManager.toolCardLock.set(false);
             }

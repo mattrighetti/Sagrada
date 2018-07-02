@@ -121,6 +121,7 @@ public class WindowController implements Initializable {
                 DicePane dicePane = dicePanes[j][k];
                 dicePane.getStyleClass().clear();
                 if (patternCard.getGrid().get(j).get(k).getDice() != null) {
+                    dicePane.setDice(patternCard.getGrid().get(j).get(k).getDice());
                     dicePane.getStyleClass().add(patternCard.getGrid().get(j).get(k).getDice().toString());
                     dicePane.getStyleClass().add("dicePaneImageSize");
                 }
@@ -220,10 +221,10 @@ public class WindowController implements Initializable {
 
     }
 
-    void enableDice(PatternCard patternCard) {
+    void enableDiceInPatternCard() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                if (patternCard.getGrid().get(i).get(j).getDice() != null) {
+                if (dicePanes[i][j].getDice() != null) {
                     dicePanes[i][j].setDisable(false);
                 } else {
                     dicePanes[i][j].setDisable(true);

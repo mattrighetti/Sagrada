@@ -54,6 +54,7 @@ public class GrozingPliers extends ToolCard {
 
         waitForToolCardAction(gameManager);
         if (gameManager.toolCardLock.get()) {
+            gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
             gameManager.grozingPliersResponse();
             gameManager.toolCardLock.set(false);
             gameManager.getCurrentRound().toolCardMoveDone();

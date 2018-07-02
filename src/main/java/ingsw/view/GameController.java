@@ -13,7 +13,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -322,7 +321,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     /**
-     * Method that disables every ToolCard
+     * Method that activates the ToolCard ImageViews
      */
     private void activateToolCard() {
         Platform.runLater(
@@ -334,6 +333,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         );
     }
 
+    /**
+     * Method that disables the ToolCards
+     */
     private void disableToolCards() {
         Platform.runLater(
                 () -> {
@@ -344,6 +346,13 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         );
     }
 
+    /**
+     * Creates an Alert of type <code>AlertType.INFORMATION</code>.
+     * @param title Title of the alert
+     * @param headerText Header of the alert
+     * @param contentText Context message of the alert
+     * @return The alert setted
+     */
     private Alert createPopUpWindow(String title, String headerText, String contentText) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -551,10 +560,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void startTurn(StartTurnNotification startTurnNotification) {
         Platform.runLater(() -> {
             createPopUpWindow("Notification", "It's your turn", "Make a move").showAndWait();
-            windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
             roundState = RoundState.YOUR_TURN;
             activateCommands();
         });
+        windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
     }
 
     private void activateCommands() {
@@ -757,7 +766,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.setHeaderText("Copper Foil Burnisher");
             alert.showAndWait();
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
-
+            windowControllerList.get(0).enableDiceInPatternCard();
             windowControllerList.get(0).moveDiceinPatternCard();
         });
     }
@@ -778,6 +787,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.showAndWait();
             activateDice();
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+            windowControllerList.get(0).enableDiceInPatternCard();
             windowControllerList.get(0).corkBackedStraightedge();
         });
     }
@@ -797,8 +807,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             alert.setTitle("Use Tool card");
             alert.setHeaderText("Eglomise Brush");
             alert.showAndWait();
-            windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
         });
+        windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
+        windowControllerList.get(0).enableDiceInPatternCard();
         windowControllerList.get(0).moveDiceinPatternCard();
     }
 
@@ -1116,6 +1127,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 });
     }
 
+    /*
+    * LATHEKIN
+    *
+    * Place exactly two dice. Must pay attention to all restrictions.
+    * */
 
     /**
      * @param useToolCardResponse
@@ -1131,7 +1147,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
             windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
             windowControllerList.get(0).updatePatternCard(useToolCardResponse.patternCard);
-            windowControllerList.get(0).enableDice(useToolCardResponse.patternCard);
+            windowControllerList.get(0).enableDiceInPatternCard();
             windowControllerList.get(0).moveDiceinPatternCardLathekin();
         });
     }

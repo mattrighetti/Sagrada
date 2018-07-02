@@ -43,6 +43,7 @@ public class FluxRemover extends ToolCard {
             return;
 
         gameManager.fluxRemoverResponse();
+        gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
         gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.toolCardLock.set(false);
         System.out.println("end FluxRemover");

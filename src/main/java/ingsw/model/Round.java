@@ -51,19 +51,15 @@ public class Round implements Runnable {
                 noOfMoves++;
                 System.out.println("Second move done");
 
-                endTurnNotification();
             } else {
                 blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
             }
 
-            System.out.println("End of Turn");
+            System.out.println("End of Turn in Round");
 
             playerEndedTurn.set(true);
 
-            synchronized (gameManager.cancelTimer) {
-                gameManager.cancelTimer.set(true);
-                gameManager.cancelTimer.notifyAll();
-            }
+            gameManager.getControllerTimer().cancelTimer();
 
             //wake up the round thread
             synchronized (playerEndedTurn) {
@@ -73,7 +69,10 @@ public class Round implements Runnable {
         }).start();
     }
 
-    public void hasMadeAMove() {
+    /**
+     * Method the set hasMadeAMove to true and wake the turn thread.
+     */
+    private void hasMadeAMove() {
         hasMadeAMove.set(true);
 
         //wake up the Thread of round class
@@ -114,15 +113,6 @@ public class Round implements Runnable {
         }
     }
 
-    private void endTurnNotification() {
-        try {
-            if (gameManager.cancelTimer.get())
-                player.getUserObserver().sendResponse(new EndTurnResponse());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
     AtomicBoolean hasPlayerEndedTurn() {
         return playerEndedTurn;
     }
@@ -146,7 +136,6 @@ public class Round implements Runnable {
         if (toolCard.getPrice() <= getCurrentPlayer().getFavourTokens()) {
 
             if (toolCard.getPrice() == 1) toolCard.increasePrice();
-            getCurrentPlayer().decreaseFavorTokens(toolCard.getPrice());
             toolCard.action(gameManager);
 
         } else {

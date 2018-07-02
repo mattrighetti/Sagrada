@@ -27,6 +27,7 @@ public class LensCutter extends ToolCard {
             waitForToolCardAction(gameManager);
 
             if (gameManager.toolCardLock.get()) {
+                gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
                 gameManager.lensCutterResponse();
                 gameManager.getCurrentRound().toolCardMoveDone();
                 gameManager.toolCardLock.set(false);

@@ -32,6 +32,7 @@ public class FluxBrush extends ToolCard {
         if (gameManager.toolCardLock.get()) {
 
             gameManager.fluxBrushResponse();
+            gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
             gameManager.getCurrentRound().toolCardMoveDone();
             gameManager.toolCardLock.set(false);
         }

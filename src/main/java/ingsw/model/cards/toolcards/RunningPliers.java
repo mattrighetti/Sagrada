@@ -29,6 +29,7 @@ public class RunningPliers extends ToolCard {
 
             if (gameManager.toolCardLock.get()) {
                 gameManager.getCurrentRound().blockedTurnPlayers.add(gameManager.getCurrentRound().getCurrentPlayer().getPlayerUsername());
+                gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
                 gameManager.runningPliersResponse();
                 gameManager.getCurrentRound().toolCardMoveDone();
                 gameManager.toolCardLock.set(false);

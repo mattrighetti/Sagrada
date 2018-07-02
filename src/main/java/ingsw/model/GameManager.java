@@ -40,7 +40,6 @@ public class GameManager {
     private Board board;
     private int maxTurnSeconds;
     private Round currentRound;
-    private boolean brokenWindow;
     private Controller controller;
     private List<Player> playerList;
     private List<MoveStatus> movesHistory;
@@ -70,10 +69,9 @@ public class GameManager {
      *
      * @param players         players that joined the match
      * @param maxTurnSeconds  max seconds that a user should use to complete a turn
-     * @param controllerTimer
+     * @param controllerTimer Timer used to schedule the time for choosing pattern cards, drafting the dice and doing an entire turn
      */
     public GameManager(List<Player> players, int maxTurnSeconds, Controller controller, ControllerTimer controllerTimer) {
-        brokenWindow = false;
         playerList = players;
         this.controller = controller;
         roundTrack = new ArrayList<>();
@@ -89,8 +87,8 @@ public class GameManager {
         playerBroadcaster = new PlayerBroadcaster(players);
         endOfMatch = new AtomicBoolean(false);
         this.controllerTimer = controllerTimer;
-        this.maxTurnSeconds = maxTurnSeconds * 1000;
         patternCardsChosen = new AtomicBoolean(false);
+        this.maxTurnSeconds = maxTurnSeconds;
         setUpGameManager();
     }
 
@@ -200,14 +198,13 @@ public class GameManager {
      * @return three randomly picked ToolCards
      */
     private List<ToolCard> chooseToolCards() {
-        //Collections.shuffle(toolCards);
+       // Collections.shuffle(toolCards);
         //return new ArrayList<>(this.toolCards.subList(0, 3));
         List<ToolCard> toolCardList = new LinkedList<>();
-        toolCardList.add(new Lathekin());
-        toolCardList.add(new FluxBrush());
-        toolCardList.add(new TapWheel());
+        toolCardList.add(new EglomiseBrush());
+        toolCardList.add(new CopperFoilBurnisher());
+        toolCardList.add(new GlazingHammer());
         return toolCardList;
-
     }
 
     /**
@@ -259,7 +256,7 @@ public class GameManager {
     /**
      * Method that checks if every user is connected to the game.
      *
-     * @param disconnectedPlayers
+     * @param disconnectedPlayers A set in which there are all the disconnected players
      */
     private void checkUserConnection(Set<Player> disconnectedPlayers) {
         for (Player player : playerList) {
@@ -315,12 +312,17 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method used to close all the active game threads (match thread, round thread and turn thread) and also the active turn timer.
+     *
+     * @throws InterruptedException
+     */
     private void closeThreads() throws InterruptedException {
         while (!endOfMatch.get()) {
-            synchronized (cancelTimer) {
-                cancelTimer.set(true);
-                cancelTimer.notifyAll();
-            }
+
+            controllerTimer.cancelTimer();
+
+            stopTurn();
 
             synchronized (currentRound.hasPlayerEndedTurn()) {
                 if (currentRound != null) {
@@ -517,18 +519,30 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method called when end turn button is clicked and if the button
+     * is pressed by the host which is the current player in that moment.
+     * Deletes the timer, sends an <code>EndTurnResponse</code>
+     * to the current player and makes the turn thread terminate gracefully.
+     *
+     * @param currentPlayer Player username to check the identity of the host who wants
+     *                      to end the turn.
+     */
     public void endTurn(String currentPlayer) {
         if (currentPlayer.equals(currentRound.getCurrentPlayer().getPlayerUsername())) {
+            controllerTimer.cancelTimer();
 
-            synchronized (cancelTimer) {
-                cancelTimer.set(true);
-                cancelTimer.notifyAll();
+            try {
+                currentRound.getCurrentPlayer().getUserObserver().sendResponse(new EndTurnResponse());
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
+
             stopTurn();
         }
     }
 
-    private void stopTurn() {
+    public void stopTurn() {
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
 
@@ -826,7 +840,7 @@ public class GameManager {
             executeTurn(i, "Turn backward ");
         }
 
-        System.out.println("End of turn gm");
+        System.out.println("End of turn in GameManager");
 
         if (!board.getDraftedDice().isEmpty()) {
             roundTrack.add(board.getDraftedDice());
@@ -843,18 +857,28 @@ public class GameManager {
 
     private void executeTurn(int playerIndex, String turnState) {
 
-        addMoveToHistoryAndNotify(new MoveStatus(playerList.get(0).getPlayerUsername(), "starts turn"));
-
+        addMoveToHistoryAndNotify(new MoveStatus(playerList.get(playerIndex).getPlayerUsername(), "starts turn"));
 
         currentRound.setPlayerEndedTurn(false);
 
         if (playerList.get(playerIndex).getUser().isActive() && (disconnectedPlayers.size() != (playerList.size() - 1))) {
             currentRound.startForPlayer(playerList.get(playerIndex));
-            startTimer(maxTurnSeconds);
+            System.out.println(turnState + currentRound.getCurrentPlayer().getPlayerUsername());
+            cancelTimer.set(false);
+            controllerTimer.startTurnTimer(maxTurnSeconds, this);
+            System.out.println("Starting the timer.");
 
             //wait until turn has ended
             waitEndTurn();
         }
+    }
+
+    public AtomicBoolean getToolCardLock() {
+        return toolCardLock;
+    }
+
+    ControllerTimer getControllerTimer() {
+        return controllerTimer;
     }
 
     private void shiftPlayerList() {
@@ -862,48 +886,6 @@ public class GameManager {
         playerList.remove(0);
         playerList.add(tmp);
         endRound.set(true);
-    }
-
-    private synchronized void startTimer(long time) {
-        cancelTimer.set(false);
-        new Thread(() -> {
-            System.out.println("start timer\n");
-
-            synchronized (cancelTimer) {
-                try {
-                    cancelTimer.wait(time);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    e.printStackTrace();
-                }
-            }
-
-            if (!cancelTimer.get()) {
-
-                try {
-                    if (toolCardLock.get())
-                        currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse(getDraftedDice(), getRoundTrack(), getCurrentRound().getCurrentPlayer()));
-                    else currentRound.getCurrentPlayer().getUserObserver().sendResponse(new TimeOutResponse());
-
-                    synchronized (this) {
-                        wait(500);
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    e.printStackTrace();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                cancelTimer.set(false);
-                System.out.println("timer ended\n");
-
-                addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "ended the turn due to time out"));
-
-                stopTurn();
-            }
-            System.out.println("Deleting timer");
-        }).start();
     }
 
     private void notifyUpdatedRoundTrack() {
@@ -989,7 +971,7 @@ public class GameManager {
      *
      * @param moveStatus move to be added in the List of Moves made
      */
-    private void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
+    public void addMoveToHistoryAndNotify(MoveStatus moveStatus) {
         movesHistory.add(moveStatus);
         playerBroadcaster.updateMovesHistory(movesHistory);
     }

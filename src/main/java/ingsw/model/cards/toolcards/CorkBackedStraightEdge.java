@@ -28,6 +28,7 @@ public class CorkBackedStraightEdge extends ToolCard {
         waitForToolCardAction(gameManager);
         if (gameManager.toolCardLock.get()) {
             gameManager.corkBackedStraightedgeResponse();
+            gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
             gameManager.getCurrentRound().toolCardMoveDone();
             gameManager.toolCardLock.set(false);
         }
