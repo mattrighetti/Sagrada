@@ -34,28 +34,6 @@ class BroadcasterTest {
 
     /*
     @Test
-    void broadcastMessage() {
-        Message message = new Message("b","test");
-
-        playerBroadcaster.broadcastMessage(message);
-        try {
-            Mockito.verify(playerlist.get(0).getUserObserver(),times(1)).sendMessage(message);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        try {
-            Mockito.verify(playerlist.get(2).getUserObserver(),times(1)).sendMessage(message);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        try {
-            Mockito.verify(playerlist.get(3).getUserObserver(),times(1)).sendMessage(message);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
     void broadcastResponse() {
         List<Dice> dice = new ArrayList<>();
 

@@ -1,6 +1,5 @@
 package ingsw.utilities;
 
-import ingsw.controller.network.Message;
 import ingsw.controller.network.commands.*;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.Dice;
