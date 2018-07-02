@@ -51,10 +51,4 @@ public enum GridJSONPath {
         }
         return filePath;
     }
-
-    @Override
-    public String toString() {
-        return filePath.toString();
-    }
-
 }

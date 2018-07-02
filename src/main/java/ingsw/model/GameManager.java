@@ -24,10 +24,8 @@ import ingsw.utilities.PlayerBroadcaster;
 import ingsw.utilities.Tuple;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
@@ -187,7 +185,6 @@ public class GameManager {
         this.publicObjectiveCards.add(new RowColorVariety());
         this.publicObjectiveCards.add(new RowShadeVariety());
         this.publicObjectiveCards.add(new ShadeVariety());
-
     }
 
     /**
@@ -267,11 +264,7 @@ public class GameManager {
     /**
      * Method that checks if every user is connected to the game.
      *
-<<<<<<< HEAD
-     * @param disconnectedPlayers set of users than disconnected from the game
-=======
      * @param disconnectedPlayers A set in which there are all the disconnected players
->>>>>>> toolcard
      */
     private void checkUserConnection(Set<Player> disconnectedPlayers) {
         for (Player player : playerList) {
@@ -650,6 +643,7 @@ public class GameManager {
                     try {
                         endOfMatch.wait();
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         e.printStackTrace();
                     }
                 }
@@ -1168,6 +1162,7 @@ public class GameManager {
     public synchronized void fluxBrushMove(Dice dice, int rowIndex, int columnIndex) {
         if (toolCardLock.get()) {
             FluxBrush fluxBrush = (FluxBrush) getSelectedToolCard("FluxBrush");
+            assert fluxBrush != null;
             board.setDraftedDice(fluxBrush.getTemporaryDraftedDice());
             placeDiceToolCard(dice, rowIndex, columnIndex);
             addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed " + dice.toString() + " in " + rowIndex + " - " + columnIndex));
@@ -1177,6 +1172,7 @@ public class GameManager {
     public void fluxBrushMove() {
         if (toolCardLock.get()) {
             FluxBrush fluxBrush = (FluxBrush) getSelectedToolCard("FluxBrush");
+            assert fluxBrush != null;
             board.setDraftedDice(fluxBrush.getTemporaryDraftedDice());
             wakeUpToolCardThread();
             addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "choose a dice that cannot be placed"));
@@ -1194,6 +1190,7 @@ public class GameManager {
         if (toolCardLock.get()) {
             FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
 
+            assert fluxRemover != null;
             fluxRemover.setDiceFromBag(board.draftOneDice());
             List<Dice> list = new ArrayList<>(getDraftedDice());
             list.add(fluxRemover.getDiceFromBag());
@@ -1223,6 +1220,7 @@ public class GameManager {
         if (toolCardLock.get()) {
             FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
 
+            assert fluxRemover != null;
             for (Dice dice : fluxRemover.getDraftedDice()) {
                 if (selectedDice.toString().equals(dice.toString())) {
                     dice.setFaceUpValue(chosenValue);
@@ -1245,6 +1243,7 @@ public class GameManager {
         if (toolCardLock.get()) {
             FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
 
+            assert fluxRemover != null;
             board.addDiceToBag(fluxRemover.getDiceFromBag());
             board.setDraftedDice(fluxRemover.getDraftedDice());
             placeDiceToolCard(selectedDice, rowIndex, columnIndex);
@@ -1264,7 +1263,9 @@ public class GameManager {
      */
     public synchronized void fluxRemoverMove() {
         if (toolCardLock.get()) {
-            FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
+            FluxRemover fluxRemover;
+            fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
+            assert fluxRemover != null;
             board.addDiceToBag(fluxRemover.getDiceFromBag());
             board.setDraftedDice(fluxRemover.getDraftedDice());
             wakeUpToolCardThread();
@@ -1395,6 +1396,7 @@ public class GameManager {
         if (toolCardLock.get()) {
             Lathekin lathekin = (Lathekin) getSelectedToolCard("Lathekin");
 
+            assert lathekin != null;
             if (lathekin.getNewGrid() == null) {
                 lathekin.setOldGrid(copyPatternCard());
             } else {

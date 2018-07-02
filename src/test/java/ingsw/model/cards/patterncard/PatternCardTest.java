@@ -1007,6 +1007,7 @@ class PatternCardTest {
             }
         }
         resultGrid[0][1] = true;
+        resultGrid[0][3] = true;
         resultGrid[1][0] = true;
 
         //assert for 1-2

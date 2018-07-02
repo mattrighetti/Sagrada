@@ -319,6 +319,7 @@ public class CLI implements SceneUpdater {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
             networkType.requestBundleData();

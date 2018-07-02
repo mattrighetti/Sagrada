@@ -12,9 +12,4 @@ class GridJSONPathTest {
     void setUp() {
         path = GridJSONPath.AURORAE_MAGNIFICUS;
     }
-
-    @Test
-    void toStringTest() {
-        assertEquals("/patterncards-json/AuroraeMagnificus.json", path.toString());
-    }
 }
