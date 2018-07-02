@@ -60,7 +60,8 @@ public class GameManager {
     private final AtomicBoolean endOfMatch;
     private final ControllerTimer controllerTimer;
     private Thread toolCardThread;
-    private AtomicBoolean patternCardsChosen;
+    private final AtomicBoolean patternCardsChosen;
+    private final AtomicBoolean draftedDiceSet;
 
 
     /**
@@ -89,6 +90,7 @@ public class GameManager {
         this.controllerTimer = controllerTimer;
         patternCardsChosen = new AtomicBoolean(false);
         this.maxTurnSeconds = maxTurnSeconds;
+        draftedDiceSet = new AtomicBoolean(false);
         setUpGameManager();
     }
 
@@ -485,16 +487,17 @@ public class GameManager {
      * Method that drafts the dice from the board and sends them to every user view
      */
     public void draftDiceFromBoard() {
-        playerBroadcaster.broadcastResponseToAll(board.draftDice(playerList.size()));
-        addMoveToHistoryAndNotify(new MoveStatus(playerList.get(0).getPlayerUsername(), "Drafted dice"));
-        waitForDiceAck();
-    }
+        synchronized (draftedDiceSet) {
 
-    public void draftDiceReceived(){
-        controllerTimer.cancelTimer();
-        draftDiceFromBoard();
+            if (!draftedDiceSet.get()) {
+                controllerTimer.cancelTimer();
+                playerBroadcaster.broadcastResponseToAll(board.draftDice(playerList.size()));
+                addMoveToHistoryAndNotify(new MoveStatus(playerList.get(0).getPlayerUsername(), "Drafted dice"));
+                waitForDiceAck();
+                draftedDiceSet.set(true);
+            }
+        }
     }
-
 
     /**
      * Method that stalls the program until every user has received every dice
@@ -847,6 +850,7 @@ public class GameManager {
             notifyUpdatedRoundTrack();
         }
 
+        draftedDiceSet.set(false);
         shiftPlayerList();
 
         //wake up the match thread
