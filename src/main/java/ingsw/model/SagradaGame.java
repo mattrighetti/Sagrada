@@ -97,7 +97,12 @@ public class SagradaGame implements RemoteSagradaGame {
     @Override
     public void sendSelectedMatchHistory(String username, String selectedMatchName) throws RemoteException {
         String matchFileName = selectedMatchName + ".txt";
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("src/main/resources/history/" + matchFileName))) {
+
+        File jarPath = new File(SagradaGame.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
+        File jarParentFolder = new File(jarParentFolderPath + "/histories");
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(jarParentFolder + "/" + matchFileName))) {
             String movesJSON = bufferedReader.readLine();
             connectedUsers.get(username).getUserObserver().sendResponse(new HistoryResponse(movesJSON));
         } catch (IOException e) {
@@ -149,7 +154,12 @@ public class SagradaGame implements RemoteSagradaGame {
     @Override
     public synchronized void sendFinishedMatchesList(String username) throws RemoteException {
         List<String> stringList = new ArrayList<>();
-        try (Stream<Path> pathStream = Files.walk(Paths.get("/Users/matt/Dev/IdeaProjects/Sagrada/src/main/resources/history/"))) {
+
+        File jarPath = new File(SagradaGame.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
+        File jarParentFolder = new File(jarParentFolderPath + "/histories");
+
+        try (Stream<Path> pathStream = Files.walk(Paths.get(jarParentFolder.getPath()))) {
             pathStream.filter(Files::isRegularFile).forEach(path -> stringList.add(path.getFileName().toString().replace(".txt", "")));
         } catch (IOException e) {
             e.printStackTrace();

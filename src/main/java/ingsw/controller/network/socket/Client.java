@@ -1,5 +1,6 @@
 package ingsw.controller.network.socket;
 
+import ingsw.controller.network.commands.Ping;
 import ingsw.controller.network.commands.Request;
 import ingsw.controller.network.commands.Response;
 
@@ -70,5 +71,13 @@ public class Client {
         }
 
         return null;
+    }
+
+    void ackPing(Ping ping) {
+        try {
+            objectOutputStream.writeObject(ping);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

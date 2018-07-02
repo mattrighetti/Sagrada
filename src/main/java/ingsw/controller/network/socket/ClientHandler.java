@@ -50,6 +50,8 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
                 if (response instanceof LogoutResponse) {
                     respond(response);
                     close();
+                } else if (response instanceof Ping) {
+
                 } else
                     respond(response);
             }
@@ -77,6 +79,16 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     private synchronized void respond(Response response) {
         try {
             objectOutputStream.writeObject(response);
+            objectOutputStream.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
+        }
+    }
+
+    private synchronized void checkConnection() {
+        try {
+            objectOutputStream.writeObject(new Ping());
             objectOutputStream.reset();
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,7 +146,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
     @Override
     public void checkIfActive() {
-        // Empty, useful only for RMI
+        checkConnection();
     }
 
     /**

@@ -23,8 +23,11 @@ import ingsw.utilities.MoveStatus;
 import ingsw.utilities.PlayerBroadcaster;
 import ingsw.utilities.Tuple;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
@@ -72,7 +75,11 @@ public class GameManager {
      *
      * @param players         players that joined the match
      * @param maxTurnSeconds  max seconds that a user should use to complete a turn
+<<<<<<< Updated upstream
      * @param controllerTimer Timer used to schedule the time for choosing pattern cards, drafting the dice and doing an entire turn
+=======
+     * @param controllerTimer
+>>>>>>> Stashed changes
      */
     public GameManager(List<Player> players, int maxTurnSeconds, Controller controller, ControllerTimer controllerTimer) {
         playerList = players;
@@ -449,6 +456,14 @@ public class GameManager {
      */
     public void randomizePatternCards(Map<String, List<PatternCard>> patternCardToChoose) {
         synchronized (patternCardsChosen) {
+        for (Player player : playerList) {
+            if (player.getPatternCard() == null) {
+                Collections.shuffle(patternCardToChoose.get(player.getPlayerUsername()));
+                player.setPatternCard(patternCardToChoose.get(player.getPlayerUsername()).get(0));
+            }
+        }
+        setBoardAndStartMatch();
+        resetAck();
 
             if (!patternCardsChosen.get()) {
                 patternCardsChosen.set(true);
@@ -667,7 +682,14 @@ public class GameManager {
         Gson gson = new Gson();
         String moveHistoryJSON = gson.toJson(movesHistory);
 
-        try (FileWriter file = new FileWriter("src/main/resources/history/" + playerList.toString() + ".txt")) {
+        File jarPath = new File(GameManager.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
+        File jarParentFolder = new File(jarParentFolderPath + "/histories");
+        if (!jarParentFolder.exists()) {
+            jarParentFolder.mkdir();
+        }
+
+        try (FileWriter file = new FileWriter(jarParentFolder + "/" + playerList.toString() + ".txt")) {
             file.write(moveHistoryJSON);
         } catch (IOException e) {
             System.err.println("There was an error writing the file! Could not complete.");

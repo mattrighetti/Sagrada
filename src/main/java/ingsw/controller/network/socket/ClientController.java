@@ -252,8 +252,10 @@ public class ClientController implements ResponseHandler, NetworkType {
                     do {
                         response = client.nextResponse();
                         if (response != null) {
-                            response.handle(this);
-                            System.out.println("Received a response: " + response);
+                            if (!(response instanceof Ping)) {
+                                response.handle(this);
+                                System.out.println("Received a response: " + response);
+                            } else client.ackPing(new Ping());
                         } else {
                             System.err.println("Null received, stopping broadcast");
                             break;
