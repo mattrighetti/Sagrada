@@ -487,7 +487,7 @@ public class GameManager {
     }
 
 
-    public synchronized void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
+    public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
         if (!brokenWindow) {
             for (Dice diceInDraftedDice : board.getDraftedDice()) {
                 if (diceInDraftedDice.getDiceColor().equals(dice.getDiceColor())
@@ -1036,12 +1036,14 @@ public class GameManager {
      * Method that roll again the drafted dice and send the new drafted pool to all the players
      */
     public synchronized void glazingHammerResponse() {
-        for (Dice dice : board.getDraftedDice()) {
-            dice.roll();
+        if (toolCardLock.get()) {
+            for (Dice dice : board.getDraftedDice()) {
+                dice.roll();
+            }
+            boolean endTurnCheck = false;
+            if (currentRound.getNoOfMoves() == 0) endTurnCheck = true;
+            playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));
         }
-        boolean endTurnCheck = false;
-        if (currentRound.getNoOfMoves() == 0) endTurnCheck = true;
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));
     }
 
     /**
@@ -1379,7 +1381,7 @@ public class GameManager {
         }
     }
 
-    private synchronized List<List<Box>> copyPatternCard() {
+    private List<List<Box>> copyPatternCard() {
         List<List<Box>> gridPattern = new ArrayList<>();
         for (int i = 0; i < currentRound.getCurrentPlayer().getPatternCard().getGrid().size(); i++) {
             gridPattern.add(new ArrayList<>());
@@ -1403,8 +1405,10 @@ public class GameManager {
     }
 
     public void runningPliersResponse() {
-        playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(getDraftedDice(), true));
+        if (toolCardLock.get()) {
+            playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
+            playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(getDraftedDice(), true));
+        }
     }
 
     public boolean getdoubleMove() {

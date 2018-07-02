@@ -851,7 +851,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                     windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
                     windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.selectedDice.toString());
                     displayDraftedDice(useToolCardResponse.draftedDice);
-                    windowControllerList.get(0).fluxBrushMove();
 
                     boolean noAvailable = false;
 
@@ -877,6 +876,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                         windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
                                     }
                                 });
+                            button.setDisable(false);
                         }
 
                     } else windowControllerList.get(0).fluxBrushMove();
