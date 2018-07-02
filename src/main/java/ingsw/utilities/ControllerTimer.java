@@ -2,6 +2,7 @@ package ingsw.utilities;
 
 import ingsw.controller.Controller;
 import ingsw.controller.network.commands.TimeOutResponse;
+import ingsw.controller.network.socket.ClientHandler;
 import ingsw.model.GameManager;
 import ingsw.model.Player;
 import ingsw.model.cards.patterncard.PatternCard;
@@ -35,6 +36,11 @@ public class ControllerTimer {
     public void startDraftedDiceTimer(GameManager gameManager){
         timer = new Timer("TimerThread");
         timer.schedule(new DraftDiceTask(gameManager),(long) 20 * 1000);
+    }
+
+    public void startPingReceiveTimer(ClientHandler clientHandler) {
+        timer = new Timer();
+        timer.schedule(new DisconnectUserTask(clientHandler), (long) 3 * 1000);
     }
 
     /**
@@ -148,6 +154,20 @@ public class ControllerTimer {
             //otherwise do nothing
 
             System.out.println("Deleting timer");
+        }
+    }
+
+    class DisconnectUserTask extends TimerTask {
+        ClientHandler clientHandler;
+
+        DisconnectUserTask(ClientHandler clientHandler) {
+            this.clientHandler = clientHandler;
+        }
+
+        @Override
+        public void run() {
+            clientHandler.close();
+            clientHandler.getServerController().deactivateUser();
         }
     }
 }

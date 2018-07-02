@@ -1,6 +1,7 @@
 package ingsw.controller.network.socket;
 
 import ingsw.controller.network.commands.*;
+import ingsw.utilities.ControllerTimer;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,6 +15,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     private final transient ObjectInputStream objectInputStream;
     private final transient ObjectOutputStream objectOutputStream;
     private transient boolean stop = false;
+    private transient ControllerTimer controllerTimer;
 
     private ServerController serverController;
 
@@ -22,6 +24,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         this.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
         this.serverController = new ServerController(this);
+        controllerTimer = new ControllerTimer();
     }
 
     /**
@@ -51,7 +54,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
                     respond(response);
                     close();
                 } else if (response instanceof Ping) {
-
+                    controllerTimer.cancelTimer();
                 } else
                     respond(response);
             }
@@ -90,6 +93,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         try {
             objectOutputStream.writeObject(new Ping());
             objectOutputStream.reset();
+            controllerTimer.startPingReceiveTimer(this);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
@@ -103,7 +107,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     /**
      * Method that closes ClientHandler connection
      */
-    private void close() {
+    public void close() {
         stop();
         if (objectInputStream != null) {
             try {
@@ -126,6 +130,10 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         } catch (IOException e) {
             System.err.println(ERROR_IN + e.getMessage());
         }
+    }
+
+    public ServerController getServerController() {
+        return serverController;
     }
 
     /*

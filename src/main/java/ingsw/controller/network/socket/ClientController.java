@@ -51,10 +51,11 @@ public class ClientController implements ResponseHandler, NetworkType {
      */
     @Override
     public void loginUser(String username) {
-        client.request(new LoginUserRequest(username));
         if (!listenerActive) {
             listenForResponses();
         }
+
+        client.request(new LoginUserRequest(username));
     }
 
     /**

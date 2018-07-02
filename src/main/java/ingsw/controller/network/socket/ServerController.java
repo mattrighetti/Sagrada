@@ -235,7 +235,7 @@ public class ServerController implements RequestHandler, Serializable {
      * Method that removes a user from the Server in case it did not join a match, otherwise it just deactivates it from
      * Sagrada and the match's Controller
      */
-    void deactivateUser() {
+    public void deactivateUser() {
         try {
             // Deactivate user in the match's controller
             if (controller != null) {
