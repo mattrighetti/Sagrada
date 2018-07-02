@@ -72,11 +72,7 @@ public class GameManager {
      *
      * @param players         players that joined the match
      * @param maxTurnSeconds  max seconds that a user should use to complete a turn
-<<<<<<< Updated upstream
      * @param controllerTimer Timer used to schedule the time for choosing pattern cards, drafting the dice and doing an entire turn
-=======
-     * @param controllerTimer
->>>>>>> Stashed changes
      */
     public GameManager(List<Player> players, int maxTurnSeconds, Controller controller, ControllerTimer controllerTimer) {
         playerList = players;

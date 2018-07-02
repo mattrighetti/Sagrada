@@ -893,7 +893,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
                     } else windowControllerList.get(0).fluxBrushMove();
                 });
-
         }
     }
 
