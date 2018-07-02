@@ -1082,11 +1082,10 @@ public class GameManager {
         for (Dice dice : board.getDraftedDice()) {
             dice.roll();
         }
-        boolean endTurnCheck = false;
-        //if it is the second move in the turn set endTurnCheck true to stop the turn
-        if (currentRound.getNoOfMoves() == 0) endTurnCheck = true;
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "rolled the drafted dice"));
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(),true));
+        endTurn(getCurrentRound().getCurrentPlayer().getPlayerUsername());
+
     }
 
     /**

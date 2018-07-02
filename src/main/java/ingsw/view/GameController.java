@@ -425,6 +425,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             diceButtonToAdd.getStyleClass().add(diceList.get(i).toString());
             diceButtonToAdd.getStyleClass().add("diceImageSize");
             diceButtonToAdd.setMinSize(70, 70);
+            diceButtonToAdd.setPadding(new Insets(5));
             diceButtonToAdd.setDisable(true);
             draftPool.add(diceButtonToAdd);
             diceHorizontalBox.setSpacing(5);
@@ -700,7 +701,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
 
             if (draftedDiceToolCardResponse.endTurn && !roundState.equals(RoundState.NOT_YOUR_TURN))
-                endTurnButtonReset();
+                disableCommandsAndReset();
         });
     }
 

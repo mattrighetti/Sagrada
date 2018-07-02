@@ -40,8 +40,6 @@ public class CLI implements SceneUpdater {
 
     private List<TripleString> statistics;
     private List<TripleString> ranking;
-    private List<String> matchesPlayed;
-    private List<MoveStatus> moveStatusList;
     private List<DoubleString> availableMatches;
     private List<Player> players;
     private List<PublicObjectiveCard> publicObjectiveCards;
@@ -65,8 +63,6 @@ public class CLI implements SceneUpdater {
         stoppableScanner = new StoppableScanner();
         statistics = new ArrayList<>();
         ranking = new ArrayList<>();
-        matchesPlayed = new ArrayList<>();
-        moveStatusList = new ArrayList<>();
         availableMatches = new ArrayList<>();
         toolCards = new ArrayList<>();
         moveHistory = new ArrayList<>();
@@ -344,23 +340,19 @@ public class CLI implements SceneUpdater {
                 switch (selectedCommand) {
                     case 1:
                         createMatch();
-                        //wait
                         break;
                     case 2:
                         joinMatch();
-                        //wait
                         break;
                     case 3:
-                        showFinishedMatches();
-                        //wait
+                        requestFinishedMatchesList();
+                        moveNext();
                         break;
                     case 4:
                         showStatistics();
-                        //wait
                         break;
                     case 5:
                         showRanking();
-                        //wait
                         break;
                     default:
                         System.err.println(wrongInputMessage);
@@ -435,43 +427,52 @@ public class CLI implements SceneUpdater {
             System.out.println("There are no matches. Please create a new one");
         }
     }
-
     /**
      * Show Finished Matches
      * <p>
      * showFinishedMatches shows the list of all finished matches and let the user to choose what he wants to replay
      * Then show all the history moves of the chosen match
+     * @param finishedMatches the list of finished matches
      */
-    private void showFinishedMatches() {
-        requestFinishedMatchesList();
+    @Override
+    public void showFinishedMatches(List<String> finishedMatches) {
         //Check if there is at least an old match to show
-        if (!matchesPlayed.isEmpty()) {
+        if (!finishedMatches.isEmpty()) {
 
             System.out.println("The list of all the played matches: ");
-            for (int i = 0; i < matchesPlayed.size(); i++) {
-                System.out.println((i + 1) + " - " + matchesPlayed.get(i));
+            for (int i = 0; i < finishedMatches.size(); i++) {
+                System.out.println((i + 1) + " - " + finishedMatches.get(i));
             }
             System.out.println("Choose what you want to watch: \nInsert the index of the match or insert 0 to exit");
 
             int selectedMatch;
             do {
                 selectedMatch = userIntegerInput();
-            } while (0 < selectedMatch && selectedMatch < matchesPlayed.size());
+            } while (0 < selectedMatch && selectedMatch < finishedMatches.size());
 
             if (selectedMatch != 0) {
-
-                networkType.requestHistory(matchesPlayed.get(selectedMatch - 1));
-
-                if (!moveStatusList.isEmpty()) {
-                    for (MoveStatus move : moveStatusList) {
-                        System.out.println(move);
-                    }
-                }
-            }
+                networkType.requestHistory(finishedMatches.get(selectedMatch - 1));
+            } else showLobbyCommandsAndWait();
 
         } else {
             System.out.println("There are no played matches");
+            showLobbyCommandsAndWait();
         }
+    }
+
+    /**
+     * Show Selected Match History
+     * <p>
+     * Method that saves in moveStatusList attribute the list of move history of a selected match
+     *
+     * @param history List of moves of a specific match
+     */
+    @Override
+    public void showSelectedMatchHistory(List<MoveStatus> history) {
+        for (MoveStatus move : history) {
+            System.out.println(move.toString());
+        }
+        showLobbyCommandsAndWait();
     }
 
     /**
@@ -509,9 +510,8 @@ public class CLI implements SceneUpdater {
     private void showRanking() {
         System.out.println("Ranking: ");
         for (TripleString rankingList : ranking) {
-            System.out.println(rankingList.toString());
+            System.out.println(rankingList.getFirstField() + rankingList.getSecondField());
         }
-
     }
 
     /**
@@ -1057,33 +1057,6 @@ public class CLI implements SceneUpdater {
     }
 
     /**
-     * Show Selected Match History
-     * <p>
-     * Method that saves in moveStatusList attribute the list of move history of a selected match
-     *
-     * @param history List of moves of a specific match
-     */
-    @Override
-    public void showSelectedMatchHistory(List<MoveStatus> history) {
-        moveStatusList.clear();
-        moveStatusList.addAll(history);
-    }
-
-
-    /**
-     * Show Finished Matches
-     * <p>
-     * Method that saves the list of finished matches
-     *
-     * @param finishedMatches the list of finished matches
-     */
-    @Override
-    public void showFinishedMatches(List<String> finishedMatches) {
-        matchesPlayed.clear();
-        matchesPlayed.addAll(finishedMatches);
-    }
-
-    /**
      * <h1>List of matches updater</h1>
      * <p>
      * Triggered by the server.
@@ -1110,7 +1083,7 @@ public class CLI implements SceneUpdater {
      */
     @Override
     public void showLostNotification(int totalScore) {
-        System.out.println("Match Ended\nYou Lose!\nYour total score is: " + totalScore + "\n\nType a key to exit.");
+        System.out.println("Match Ended\nYou Lose!\nYour total score is: " + totalScore + "\n\nEnter a key to exit.");
         userStringInput();
         showLobbyCommandsAndWait();
     }
@@ -1124,9 +1097,9 @@ public class CLI implements SceneUpdater {
      */
     @Override
     public void showWinnerNotification(int totalScore) {
-        System.out.println("Match Ended\nYou Win!\nYour total score is: " + totalScore + "\n\nInsert a key to exit.");
+        System.out.println("Match Ended\nYou Win!\nYour total score is: " + totalScore + "\n\nEnter a key to exit.");
+        userStringInput();
         showLobbyCommandsAndWait();
-
     }
 
     /* -------------------------------------------------------- */
