@@ -49,6 +49,10 @@ public final class GridCreator {
         return Collections.emptyList();
     }
 
+    public static List<List<Box>> fromString(String jsonString) {
+        return gson.fromJson(jsonString, GRID_TYPE);
+    }
+
     @SuppressWarnings("unused")
     public static PatternCard fromString(String string, PatternCard patternCard) {
         return gson.fromJson(string, patternCard.getClass());

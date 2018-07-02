@@ -810,7 +810,7 @@ public class GameManager {
 
         if (playerList.get(playerIndex).getUser().isActive() && (disconnectedPlayers.size() != (playerList.size() - 1))) {
             currentRound.startForPlayer(playerList.get(playerIndex));
-            startTimer(10000000);
+            startTimer(30000);
 
             //wait until turn has ended
             waitEndTurn();
