@@ -130,9 +130,10 @@ public class WindowController implements Initializable {
         }
     }
 
-    void updateAvailablePositions(String diceString) {
+    synchronized void updateAvailablePositions(String diceString) {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
+                dicePanes[j][k].getStyleClass().remove("grey");
                 if (availablePosition.get(diceString) != null) {
                     System.out.print(availablePosition.get(diceString)[j][k] + "\t");
                     if (!availablePosition.get(diceString)[j][k]) {
@@ -146,6 +147,8 @@ public class WindowController implements Initializable {
             }
             System.out.println();
         }
+
+        System.out.println("ciao");
     }
 
     void setCursorDice(String dice) {

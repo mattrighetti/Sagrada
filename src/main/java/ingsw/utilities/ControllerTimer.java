@@ -141,6 +141,8 @@ public class ControllerTimer {
 
             gameManager.addMoveToHistoryAndNotify(new MoveStatus(currentPlayer.getPlayerUsername(), "ended the turn due to time out"));
 
+            gameManager.getCurrentRound().avoidEndTurnNotification(true);
+
             gameManager.stopTurn();
 
             //otherwise do nothing

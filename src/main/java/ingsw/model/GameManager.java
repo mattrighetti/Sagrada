@@ -33,7 +33,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import static java.lang.Thread.sleep;
 
@@ -210,13 +209,13 @@ public class GameManager {
      * @return three randomly picked ToolCards
      */
     private List<ToolCard> chooseToolCards() {
-       // Collections.shuffle(toolCards);
-        //return new ArrayList<>(this.toolCards.subList(0, 3));
-        List<ToolCard> toolCardList = new LinkedList<>();
+        Collections.shuffle(toolCards);
+        return new ArrayList<>(this.toolCards.subList(0, 3));
+        /*List<ToolCard> toolCardList = new LinkedList<>();
         toolCardList.add(new EglomiseBrush());
         toolCardList.add(new CopperFoilBurnisher());
         toolCardList.add(new GlazingHammer());
-        return toolCardList;
+        return toolCardList;*/
     }
 
     /**
@@ -559,13 +558,7 @@ public class GameManager {
     public void endTurn(String currentPlayer) {
         if (currentPlayer.equals(currentRound.getCurrentPlayer().getPlayerUsername())) {
             controllerTimer.cancelTimer();
-
-            try {
-                currentRound.getCurrentPlayer().getUserObserver().sendResponse(new EndTurnResponse());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-
+            currentRound.avoidEndTurnNotification(true);
             stopTurn();
         }
     }
@@ -1090,6 +1083,7 @@ public class GameManager {
             dice.roll();
         }
         boolean endTurnCheck = false;
+        //if it is the second move in the turn set endTurnCheck true to stop the turn
         if (currentRound.getNoOfMoves() == 0) endTurnCheck = true;
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "rolled the drafted dice"));
         playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), endTurnCheck));

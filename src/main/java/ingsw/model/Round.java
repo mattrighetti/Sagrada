@@ -16,12 +16,14 @@ public class Round implements Runnable {
     private final AtomicBoolean playerEndedTurn;
     public List<String> blockedTurnPlayers;
     private int noOfMoves;
+    private AtomicBoolean avoidEndTurnNotification;
 
     Round(GameManager gameManager) {
         this.gameManager = gameManager;
         hasMadeAMove = new AtomicBoolean();
         playerEndedTurn = new AtomicBoolean();
         blockedTurnPlayers = new ArrayList<>();
+        avoidEndTurnNotification = new AtomicBoolean(false);
     }
 
     void startForPlayer(Player player) {
@@ -41,6 +43,7 @@ public class Round implements Runnable {
                     e.printStackTrace();
                 }
 
+                avoidEndTurnNotification.set(false);
                 noOfMoves = 0;
                 hasMadeAMove.set(false);
                 waitForMove();
@@ -51,6 +54,7 @@ public class Round implements Runnable {
                 noOfMoves++;
                 System.out.println("Second move done");
 
+                endTurnNotification();
             } else {
                 blockedTurnPlayers.remove(getCurrentPlayer().getPlayerUsername());
             }
@@ -67,6 +71,16 @@ public class Round implements Runnable {
             }
 
         }).start();
+    }
+
+    private void endTurnNotification() {
+        if (!avoidEndTurnNotification.get()) {
+            try {
+                getCurrentPlayer().getUserObserver().sendResponse(new EndTurnResponse());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -158,5 +172,9 @@ public class Round implements Runnable {
     @SuppressWarnings("unused")
     int getNoOfMoves() {
         return noOfMoves;
+    }
+
+    public void avoidEndTurnNotification(boolean avoid) {
+        this.avoidEndTurnNotification.set(avoid);
     }
 }
