@@ -1,5 +1,6 @@
 package ingsw.utilities;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -39,9 +40,15 @@ public enum GridJSONPath {
      */
     GridJSONPath(String fileName) {
         filePath = getClass().getResourceAsStream("/patterncards-json/" + fileName);
+        filePath.mark(0);
     }
 
     public InputStream getFilePath() {
+        try {
+            filePath.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return filePath;
     }
 

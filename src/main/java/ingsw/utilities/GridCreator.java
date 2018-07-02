@@ -33,7 +33,8 @@ public final class GridCreator {
      * @return PatternCard grid
      */
     public static List<List<Box>> fromFile(GridJSONPath path) {
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(path.getFilePath()))) {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(path.getFilePath()));
+        try {
             jsonReader = new JsonReader(bufferedReader);
             if (jsonReader.hasNext()) {
                 Gson gson = new GsonBuilder().create();
