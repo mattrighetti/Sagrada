@@ -61,6 +61,7 @@ public class GameManager {
     private final AtomicBoolean endOfMatch;
     private final ControllerTimer controllerTimer;
     private Thread toolCardThread;
+    private AtomicBoolean patternCardsChosen;
 
 
     /**
@@ -89,6 +90,7 @@ public class GameManager {
         endOfMatch = new AtomicBoolean(false);
         this.controllerTimer = controllerTimer;
         this.maxTurnSeconds = maxTurnSeconds * 1000;
+        patternCardsChosen = new AtomicBoolean(false);
         setUpGameManager();
     }
 
@@ -373,13 +375,15 @@ public class GameManager {
      * @param patternCard pattern card chosen by the player
      */
     public void setPatternCardForPlayer(String username, PatternCard patternCard) {
-        if (noOfAck.get() >= 0) {
-            for (Player player : playerList) {
-                if (player.getPlayerUsername().equals(username)) {
-                    player.setPatternCard(patternCard);
-                    receiveAck();
-                    synchronized (noOfAck) {
-                        noOfAck.notifyAll();
+        synchronized (patternCardsChosen) {
+            if (noOfAck.get() >= 0 && !patternCardsChosen.get()) {
+                for (Player player : playerList) {
+                    if (player.getPlayerUsername().equals(username)) {
+                        player.setPatternCard(patternCard);
+                        receiveAck();
+                        synchronized (noOfAck) {
+                            noOfAck.notifyAll();
+                        }
                     }
                 }
             }
@@ -412,10 +416,13 @@ public class GameManager {
             controllerTimer.startPatternCardTimer(30, this, patternCardToChoose);
             waitAck();
 
-            if (noOfAck.get() == playerList.size()) {
-                controllerTimer.cancelTimer();
-                resetAck();
-                setBoardAndStartMatch();
+            synchronized (patternCardsChosen) {
+                if (noOfAck.get() == playerList.size() && !patternCardsChosen.get()) {
+                    controllerTimer.cancelTimer();
+                    resetAck();
+                    patternCardsChosen.set(true);
+                    setBoardAndStartMatch();
+                }
             }
         }).start();
     }
@@ -427,17 +434,24 @@ public class GameManager {
      * @param patternCardToChoose
      */
     public void randomizePatternCards(Map<String, List<PatternCard>> patternCardToChoose) {
-        for (Player player : playerList) {
-            if (player.getPatternCard() == null) {
-                Collections.shuffle(patternCardToChoose.get(player.getPlayerUsername()));
-                player.setPatternCard(patternCardToChoose.get(player.getPlayerUsername()).get(0));
-            }
-        }
-        setBoardAndStartMatch();
-        resetAck();
+        synchronized (patternCardsChosen) {
 
-        synchronized (noOfAck) {
-            noOfAck.notifyAll();
+            if (!patternCardsChosen.get()) {
+                patternCardsChosen.set(true);
+
+                for (Player player : playerList) {
+                    if (player.getPatternCard() == null) {
+                        Collections.shuffle(patternCardToChoose.get(player.getPlayerUsername()));
+                        player.setPatternCard(patternCardToChoose.get(player.getPlayerUsername()).get(0));
+                    }
+                }
+                setBoardAndStartMatch();
+                resetAck();
+
+                synchronized (noOfAck) {
+                    noOfAck.notifyAll();
+                }
+            }
         }
     }
 

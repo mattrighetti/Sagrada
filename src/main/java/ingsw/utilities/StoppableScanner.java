@@ -119,7 +119,7 @@ public class StoppableScanner {
                     input = Integer.parseInt(bufferedReader.readLine());
 
                 } catch (InterruptedException e) {
-                    System.err.println("ConsoleLineReader stopped");
+                    System.err.println("ConsoleIntReader stopped");
                     Thread.currentThread().interrupt();
                     return null;
                 }

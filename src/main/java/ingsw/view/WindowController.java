@@ -165,6 +165,7 @@ public class WindowController implements Initializable {
             for (int k = 0; k < 5; k++) {
                 DicePane thisDicePane = dicePanes[j][k];
 
+                //set the onMouseClicked of the Pattern Card
                 thisDicePane.setOnMouseClicked(event -> {
                     if (selectedPositions.isEmpty()) {
                         if (!thisDicePane.getStyleClass().isEmpty()) {

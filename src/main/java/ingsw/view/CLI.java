@@ -596,13 +596,14 @@ public class CLI implements SceneUpdater {
     @Override
     public void popUpDraftNotification() {
         notMoveNext();
-
-        while (!moveNext.get()) {
-            System.out.println("It's time to draft the dice: insert 'd' to draft");
-            if (!userStringInput().equals("interrupted"))
-                networkType.draftDice();
-            moveNext();
-        }
+        new Thread(() -> {
+            while (!moveNext.get()) {
+                System.out.println("It's time to draft the dice: insert 'd' to draft");
+                if (!userStringInput().equals("interrupted"))
+                    networkType.draftDice();
+                moveNext();
+            }
+        }).start();
     }
 
     /**
@@ -677,8 +678,7 @@ public class CLI implements SceneUpdater {
                             if (!placeDiceMove) {
                                 placeDiceMove = placeDice();
                                 if (placeDiceMove) {
-                                    //method in wait
-                                    gamePhaseWait();
+                                    System.out.println("Dice place correctly");
                                 }
                             } else System.out.println("You have already done this move in this turn");
                             break;
@@ -1009,7 +1009,7 @@ public class CLI implements SceneUpdater {
     @Override
     public void setDraftedDice(List<Dice> dice) {
 
-        if(!stoppableScanner.isReaderCancelled()) stoppableScanner.cancel();
+        if (!stoppableScanner.isReaderCancelled()) stoppableScanner.cancel();
 
         this.draftedDice = dice;
         networkType.sendAck();
@@ -1035,7 +1035,7 @@ public class CLI implements SceneUpdater {
     public void updateView(UpdateViewResponse updateViewResponse) {
         updatePatternCard(updateViewResponse.player);
         updateAvailablePositions(updateViewResponse.availablePositions);
-        System.out.println(updateViewResponse.player.getPlayerUsername() + " placed a die");
+        System.out.println(updateViewResponse.player.getPlayerUsername() + " placed a die:");
         showPatternCardPlayer(updateViewResponse.player);
 
         //Notify lock on gamePhase
@@ -1183,7 +1183,7 @@ public class CLI implements SceneUpdater {
 
     @Override
     public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
-        System.out.println("Pay Attention\n You can't use this tool card now\n");
+        System.out.println("Pay Attention\nYou can't use this tool card now\n");
 
         //Notify thread locked on GamePhase
         notifyGamePhase();
@@ -1258,7 +1258,7 @@ public class CLI implements SceneUpdater {
                     System.out.println("Flux Brush\n\nChoose which dice has to be rolled again:\n");
                     int selecteDice = selectDiceFromDrafted();
                     //stop turn
-                    if (stoppedTurn.get()) return;
+                    if (stoppedTurn.get() || selecteDice < 0) return;
 
                     networkType.fluxBrushMove(draftedDice.get(selecteDice));
                     break;
@@ -1677,6 +1677,7 @@ public class CLI implements SceneUpdater {
             do {
 
                 selectedDice = selectDiceFromDrafted();
+                if (selectedDice < 0) return;
 
                 System.out.println("You chose " + draftedDice.get(selectedDice).toString() + "\n");
                 System.out.println("These are the position in which you can place the die:\n");
@@ -1716,7 +1717,10 @@ public class CLI implements SceneUpdater {
     public void toolCardAction(LensCutterResponse useToolCardResponse) {
         new Thread(() -> {
             System.out.println("Lens Cutter\nSwipe a die from the drafted die with another in the Round Track\n");
+
             int selectedDraftedDice = selectDiceFromDrafted();
+            if (selectedDraftedDice < 0) return;
+
             int selectedRound;
 
             System.out.println("Select a die from the Round Track");
@@ -1762,6 +1766,7 @@ public class CLI implements SceneUpdater {
 
             do {
                 int selectedDice = selectDiceFromDrafted();
+                if (selectedDice < 0) return;
 
                 showPatternCardPlayer(players.get(currentPlayerIndex));
                 System.out.println("These are the available position in wich you can place the selected die\n");
