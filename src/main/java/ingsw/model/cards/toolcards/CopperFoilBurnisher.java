@@ -1,6 +1,5 @@
 package ingsw.model.cards.toolcards;
 
-import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.CopperFoilBurnisherResponse;
 import ingsw.model.GameManager;
 import ingsw.model.cards.patterncard.PatternCard;
