@@ -20,6 +20,7 @@ class HistoryResponseTest {
 
     @Test
     void handle() {
+        // TODO test
         historyResponse.handle(rmiController);
         //Mockito.verify(rmiController, Mockito.times(1)).handle(rmiController);
         historyResponse.handle(clientController);

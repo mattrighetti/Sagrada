@@ -4,7 +4,6 @@ import ingsw.utilities.ToolCardType;
 import ingsw.utilities.Tuple;
 
 public class LathekinRequest extends MoveToolCardRequest {
-
     public Tuple dicePosition;
     public Tuple position;
     public boolean doubleMove;

@@ -6,7 +6,6 @@ import ingsw.utilities.ToolCardType;
 import java.util.List;
 
 public class DraftedDiceToolCardResponse extends UseToolCardResponse {
-
     public List<Dice> draftedDice;
     public boolean endTurn;
 

@@ -6,7 +6,6 @@ import ingsw.utilities.ToolCardType;
 import static ingsw.utilities.ToolCardType.FLUX_REMOVER;
 
 public class FluxRemoverRequest extends MoveToolCardRequest {
-
     public Dice selectedDice;
     public int chosenValue;
     public int phase;

@@ -3,7 +3,6 @@ package ingsw.controller.network.commands;
 import ingsw.utilities.ToolCardType;
 
 public class GrozingPliersResponse extends UseToolCardResponse {
-
     public String restrictions;
 
     public GrozingPliersResponse(String restrictions) {

@@ -1,13 +1,11 @@
 package ingsw.controller.network.commands;
 
 import ingsw.model.Player;
-import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.ToolCardType;
 
 import java.util.Map;
 
 public class TapWheelResponse extends UseToolCardResponse {
-
     public int phase;
     public Map<String, Boolean[][]> availablePositions;
     public Player player;

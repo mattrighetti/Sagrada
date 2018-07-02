@@ -4,7 +4,6 @@ import ingsw.model.Dice;
 import ingsw.utilities.ToolCardType;
 
 public class CorkBackedStraightedgeRequest extends MoveToolCardRequest {
-
     public Dice selectedDice;
     public int row;
     public int column;

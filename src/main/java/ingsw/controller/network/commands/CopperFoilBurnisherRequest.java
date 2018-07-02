@@ -4,7 +4,6 @@ import ingsw.utilities.ToolCardType;
 import ingsw.utilities.Tuple;
 
 public class CopperFoilBurnisherRequest extends MoveToolCardRequest {
-
     public Tuple dicePosition;
     public Tuple position;
 

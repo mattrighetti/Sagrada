@@ -4,7 +4,6 @@ import ingsw.model.Dice;
 import ingsw.utilities.ToolCardType;
 
 public class GrindingStoneRequest extends MoveToolCardRequest {
-
     public Dice selectedDice;
 
     public GrindingStoneRequest(Dice selectedDice) {

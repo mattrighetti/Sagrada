@@ -6,7 +6,6 @@ import java.util.Map;
 
 
 public class CorkBackedStraightedgeResponse extends UseToolCardResponse {
-
     public Map<String, Boolean[][]> availablePositions;
 
     public CorkBackedStraightedgeResponse(Map<String, Boolean[][]> availablePositions) {

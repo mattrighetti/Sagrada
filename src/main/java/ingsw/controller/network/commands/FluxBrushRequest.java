@@ -4,9 +4,7 @@ import ingsw.model.Dice;
 import ingsw.utilities.ToolCardType;
 
 public class FluxBrushRequest extends MoveToolCardRequest {
-
     public Dice selectedDice;
-
     public int row;
     public int column;
     public  int phase;

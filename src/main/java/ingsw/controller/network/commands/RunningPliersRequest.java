@@ -4,7 +4,6 @@ import ingsw.model.Dice;
 import ingsw.utilities.ToolCardType;
 
 public class RunningPliersRequest extends MoveToolCardRequest {
-
     public Dice selectedDice;
     public int rowIndex;
     public int ColumnIndex;

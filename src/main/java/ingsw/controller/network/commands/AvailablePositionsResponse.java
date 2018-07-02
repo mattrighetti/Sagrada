@@ -3,7 +3,6 @@ package ingsw.controller.network.commands;
 import java.util.Map;
 
 public class AvailablePositionsResponse implements Response {
-
     public Map<String, Boolean[][]> availablePositions;
 
     public AvailablePositionsResponse(Map<String, Boolean[][]> availablePositions) {

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public class FluxBrushResponse extends UseToolCardResponse {
-
     public Map<String, Boolean[][]> availablePositions;
     public List<Dice> draftedDice;
     public Dice selectedDice;

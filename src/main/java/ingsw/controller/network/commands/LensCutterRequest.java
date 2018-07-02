@@ -3,7 +3,6 @@ package ingsw.controller.network.commands;
 import ingsw.utilities.ToolCardType;
 
 public class LensCutterRequest extends MoveToolCardRequest {
-
     public int roundIndex;
     public String roundTrackDice;
     public String poolDice;

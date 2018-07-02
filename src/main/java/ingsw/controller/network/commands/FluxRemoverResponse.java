@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public class FluxRemoverResponse extends UseToolCardResponse {
-
     public int phase;
     public Dice draftedDie;
     public Map<String,Boolean[][]> availablePositions;

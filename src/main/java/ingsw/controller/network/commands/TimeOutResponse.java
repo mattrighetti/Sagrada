@@ -7,7 +7,6 @@ import ingsw.model.Player;
 import java.util.List;
 
 public class TimeOutResponse implements Response {
-
     public boolean toolCardMoveActive;
     public List<Dice> draftedDice;
     public List<List<Dice>> roundTrack;

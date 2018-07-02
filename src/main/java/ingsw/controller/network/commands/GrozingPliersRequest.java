@@ -4,7 +4,6 @@ import ingsw.model.Dice;
 import ingsw.utilities.ToolCardType;
 
 public class GrozingPliersRequest extends MoveToolCardRequest {
-
     public Dice selectedDice;
     public Boolean increase;
 

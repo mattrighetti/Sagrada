@@ -5,7 +5,6 @@ import ingsw.utilities.NotificationType;
 import java.util.Map;
 
 public class StartTurnNotification extends Notification {
-
     public Map<String,Boolean[][]> booleanMapGrid;
 
     public StartTurnNotification(Map<String,Boolean[][]> booleanMapGrid) {

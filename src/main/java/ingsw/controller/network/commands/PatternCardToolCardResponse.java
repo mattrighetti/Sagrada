@@ -6,7 +6,6 @@ import ingsw.utilities.ToolCardType;
 import java.util.Map;
 
 public class PatternCardToolCardResponse extends UseToolCardResponse {
-
     public Player player;
     public Map<String,Boolean[][]> availablePositions;
 
