@@ -20,12 +20,14 @@ public class StoppableScanner {
                 inputLine = lineRead.get();
             } catch (IllegalStateException e) {
                 System.err.println("Time OUT triggers (Illegal State Exception)");
+                inputLine = "interrupted";
             } catch (ExecutionException e) {
                 System.err.println("Interrupted READ LINE");
             } catch (InterruptedException e) {
                 System.err.println("Interrupted READ LINE");
                 Thread.currentThread().interrupt();
                 executorService.shutdown();
+                inputLine = "interrupted";
             }
 
         } finally {

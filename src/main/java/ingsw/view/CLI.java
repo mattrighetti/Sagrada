@@ -599,8 +599,8 @@ public class CLI implements SceneUpdater {
 
         while (!moveNext.get()) {
             System.out.println("It's time to draft the dice: insert 'd' to draft");
-            userStringInput();
-            networkType.draftDice();
+            if (!userStringInput().equals("interrupted"))
+                networkType.draftDice();
             moveNext();
         }
     }
@@ -1008,6 +1008,9 @@ public class CLI implements SceneUpdater {
      */
     @Override
     public void setDraftedDice(List<Dice> dice) {
+
+        if(!stoppableScanner.isReaderCancelled()) stoppableScanner.cancel();
+
         this.draftedDice = dice;
         networkType.sendAck();
     }

@@ -28,6 +28,10 @@ public class ControllerTimer {
         timer.schedule(new ChoosePatternCard(gameManager, patternCards), (long) patternCardSeconds * 1000 );
     }
 
+    public void startDraftedDiceTimer(GameManager gameManager){
+        timer.schedule(new DraftDiceTask(gameManager),(long) 20 * 1000);
+    }
+
     /**
      * Method to stop the timer that is running
      */
@@ -73,6 +77,23 @@ public class ControllerTimer {
         @Override
         public void run() {
             gameManager.randomizePatternCards(patternCards);
+        }
+    }
+
+    /**
+     * Task class for draft the Dice automatically if player waits too much time
+     */
+    class DraftDiceTask extends TimerTask {
+
+        GameManager gameManager;
+
+        public DraftDiceTask(GameManager gameManager){
+            this.gameManager = gameManager;
+        }
+
+        @Override
+        public void run() {
+            gameManager.draftDiceFromBoard();
         }
     }
 

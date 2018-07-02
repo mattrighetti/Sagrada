@@ -120,7 +120,7 @@ public class Controller extends UnicastRemoteObject implements RemoteController 
      */
     @Override
     public void draftDice(String username) throws RemoteException {
-        gameManager.draftDiceFromBoard();
+        gameManager.draftDiceReceived();
     }
 
     /**

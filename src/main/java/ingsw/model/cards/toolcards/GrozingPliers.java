@@ -56,6 +56,7 @@ public class GrozingPliers extends ToolCard {
         if (gameManager.toolCardLock.get()) {
             gameManager.grozingPliersResponse();
             gameManager.toolCardLock.set(false);
+            gameManager.getCurrentRound().toolCardMoveDone();
         }
     }
 }

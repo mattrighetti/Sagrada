@@ -474,6 +474,12 @@ public class GameManager {
         waitForDiceAck();
     }
 
+    public void draftDiceReceived(){
+        controllerTimer.cancelTimer();
+        draftDiceFromBoard();
+    }
+
+
     /**
      * Method that stalls the program until every user has received every dice
      */
@@ -542,6 +548,7 @@ public class GameManager {
      */
     private void notifyDraftToPlayer(Player player) {
         player.notifyDraft();
+        controllerTimer.startDraftedDiceTimer(this);
     }
 
     /**
@@ -1142,6 +1149,8 @@ public class GameManager {
 
     public void fluxBrushMove() {
         if (toolCardLock.get()) {
+            FluxBrush fluxBrush = (FluxBrush) getSelectedToolCard("FluxBrush");
+            board.setDraftedDice(fluxBrush.getTemporaryDraftedDice());
             wakeUpToolCardThread();
             addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "choose a dice that cannot be placed"));
         }
