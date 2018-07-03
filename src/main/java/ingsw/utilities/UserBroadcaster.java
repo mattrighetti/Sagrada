@@ -10,16 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 public class UserBroadcaster {
-
+    private static final String ERROR_MESSAGE ="Broadcaster is not active";
     private boolean isBroadcasterActive;
     private Map<String, User> users;
 
     public UserBroadcaster(Map<String, User> users) {
         this.users = users;
-        isBroadcasterActive = true;
-    }
-
-    public void enableBroadcaster() {
         isBroadcasterActive = true;
     }
 
@@ -66,7 +62,7 @@ public class UserBroadcaster {
                     e.printStackTrace();
                 }
             }
-        } else System.out.println("Broadcaster is not active");
+        } else System.out.println(ERROR_MESSAGE);
     }
 
     public void broadcastResponseToAll(CreateMatchResponse createMatchResponse) {
@@ -80,7 +76,7 @@ public class UserBroadcaster {
                     }
                 }
             }
-        } else System.out.println("Broadcaster is not active");
+        } else System.out.println(ERROR_MESSAGE);
     }
 
     public void broadcastResponse(String usernameToExclude, CreateMatchResponse createMatchResponse) {
@@ -92,7 +88,7 @@ public class UserBroadcaster {
                     e.printStackTrace();
                 }
             }
-        } else System.out.println("Broadcaster is not active");
+        } else System.out.println(ERROR_MESSAGE);
     }
 
     public void broadcastResponseToAll(int numberOfConnectedUsers) {
@@ -104,6 +100,6 @@ public class UserBroadcaster {
                     e.printStackTrace();
                 }
             }
-        } else System.out.println("Broadcaster is not active");
+        } else System.out.println(ERROR_MESSAGE);
     }
 }

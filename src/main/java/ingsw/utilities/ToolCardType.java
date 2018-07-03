@@ -6,7 +6,6 @@ public enum ToolCardType {
     EGLOMISE_BRUSH,
     FLUX_BRUSH,
     FLUX_REMOVER,
-    GLAZING_HAMMER,
     GRINDING_STONE,
     GROZING_PLIERS,
     LATHEKIN,

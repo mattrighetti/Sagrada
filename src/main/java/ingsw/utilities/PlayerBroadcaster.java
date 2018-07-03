@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerBroadcaster {
+    private static final String ERROR_MESSAGE = "Broadcaster is not active";
     private boolean isBroadcasterActive;
     private List<Player> players;
 
@@ -69,7 +70,7 @@ public class PlayerBroadcaster {
                     e.printStackTrace();
                 }
             }
-        } else System.out.println("Broadcaster is not active");
+        } else System.out.println(ERROR_MESSAGE);
     }
 
     public void broadcastResponseToAll(List<Dice> dice) {
@@ -81,7 +82,7 @@ public class PlayerBroadcaster {
                     e.printStackTrace();
                 }
             }
-        } else System.out.println("Broadcaster is not active");
+        } else System.out.println(ERROR_MESSAGE);
     }
 
     public void broadcastResponseToAll(Response response) {
@@ -93,7 +94,7 @@ public class PlayerBroadcaster {
                     e.printStackTrace();
                 }
             }
-        } else System.out.println("Broadcaster is not active");
+        } else System.out.println(ERROR_MESSAGE);
     }
 
 
@@ -106,6 +107,6 @@ public class PlayerBroadcaster {
                     e.printStackTrace();
                 }
             }
-        } else System.out.println("Broadcaster is not active");
+        } else System.out.println(ERROR_MESSAGE);
     }
 }

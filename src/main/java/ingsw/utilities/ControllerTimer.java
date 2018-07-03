@@ -12,30 +12,30 @@ import java.util.*;
 
 public class ControllerTimer {
     private Timer timer;
-    private static ControllerTimer controllerTimer;
+    private static final String TIMER_THREAD_NAME = "TimerThread";
 
     public ControllerTimer() {
-        this.timer = new Timer("TimerThread");
+        this.timer = new Timer(TIMER_THREAD_NAME);
     }
 
     public void startLoginTimer(int loginSeconds, Controller controller, boolean hasStarted) {
-        timer = new Timer("TimerThread");
+        timer = new Timer(TIMER_THREAD_NAME);
         timer.schedule(new LaunchMatch(controller, hasStarted), (long) loginSeconds * 1000);
     }
 
     public void startTurnTimer(int turnSeconds, GameManager gameManager) {
-        timer = new Timer("TimerThread");
+        timer = new Timer(TIMER_THREAD_NAME);
         timer.schedule(new EndTurn(gameManager), (long) turnSeconds * 1000);
     }
 
     public void startPatternCardTimer(int patternCardSeconds, GameManager gameManager, Map<String, List<PatternCard>> patternCards) {
-        timer = new Timer("TimerThread");
+        timer = new Timer(TIMER_THREAD_NAME);
         timer.schedule(new ChoosePatternCard(gameManager, patternCards), (long) patternCardSeconds * 1000);
     }
 
-    public void startDraftedDiceTimer(GameManager gameManager){
-        timer = new Timer("TimerThread");
-        timer.schedule(new DraftDiceTask(gameManager),(long) 20 * 1000);
+    public void startDraftedDiceTimer(GameManager gameManager) {
+        timer = new Timer(TIMER_THREAD_NAME);
+        timer.schedule(new DraftDiceTask(gameManager), (long) 20 * 1000);
     }
 
     public void startPingReceiveTimer(ClientHandler clientHandler) {
@@ -99,7 +99,7 @@ public class ControllerTimer {
 
         GameManager gameManager;
 
-        public DraftDiceTask(GameManager gameManager){
+        DraftDiceTask(GameManager gameManager) {
             this.gameManager = gameManager;
         }
 
