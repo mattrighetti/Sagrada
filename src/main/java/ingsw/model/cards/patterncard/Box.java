@@ -9,6 +9,7 @@ public class Box implements Serializable {
     private Color color;
     private Integer value;
     private Dice dice;
+    private Object obj;
 
     public Box(Color color) {
         this.color = color;
@@ -61,6 +62,14 @@ public class Box implements Serializable {
         else if (obj == this) return true;
         else if (((Box) obj).value != null && ((Box) obj).value.equals(this.value)) return true;
         return ((Box) obj).color.equals(this.color);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + value.hashCode();
+        result = 31 * result + color.hashCode();
+        return result;
     }
 
     Boolean isDiceSet() {
