@@ -70,7 +70,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             System.err.println("Deactivating the user");
             serverController.deactivateUser();
             System.err.println("Closing down OutputStreams and InputStreams");
-            pinger.cancel(true);
+            pinger.cancel(true)
             close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,19 +97,24 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     }
 
     private synchronized void checkConnection() {
-        try {
-            System.out.println("Sending Ping to the user");
-            objectOutputStream.writeObject(new Ping());
-            objectOutputStream.reset();
-            controllerTimer.startPingReceiveTimer(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
+        if (!stop) {
+            try {
+                System.out.println("Sending Ping to the user");
+                objectOutputStream.writeObject(new Ping());
+                objectOutputStream.reset();
+                controllerTimer.startPingReceiveTimer(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
+            }
         }
     }
 
     private void pingTimer() {
-        pinger = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::checkConnection, 0, 3, TimeUnit.SECONDS);
+        pinger = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::checkConnection,
+                                                                                     0,
+                                                                                     3,
+                                                                                     TimeUnit.SECONDS);
     }
 
     private void stop() {
