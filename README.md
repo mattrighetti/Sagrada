@@ -1,4 +1,10 @@
 # IDS Project 2018
+
+## Team
+- Mattia Righetti 846580
+- Manuel Trivilino 843470
+- Luca Terracciano 845937
+
 <p align="center">
   <a href="http://floodgategames.com/Sagrada/">
     <img src="https://cf.geekdo-images.com/medium/img/frguV5YOfP1hsAmZpKnYxAmIpYA=/fit-in/500x500/filters:no_upscale()/pic3525224.jpg" alt="" width=381 height=500>
@@ -19,10 +25,13 @@
 <br>
 
 ## UML
-
+**_DESPRECATED_**
 ![uml](https://user-images.githubusercontent.com/16304728/38947258-5450b4b0-433c-11e8-857d-a892bf79b17d.png)
 
-## Team
-- Mattia Righetti (846580)
-- Manuel Trivilino(843470)
-- Luca Terracciano(845937)
+## Implemented Functions
+- Persistence
+- Multi match
+
+## Documentation
+
+For the documentation of the game please refer to the Wiki section of this repository
