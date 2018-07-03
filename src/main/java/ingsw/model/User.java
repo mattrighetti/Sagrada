@@ -32,7 +32,6 @@ public class User implements Serializable {
         matchesPlayed = new LinkedList<>();
         this.stopWatch = new StopWatch();
         this.username = username;
-        stopWatch.start();
     }
 
     int getPositionInRanking() {
@@ -78,20 +77,20 @@ public class User implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
-        //if (active) stopWatch.resume();
-        //else stopWatch.suspend();
     }
 
     public boolean isActive() {
         return active;
     }
 
-    public boolean isReady() {
+    boolean isReady() {
         return ready;
     }
 
     public void setReady(boolean ready) {
         this.ready = ready;
+        if (ready) stopWatch.start();
+        else stopWatch.suspend();
     }
 
     private long getActiveTime() {
