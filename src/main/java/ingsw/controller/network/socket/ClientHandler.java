@@ -171,7 +171,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
     @Override
     public void activatePinger() {
-        checkConnection();
+        pingTimer();
     }
 
     /**

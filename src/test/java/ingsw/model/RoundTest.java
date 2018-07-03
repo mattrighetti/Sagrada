@@ -48,6 +48,11 @@ class RoundTest {
             }
 
             @Override
+            public void activatePinger() {
+
+            }
+
+            @Override
             public void sendResponse(Response response) throws RemoteException {
 
             }

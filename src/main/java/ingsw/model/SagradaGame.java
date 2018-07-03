@@ -210,6 +210,7 @@ public class SagradaGame implements RemoteSagradaGame {
             currentUser.attachUserObserver(userObserver);
             connectedUsers.put(username, currentUser);
             connectedUsers.get(username).getUserObserver().sendResponse(new LoginUserResponse(currentUser));
+            connectedUsers.get(username).getUserObserver().activatePinger();
             broadcastUsersConnected(username);
             return connectedUsers.get(username);
         }
