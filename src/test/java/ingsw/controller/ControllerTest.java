@@ -43,7 +43,7 @@ class ControllerTest {
         assertEquals(controllerToTest.getPlayerList(),Whitebox.getInternalState(controllerToTest,"playerList"));
     }
 
-    @Test
+/*    @Test
     void loginUser() throws NoSuchFieldException, IllegalAccessException, RemoteException {
         Field field = controller.getClass().getDeclaredField("playerList");
         field.setAccessible(true);
@@ -54,7 +54,7 @@ class ControllerTest {
             assertTrue(playerList.get(i).getPlayerUsername().equals(String.valueOf(i)));
         }
         field.setAccessible(false);
-    }
+    }*/
 
     @Test
     void deactivateUser() throws RemoteException {

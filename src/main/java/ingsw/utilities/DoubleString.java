@@ -21,4 +21,12 @@ public class DoubleString implements Serializable {
     public String getSecondField() {
         return secondField;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DoubleString) {
+            DoubleString obj1 = (DoubleString) obj;
+            return obj1.getFirstField().equals(firstField) && obj1.getSecondField().equals(secondField);
+        } else return false;
+    }
 }

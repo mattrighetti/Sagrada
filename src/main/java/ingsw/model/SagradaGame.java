@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 public class SagradaGame implements RemoteSagradaGame {
     private static SagradaGame sagradaGameSingleton;
     Map<String, Controller> matchesByName; // List of all open matches
-    private Map<String, User> connectedUsers; // List of connected users
+    Map<String, User> connectedUsers; // List of connected users
 
     private int maxTurnSeconds;
     private int maxJoinMatchSeconds;
@@ -46,16 +46,6 @@ public class SagradaGame implements RemoteSagradaGame {
         }
 
         return sagradaGameSingleton;
-    }
-
-    @Override
-    public void setMaxTurnSeconds(int maxTurnSeconds) {
-        this.maxTurnSeconds = maxTurnSeconds;
-    }
-
-    @Override
-    public void setMaxJoinMatchSeconds(int maxJoinMatchSeconds) {
-        this.maxJoinMatchSeconds = maxJoinMatchSeconds;
     }
 
     public void removeMatch(Controller controller) {
@@ -111,6 +101,16 @@ public class SagradaGame implements RemoteSagradaGame {
     }
 
     @Override
+    public void setMaxTurnSeconds(int maxTurnSeconds) {
+        this.maxTurnSeconds = maxTurnSeconds;
+    }
+
+    @Override
+    public void setMaxJoinMatchSeconds(int maxJoinMatchSeconds) {
+        this.maxJoinMatchSeconds = maxJoinMatchSeconds;
+    }
+
+    @Override
     public List<TripleString> createRankingsList() {
         TripleString tripleString;
         List<TripleString> ranking = new ArrayList<>();
@@ -118,8 +118,19 @@ public class SagradaGame implements RemoteSagradaGame {
         List<User> rankingList = new ArrayList<>(connectedUsers.values());
         rankingList.sort((user1, user2) -> Integer.compare(user2.getNoOfWins(), user1.getNoOfWins()));
 
-        for (int i = 0; i < rankingList.size(); i++) {
-            rankingList.get(i).setPositionInRanking(i + 1);
+        int positionInRanking = 1;
+        int i = 1;
+        while (i < rankingList.size()) {
+            if (rankingList.get(i).getNoOfWins() == rankingList.get(i - 1).getNoOfWins()) {
+                rankingList.get(i - 1).setPositionInRanking(positionInRanking);
+                rankingList.get(i).setPositionInRanking(positionInRanking);
+                i++;
+            } else {
+                rankingList.get(i - 1).setPositionInRanking(positionInRanking);
+                positionInRanking++;
+                rankingList.get(i).setPositionInRanking(positionInRanking);
+                i++;
+            }
         }
 
         for (User user : connectedUsers.values()) {
@@ -129,6 +140,8 @@ public class SagradaGame implements RemoteSagradaGame {
 
             ranking.add(tripleString);
         }
+
+        ranking.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getFirstField())));
 
         return ranking;
     }
@@ -238,11 +251,8 @@ public class SagradaGame implements RemoteSagradaGame {
 
     @Override
     public void logoutUser(String username) throws RemoteException {
-        connectedUsers.remove(username);
-        broadcastUsersConnected(username);
-
-        if (connectedUsers.get(username) != null) {
-            throw new RemoteException("Logout unsuccessful");
+        if (connectedUsers.remove(username, connectedUsers.get(username))) {
+                broadcastUsersConnected(username);
         }
     }
 
@@ -328,9 +338,9 @@ public class SagradaGame implements RemoteSagradaGame {
      * when he reconnects
      */
     @Override
-    public void deactivateUser(User disconnectedUser) {
+    public void deactivateUser(String disconnectedUsername) {
         for (User user : connectedUsers.values()) {
-            if (user.getUsername().equals(disconnectedUser.getUsername())) {
+            if (user.getUsername().equals(disconnectedUsername)) {
                 System.out.println("F");
                 user.setActive(false);
                 user.setReady(false);

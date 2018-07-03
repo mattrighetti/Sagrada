@@ -34,8 +34,6 @@ public interface RemoteSagradaGame extends Remote {
 
     void loginPrexistentPlayer(String matchName, String username) throws RemoteException;
 
-    void deactivateUser(User user) throws RemoteException;
-
     void broadcastUsersConnected(String string) throws RemoteException;
 
     List<DoubleString> createAvailableMatchesList() throws RemoteException;
@@ -43,4 +41,6 @@ public interface RemoteSagradaGame extends Remote {
     void loginUserToController(String matchName, String username) throws RemoteException;
 
     void sendBundleData(String username) throws RemoteException;
+
+    void deactivateUser(String disconnectedUsername) throws RemoteException;
 }

@@ -7,11 +7,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DoubleStringTest {
     private DoubleString doubleString;
+    private DoubleString doubleString1;
 
     @BeforeEach
 
     void setUp() {
         doubleString = new DoubleString("firstField", 10);
+        doubleString1 = new DoubleString("firstField", 10);
     }
 
     @Test
@@ -22,5 +24,10 @@ class DoubleStringTest {
     @Test
     void getSecondField() {
         assertEquals("10", doubleString.getSecondField());
+    }
+
+    @Test
+    void equalsTest() {
+        assertEquals(doubleString, doubleString1);
     }
 }

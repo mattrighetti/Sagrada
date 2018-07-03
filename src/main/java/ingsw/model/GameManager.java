@@ -204,12 +204,7 @@ public class GameManager {
      */
     private List<ToolCard> chooseToolCards() {
         Collections.shuffle(toolCards);
-        return new ArrayList<>(this.toolCards.subList(0, 3));
-        /*List<ToolCard> toolCardList = new LinkedList<>();
-        toolCardList.add(new EglomiseBrush());
-        toolCardList.add(new CopperFoilBurnisher());
-        toolCardList.add(new GlazingHammer());
-        return toolCardList;*/
+        return new ArrayList<>(toolCards.subList(0, 3));
     }
 
     /**
