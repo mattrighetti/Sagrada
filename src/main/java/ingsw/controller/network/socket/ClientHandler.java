@@ -109,7 +109,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     }
 
     private void pingTimer() {
-        pinger = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::checkConnection, 0, 2, TimeUnit.SECONDS);
+        pinger = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::checkConnection, 0, 3, TimeUnit.SECONDS);
     }
 
     private void stop() {

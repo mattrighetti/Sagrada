@@ -53,7 +53,7 @@ public class ControllerTimer {
         if (!pingActive.get()) {
             pingActive.set(true);
             timer = new Timer(TIMER_THREAD_NAME);
-            timer.schedule(new DisconnectUserTask(clientHandler), (long) 2 * 1000);
+            timer.schedule(new DisconnectUserTask(clientHandler), (long) 1000);
         }
     }
 
