@@ -7,6 +7,9 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
     private static final String ERROR_IN = "Errors in closing - ";
@@ -16,6 +19,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     private final transient ObjectOutputStream objectOutputStream;
     private transient boolean stop = false;
     private transient ControllerTimer controllerTimer;
+    private transient ScheduledFuture<?> pinger;
 
     private ServerController serverController;
 
@@ -66,6 +70,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             System.err.println("Deactivating the user");
             serverController.deactivateUser();
             System.err.println("Closing down OutputStreams and InputStreams");
+            pinger.cancel(true);
             close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -101,6 +106,10 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             e.printStackTrace();
             System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
         }
+    }
+
+    private void pingTimer() {
+        pinger = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::checkConnection, 0, 2, TimeUnit.SECONDS);
     }
 
     private void stop() {
@@ -157,6 +166,11 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
     @Override
     public void checkIfActive() {
+
+    }
+
+    @Override
+    public void activatePinger() {
         checkConnection();
     }
 
@@ -186,7 +200,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      * @param booleanMapGrid list of every available position where the die can be placed
      */
     @Override
-    public void activateTurnNotification(Map<String,Boolean[][]> booleanMapGrid) {
+    public void activateTurnNotification(Map<String, Boolean[][]> booleanMapGrid) {
         respond(new StartTurnNotification(booleanMapGrid));
     }
 
