@@ -687,9 +687,7 @@ public class GameManager {
                 try {
                     player.getUser().incrementNoOfWins();
                     addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "wins the match"));
-                    if (!disconnectedPlayers.contains(player)) {
-                        player.getUserObserver().notifyVictory(player.getScore());
-                    }
+                    player.getUserObserver().notifyVictory(player.getScore());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -697,9 +695,7 @@ public class GameManager {
                 try {
                     player.getUser().incrementNoOfLose();
                     addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "loses the match"));
-                    if (!disconnectedPlayers.contains(player)) {
-                        player.getUserObserver().notifyLost(player.getScore());
-                    }
+                    player.getUserObserver().notifyLost(player.getScore());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

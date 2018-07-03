@@ -91,8 +91,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             objectOutputStream.writeObject(response);
             objectOutputStream.reset();
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
+            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage() + ", caught and the user will not be notified");
         }
     }
 
