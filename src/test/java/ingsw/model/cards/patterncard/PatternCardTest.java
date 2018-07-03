@@ -839,7 +839,6 @@ class PatternCardTest {
         resultGrid[1][0] = true;
         resultGrid[1][2] = true;
         resultGrid[2][3] = true;
-        resultGrid[3][0] = true;
         resultGrid[3][1] = true;
 
         //assert for 1-2
@@ -862,7 +861,6 @@ class PatternCardTest {
         resultGrid[1][3] = true;
         resultGrid[1][4] = true;
         resultGrid[2][4] = true;
-        resultGrid[3][0] = true;
         resultGrid[3][4] = true;
 
         //assert for 1-4
@@ -881,7 +879,6 @@ class PatternCardTest {
         }
         resultGrid[0][1] = true;
         resultGrid[0][3] = true;
-        resultGrid[1][4] = true;
         resultGrid[2][1] = true;
         resultGrid[3][1] = true;
 
@@ -906,7 +903,6 @@ class PatternCardTest {
         resultGrid[1][2] = true;
         resultGrid[2][3] = true;
         resultGrid[2][4] = true;
-        resultGrid[3][0] = true;
         resultGrid[3][1] = true;
 
         //assert for 2-3
@@ -952,7 +948,6 @@ class PatternCardTest {
         resultGrid[0][4] = true;
         resultGrid[1][0] = true;
         resultGrid[1][3] = true;
-        resultGrid[2][1] = true;
         resultGrid[2][4] = true;
         resultGrid[3][0] = true;
         resultGrid[3][3] = true;
@@ -960,7 +955,6 @@ class PatternCardTest {
         //assert for 3-3
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                System.out.println(i+" "+j);
                 assertEquals(resultGrid[i][j], resultMap.get("Yellow333")[i][j]);
             }
         }
@@ -980,6 +974,11 @@ class PatternCardTest {
         dice.setFaceUpValue(6);
         patternCard.grid.get(1).get(2).insertDice(dice);
 
+        dice = new Dice(Color.YELLOW);
+        dice.setFaceUpValue(5);
+        patternCard.grid.get(2).get(1).insertDice(dice);
+
+
         dice = new Dice(Color.GREEN);
         dice.setFaceUpValue(1);
         patternCard.grid.get(2).get(0).insertDice(dice);
@@ -988,9 +987,9 @@ class PatternCardTest {
         dice.setFaceUpValue(2);
         patternCard.grid.get(3).get(0).insertDice(dice);
 
-        resultMap = patternCard.computeAvailablePositionsTapWheel(new Dice(6, Color.BLUE), false);
+        resultMap = patternCard.computeAvailablePositionsTapWheel(new Dice(Color.BLUE), false);
 
-        //Grid expected for 1-2
+        //Grid expected for 0-1
         Boolean[][] resultGrid = new Boolean[4][5];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -1000,12 +999,10 @@ class PatternCardTest {
         resultGrid[0][1] = true;
         resultGrid[0][3] = true;
         resultGrid[1][0] = true;
-        //check why is true
-        //resultGrid[1][2] = true;
-        resultGrid[2][0] = true;
-        resultGrid[3][0] = true;
+        resultGrid[1][2] = true;
+        resultGrid[3][2] = true;
 
-        //assert for 1-2
+        //assert for 0-1
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 System.out.println(i +" " + j);

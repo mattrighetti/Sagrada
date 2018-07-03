@@ -1,42 +1,77 @@
 package ingsw.model;
 
-import com.sun.tools.javac.tree.DCTree;
 import ingsw.controller.Controller;
+
 import ingsw.controller.network.commands.AvoidToolCardResponse;
-import ingsw.controller.network.commands.DraftedDiceToolCardResponse;
-import ingsw.controller.network.commands.GrozingPliersResponse;
-import ingsw.controller.network.socket.ClientHandler;
+import ingsw.controller.network.commands.Notification;
+import ingsw.controller.network.commands.Response;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.ControllerTimer;
+import ingsw.utilities.MoveStatus;
 import ingsw.utilities.PlayerBroadcaster;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.lang.reflect.*;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 class GameManagerTest {
 
     private GameManager gameManager;
     private Board board;
     private Round round;
+    private UserObserver userObserver;
 
     @BeforeEach
-    void setUp() throws RemoteException {
+    void setUp() {
+        userObserver = new UserObserver() {
+            @Override
+            public void onJoin(int numberOfConnectedUsers) throws RemoteException {
+
+            }
+
+            @Override
+            public void receiveNotification(Notification notification) throws RemoteException {
+
+            }
+
+            @Override
+            public void activateTurnNotification(Map<String, Boolean[][]> booleanMapGrid) throws RemoteException {
+
+            }
+
+            @Override
+            public void sendResponse(Response response) throws RemoteException {
+
+            }
+
+            @Override
+            public void checkIfActive() throws RemoteException {
+
+            }
+
+            @Override
+            public void notifyVictory(int score) throws RemoteException {
+
+            }
+
+            @Override
+            public void notifyLost(int score) throws RemoteException {
+
+            }
+        };
+
         List<Player> players = new ArrayList<>();
 
         User userA = new User("a");
@@ -97,7 +132,6 @@ class GameManagerTest {
 
         round = new Round(gameManager);
         Whitebox.setInternalState(round,"player",players.get(0));
-
     }
 
     @Test
@@ -321,5 +355,30 @@ class GameManagerTest {
 
         actual = (AtomicInteger) noOfAck.get(gameManager);
         assertEquals((new AtomicInteger(0)).get(), actual.get());
-    }*/
+    }
+    */
+
+    @Test
+    void avoidToolCardUseTest() throws RemoteException {
+        Player player = mock(Player.class);
+        Whitebox.setInternalState(round, "player", player);
+        Whitebox.setInternalState(gameManager, "currentRound", round);
+        when(player.getUserObserver()).thenReturn(userObserver);
+        gameManager.avoidToolCardUse();
+
+        verify(player).getUserObserver();
+        assertFalse(gameManager.getToolCardLock().get());
+
+    }
+
+    @Test
+    void glazingHammerResponseTest() {
+        gameManager = mock(GameManager.class);
+        Whitebox.setInternalState(gameManager, "board", board);
+        List<MoveStatus> moveStatuses = new ArrayList<>();
+        Whitebox.setInternalState(gameManager, "movesHistory", moveStatuses);
+     //   doNothing().when(gameManager.addMoveToHistoryAndNotify(mock(MoveStatus.class)));
+        gameManager.glazingHammerResponse();
+    }
+
 }

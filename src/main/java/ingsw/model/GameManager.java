@@ -53,7 +53,7 @@ public class GameManager {
     private final AtomicBoolean endRound;
     private final AtomicBoolean stop;
     private final AtomicBoolean doubleMove;
-    final AtomicBoolean cancelTimer;
+    private final AtomicBoolean cancelTimer;
     private final AtomicInteger turnInRound;
     private final AtomicBoolean toolCardLock;
     private Set<Player> disconnectedPlayers;
@@ -352,7 +352,7 @@ public class GameManager {
             try {
                 do {
                     // PING every 2 seconds
-                    sleep(2000);
+                    sleep(5000);
 
                     checkUserConnection(disconnectedPlayers);
 

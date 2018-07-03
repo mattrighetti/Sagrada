@@ -45,7 +45,7 @@ class ControllerTest {
 
 /*    @Test
     void loginUser() throws NoSuchFieldException, IllegalAccessException, RemoteException {
-        Field field = controller.getClass().getDeclaredField("playerList");
+  /*      Field field = controller.getClass().getDeclaredField("playerList");
         field.setAccessible(true);
         for (int i = 0; i < 3; i++) {
             controller.loginUser(new User(String.valueOf(i)));

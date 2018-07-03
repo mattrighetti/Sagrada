@@ -61,7 +61,7 @@ public abstract class PatternCard extends Card {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
             if(!hashMapGrid.containsKey(dice.toString())) {
-                hashMapGrid.put(dice.toString(), computePosition(dice, true, true,true, false));
+                hashMapGrid.put(dice.toString(), computePosition(dice, true, true, true, false, 0, 0));
             }
         }
         return hashMapGrid;
@@ -71,13 +71,13 @@ public abstract class PatternCard extends Card {
     public Map<String,Boolean[][]> computeAvailablePositions() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
-                if(grid.get(i).get(j).getDice() != null) {
-                    dice = grid.get(i).get(j).getDice();
-                    grid.get(i).get(j).removeDice();
-                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, false));
-                    grid.get(i).get(j).insertDice(dice);
+        for (int line = 0; line < 4; line++) {
+            for (int column = 0; column < 5; column++) {
+                if(grid.get(line).get(column).getDice() != null) {
+                    dice = grid.get(line).get(column).getDice();
+                    grid.get(line).get(column).removeDice();
+                    hashMapGrid.put(dice.toString() + line + column, computePosition(dice, true, true, true, false, line, column));
+                    grid.get(line).get(column).insertDice(dice);
                 }
             }
         }
@@ -87,13 +87,13 @@ public abstract class PatternCard extends Card {
     public Map<String,Boolean[][]> computeAvailablePositionsNoValue() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
-                if(grid.get(i).get(j).getDice() != null) {
-                    dice = grid.get(i).get(j).getDice();
-                    grid.get(i).get(j).removeDice();
-                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, false, true, false));
-                    grid.get(i).get(j).insertDice(dice);
+        for (int line = 0; line < 4; line++) {
+            for (int column = 0; column < 5; column++) {
+                if(grid.get(line).get(column).getDice() != null) {
+                    dice = grid.get(line).get(column).getDice();
+                    grid.get(line).get(column).removeDice();
+                    hashMapGrid.put(dice.toString() + line + column, computePosition(dice, true, false, true, false, line, column));
+                    grid.get(line).get(column).insertDice(dice);
                 }
             }
         }
@@ -108,13 +108,13 @@ public abstract class PatternCard extends Card {
     public Map<String, Boolean[][]> computeAvailablePositionsLathekin() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
-                if(grid.get(i).get(j).getDice() != null) {
-                    dice = grid.get(i).get(j).getDice();
-                    grid.get(i).get(j).removeDice();
-                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, true));
-                    grid.get(i).get(j).insertDice(dice);
+        for (int line = 0; line < 4; line++) {
+            for (int column = 0; column < 5; column++) {
+                if(grid.get(line).get(column).getDice() != null) {
+                    dice = grid.get(line).get(column).getDice();
+                    grid.get(line).get(column).removeDice();
+                    hashMapGrid.put(dice.toString() + line + column, computePosition(dice, true, true, true, true, line, column));
+                    grid.get(line).get(column).insertDice(dice);
                 }
             }
         }
@@ -131,22 +131,22 @@ public abstract class PatternCard extends Card {
     public Map<String, Boolean[][]> computeAvailablePositionsTapWheel(Dice colorDice, boolean firstMoveDone) {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
-                if(grid.get(i).get(j).getDice() != null && grid.get(i).get(j).getDice().getDiceColor() == colorDice.getDiceColor()) {
-                    dice = grid.get(i).get(j).getDice();
-                    grid.get(i).get(j).removeDice();
+        for (int lined = 0; lined < 4; lined++) {
+            for (int column = 0; column < 5; column++) {
+                if(grid.get(lined).get(column).getDice() != null && grid.get(lined).get(column).getDice().getDiceColor() == colorDice.getDiceColor()) {
+                    dice = grid.get(lined).get(column).getDice();
+                    grid.get(lined).get(column).removeDice();
 
                     if (!firstMoveDone) {
                         //Re use lathekin algorithm for the double move
-                        hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, true));
+                        hashMapGrid.put(dice.toString() + lined + column, computePosition(dice, true, true, true, true, lined, column));
                     } else
-                        hashMapGrid.put(dice.toString() + i + j, computePosition(dice, true, true, true, false));
+                        hashMapGrid.put(dice.toString() + lined + column, computePosition(dice, true, true, true, false, lined, column));
 
-                    grid.get(i).get(j).insertDice(dice);
+                    grid.get(lined).get(column).insertDice(dice);
 
-                    System.out.println(dice.toString() +i +j);
-                    Boolean[][] x = hashMapGrid.get(dice.toString() +i +j);
+                    System.out.println(dice.toString() +lined +column);
+                    Boolean[][] x = hashMapGrid.get(dice.toString() +lined +column);
                     for (int k = 0; k < 4; k++) {
                         for (int l = 0; l < 5; l++) {
                             System.out.print(x[k][l] + "\t");
@@ -163,13 +163,13 @@ public abstract class PatternCard extends Card {
     public Map<String,Boolean[][]> computeAvailablePositionsNoColor() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
-                if(grid.get(i).get(j).getDice() != null) {
-                    dice = grid.get(i).get(j).getDice();
-                    grid.get(i).get(j).removeDice();
-                    hashMapGrid.put(dice.toString() + i + j, computePosition(dice, false, true, true, false));
-                    grid.get(i).get(j).insertDice(dice);
+        for (int line = 0; line < 4; line++) {
+            for (int column = 0; column < 5; column++) {
+                if(grid.get(line).get(column).getDice() != null) {
+                    dice = grid.get(line).get(column).getDice();
+                    grid.get(line).get(column).removeDice();
+                    hashMapGrid.put(dice.toString() + line + column, computePosition(dice, false, true, true, false, line, column));
+                    grid.get(line).get(column).insertDice(dice);
                 }
             }
         }
@@ -180,14 +180,14 @@ public abstract class PatternCard extends Card {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
             if(!hashMapGrid.containsKey(dice.toString())) {
-                hashMapGrid.put(dice.toString(), computePosition(dice, true, true,false, false));
+                hashMapGrid.put(dice.toString(), computePosition(dice, true, true, false, false, 0, 0));
             }
         }
         return hashMapGrid;
     }
 
 
-    private Boolean[][] computePosition(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction, boolean lathekin) {
+    private Boolean[][] computePosition(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction, boolean lathekin, int diceLine, int diceColumn) {
         Boolean[][] booleanGrid = new Boolean[4][5];
 
         //initialize booleanGrid
@@ -238,62 +238,24 @@ public abstract class PatternCard extends Card {
         } else {
             //Check dice
 
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 5; j++) {
-                    if (noDice(i, j) || lathekin) {
+            for (int line = 0; line < 4; line++) {
+                for (int column = 0; column < 5; column++) {
+                    if (noDice(line, column) || lathekin) {
 
-                        //Check if there are dices around the box
+                        /*
+                        Only for double move (Lathekin && TapWheel):
+                        First of all check if the dice in the box can be switched with the one that it's been analyzed.
+                        Analyze if the dice in position [line, column] can be placed in the position of the current dice [diceLine, diceColumn]
+                         */
 
-                        if (!hasDicesAround(i, j)) {
-                            if (!diceAroundRestriction) {
-                                booleanGrid[i][j] = true;
-                            } else {
-                                booleanGrid[i][j] = false;
-                                continue;
-                            }
-                        } else if (!diceAroundRestriction) {
-                            booleanGrid[i][j] = false;
+                        if (!singleBoxCheck(dice, colorRestrictions, valueRestrictions, diceAroundRestriction, booleanGrid, line, column)) {
                             continue;
                         }
 
-
-                        //Check restrictions
-
-                        if (hasValue(i, j)) {
-                            if (!sameGridValue(valueRestrictions, i, j, dice)) {
-                                booleanGrid[i][j] = false;
-                                continue;
-                            } else if (!diceAroundRestriction) {
-                                booleanGrid[i][j] = true;
-                                continue;
-                            }
-                        } else {
-                            if (!sameGridColor(colorRestrictions, i, j, dice) && !isBlank(i, j)) {
-                                booleanGrid[i][j] = false;
-                                continue;
-                            } else if (!diceAroundRestriction) {
-                                booleanGrid[i][j] = true;
-                                continue;
-                            }
+                        if (lathekin && (line != diceLine && column != diceColumn) && grid.get(line).get(column).getDice() != null) {
+                            boxToSwitchCheck(grid.get(line).get(column).getDice(), colorRestrictions, valueRestrictions, diceAroundRestriction, booleanGrid, line, column, diceLine, diceColumn);
                         }
 
-                        //Check dices around
-
-                        if (i < 3)
-                            if (checkAround(dice, i + 1, j, j, booleanGrid[i])) continue;
-
-
-                        if (i > 0)
-                            if (checkAround(dice, i - 1, j, j, booleanGrid[i])) continue;
-
-
-                        if (j < 4)
-                            if (checkAround(dice, i, j, j + 1, booleanGrid[i])) continue;
-
-
-                        if (j > 0) {
-                            checkAround(dice, i, j, j - 1, booleanGrid[i]);
-                        }
                     }
                 }
             }
@@ -301,17 +263,140 @@ public abstract class PatternCard extends Card {
         return booleanGrid;
     }
 
-    private boolean checkAround(Dice dice, int i, int j, int i2, Boolean[] booleans) {
-        if (!noDice(i, i2)) {
-            if (!sameDiceValue(i, i2, dice) && !sameDiceColor(i, i2, dice)) {
-                booleans[j] = true;
+    private boolean boxToSwitchCheck(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction, Boolean[][] booleanGrid, int line, int column, int diceLine, int diceColumn) {
+        //Check if there are dices around the box
+
+        if (checkIfDiceAround(diceAroundRestriction, booleanGrid, line, column, diceLine, diceColumn)) return false;
+
+
+        //Check restrictions
+
+        if (hasValue(diceLine, diceColumn)) {
+            if (!sameGridValue(valueRestrictions, diceLine, diceColumn, dice)) {
+                booleanGrid[line][column] = false;
+                return false;
+            } else if (!diceAroundRestriction) {
+                booleanGrid[line][column] = true;
+                return true;
+            }
+        } else {
+            if (!sameGridColor(colorRestrictions, diceLine, diceColumn, dice) && !isBlank(diceLine, diceColumn)) {
+                booleanGrid[line][column] = false;
+                return false;
+            } else if (!diceAroundRestriction) {
+                booleanGrid[line][column] = true;
+                return true;
+            }
+        }
+
+        //Check dices around
+
+        if (diceLine < 3)
+            if (checkAroundSwitchBox(dice, diceLine + 1, diceColumn, line, column, booleanGrid))
+                return colorRestrictions;
+
+        if (diceLine > 0)
+            if (checkAroundSwitchBox(dice, diceLine - 1, diceColumn, line, column, booleanGrid))
+                return colorRestrictions;
+
+        if (diceColumn < 4)
+            if (checkAroundSwitchBox(dice, diceLine, diceColumn + 1, line, column, booleanGrid))
+                return colorRestrictions;
+
+        if (diceColumn > 0) {
+            checkAroundSwitchBox(dice, diceLine, diceColumn - 1, line, column, booleanGrid);
+        }
+        return colorRestrictions;
+    }
+
+    private boolean checkIfDiceAround(boolean diceAroundRestriction, Boolean[][] booleanGrid, int line, int column, int diceLine, int diceColumn) {
+        if (!hasDicesAround(diceLine, diceColumn)) {
+            if (!diceAroundRestriction) {
+                booleanGrid[line][column] = true;
+            } else {
+                booleanGrid[line][column] = false;
+                return true;
+            }
+        } else if (!diceAroundRestriction) {
+            booleanGrid[line][column] = false;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean singleBoxCheck(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction, Boolean[][] booleanGrid, int line, int column) {
+        //Check if there are dices around the box
+
+        if (checkIfDiceAround(diceAroundRestriction, booleanGrid, line, column, line, column)) return false;
+
+
+        //Check restrictions
+
+        if (hasValue(line, column)) {
+            if (!sameGridValue(valueRestrictions, line, column, dice)) {
+                booleanGrid[line][column] = false;
+                return false;
+            } else if (!diceAroundRestriction) {
+                booleanGrid[line][column] = true;
+                return true;
+            }
+        } else {
+            if (!sameGridColor(colorRestrictions, line, column, dice) && !isBlank(line, column)) {
+                booleanGrid[line][column] = false;
+                return false;
+            } else if (!diceAroundRestriction) {
+                booleanGrid[line][column] = true;
+                return true;
+            }
+        }
+
+        //Check dices around
+
+        if (line < 3)
+            if (checkAround(dice, line + 1, column, column, booleanGrid[line])) return false;
+
+
+        if (line > 0)
+            if (checkAround(dice, line - 1, column, column, booleanGrid[line])) return false;
+
+
+        if (column < 4)
+            if (checkAround(dice, line, column, column + 1, booleanGrid[line])) return false;
+
+
+        if (column > 0) {
+            if (checkAround(dice, line, column, column - 1, booleanGrid[line])) return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkAround(Dice dice, int line, int column, int neighbour, Boolean[] booleans) {
+        if (!noDice(line, neighbour)) {
+            if (!sameDiceValue(line, neighbour, dice) && !sameDiceColor(line, neighbour, dice)) {
+                booleans[column] = true;
             }
             else {
-                booleans[j] = false;
+                booleans[column] = false;
                 return true;
             }
         } else
-            booleans[j] = true;
+            booleans[column] = true;
+        return false;
+    }
+
+
+    private boolean checkAroundSwitchBox(Dice dice, int diceLine, int diceColumn, int line, int column, Boolean[][] booleans) {
+        if (!noDice(diceLine, diceColumn)) {
+            if (!sameDiceValue(diceLine, diceColumn, dice) && !sameDiceColor(diceLine, diceColumn, dice)) {
+                booleans[line][column] = true;
+            }
+            else {
+                booleans[line][column] = false;
+                return true;
+            }
+        } else
+            booleans[line][column] = true;
         return false;
     }
 

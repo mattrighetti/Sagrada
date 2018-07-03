@@ -9,13 +9,24 @@ import ingsw.model.cards.patterncard.PatternCard;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ControllerTimer {
+    private AtomicBoolean pingActive;
     private Timer timer;
     private static final String TIMER_THREAD_NAME = "TimerThread";
 
     public ControllerTimer() {
         this.timer = new Timer(TIMER_THREAD_NAME);
+        pingActive = new AtomicBoolean(false);
+    }
+
+    public AtomicBoolean getPingActive() {
+        return pingActive;
+    }
+
+    public void setPingActive(boolean pingActive) {
+        this.pingActive.set(pingActive);
     }
 
     public void startLoginTimer(int loginSeconds, Controller controller, boolean hasStarted) {
@@ -39,8 +50,11 @@ public class ControllerTimer {
     }
 
     public void startPingReceiveTimer(ClientHandler clientHandler) {
-        timer = new Timer();
-        timer.schedule(new DisconnectUserTask(clientHandler), (long) 3 * 1000);
+        if (!pingActive.get()) {
+            pingActive.set(true);
+            timer = new Timer(TIMER_THREAD_NAME);
+            timer.schedule(new DisconnectUserTask(clientHandler), (long) 2 * 1000);
+        }
     }
 
     /**

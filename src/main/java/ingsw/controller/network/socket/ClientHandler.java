@@ -54,6 +54,8 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
                     respond(response);
                     close();
                 } else if (response instanceof Ping) {
+                    System.out.println("Received Ping from the user");
+                    controllerTimer.setPingActive(false);
                     controllerTimer.cancelTimer();
                 } else
                     respond(response);
@@ -91,6 +93,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
     private synchronized void checkConnection() {
         try {
+            System.out.println("Sending Ping to the user");
             objectOutputStream.writeObject(new Ping());
             objectOutputStream.reset();
             controllerTimer.startPingReceiveTimer(this);
