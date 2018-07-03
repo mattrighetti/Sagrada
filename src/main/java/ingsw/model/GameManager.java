@@ -436,18 +436,11 @@ public class GameManager {
      * Method that choose the patter card of the player who didn't choose in time randomly
      * Then it starts the match
      *
-     * @param patternCardToChoose
+     * @param patternCardToChoose map of username and a list of their four pattern cards from wich
+     *                            he has to choose one
      */
     public void randomizePatternCards(Map<String, List<PatternCard>> patternCardToChoose) {
         synchronized (patternCardsChosen) {
-        for (Player player : playerList) {
-            if (player.getPatternCard() == null) {
-                Collections.shuffle(patternCardToChoose.get(player.getPlayerUsername()));
-                player.setPatternCard(patternCardToChoose.get(player.getPlayerUsername()).get(0));
-            }
-        }
-        setBoardAndStartMatch();
-        resetAck();
 
             if (!patternCardsChosen.get()) {
                 patternCardsChosen.set(true);
@@ -551,6 +544,11 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method triggered when the turn ends
+     * Stops the turn of the current player in the server
+     * and if it is active, stops the toolcard move execution
+     */
     public void stopTurn() {
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Ended turn"));
         currentRound.setPlayerEndedTurn(true);
@@ -875,7 +873,7 @@ public class GameManager {
         }
     }
 
-    private void executeTurn(int playerIndex, String turnState) {
+    public void executeTurn(int playerIndex, String turnState) {
 
         addMoveToHistoryAndNotify(new MoveStatus(playerList.get(playerIndex).getPlayerUsername(), "starts turn"));
 
@@ -945,7 +943,7 @@ public class GameManager {
      *
      */
 
-    boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
+     boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
         if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
 
@@ -975,7 +973,7 @@ public class GameManager {
         toolCardThread = new Thread(
                 () -> {
                     toolCardLock.set(true);
-                    for (ToolCard toolCard : toolCards) {
+                    for (ToolCard toolCard : board.getToolCards()) {
                         if (toolCard.getName().equals(toolCardName)) {
                             addMoveToHistoryAndNotify(new MoveStatus("Get the name", "Used toolcard " + toolCardName));
                             currentRound.makeMove(toolCard);
@@ -1072,7 +1070,7 @@ public class GameManager {
             dice.roll();
         }
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "rolled the drafted dice"));
-        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(),true));
+        playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), true));
         endTurn(getCurrentRound().getCurrentPlayer().getPlayerUsername());
     }
 
@@ -1093,8 +1091,7 @@ public class GameManager {
                     if (increase) {
                         diceInPool.increasesByOneValue();
                         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "increased " + diceInPool.toString() + " by one value"));
-                    }
-                    else {
+                    } else {
                         diceInPool.decreasesByOneValue();
                         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "decreased " + diceInPool.toString() + " by one value"));
                     }
@@ -1246,7 +1243,7 @@ public class GameManager {
     }
 
     private ToolCard getSelectedToolCard(String toolCardName) {
-        for (ToolCard toolCard : toolCards) {
+        for (ToolCard toolCard : board.getToolCards()) {
             if (toolCard.getName().equals(toolCardName)) return toolCard;
         }
         return null;
@@ -1302,7 +1299,7 @@ public class GameManager {
             List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
             patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
             patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
-            addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice from " + dicePosition.getFirst() + " - " +  dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
+            addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice from " + dicePosition.getFirst() + " - " + dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
             wakeUpToolCardThread();
         }
     }
@@ -1373,7 +1370,7 @@ public class GameManager {
                 patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
                 patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
 
-                addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice from " + dicePosition.getFirst() + " - " +  dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
+                addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice from " + dicePosition.getFirst() + " - " + dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
 
             } else System.out.println("Eglomise Brusher: Error invalid selected dice");
             wakeUpToolCardThread();
@@ -1433,7 +1430,7 @@ public class GameManager {
                 }
             }
 
-            addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice from " + dicePosition.getFirst() + " - " +  dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
+            addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice from " + dicePosition.getFirst() + " - " + dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
 
 
             wakeUpToolCardThread();
@@ -1511,7 +1508,7 @@ public class GameManager {
 
                     System.out.println("The dice removed is\t" + dice1.toString() + position.getFirst() + position.getSecond());
 
-                    addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the first dice from " + dicePosition.getFirst() + " - " +  dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
+                    addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the first dice from " + dicePosition.getFirst() + " - " + dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
 
 
                     wakeUpToolCardThread();
@@ -1526,7 +1523,7 @@ public class GameManager {
                     patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).insertDice(dice);
                     setDoubleMove(true);
 
-                    addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice in " + dicePosition.getFirst() + " - " +  dicePosition.getSecond() + " and " + position.getFirst() + " - " + position.getSecond()));
+                    addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice in " + dicePosition.getFirst() + " - " + dicePosition.getSecond() + " and " + position.getFirst() + " - " + position.getSecond()));
 
 
                     wakeUpToolCardThread();
@@ -1539,7 +1536,7 @@ public class GameManager {
                 patternCard.get(position.getFirst()).get(position.getSecond()).insertDice(patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
                 patternCard.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
 
-                addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice from " + dicePosition.getFirst() + " - " +  dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
+                addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed the dice from " + dicePosition.getFirst() + " - " + dicePosition.getSecond() + " to " + position.getFirst() + " - " + position.getSecond()));
 
                 wakeUpToolCardThread();
                 tapWheelResponse(null, 3);

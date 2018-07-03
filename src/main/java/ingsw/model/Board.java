@@ -7,6 +7,11 @@ import java.util.*;
 
 public class Board {
     private List<PublicObjectiveCard> publicObjectiveCards;
+
+    public List<ToolCard> getToolCards() {
+        return toolCards;
+    }
+
     private List<ToolCard> toolCards;
     private List<Dice> diceBag;
     private List<Dice> draftedDice;

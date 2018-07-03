@@ -48,10 +48,10 @@ class ControllerTest {
   /*      Field field = controller.getClass().getDeclaredField("playerList");
         field.setAccessible(true);
         for (int i = 0; i < 3; i++) {
-            controller.loginUser(new User(String.valueOf(i)));
+            controller.loginUser(new User("user" + i));
             List<Player> playerList = (List<Player>) field.get(controller);
             assertEquals(playerList.size(), i+1);
-            assertTrue(playerList.get(i).getPlayerUsername().equals(String.valueOf(i)));
+            assertTrue(playerList.get(i).getPlayerUsername().equals("user" + i));
         }
         field.setAccessible(false);
     }*/

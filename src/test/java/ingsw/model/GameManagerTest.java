@@ -2,7 +2,6 @@ package ingsw.model;
 
 import ingsw.controller.Controller;
 
-import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.Notification;
 import ingsw.controller.network.commands.Response;
 import ingsw.controller.network.socket.UserObserver;
@@ -11,7 +10,6 @@ import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.ControllerTimer;
-import ingsw.utilities.MoveStatus;
 import ingsw.utilities.PlayerBroadcaster;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +18,7 @@ import org.mockito.internal.util.reflection.Whitebox;
 import java.lang.reflect.*;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,9 +89,8 @@ class GameManagerTest {
         userD.attachUserObserver(mock(UserObserver.class));
         players.add(new Player(userD));
 
-        ControllerTimer controllerTimer = new ControllerTimer();
 
-        gameManager = new GameManager(players, 10, new Controller("Match", 10, 10, SagradaGame.get()), controllerTimer);
+        gameManager = new GameManager(players, 10, mock(Controller.class), mock(ControllerTimer.class));
 
         List<ToolCard> toolCards = new ArrayList<>();
         toolCards.add(new CopperFoilBurnisher());
@@ -232,11 +230,10 @@ class GameManagerTest {
 
         assertEquals(false,gameManager.getToolCardLock().get());
 
-
     }
 
     @Test
-    void glazingHammerMove() {
+    void glazingHammerResponse() {
         Dice dice = board.getDraftedDice().get(0);
         Whitebox.setInternalState(gameManager,"board",board);
         Whitebox.setInternalState(gameManager,"currentRound",round);
@@ -290,7 +287,7 @@ class GameManagerTest {
     @Test
     void pickPatternCards() {
 
-        List<PatternCard> patternCards = (LinkedList<PatternCard>) Whitebox.getInternalState(gameManager,"patternCards");
+        List<PatternCard> patternCards = (LinkedList<PatternCard>) Whitebox.getInternalState(gameManager, "patternCards");
         int oldSize = patternCards.size();
         int minus = gameManager.getPlayerList().size() * 4;
 
@@ -330,6 +327,101 @@ class GameManagerTest {
 
 
     }
+
+    @Test
+    void stopTurn() {
+        Round roundMock = mock(Round.class);
+        Whitebox.setInternalState(gameManager,"currentRound",roundMock);
+        Player playerMock = mock(Player.class);
+        when(roundMock.getCurrentPlayer()).thenReturn(playerMock);
+        when(playerMock.getPlayerUsername()).thenReturn("b");
+
+        AtomicBoolean atomicBoolean = (AtomicBoolean) Whitebox.getInternalState(gameManager,"toolCardLock");
+        atomicBoolean.set(true);
+
+        gameManager.stopTurn();
+
+        verify(roundMock).setPlayerEndedTurn(true);
+
+        atomicBoolean = (AtomicBoolean) Whitebox.getInternalState(gameManager,"toolCardLock");
+
+        assertTrue(atomicBoolean.get());
+    }
+
+    @Test
+    void useToolCard() throws InterruptedException {
+        Round roundMock = mock(Round.class);
+        Whitebox.setInternalState(gameManager,"currentRound",roundMock);
+
+        gameManager.useToolCard("EglomiseBrush");
+
+        Thread.sleep(1000);
+
+        assertEquals(true, gameManager.getToolCardLock().get());
+
+    }
+
+    @Test
+    void randomizePatternCards() {
+
+        Map<String, List<PatternCard>> mapPatternCards = new HashMap<>();
+        List<PatternCard> patternCards = new ArrayList<>();
+        patternCards.add(new AuroraSagradis());
+        patternCards.add(new AuroraeMagnificus());
+        patternCards.add(new Batllo());
+        patternCards.add(new Firelight());
+        mapPatternCards.put("a",patternCards);
+        mapPatternCards.put("b",patternCards);
+        mapPatternCards.put("c",patternCards);
+        mapPatternCards.put("d",patternCards);
+
+
+        gameManager.randomizePatternCards(mapPatternCards);
+
+        AtomicBoolean patternCardChosen = (AtomicBoolean) Whitebox.getInternalState(gameManager,"patternCardsChosen");
+
+        assertTrue(patternCardChosen.get());
+
+        boolean verified = false;
+        for (PatternCard patternCard : mapPatternCards.get("a")){
+            if (gameManager.getPlayerList().get(0).getPatternCard().toString().equals(patternCard.toString()))
+                verified = true;
+        }
+        assertTrue(verified);
+    }
+
+    @Test
+    void receiveAck() {
+        AtomicInteger atomicInteger = (AtomicInteger) Whitebox.getInternalState(gameManager,"noOfAck");
+        int oldValue = atomicInteger.get();
+        gameManager.receiveAck();
+
+        atomicInteger =  (AtomicInteger) Whitebox.getInternalState(gameManager,"noOfAck");
+
+        assertEquals(oldValue + 1,atomicInteger.get());
+    }
+
+    @Test
+    void fluxBrushMove1() {
+
+        Round roundMock = mock(Round.class);
+
+        Whitebox.setInternalState(gameManager,"board",this.board);
+
+
+        gameManager.fluxBrushMove(board.getDraftedDice().get(0));
+
+        FluxBrush fluxBrush = new FluxBrush();
+        boolean verified = false;
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("FluxBrush")) {
+                fluxBrush = (FluxBrush) toolCard;
+                verified = true;
+            }
+        }
+
+    }
+
 
     /*
     @Test
@@ -371,14 +463,5 @@ class GameManagerTest {
 
     }
 
-    @Test
-    void glazingHammerResponseTest() {
-        gameManager = mock(GameManager.class);
-        Whitebox.setInternalState(gameManager, "board", board);
-        List<MoveStatus> moveStatuses = new ArrayList<>();
-        Whitebox.setInternalState(gameManager, "movesHistory", moveStatuses);
-     //   doNothing().when(gameManager.addMoveToHistoryAndNotify(mock(MoveStatus.class)));
-        gameManager.glazingHammerResponse();
-    }
 
 }
