@@ -29,12 +29,12 @@ public class FluxBrush extends ToolCard {
 
         waitForToolCardAction(gameManager);
 
-        if (gameManager.toolCardLock.get()) {
+        if (gameManager.getToolCardLock().get()) {
 
             gameManager.fluxBrushResponse();
             gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
             gameManager.getCurrentRound().toolCardMoveDone();
-            gameManager.toolCardLock.set(false);
+            gameManager.getToolCardLock().set(false);
         }
         System.out.println("end FluxBrush");
     }

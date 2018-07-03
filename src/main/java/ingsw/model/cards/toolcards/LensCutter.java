@@ -26,16 +26,16 @@ public class LensCutter extends ToolCard {
 
             waitForToolCardAction(gameManager);
 
-            if (gameManager.toolCardLock.get()) {
+            if (gameManager.getToolCardLock().get()) {
                 gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
                 gameManager.lensCutterResponse();
                 gameManager.getCurrentRound().toolCardMoveDone();
-                gameManager.toolCardLock.set(false);
+                gameManager.getToolCardLock().set(false);
             }
         } else {
             try {
                 gameManager.getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new AvoidToolCardResponse());
-                gameManager.toolCardLock.set(false);
+                gameManager.getToolCardLock().set(false);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

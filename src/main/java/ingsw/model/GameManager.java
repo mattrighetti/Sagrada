@@ -55,7 +55,7 @@ public class GameManager {
     private final AtomicBoolean doubleMove;
     final AtomicBoolean cancelTimer;
     private final AtomicInteger turnInRound;
-    public final AtomicBoolean toolCardLock;
+    private final AtomicBoolean toolCardLock;
     private Set<Player> disconnectedPlayers;
     private PlayerBroadcaster playerBroadcaster;
     private final AtomicBoolean endOfMatch;
@@ -96,6 +96,7 @@ public class GameManager {
         endGameDueToDisconnection = new AtomicBoolean(false);
         setUpGameManager();
     }
+
 
     /**
      * Method that will setup the GameManager.
@@ -1078,7 +1079,6 @@ public class GameManager {
         addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "rolled the drafted dice"));
         playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(),true));
         endTurn(getCurrentRound().getCurrentPlayer().getPlayerUsername());
-
     }
 
     /**

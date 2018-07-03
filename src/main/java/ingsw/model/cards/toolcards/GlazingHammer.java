@@ -21,6 +21,6 @@ public class GlazingHammer extends ToolCard {
         else
             gameManager.avoidToolCardUse();
 
-        gameManager.toolCardLock.set(false);
+        gameManager.getToolCardLock().set(false);
     }
 }

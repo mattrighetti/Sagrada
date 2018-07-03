@@ -24,11 +24,11 @@ public class GrindingStone extends ToolCard {
 
         waitForToolCardAction(gameManager);
 
-        if (gameManager.toolCardLock.get()) {
+        if (gameManager.getToolCardLock().get()) {
             gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
             gameManager.grindingStoneResponse();
             gameManager.getCurrentRound().toolCardMoveDone();
-            gameManager.toolCardLock.set(false);
+            gameManager.getToolCardLock().set(false);
         }
     }
 }

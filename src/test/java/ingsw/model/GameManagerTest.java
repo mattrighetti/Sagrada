@@ -1,35 +1,103 @@
 package ingsw.model;
 
+import com.sun.tools.javac.tree.DCTree;
 import ingsw.controller.Controller;
+import ingsw.controller.network.commands.AvoidToolCardResponse;
+import ingsw.controller.network.commands.DraftedDiceToolCardResponse;
+import ingsw.controller.network.commands.GrozingPliersResponse;
+import ingsw.controller.network.socket.ClientHandler;
+import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.model.cards.publicoc.*;
-import ingsw.model.cards.toolcards.ToolCard;
+import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.ControllerTimer;
+import ingsw.utilities.PlayerBroadcaster;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import java.lang.reflect.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class GameManagerTest {
 
     private GameManager gameManager;
+    private Board board;
+    private Round round;
 
     @BeforeEach
     void setUp() throws RemoteException {
         List<Player> players = new ArrayList<>();
-        players.add(new Player(new User("a")));
-        players.add(new Player(new User("b")));
-        players.add(new Player(new User("c")));
-        players.add(new Player(new User("d")));
+
+        User userA = new User("a");
+        userA.attachUserObserver(mock(UserObserver.class));
+        players.add(new Player(userA));
+
+        User userB = new User("b");
+        userB.attachUserObserver(mock(UserObserver.class));
+        players.add(new Player(userB));
+
+        User userC = new User("c");
+        userC.attachUserObserver(mock(UserObserver.class));
+        players.add(new Player(userC));
+
+        User userD = new User("d");
+        userD.attachUserObserver(mock(UserObserver.class));
+        players.add(new Player(userD));
+
         ControllerTimer controllerTimer = new ControllerTimer();
+
         gameManager = new GameManager(players, 10, new Controller("Match", 10, 10, SagradaGame.get()), controllerTimer);
+
+        List<ToolCard> toolCards = new ArrayList<>();
+        toolCards.add(new CopperFoilBurnisher());
+        toolCards.add(new CorkBackedStraightEdge());
+        toolCards.add(new EglomiseBrush());
+        toolCards.add(new FluxRemover());
+        toolCards.add(new FluxBrush());
+        toolCards.add(new GlazingHammer());
+        toolCards.add(new GrozingPliers());
+        toolCards.add(new Lathekin());
+        toolCards.add(new LensCutter());
+        toolCards.add(new RunningPliers());
+        toolCards.add(new TapWheel());
+
+        //draftedDice in board
+        List<Dice> diceList = new ArrayList<>();
+        Dice dice1 = new Dice(Color.BLUE);
+        Dice dice2 = new Dice(Color.YELLOW);
+        Dice dice3 = new Dice(Color.GREEN);
+        Dice dice4 = new Dice(Color.RED);
+        Dice dice5 = new Dice(Color.PURPLE);
+        dice1.roll();
+        dice2.roll();
+        dice3.roll();
+        dice4.roll();
+        dice5.roll();
+        diceList.add(dice1);
+        diceList.add(dice2);
+        diceList.add(dice3);
+        diceList.add(dice4);
+        diceList.add(dice5);
+
+        List<PublicObjectiveCard> publicObjectiveCards = new ArrayList<>();
+
+        board = new Board(publicObjectiveCards,toolCards);
+        board.setDraftedDice(diceList);
+
+        round = new Round(gameManager);
+        Whitebox.setInternalState(round,"player",players.get(0));
+
     }
 
     @Test
@@ -114,7 +182,122 @@ class GameManagerTest {
         assertEquals( "PatternCard{'Batllo'}" , gameManager.getPlayerList().get(0).getPatternCard().toString());
         assertEquals(current.get(), old.getAndIncrement());
     }
-/*
+
+    @Test
+    void avoidToolCardUse() throws RemoteException {
+
+        Round roundMock = mock(Round.class);
+        Whitebox.setInternalState(gameManager,"currentRound", roundMock);
+        Player playerMock = mock(Player.class);
+        UserObserver userObserverMock = mock(UserObserver.class);
+
+        when(roundMock.getCurrentPlayer()).thenReturn(playerMock);
+        when(playerMock.getUserObserver()).thenReturn(userObserverMock);
+
+        gameManager.avoidToolCardUse();
+
+        assertEquals(false,gameManager.getToolCardLock().get());
+
+
+    }
+
+    @Test
+    void glazingHammerMove() {
+        Dice dice = board.getDraftedDice().get(0);
+        Whitebox.setInternalState(gameManager,"board",board);
+        Whitebox.setInternalState(gameManager,"currentRound",round);
+        Whitebox.setInternalState(round,"player", gameManager.getPlayerList().get(0));
+        gameManager.glazingHammerResponse();
+
+        //TODO
+
+    }
+
+    @Test
+    void grozingPliersMove() {
+        gameManager.getToolCardLock().set(true);
+
+        int oldValue = board.getDraftedDice().get(0).getFaceUpValue();
+        Whitebox.setInternalState(gameManager,"board",board);
+        Whitebox.setInternalState(gameManager,"currentRound",round);
+
+        gameManager.grozingPliersMove(board.getDraftedDice().get(0),true);
+
+        if (oldValue != 6)
+            assertEquals(board.getDraftedDice().get(0).getFaceUpValue(),oldValue + 1);
+        else assertEquals(board.getDraftedDice().get(0).getFaceUpValue(),6);
+
+        oldValue = board.getDraftedDice().get(0).getFaceUpValue();
+
+        gameManager.grozingPliersMove(board.getDraftedDice().get(0),false);
+
+        if(oldValue != 1)
+            assertEquals(board.getDraftedDice().get(0).getFaceUpValue(),oldValue - 1);
+        else assertEquals(board.getDraftedDice().get(0).getFaceUpValue(),1);
+
+
+
+    }
+
+    @Test
+    void grozingPliersResponse() throws RemoteException {
+        gameManager.getToolCardLock().set(true);
+        PlayerBroadcaster playerBroadcaster = mock(PlayerBroadcaster.class);
+
+        Whitebox.setInternalState(gameManager,"playerBroadcaster",playerBroadcaster);
+        Whitebox.setInternalState(gameManager,"board",board);
+        Whitebox.setInternalState(gameManager,"currentRound",round);
+        Whitebox.setInternalState(gameManager.getCurrentRound().getCurrentPlayer(), "patternCard", mock(PatternCard.class));
+
+        gameManager.grozingPliersResponse();
+        //todo
+    }
+
+    @Test
+    void pickPatternCards() {
+
+        List<PatternCard> patternCards = (LinkedList<PatternCard>) Whitebox.getInternalState(gameManager,"patternCards");
+        int oldSize = patternCards.size();
+        int minus = gameManager.getPlayerList().size() * 4;
+
+        HashMap map = gameManager.pickPatternCards();
+
+        patternCards = (LinkedList<PatternCard>) Whitebox.getInternalState(gameManager, "patternCards");
+        assertEquals(oldSize - minus, patternCards.size());
+        assertEquals(map.size(),gameManager.getPlayerList().size());
+
+    }
+
+    @Test
+    void placeDiceForPlayer() {
+
+        Round roundMock = mock(Round.class);
+        Whitebox.setInternalState(gameManager,"board",board);
+        Whitebox.setInternalState(gameManager,"currentRound",roundMock);
+
+        gameManager.placeDiceForPlayer(gameManager.getDraftedDice().get(0),1,1);
+
+        verify(gameManager.getCurrentRound(),times(1)).makeMove(gameManager.getDraftedDice().get(0),1,1);
+
+    }
+
+    @Test
+    void endTurn() {
+
+        Round roundMock = mock(Round.class);
+        Whitebox.setInternalState(gameManager,"currentRound",roundMock);
+        Player playerMock = mock(Player.class);
+        when(roundMock.getCurrentPlayer()).thenReturn(playerMock);
+        when(playerMock.getPlayerUsername()).thenReturn("a");
+
+        gameManager.endTurn("a");
+
+        verify(roundMock).avoidEndTurnNotification(true);
+
+
+    }
+
+    /*
     @Test
     void waitForEveryPatternCard() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
         Field noOfAck = gameManager.getClass().getDeclaredField("noOfAck");

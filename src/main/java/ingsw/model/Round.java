@@ -19,7 +19,7 @@ public class Round implements Runnable {
     private int noOfMoves;
     private AtomicBoolean avoidEndTurnNotification;
 
-    Round(GameManager gameManager) {
+    public Round(GameManager gameManager) {
         this.gameManager = gameManager;
         hasMadeAMove = new AtomicBoolean();
         playerEndedTurn = new AtomicBoolean();

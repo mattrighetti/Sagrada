@@ -27,9 +27,9 @@ public abstract class ToolCard extends Card {
     }
 
     protected void waitForToolCardAction(GameManager gameManager) {
-        synchronized (gameManager.toolCardLock) {
+        synchronized (gameManager.getToolCardLock()) {
             try {
-                gameManager.toolCardLock.wait();
+                gameManager.getToolCardLock().wait();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 e.printStackTrace();

@@ -66,7 +66,7 @@ public class Lathekin extends ToolCard {
             gameManager.getCurrentRound().getCurrentPlayer().decreaseFavorTokens(getPrice());
             gameManager.lathekinResponse();
             gameManager.setDoubleMove(false);
-            gameManager.toolCardLock.set(false);
+            gameManager.getToolCardLock().set(false);
             setNewGrid(null);
             setOldGrid(null);
             return;
@@ -74,16 +74,16 @@ public class Lathekin extends ToolCard {
 
         gameManager.getCurrentRound().toolCardMoveDone();
         gameManager.setDoubleMove(false);
-        gameManager.toolCardLock.set(false);
+        gameManager.getToolCardLock().set(false);
         setNewGrid(null);
         setOldGrid(null);
         System.out.println("end Lathekin");
     }
 
     private boolean resetValues(GameManager gameManager) {
-        if (!gameManager.toolCardLock.get()) {
+        if (!gameManager.getToolCardLock().get()) {
             gameManager.setDoubleMove(false);
-            gameManager.toolCardLock.set(false);
+            gameManager.getToolCardLock().set(false);
             setNewGrid(null);
             setOldGrid(null);
             return true;
