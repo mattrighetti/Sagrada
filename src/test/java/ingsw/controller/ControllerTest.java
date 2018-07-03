@@ -4,7 +4,6 @@ import ingsw.controller.network.commands.*;
 import ingsw.model.*;
 import ingsw.model.cards.patterncard.PatternCard;
 import ingsw.utilities.Tuple;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.reflection.Whitebox;

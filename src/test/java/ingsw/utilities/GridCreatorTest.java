@@ -1,22 +1,20 @@
 package ingsw.utilities;
 
 import ingsw.model.Color;
-import ingsw.model.cards.patterncard.AuroraSagradis;
+import ingsw.model.cards.patterncard.AuroraeMagnificus;
 import ingsw.model.cards.patterncard.Box;
-import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.model.cards.toolcards.ToolCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GridCreatorTest {
-    List<List<Box>> expectedGrid;
-    List<List<Box>> actualGrid;
-    List<List<Box>> secondActualGrid;
+    private List<List<Box>> expectedGrid;
+    private List<List<Box>> actualGrid;
+    private List<List<Box>> secondActualGrid;
 
     @BeforeEach
     void setUp() {
@@ -44,33 +42,13 @@ class GridCreatorTest {
         expectedGrid.get(3).add(new Box(Color.BLANK));
         expectedGrid.get(3).add(new Box(Color.GREEN));
         expectedGrid.get(3).add(new Box(4));
-        actualGrid = GridCreator.fromFile(GridJSONPath.AURORAE_MAGNIFICUS);
-        secondActualGrid = GridCreator.fromFile(GridJSONPath.AURORAE_MAGNIFICUS);
+        actualGrid = new AuroraeMagnificus().getGrid();
+        secondActualGrid = new AuroraeMagnificus().getGrid();
     }
 
     @Test
-    void fromFile() {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
-                if (expectedGrid.get(i).get(j).isValueSet()) {
-                    assertEquals(expectedGrid.get(i).get(j).getValue(), actualGrid.get(i).get(j).getValue(),
-                                 "GetValue Box[" + i + "][" + j + "]");
-                    assertEquals(expectedGrid.get(i).get(j).getValue(), secondActualGrid.get(i).get(j).getValue(),
-                                 "GetValue Box[" + i + "][" + j + "]");
-                } else {
-                    assertEquals(expectedGrid.get(i).get(j).getColor(), actualGrid.get(i).get(j).getColor(),
-                            "GetColor at Box[" + i + "][" + j + "]");
-                    assertEquals(expectedGrid.get(i).get(j).getColor(), secondActualGrid.get(i).get(j).getColor(),
-                                 "GetColor at Box[" + i + "][" + j + "]");
-                    assertNull(expectedGrid.get(i).get(j).getValue());
-                }
-            }
-        }
-    }
-
-    @Test
-    void multipleReads() {
-        PatternCard patternCard = new AuroraSagradis();
-        PatternCard patternCard1 = new AuroraSagradis();
+    void fromString() {
+        assertEquals(expectedGrid, actualGrid);
+        assertEquals(actualGrid, secondActualGrid);
     }
 }

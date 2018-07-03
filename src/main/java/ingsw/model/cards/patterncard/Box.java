@@ -45,13 +45,25 @@ public class Box implements Serializable {
     @Override
     public String toString() {
         if (dice == null) {
-            if (isValueSet()) return "[" + String.valueOf(value) + " ->  ]";
-            else return "[" + String.valueOf(color.name().charAt(0)) + " ->  ]";
+            if (isValueSet()) return "[" + value + " ->  ]";
+            else return "[" + color.name().charAt(0) + " ->  ]";
         } else {
-            if (isValueSet()) return "[" + String.valueOf(value) + " -> " + String.valueOf(dice.getDiceColor().name().charAt(0)) + dice.getFaceUpValue() + "]";
-            else return "[" + String.valueOf(color.name().charAt(0)) + " -> " + String.valueOf(dice.getDiceColor().name().charAt(0)) + dice.getFaceUpValue() + "]" ;
+            if (isValueSet())
+                return "[" + value + " -> " + dice.getDiceColor().name().charAt(0) + dice.getFaceUpValue() + "]";
+            else
+                return "[" + color.name().charAt(0) + " -> " + dice.getDiceColor().name().charAt(0) + dice.getFaceUpValue() + "]";
         }
     }
 
-    Boolean isDiceSet(){ return dice != null; }
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Box)) return false;
+        else if (obj == this) return true;
+        else if (((Box) obj).value != null && ((Box) obj).value.equals(this.value)) return true;
+        return ((Box) obj).color.equals(this.color);
+    }
+
+    Boolean isDiceSet() {
+        return dice != null;
+    }
 }
