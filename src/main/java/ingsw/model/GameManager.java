@@ -472,6 +472,10 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method that sends all the static data (players' pattern card, Public Objective cards and Tool cards) to the players,
+     * starts the thread which listens for the players disconnection and starts the match.
+     */
     private void setBoardAndStartMatch() {
         BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
         playerBroadcaster.broadcastResponseToAll(boardDataResponse);
@@ -523,7 +527,6 @@ public class GameManager {
             startRound();
         }).start();
     }
-
 
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
         for (Dice diceInDraftedDice : board.getDraftedDice()) {

@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+
 public class Round implements Runnable {
     private Player player;
     private final AtomicBoolean hasMadeAMove;
     private GameManager gameManager;
     private final AtomicBoolean playerEndedTurn;
-    public List<String> blockedTurnPlayers;
+    public final List<String> blockedTurnPlayers;
     private int noOfMoves;
     private AtomicBoolean avoidEndTurnNotification;
 

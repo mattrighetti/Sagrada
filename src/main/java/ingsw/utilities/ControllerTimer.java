@@ -65,6 +65,7 @@ public class ControllerTimer {
 
         @Override
         public void run() {
+            controller.setStop(true);
             hasStarted = true;
             controller.createMatch();
         }

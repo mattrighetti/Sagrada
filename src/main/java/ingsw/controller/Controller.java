@@ -8,13 +8,18 @@ import ingsw.utilities.ControllerTimer;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Controller  implements RemoteController {
+import static java.lang.Thread.sleep;
+
+public class Controller implements RemoteController {
     private String matchName;
     private boolean hasStarted;
     private SagradaGame sagradaGame;
     private GameManager gameManager;
-    private List<Player> playerList;
+    private final List<Player> playerList;
+    private List<Player> disconnectedUsers;
+    private AtomicBoolean stop;
     private int maxTurnSeconds;
     private int maxJoinMatchSeconds;
     private ControllerTimer controllerTimer;
@@ -28,6 +33,9 @@ public class Controller  implements RemoteController {
         this.maxJoinMatchSeconds = maxJoinMatchSeconds;
         this.maxTurnSeconds = maxTurnSeconds;
         controllerTimer = new ControllerTimer();
+        disconnectedUsers = new ArrayList<>();
+        stop = new AtomicBoolean(false);
+        checkPlayerListSize();
     }
 
     public String getMatchName() {
@@ -42,6 +50,56 @@ public class Controller  implements RemoteController {
         return playerList;
     }
 
+    public void setStop(boolean stop) {
+        this.stop.set(stop);
+    }
+
+    private void checkPlayerListSize() {
+        new Thread(() -> {
+            try {
+                do {
+                    // PING every 2 seconds
+                    sleep(1000);
+
+                    disconnectedUsers.clear();
+
+                    synchronized (playerList) {
+                        checkNumberOfUsers();
+                        playerList.removeAll(disconnectedUsers);
+                    }
+
+                    if (playerList.size() < 2) {
+                        System.out.println("There are less than 2 players, cancelling timer");
+                        controllerTimer.cancelTimer();
+                    }
+
+                    System.out.println("Players waiting " + playerList.size() + " disconnected users " + disconnectedUsers.size());
+
+                } while (!stop.get());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void checkNumberOfUsers() {
+        for (Player player : playerList) {
+            try {
+                //Check if the user is active
+                player.getUserObserver();
+
+            } catch (RemoteException e) {
+                // If a RMI user disconnects, this code will execute
+                System.out.println("RMI User " + player.getPlayerUsername() + " disconnected");
+                player.getUser().setActive(false);
+                player.getUser().setReady(false);
+                disconnectedUsers.add(player);
+            }
+        }
+    }
+
+
     /**
      * Wait for new Users who connect and want to enter the match and build the list of the match players
      * When all the players are connected, start the match.
@@ -50,12 +108,16 @@ public class Controller  implements RemoteController {
      */
     public void loginUser(User user) throws RemoteException {
         if (!hasStarted) {
-            playerList.add(new Player(user));
+            synchronized (playerList) {
+                playerList.add(new Player(user));
+            }
             if (playerList.size() == 2) {
+                checkNumberOfUsers();
                 controllerTimer.startLoginTimer(maxJoinMatchSeconds, this, hasStarted);
             }
 
             if (playerList.size() == 4) {
+                stop.set(true);
                 controllerTimer.cancelTimer();
                 hasStarted = true;
                 createMatch();
@@ -130,9 +192,8 @@ public class Controller  implements RemoteController {
     }
 
     /**
-     *
-     * @param dice selected to place from the player
-     * @param rowIndex the row index where to place the die in the pattern card
+     * @param dice        selected to place from the player
+     * @param rowIndex    the row index where to place the die in the pattern card
      * @param columnIndex the column index where to place the die in the pattern card
      * @throws RemoteException may occur during the execution of a remote method call
      */
@@ -143,6 +204,7 @@ public class Controller  implements RemoteController {
 
     /**
      * Request to use a tool card
+     *
      * @param toolCardName the tool card's name that the player wants to use
      */
     @Override
@@ -153,6 +215,7 @@ public class Controller  implements RemoteController {
     /**
      * GROZING PLIERS Tool Card move
      * it calls the game Manager tool card move method
+     *
      * @param grozingPliersRequest contains the die and a flag to specify the increasing or the decreasing choice
      */
     @Override
@@ -163,6 +226,7 @@ public class Controller  implements RemoteController {
     /**
      * FLUX BRUSH Tool Card move
      * it calls the game Manager tool card move methods based on the phase of the move
+     *
      * @param fluxBrushRequest contains the index to switch the method based on the phase of the move,
      *                         it can contains dice and the position where place the die
      */
@@ -187,6 +251,7 @@ public class Controller  implements RemoteController {
     /**
      * FLUX REMOVER Tool Card move
      * it calls the game Manager tool card move method based on the phase of the move
+     *
      * @param fluxRemoverRequest contains the index to switch the method based on the phase of the move and
      *                           other data needed for tool card move
      */
@@ -214,6 +279,7 @@ public class Controller  implements RemoteController {
     /**
      * GRINDING STONE Tool Card move
      * it calls the game Manager tool card move method
+     *
      * @param grindingStoneRequest contains the selected die
      */
     public void toolCardMove(GrindingStoneRequest grindingStoneRequest) throws RemoteException {
@@ -223,6 +289,7 @@ public class Controller  implements RemoteController {
     /**
      * COPPER FOIL BURNISHER Tool Card move
      * it calls the game Manager tool card move method
+     *
      * @param moveToolCardRequest contains the selected die and the indexes of the position where to place it
      */
     @Override
@@ -233,6 +300,7 @@ public class Controller  implements RemoteController {
     /**
      * CORK BACKED STRAIGHTEDGE Tool Card move
      * it calls the game Manager tool card move method
+     *
      * @param moveToolCardRequest contains the selected die and the indexes of the position where to place it
      */
     @Override
@@ -243,6 +311,7 @@ public class Controller  implements RemoteController {
     /**
      * LENS CUTTER Tool Card move
      * it calls the game Manager tool card move method
+     *
      * @param moveToolCardRequest contains the selected die from the round track, round track index and the selected die from drafted dice
      */
     @Override
@@ -253,6 +322,7 @@ public class Controller  implements RemoteController {
     /**
      * EGLOMISE BRUSH Tool Card move
      * it calls the game Manager tool card move method
+     *
      * @param moveToolCardRequest contains the selected die and the position where to place it
      */
     @Override
@@ -263,6 +333,7 @@ public class Controller  implements RemoteController {
     /**
      * LAHEKIN Tool Card move
      * it calls the game Manager tool card move method
+     *
      * @param lathekinRequest contains the dice position, the new position and the flag for dice switch
      */
     @Override
@@ -273,6 +344,7 @@ public class Controller  implements RemoteController {
     /**
      * RUNNING PLIERS Tool Card move
      * it calls the game Manager tool card move method
+     *
      * @param moveToolCardRequest contains the selected die and the position where to place it
      */
     @Override
@@ -283,6 +355,7 @@ public class Controller  implements RemoteController {
     /**
      * TAP WHEEL tool card move
      * it calls the game Manager tool card move method
+     *
      * @param moveToolCardRequest request that contains the die and its positions, the new position and the flag for dice switch
      */
     @Override

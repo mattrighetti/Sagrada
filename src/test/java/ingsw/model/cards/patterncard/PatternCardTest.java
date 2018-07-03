@@ -322,14 +322,6 @@ class PatternCardTest {
     }
 
     @Test
-    void insertDiceInBox() {
-    }
-
-    @Test
-    void getNoOfEmptyBoxes() {
-    }
-
-    @Test
     void computeAvailablePositionsDraftedDice() {
         patternCard = new ViaLux();
         List<Dice> diceList = new ArrayList<>();
@@ -975,9 +967,56 @@ class PatternCardTest {
     }
 
     @Test
+    void computeAvailablePositionsTapWheelFirstMoveDone() {
+        patternCard = new Bellesguard();
+        Map<String,Boolean[][]> resultMap;
+
+
+        Dice dice = new Dice(Color.BLUE);
+        dice.setFaceUpValue(6);
+        patternCard.grid.get(0).get(1).insertDice(dice);
+
+        dice = new Dice(Color.BLUE);
+        dice.setFaceUpValue(6);
+        patternCard.grid.get(1).get(2).insertDice(dice);
+
+        dice = new Dice(Color.GREEN);
+        dice.setFaceUpValue(1);
+        patternCard.grid.get(2).get(0).insertDice(dice);
+
+        dice = new Dice(Color.YELLOW);
+        dice.setFaceUpValue(2);
+        patternCard.grid.get(3).get(0).insertDice(dice);
+
+        resultMap = patternCard.computeAvailablePositionsTapWheel(new Dice(6, Color.BLUE), false);
+
+        //Grid expected for 1-2
+        Boolean[][] resultGrid = new Boolean[4][5];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                resultGrid[i][j] = false;
+            }
+        }
+        resultGrid[0][1] = true;
+        resultGrid[0][3] = true;
+        resultGrid[1][0] = true;
+        //check why is true
+        //resultGrid[1][2] = true;
+        resultGrid[2][0] = true;
+        resultGrid[3][0] = true;
+
+        //assert for 1-2
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                System.out.println(i +" " + j);
+                assertEquals(resultGrid[i][j], resultMap.get("Blue601")[i][j]);
+            }
+        }
+    }
+
+    @Test
     void computeAvailablePositionsTapWheel() {
         patternCard = new Bellesguard();
-        List<Dice> diceList = new ArrayList<>();
         Map<String,Boolean[][]> resultMap;
 
 
@@ -1013,21 +1052,171 @@ class PatternCardTest {
         //assert for 1-2
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                System.out.println(i +" " + j);
                 assertEquals(resultGrid[i][j], resultMap.get("Blue601")[i][j]);
             }
         }
     }
 
+
     @Test
     void computeAvailablePositionsNoColor() {
+        patternCard = new RipplesOfLight();
+        List<Dice> diceList = new ArrayList<>();
+        Map<String,Boolean[][]> resultMap;
+
+
+        Dice dice = new Dice(Color.PURPLE);
+        dice.setFaceUpValue(5);
+        patternCard.grid.get(0).get(4).insertDice(dice);
+
+        dice = new Dice(Color.BLUE);
+        dice.setFaceUpValue(4);
+        patternCard.grid.get(1).get(3).insertDice(dice);
+
+        dice = new Dice(Color.RED);
+        dice.setFaceUpValue(3);
+        patternCard.grid.get(2).get(2).insertDice(dice);
+
+        dice = new Dice(Color.PURPLE);
+        dice.setFaceUpValue(2);
+        patternCard.grid.get(3).get(1).insertDice(dice);
+
+        resultMap = patternCard.computeAvailablePositionsNoColor();
+
+        //Grid expected for 0-4
+        Boolean[][] resultGrid = new Boolean[4][5];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                resultGrid[i][j] = false;
+            }
+        }
+        resultGrid[0][2] = true;
+        resultGrid[0][3] = true;
+        resultGrid[0][4] = true;
+        resultGrid[1][1] = true;
+        resultGrid[1][2] = true;
+        resultGrid[1][4] = true;
+        resultGrid[2][0] = true;
+        resultGrid[2][3] = true;
+
+        //assert for 0-4
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                assertEquals(resultGrid[i][j], resultMap.get("Purple504")[i][j]);
+            }
+        }
+
+        //Grid expected for 1-3
+        resultGrid = new Boolean[4][5];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                resultGrid[i][j] = false;
+            }
+        }
+        resultGrid[0][3] = true;
+        resultGrid[1][1] = true;
+        resultGrid[1][2] = true;
+        resultGrid[1][3] = true;
+        resultGrid[1][4] = true;
+        resultGrid[2][0] = true;
+        resultGrid[2][1] = true;
+        resultGrid[2][3] = true;
+        resultGrid[3][0] = true;
+        resultGrid[3][2] = true;
+
+        //assert for 1-4
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                assertEquals(resultGrid[i][j], resultMap.get("Blue413")[i][j]);
+            }
+        }
+
+        //Grid expected for 2-2
+        resultGrid = new Boolean[4][5];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                resultGrid[i][j] = false;
+            }
+        }
+
+        resultGrid[0][2] = true;
+        resultGrid[0][3] = true;
+        resultGrid[1][2] = true;
+        resultGrid[1][4] = true;
+        resultGrid[2][0] = true;
+        resultGrid[2][1] = true;
+        resultGrid[2][2] = true;
+        resultGrid[2][3] = true;
+        resultGrid[3][0] = true;
+        resultGrid[3][2] = true;
+
+        //assert for 2-2
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                assertEquals(resultGrid[i][j], resultMap.get("Red322")[i][j]);
+            }
+        }
+
+        //Grid expected for 3-1
+        resultGrid = new Boolean[4][5];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                resultGrid[i][j] = false;
+            }
+        }
+
+        resultGrid[0][2] = true;
+        resultGrid[1][1] = true;
+        resultGrid[1][2] = true;
+        resultGrid[2][1] = true;
+        resultGrid[2][3] = true;
+        resultGrid[3][1] = true;
+        resultGrid[3][2] = true;
+
+        //assert for 3-1
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                assertEquals(resultGrid[i][j], resultMap.get("Purple231")[i][j]);
+            }
+        }
     }
 
     @Test
     void isGridEmpty() {
+        patternCard = new RipplesOfLight();
+
+        Dice dice = new Dice(Color.PURPLE);
+        dice.setFaceUpValue(5);
+        patternCard.grid.get(0).get(4).insertDice(dice);
+
+        assertFalse(patternCard.isGridEmpty());
+
+        patternCard = new RipplesOfLight();
+
+        assertTrue(patternCard.isGridEmpty());
     }
 
     @Test
     void getNoOfDice() {
+        patternCard = new RipplesOfLight();
+
+        patternCard.getGrid().get(0).get(0).insertDice(new Dice(5, Color.BLUE));
+        patternCard.getGrid().get(2).get(2).insertDice(new Dice(5, Color.BLUE));
+        patternCard.getGrid().get(1).get(3).insertDice(new Dice(5, Color.BLUE));
+        patternCard.getGrid().get(3).get(4).insertDice(new Dice(5, Color.BLUE));
+
+        assertEquals(4, patternCard.getNoOfDice());
+    }
+
+    @Test
+    void getNoOfEmptyBoxes() {
+        patternCard = new RipplesOfLight();
+
+        patternCard.getGrid().get(0).get(0).insertDice(new Dice(5, Color.BLUE));
+        patternCard.getGrid().get(2).get(2).insertDice(new Dice(5, Color.BLUE));
+        patternCard.getGrid().get(1).get(3).insertDice(new Dice(5, Color.BLUE));
+        patternCard.getGrid().get(3).get(4).insertDice(new Dice(5, Color.BLUE));
+
+        assertEquals(16, patternCard.getNoOfEmptyBoxes());
     }
 }
