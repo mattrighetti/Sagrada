@@ -70,7 +70,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             System.err.println("Deactivating the user");
             serverController.deactivateUser();
             System.err.println("Closing down OutputStreams and InputStreams");
-            pinger.cancel(true)
+            pinger.cancel(true);
             close();
         } catch (IOException e) {
             e.printStackTrace();
