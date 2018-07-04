@@ -19,10 +19,6 @@ public class UserBroadcaster {
         isBroadcasterActive = true;
     }
 
-    public void disableBroadcaster() {
-        isBroadcasterActive = false;
-    }
-
     private List<UserObserver> usersToBroadcast(String usernameToExclude) {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (User user : users.values()) {

@@ -5,8 +5,6 @@
  *
  * Contiene tutti gli oggetti del gioco perché si occupa del setup della Board e della creazione della stessa
  *
- * SINGLETON
- *
  */
 
 package ingsw.model;
@@ -220,7 +218,7 @@ public class GameManager {
     /**
      * Method that will distribute four PatternCards to each Player
      */
-    public HashMap pickPatternCards() {
+    public Map<String, List<PatternCard>> pickPatternCards() {
         HashMap<String, List<PatternCard>> patternCardToChoose = new HashMap<>();
         for (Player player : playerList) {
 
@@ -701,10 +699,10 @@ public class GameManager {
         }
     }
 
-    private void assignPointsToPlayers() {
+    void assignPointsToPlayers() {
         for (Player player : playerList) {
             int score = 0;
-            for (PublicObjectiveCard publicObjectiveCard : publicObjectiveCards) {
+            for (PublicObjectiveCard publicObjectiveCard : board.getPublicObjectiveCards()) {
                 score += publicObjectiveCard.getScore(player.getPatternCard().getGrid());
             }
             score -= player.getPatternCard().getNoOfEmptyBoxes();
@@ -793,7 +791,7 @@ public class GameManager {
     /**
      * Method that computes the winner and notifies each player with their results
      */
-    private Player evaluateWinner() {
+    Player evaluateWinner() {
         Player winner = null;
         boolean found = false;
         Set<Player> possibleWinners = evaluateBasicPoints();
@@ -807,16 +805,20 @@ public class GameManager {
         }
 
         if (activeUsers > 1) {
+            System.out.println("Entro");
             winner = null;
             if (possibleWinners.size() > 1) {
+                System.out.println("PR" + possibleWinners);
                 possibleWinners = evaluatePrivateObjectiveCardPoints(possibleWinners);
             } else found = true;
 
             if (possibleWinners.size() > 1) {
+                System.out.println("FT" + possibleWinners);
                 possibleWinners = evaluateFavourTokenPoints(possibleWinners);
             } else found = true;
 
             if (possibleWinners.size() > 1) {
+                System.out.println("UL" + possibleWinners);
                 for (Player player : playerList) {
                     if (possibleWinners.contains(player)) {
                         winner = player;
@@ -824,12 +826,11 @@ public class GameManager {
                         break;
                     }
                 }
-            } else found = true;
+            }
 
-            if (!found) {
-                for (Player player : possibleWinners) {
-                    winner = player;
-                }
+            for (Player player : possibleWinners) {
+                System.out.println("Trovato");
+                winner = player;
             }
         } else {
             if (winner != null) {
@@ -838,7 +839,6 @@ public class GameManager {
         }
 
         return winner;
-
     }
 
     /**
@@ -874,7 +874,7 @@ public class GameManager {
         }
     }
 
-    public void executeTurn(int playerIndex, String turnState) {
+    private void executeTurn(int playerIndex, String turnState) {
 
         addMoveToHistoryAndNotify(new MoveStatus(playerList.get(playerIndex).getPlayerUsername(), "starts turn"));
 
@@ -1084,7 +1084,6 @@ public class GameManager {
      * @param dice     the selected die from the player
      * @param increase if true increase the die value, if false decrease the die value
      */
-
     public synchronized void grozingPliersMove(Dice dice, Boolean increase) {
         if (toolCardLock.get()) {
             for (Dice diceInPool : board.getDraftedDice()) {
@@ -1174,7 +1173,7 @@ public class GameManager {
 
     /**
      * FLUX BRUSH 3RD PHASE
-     *
+     * <p>
      * The move is done so we can save the toolcard move changes in the board
      */
     public void fluxBrushMove() {
@@ -1235,7 +1234,7 @@ public class GameManager {
 
     /**
      * FLUX REMOVER 2ND PHASE
-     *
+     * <p>
      * Received the new face up value for the drafted die,
      * this method sets the chosen value and send to the client the drafted dice,
      * the selected die and the available positions to makes the player choose
@@ -1243,7 +1242,7 @@ public class GameManager {
      *
      * @param selectedDice the die previously drafted from the bag and whose
      *                     the player choose the value
-     * @param chosenValue the value chosen from the player to set as face up value
+     * @param chosenValue  the value chosen from the player to set as face up value
      */
     public synchronized void fluxRemoverMove(Dice selectedDice, int chosenValue) {
         if (toolCardLock.get()) {
@@ -1271,7 +1270,7 @@ public class GameManager {
 
     /**
      * FLUX REMOVER 3RD PHASE a
-     *
+     * <p>
      * This method handles the case
      *
      * @param selectedDice
@@ -1299,7 +1298,7 @@ public class GameManager {
 
     /**
      * FLUX REMOVER 3RD PHASE b
-     *
+     * <p>
      * This method handles the case the dice can't be placed in the pattern card
      * it will be leave in the drafted dice
      * The move is done so we can save the toolcard move changes in the board
@@ -1328,9 +1327,10 @@ public class GameManager {
 
     /**
      * GRINDING STONE
-     *
+     * <p>
      * Received the selected dice, this method sets its value to the opposite side
      * (if 1 becomes 6, if 2 becomes 5, if 3 becomes 4 and the other way around)
+     *
      * @param selectedDice the selected dice whose the value has to be flipped
      */
     public synchronized void grindingStoneMove(Dice selectedDice) {
@@ -1372,6 +1372,10 @@ public class GameManager {
 
     /**
      * COPPER FOIL BURNISHER
+     *
+     * =======
+     * <p>
+     *
      * After the toolCard move ends with success this method sends the
      * updated data to the players
      */
@@ -1412,16 +1416,16 @@ public class GameManager {
 
     /**
      * LENS CUTTER
-     *
+     * <p>
      * Received the two selected dice from the player,
      * one from the roundtrack and one frome the drafted pool,
      * this method swipes them. it gets the die from the round track and puts it
      * in the drafted pool, and then takes the other one from the
      * drafted pool and puts it in the right round of the roundtrack
      *
-     * @param roundIndex the round where the selected die in the roundtrack belongs
+     * @param roundIndex     the round where the selected die in the roundtrack belongs
      * @param roundTrackDice the selected die from the round track
-     * @param poolDice the selected die from the draft pool
+     * @param poolDice       the selected die from the draft pool
      */
     public synchronized void lensCutterMove(int roundIndex, String roundTrackDice, String poolDice) {
         if (toolCardLock.get()) {
@@ -1498,7 +1502,7 @@ public class GameManager {
      * Receives two positions: the first is the die's positions to move,
      * the second is the one where the player wants to put the die.
      * The player has to move two dice to complete the move.
-     *
+     * <p>
      * In the first call the method moves the dice and saves the changes and the previous state
      * in the ToolCard attributes, because in the case the move ends with no success the previous
      * state would be restored.
@@ -1507,8 +1511,8 @@ public class GameManager {
      * In case of doubleMove, the player makes the two moves in one swiping two dice positions.
      *
      * @param dicePosition position of the die to move
-     * @param position the position where put the die
-     * @param doubleMove if the player want to swipe to dice
+     * @param position     the position where put the die
+     * @param doubleMove   if the player want to swipe to dice
      */
     public synchronized void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
         if (toolCardLock.get()) {
@@ -1611,10 +1615,10 @@ public class GameManager {
      * Method that makes the player draft and place another die before his end turn
      *
      * @param selectedDice dice to place
-     * @param rowIndex row index of the position in the patterncard
-     *                 where the place has to be placed
-     * @param columnIndex column index of the position in the patterncard
-     *                    where the place has to be placed
+     * @param rowIndex     row index of the position in the patterncard
+     *                     where the place has to be placed
+     * @param columnIndex  column index of the position in the patterncard
+     *                     where the place has to be placed
      */
     public synchronized void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
         if (toolCardLock.get()) {

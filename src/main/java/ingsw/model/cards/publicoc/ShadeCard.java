@@ -3,6 +3,7 @@ package ingsw.model.cards.publicoc;
 import ingsw.model.cards.patterncard.Box;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Abstract class for the Publcic Objective Cards with "Shade" word in the name

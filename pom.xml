@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <name>ingswproject</name>
-    <url>https://github.com/MattRighetti/uml-project</url>
+    <url>https://github.com/MattRighetti/ing-sw-2018-righetti-trivilino-terracciano</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -8,7 +8,7 @@ import java.util.List;
  * Public Objective Card that counts how many sets of 3 and 4 are in the grid
  */
 public class MediumShades extends ShadeCard {
-    final int firstShade, secondShade;
+    private final int firstShade, secondShade;
 
     /**
      * Create a Medium Shades instance. Calls <code>super()</code> with parameters the card name "MediumShades" and

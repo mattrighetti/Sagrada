@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 class LogoutRequestTest {
     private LogoutRequest logoutRequest;
-    private ingsw.controller.network.rmi.RMIHandler rmiHandler;
+    private RMIHandler rmiHandler;
     private ServerController serverController;
 
     @BeforeEach

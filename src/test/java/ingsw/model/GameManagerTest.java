@@ -97,6 +97,9 @@ class GameManagerTest {
         players.add(new Player(userD));
 
         players.get(0).setPatternCard(new AuroraeMagnificus());
+        players.get(1).setPatternCard(new Batllo());
+        players.get(2).setPatternCard(new Comitas());
+        players.get(3).setPatternCard(new ViaLux());
 
 
         gameManager = new GameManager(players, 10, mock(Controller.class), mock(ControllerTimer.class));
@@ -301,7 +304,7 @@ class GameManagerTest {
         int oldSize = patternCards.size();
         int minus = gameManager.getPlayerList().size() * 4;
 
-        HashMap map = gameManager.pickPatternCards();
+        Map<String, List<PatternCard>> map = gameManager.pickPatternCards();
 
         patternCards = (LinkedList<PatternCard>) Whitebox.getInternalState(gameManager, "patternCards");
         assertEquals(oldSize - minus, patternCards.size());
@@ -991,10 +994,10 @@ class GameManagerTest {
     @Test
     void tapWheelMoveTest3() throws RemoteException {
         GameManager gameManagerSpy = spy(gameManager);
-        PatternCard patternCard= new Batllo();
-        Dice dice1 = new Dice(3,Color.RED);
-        Dice dice2 = new Dice(3,Color.RED);
-        Dice dice3 = new Dice(5,Color.GREEN);
+        PatternCard patternCard = new Batllo();
+        Dice dice1 = new Dice(3, Color.RED);
+        Dice dice2 = new Dice(3, Color.RED);
+        Dice dice3 = new Dice(5, Color.GREEN);
         patternCard.getGrid().get(0).get(0).insertDice(dice1);
         patternCard.getGrid().get(0).get(1).insertDice(dice3);
         patternCard.getGrid().get(0).get(2).insertDice(dice2);
@@ -1015,16 +1018,172 @@ class GameManagerTest {
 
         doNothing().when(gameManagerSpy).addMoveToHistoryAndNotify(mock(MoveStatus.class));
         doNothing().when(userObserver).sendResponse(mock(TapWheelResponse.class));
-        Tuple dicePosition = new Tuple(0,0);
-        Tuple position = new Tuple(0,2);
+        Tuple dicePosition = new Tuple(0, 0);
+        Tuple position = new Tuple(0, 2);
 
-        gameManagerSpy.tapWheelMove(null, 1, dicePosition , position, true);
+        gameManagerSpy.tapWheelMove(null, 1, dicePosition, position, true);
 
         assertNotNull(patternCard.getGrid().get(0).get(0).getDice());
         assertNotNull(patternCard.getGrid().get(0).get(2).getDice());
         assertEquals(dice1, patternCard.getGrid().get(0).get(2).getDice());
         assertEquals(dice2, patternCard.getGrid().get(0).get(0).getDice());
+    }
 
+    @Test
+    void notifyWinner() {
+
+    }
+
+    @Test
+    void evaluateWinner() {
+        List<PublicObjectiveCard> publicObjectiveCardList = new ArrayList<>();
+        publicObjectiveCardList.add(new DeepShades());
+        publicObjectiveCardList.add(new MediumShades());
+        publicObjectiveCardList.add(new LightShades());
+        Board board = new Board(publicObjectiveCardList, new ArrayList<>());
+        Whitebox.setInternalState(gameManager, "board", board);
+        Player player1 = gameManager.getPlayerList().get(0);
+        Player player2 = gameManager.getPlayerList().get(1);
+        Player player3 = gameManager.getPlayerList().get(2);
+        Player player4 = gameManager.getPlayerList().get(3);
+        PatternCard auroraeMagnificus = player1.getPatternCard();
+        PatternCard batllo = player2.getPatternCard();
+        PatternCard comitas = player3.getPatternCard();
+        PatternCard viaLux = player4.getPatternCard();
+        gameManager.getPlayerList().get(0).setPrivateObjectiveCard(new PrivateObjectiveCard(Color.PURPLE));
+        gameManager.getPlayerList().get(1).setPrivateObjectiveCard(new PrivateObjectiveCard(Color.YELLOW));
+        gameManager.getPlayerList().get(2).setPrivateObjectiveCard(new PrivateObjectiveCard(Color.BLUE));
+        gameManager.getPlayerList().get(3).setPrivateObjectiveCard(new PrivateObjectiveCard(Color.GREEN));
+        gameManager.assignPointsToPlayers();
+        assertEquals(gameManager.getPlayerList().get(0).getScore(), -20);
+        assertEquals(gameManager.getPlayerList().get(1).getScore(), -20);
+        assertEquals(gameManager.getPlayerList().get(2).getScore(), -20);
+        assertEquals(gameManager.getPlayerList().get(3).getScore(), -20);
+        assertEquals(player1.getFavourTokens(), 5);
+        assertEquals(player2.getFavourTokens(), 5);
+        assertEquals(player3.getFavourTokens(), 5);
+        assertEquals(player4.getFavourTokens(), 4);
+
+        auroraeMagnificus.insertDiceInBox(0,0).insertDice(new Dice(6, Color.GREEN));
+        auroraeMagnificus.insertDiceInBox(0,1).insertDice(new Dice(5, Color.BLUE));
+        auroraeMagnificus.insertDiceInBox(0,2).insertDice(new Dice(4, Color.GREEN));
+        auroraeMagnificus.insertDiceInBox(0,3).insertDice(new Dice(3, Color.PURPLE));
+        auroraeMagnificus.insertDiceInBox(0,4).insertDice(new Dice(2, Color.GREEN));
+        auroraeMagnificus.insertDiceInBox(1,0).insertDice(new Dice(6, Color.BLUE));
+        auroraeMagnificus.insertDiceInBox(1,1).insertDice(new Dice(2, Color.GREEN));
+        auroraeMagnificus.insertDiceInBox(1,2).insertDice(new Dice(4, Color.PURPLE));
+        auroraeMagnificus.insertDiceInBox(1,3).insertDice(new Dice(1, Color.YELLOW));
+        auroraeMagnificus.insertDiceInBox(1,4).insertDice(new Dice(3, Color.RED));
+        auroraeMagnificus.insertDiceInBox(2,0).insertDice(new Dice(2, Color.GREEN));
+        auroraeMagnificus.insertDiceInBox(2,1).insertDice(new Dice(3, Color.RED));
+        auroraeMagnificus.insertDiceInBox(2,2).insertDice(new Dice(4, Color.PURPLE));
+        auroraeMagnificus.insertDiceInBox(2,3).insertDice(new Dice(1, Color.RED));
+        auroraeMagnificus.insertDiceInBox(2,4).insertDice(new Dice(4, Color.PURPLE));
+        auroraeMagnificus.insertDiceInBox(3,0).insertDice(new Dice(5, Color.YELLOW));
+        auroraeMagnificus.insertDiceInBox(3,1).insertDice(new Dice(1, Color.GREEN));
+        auroraeMagnificus.insertDiceInBox(3,2).insertDice(new Dice(3, Color.GREEN));
+        auroraeMagnificus.insertDiceInBox(3,3).insertDice(new Dice(4, Color.RED));
+        auroraeMagnificus.insertDiceInBox(3,4).insertDice(new Dice(3, Color.YELLOW));
+
+        batllo.insertDiceInBox(0,0).insertDice(new Dice(6, Color.GREEN));
+        batllo.insertDiceInBox(0,1).insertDice(new Dice(5, Color.BLUE));
+        batllo.insertDiceInBox(0,2).insertDice(new Dice(4, Color.GREEN));
+        batllo.insertDiceInBox(0,3).insertDice(new Dice(3, Color.PURPLE));
+        batllo.insertDiceInBox(0,4).insertDice(new Dice(2, Color.GREEN));
+        batllo.insertDiceInBox(1,0).insertDice(new Dice(6, Color.BLUE));
+        batllo.insertDiceInBox(1,1).insertDice(new Dice(2, Color.GREEN));
+        batllo.insertDiceInBox(1,2).insertDice(new Dice(4, Color.PURPLE));
+        batllo.insertDiceInBox(1,3).insertDice(new Dice(1, Color.YELLOW));
+        batllo.insertDiceInBox(1,4).insertDice(new Dice(3, Color.RED));
+        batllo.insertDiceInBox(2,0).insertDice(new Dice(2, Color.GREEN));
+        batllo.insertDiceInBox(2,1).insertDice(new Dice(3, Color.RED));
+        batllo.insertDiceInBox(2,2).insertDice(new Dice(4, Color.PURPLE));
+        batllo.insertDiceInBox(2,3).insertDice(new Dice(1, Color.RED));
+        batllo.insertDiceInBox(2,4).insertDice(new Dice(4, Color.PURPLE));
+        batllo.insertDiceInBox(3,0).insertDice(new Dice(5, Color.YELLOW));
+        batllo.insertDiceInBox(3,1).insertDice(new Dice(1, Color.GREEN));
+        batllo.insertDiceInBox(3,2).insertDice(new Dice(3, Color.GREEN));
+        batllo.insertDiceInBox(3,3).insertDice(new Dice(4, Color.RED));
+        batllo.insertDiceInBox(3,4).insertDice(new Dice(3, Color.YELLOW));
+
+        comitas.insertDiceInBox(0,0).insertDice(new Dice(6, Color.GREEN));
+        comitas.insertDiceInBox(0,1).insertDice(new Dice(5, Color.BLUE));
+        comitas.insertDiceInBox(0,2).insertDice(new Dice(4, Color.GREEN));
+        comitas.insertDiceInBox(0,3).insertDice(new Dice(3, Color.PURPLE));
+        comitas.insertDiceInBox(0,4).insertDice(new Dice(2, Color.GREEN));
+        comitas.insertDiceInBox(1,0).insertDice(new Dice(6, Color.BLUE));
+        comitas.insertDiceInBox(1,1).insertDice(new Dice(2, Color.GREEN));
+        comitas.insertDiceInBox(1,2).insertDice(new Dice(4, Color.PURPLE));
+        comitas.insertDiceInBox(1,3).insertDice(new Dice(1, Color.YELLOW));
+        comitas.insertDiceInBox(1,4).insertDice(new Dice(3, Color.RED));
+        comitas.insertDiceInBox(2,0).insertDice(new Dice(2, Color.GREEN));
+        comitas.insertDiceInBox(2,1).insertDice(new Dice(3, Color.RED));
+        comitas.insertDiceInBox(2,2).insertDice(new Dice(4, Color.PURPLE));
+        comitas.insertDiceInBox(2,3).insertDice(new Dice(1, Color.RED));
+        comitas.insertDiceInBox(2,4).insertDice(new Dice(4, Color.PURPLE));
+        comitas.insertDiceInBox(3,0).insertDice(new Dice(5, Color.YELLOW));
+        comitas.insertDiceInBox(3,1).insertDice(new Dice(1, Color.GREEN));
+        comitas.insertDiceInBox(3,2).insertDice(new Dice(3, Color.GREEN));
+        comitas.insertDiceInBox(3,3).insertDice(new Dice(4, Color.RED));
+        comitas.insertDiceInBox(3,4).insertDice(new Dice(3, Color.YELLOW));
+
+        viaLux.insertDiceInBox(0,0).insertDice(new Dice(6, Color.GREEN));
+        viaLux.insertDiceInBox(0,1).insertDice(new Dice(5, Color.BLUE));
+        viaLux.insertDiceInBox(0,2).insertDice(new Dice(4, Color.GREEN));
+        viaLux.insertDiceInBox(0,3).insertDice(new Dice(3, Color.PURPLE));
+        viaLux.insertDiceInBox(0,4).insertDice(new Dice(2, Color.RED));
+        viaLux.insertDiceInBox(1,0).insertDice(new Dice(6, Color.BLUE));
+        viaLux.insertDiceInBox(1,1).insertDice(new Dice(2, Color.RED));
+        viaLux.insertDiceInBox(1,2).insertDice(new Dice(4, Color.PURPLE));
+        viaLux.insertDiceInBox(1,3).insertDice(new Dice(1, Color.YELLOW));
+        viaLux.insertDiceInBox(1,4).insertDice(new Dice(3, Color.RED));
+        viaLux.insertDiceInBox(2,0).insertDice(new Dice(2, Color.RED));
+        viaLux.insertDiceInBox(2,1).insertDice(new Dice(3, Color.RED));
+        viaLux.insertDiceInBox(2,2).insertDice(new Dice(4, Color.PURPLE));
+        viaLux.insertDiceInBox(2,3).insertDice(new Dice(1, Color.RED));
+        viaLux.insertDiceInBox(2,4).insertDice(new Dice(4, Color.PURPLE));
+        viaLux.insertDiceInBox(3,0).insertDice(new Dice(5, Color.YELLOW));
+        viaLux.insertDiceInBox(3,1).insertDice(new Dice(1, Color.GREEN));
+        viaLux.insertDiceInBox(3,2).insertDice(new Dice(3, Color.GREEN));
+        viaLux.insertDiceInBox(3,3).insertDice(new Dice(4, Color.RED));
+        viaLux.insertDiceInBox(3,4).insertDice(new Dice(3, Color.YELLOW));
+
+        gameManager.assignPointsToPlayers();
+
+        assertEquals(gameManager.getPlayerList().get(0).getScore(), 20);
+        assertEquals(gameManager.getPlayerList().get(1).getScore(), 20);
+        assertEquals(gameManager.getPlayerList().get(2).getScore(), 20);
+        assertEquals(gameManager.getPlayerList().get(3).getScore(), 20);
+
+        player1.decreaseFavorTokens(1);
+        assertEquals(4, player1.getFavourTokens());
+        assertEquals(4, player4.getFavourTokens());
+        Player winner = gameManager.evaluateWinner();
+        // Pareggio totale, vince il primo nella lista (primo turno nell'ultimo turno)
+        assertEquals(winner, player4);
+
+        player1.decreaseFavorTokens(1);
+        assertEquals(3, player1.getFavourTokens());
+        assertEquals(4, player4.getFavourTokens());
+        assertEquals(5, player2.getFavourTokens());
+        assertEquals(5, player3.getFavourTokens());
+        winner = gameManager.evaluateWinner();
+        assertEquals(winner, player4);
+
+        viaLux.insertDiceInBox(2,0).insertDice(new Dice(2, Color.GREEN));
+        winner = gameManager.evaluateWinner();
+        assertEquals(winner, player4);
+
+        player1.getUser().setActive(false);
+        player2.getUser().setActive(false);
+        player3.getUser().setActive(false);
+        assertFalse(player1.getUser().isActive());
+        assertFalse(player2.getUser().isActive());
+        assertFalse(player3.getUser().isActive());
+
+        winner = gameManager.evaluateWinner();
+        assertNotNull(winner);
+        assertEquals(winner, player4);
     }
 
 }
