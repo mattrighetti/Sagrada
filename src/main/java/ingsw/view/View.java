@@ -300,5 +300,6 @@ public class View extends Application implements GUIUpdater {
     @Override
     public void closeApplication() {
         mainStage.close();
+        Platform.exit();
     }
 }

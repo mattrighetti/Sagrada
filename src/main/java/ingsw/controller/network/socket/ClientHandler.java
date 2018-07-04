@@ -54,11 +54,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         try {
             Response response = ((Request) objectInputStream.readObject()).handle(serverController);
             if (response != null) {
-                if (response instanceof LogoutResponse) {
-                    respond(response);
-                    close();
-                } else if (response instanceof Ping) {
-                    System.out.println("Received Ping from the user");
+                if (response instanceof Ping) {
                     controllerTimer.setPingActive(false);
                     controllerTimer.cancelTimer();
                 } else
@@ -66,18 +62,19 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             }
 
         } catch (EOFException | SocketException e) {
-            System.err.println("Client has disconnected from server, closing the connection");
-            System.err.println("Deactivating the user");
-            serverController.deactivateUser();
-            System.err.println("Closing down OutputStreams and InputStreams");
-            pinger.cancel(true);
-            close();
+            shutdownClientHandler();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            System.err.println("The class is probably not Serializable");
+            System.err.println("The class is not Serializable");
             e.printStackTrace();
         }
+    }
+
+    private void shutdownClientHandler() {
+        serverController.deactivateUser();
+        pinger.cancel(true);
+        close();
     }
 
 
@@ -98,7 +95,6 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     private synchronized void checkConnection() {
         if (!stop) {
             try {
-                System.out.println("Sending Ping to the user");
                 objectOutputStream.writeObject(new Ping());
                 objectOutputStream.reset();
                 controllerTimer.startPingReceiveTimer(this);
@@ -125,6 +121,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      */
     public void close() {
         stop();
+        pinger.cancel(true);
         if (objectInputStream != null) {
             try {
                 objectInputStream.close();

@@ -7,8 +7,6 @@ import ingsw.utilities.Tuple;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
-import java.util.concurrent.Executors;
-
 /**
  * Class that defines the socket connection of the game
  */
@@ -24,19 +22,6 @@ public class ClientController implements ResponseHandler, NetworkType {
     public void setSceneUpdater(SceneUpdater sceneUpdater) {
         this.sceneUpdater = sceneUpdater;
     }
-
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-    /* EXCLUSIVE SOCKET PART */
-
-    /**
-     * Method that stops the active receiver thread triggering a null response
-     */
-    private void stopBroadcastReceiver() {
-        client.stopBroadcastReceiver();
-    }
-
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /* NETWORK TYPE PART */
     /* METHODS EXECUTED BY THE VIEW TO MAKE ACTIONS */
@@ -58,7 +43,14 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     @Override
     public void disconnectUser() {
-        stopBroadcastReceiver();
+        client.request(new StopListener());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         client.request(new DisconnectionRequest());
         client.nextResponse().handle(this);
     }
@@ -68,7 +60,14 @@ public class ClientController implements ResponseHandler, NetworkType {
      */
     @Override
     public void logoutUser() {
-        stopBroadcastReceiver();
+        client.request(new StopListener());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         client.request(new LogoutRequest());
         client.nextResponse().handle(this);
     }
@@ -246,34 +245,33 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new ReadHistoryRequest(matchName));
     }
 
-    private void activateListener() {
-        Executors.newSingleThreadScheduledExecutor().execute(() -> {
+    /**
+     * Method that opens a Thread and listens for every incoming Response sent by the Controller
+     */
+    private void listenForResponses() {
+        new Thread(() -> {
+            boolean stop = false;
             listenerActive = true;
             System.out.println("Opening the Thread");
             Response response;
             do {
                 response = client.nextResponse();
                 if (response != null) {
-                    if (!(response instanceof Ping)) {
+                    if (response instanceof StopListenerResponse) {
+                        stop = true;
+                    } else if (!(response instanceof Ping)) {
                         response.handle(this);
-                        System.out.println("Received a response: " + response);
                     } else {
                         client.ackPing(new Ping());
                     }
                 } else {
                     System.err.println("Stopping broadcast");
-                    break;
+                    stop = true;
                 }
-            } while (true);
+            } while (!stop);
+            System.err.println("StopListener");
             listenerActive = false;
-        });
-    }
-
-    /**
-     * Method that opens a Thread and listens for every incoming Response sent by the Controller
-     */
-    private void listenForResponses() {
-        activateListener();
+        }).start();
     }
 
 
@@ -281,7 +279,6 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     /* HANDLER PART */
     /* METHOD EXECUTED BY THE CLIENT HANDLER */
-
 
     /**
      * Method that is executed every time a User logs into the game.
@@ -305,12 +302,10 @@ public class ClientController implements ResponseHandler, NetworkType {
     @Override
     public void handle(LogoutResponse logoutResponse) {
         if (logoutResponse.logoutSuccessful) {
-            client.close();
+            System.out.println("BYE BYE!");
             sceneUpdater.closeStage();
         } else
             sceneUpdater.launchAlert();
-
-        //TODO launchAlert message in this case must be changed
     }
 
     /**

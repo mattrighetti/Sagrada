@@ -219,7 +219,8 @@ public class RMIController implements ResponseHandler, NetworkType {
     public void handle(LogoutResponse logoutResponse) {
         if (logoutResponse != null) {
             sceneUpdater.closeStage();
-        }
+        } else
+            sceneUpdater.launchAlert();
     }
 
     @Override
@@ -253,7 +254,7 @@ public class RMIController implements ResponseHandler, NetworkType {
 
     @Override
     public void handle(JoinedMatchResponse joinedMatchResponse) {
-        System.out.println("Received logintomatch");
+        System.out.println("Received loginToMatch");
     }
 
     @Override

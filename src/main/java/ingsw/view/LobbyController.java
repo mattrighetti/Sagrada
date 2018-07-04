@@ -110,6 +110,11 @@ public class LobbyController implements SceneUpdater, Initializable {
     }
 
     @Override
+    public void disconnectUser() {
+        networkType.logoutUser();
+    }
+
+    @Override
     public void setNetworkType(NetworkType clientController) {
         this.networkType = clientController;
     }
@@ -149,7 +154,6 @@ public class LobbyController implements SceneUpdater, Initializable {
     @FXML
     void onExitPressed(ActionEvent event) {
         networkType.logoutUser();
-        application.closeApplication();
     }
 
     @FXML
@@ -223,11 +227,6 @@ public class LobbyController implements SceneUpdater, Initializable {
     @Override
     public void closeStage() {
         application.closeApplication();
-    }
-
-    @Override
-    public void disconnectUser() {
-        networkType.disconnectUser();
     }
 }
 

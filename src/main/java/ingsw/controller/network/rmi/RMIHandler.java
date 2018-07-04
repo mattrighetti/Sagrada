@@ -83,12 +83,13 @@ public class RMIHandler implements RequestHandler {
     public Response handle(LogoutRequest logoutRequest) {
         try {
             sagradaGame.logoutUser(user.getUsername());
+            new LogoutResponse(true);
         } catch (RemoteException e) {
             System.err.println(e.getMessage());
-            return new LogoutResponse(false);
+            new LogoutResponse(false).handle(rmiController);
         }
 
-        return new LogoutResponse(true);
+        return null;
     }
 
     /**
@@ -101,12 +102,13 @@ public class RMIHandler implements RequestHandler {
     public Response handle(DisconnectionRequest disconnectionRequest) {
         try {
             sagradaGame.deactivateUser(user.getUsername());
+            new LogoutResponse(true).handle(rmiController);
         } catch (RemoteException e) {
             System.err.println(e.getMessage());
-            return new LogoutResponse(false);
+            new LogoutResponse(false).handle(rmiController);
         }
 
-        return new LogoutResponse(true);
+        return null;
     }
 
     /**
