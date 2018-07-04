@@ -74,9 +74,6 @@ class CopperFoilBurnisherTest {
 
     }
 
-
-    /*
-
     @Test
     void onActionTest2() throws RemoteException, InterruptedException {
 
@@ -98,7 +95,7 @@ class CopperFoilBurnisherTest {
 
        new Thread(()-> copperFoilBurnisher.action(gameManagerMock)).start();
 
-       Thread.sleep(10000);
+       Thread.sleep(3000);
 
        synchronized (gameManagerMock.getToolCardLock()) {
            gameManagerMock.getToolCardLock().notify();
@@ -110,6 +107,6 @@ class CopperFoilBurnisherTest {
         verify(gameManagerMock,times(0)).avoidToolCardUse();
         verify(gameManagerMock,times(1)).copperFoilBurnisherResponse();
     }
-    */
+
 
 }

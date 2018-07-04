@@ -943,7 +943,7 @@ public class GameManager {
      *
      */
 
-     boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
+    boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
         if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
 
