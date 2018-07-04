@@ -94,6 +94,8 @@ class GameManagerTest {
         userD.attachUserObserver(mock(UserObserver.class));
         players.add(new Player(userD));
 
+        players.get(0).setPatternCard(new AuroraeMagnificus());
+
 
         gameManager = new GameManager(players, 10, mock(Controller.class), mock(ControllerTimer.class));
 
@@ -357,12 +359,21 @@ class GameManagerTest {
     void useToolCard() throws InterruptedException {
         Round roundMock = mock(Round.class);
         Whitebox.setInternalState(gameManager,"currentRound",roundMock);
+        Whitebox.setInternalState(gameManager,"board",board);
 
-        gameManager.useToolCard("EglomiseBrush");
+        gameManager.useToolCard("FluxRemover");
 
         Thread.sleep(1000);
 
         assertEquals(true, gameManager.getToolCardLock().get());
+
+        FluxRemover fluxRemover = new FluxRemover();
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("FluxRemover")) {
+                fluxRemover = (FluxRemover) toolCard;
+            }
+        }
+        verify(roundMock).makeMove(fluxRemover);
 
     }
 
@@ -409,9 +420,10 @@ class GameManagerTest {
     @Test
     void fluxBrushMove1() {
 
-        Round roundMock = mock(Round.class);
+        Whitebox.setInternalState(gameManager,"currentRound",this.round);
 
         Whitebox.setInternalState(gameManager,"board",this.board);
+        gameManager.getToolCardLock().set(true);
 
 
         gameManager.fluxBrushMove(board.getDraftedDice().get(0));
@@ -425,7 +437,126 @@ class GameManagerTest {
             }
         }
 
+        if (verified) assertNotNull(fluxBrush.getTemporaryDraftedDice());
+
     }
+
+    @Test
+    void fluxBrushMove2() {
+        Whitebox.setInternalState(gameManager,"board",this.board);
+        Whitebox.setInternalState(gameManager,"currentRound",this.round);
+
+        gameManager.getToolCardLock().set(true);
+
+        List<Dice> diceList = new ArrayList<>();
+        diceList.add(new Dice(Color.YELLOW));
+        diceList.add(new Dice(Color.BLUE));
+
+        FluxBrush fluxBrush = new FluxBrush();
+        boolean verified = false;
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("FluxBrush")) {
+                fluxBrush = (FluxBrush) toolCard;
+                verified = true;
+            }
+        }
+        fluxBrush.setTemporaryDraftedDice(diceList);
+
+        gameManager.fluxBrushMove(gameManager.getDraftedDice().get(0),1,1);
+
+        assertNotNull(round.getCurrentPlayer().getPatternCard().getGrid().get(1).get(1).getDice());
+        assertEquals(diceList.size(),board.getDraftedDice().size());
+    }
+
+    @Test
+    void fluxBrushMove3() {
+        Whitebox.setInternalState(gameManager,"board",this.board);
+        Whitebox.setInternalState(gameManager,"currentRound",this.round);
+        gameManager.getToolCardLock().set(true);
+
+        List<Dice> diceList = new ArrayList<>();
+        diceList.add(new Dice(Color.YELLOW));
+        diceList.add(new Dice(Color.BLUE));
+
+        FluxBrush fluxBrush = new FluxBrush();
+        boolean verified = false;
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("FluxBrush")) {
+                fluxBrush = (FluxBrush) toolCard;
+                verified = true;
+            }
+        }
+        fluxBrush.setTemporaryDraftedDice(diceList);
+
+        gameManager.fluxBrushMove();
+
+        assertEquals(diceList.size(),board.getDraftedDice().size());
+        for (int i = 0; i < board.getDraftedDice().size(); i++) {
+            assertEquals(board.getDraftedDice().get(i).toString(),diceList.get(i).toString());
+        }
+
+    }
+
+    @Test
+    void fluxRemoverMove1() {
+        Whitebox.setInternalState(gameManager,"board",this.board);
+        Whitebox.setInternalState(gameManager,"currentRound",this.round);
+        gameManager.getToolCardLock().set(true);
+        int oldSize = board.getDraftedDice().size();
+
+        gameManager.fluxRemoverMove(board.getDraftedDice().get(0));
+
+
+        FluxRemover fluxRemover = new FluxRemover();
+        boolean verified = false;
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("FluxRemover")) {
+                fluxRemover = (FluxRemover) toolCard;
+                verified = true;
+            }
+        }
+        assertNotNull(fluxRemover.getDiceFromBag());
+        assertNotNull(fluxRemover.getDraftedDice());
+        assertEquals(oldSize ,fluxRemover.getDraftedDice().size());
+        assertTrue(fluxRemover.getDraftedDice().contains(fluxRemover.getDiceFromBag()));
+
+    }
+
+    @Test
+    void fluxRemoverMove2() {
+        Whitebox.setInternalState(gameManager,"board",this.board);
+        Whitebox.setInternalState(gameManager,"currentRound",this.round);
+        gameManager.getToolCardLock().set(true);
+        int oldSize = board.getDraftedDice().size();
+        Dice dice = board.getDraftedDice().get(0);
+
+        FluxRemover fluxRemover = new FluxRemover();
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("FluxRemover")) {
+                fluxRemover = (FluxRemover) toolCard;
+            }
+        }
+        fluxRemover.setDraftedDice(board.getDraftedDice());
+
+        int oldNumberOfDice = 0;
+        for (Dice die : fluxRemover.getDraftedDice()) {
+            if (die.toString().equals(dice.getDiceColor().toString() + 1))
+                oldNumberOfDice++;
+        }
+
+        gameManager.fluxRemoverMove(dice, 1);
+
+        int numberOfDice = 0;
+        for (Dice die : fluxRemover.getDraftedDice()) {
+            if (die.toString().equals(dice.getDiceColor().toString() + 1))
+                numberOfDice++;
+        }
+
+        assertEquals(oldNumberOfDice + 1,numberOfDice);
+
+
+    }
+
 
 
     /*

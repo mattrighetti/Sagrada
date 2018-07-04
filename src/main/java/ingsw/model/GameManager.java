@@ -1216,6 +1216,16 @@ public class GameManager {
         }
     }
 
+    /**
+     * Received the new face up value for the drafted die,
+     * this method sets the chosen value and send to the client the drafted dice,
+     * the selected die and the available positions to makes the player choose
+     * where to place the die
+     *
+     * @param selectedDice the die previously drafted from the bag and whose
+     *                     the player choose the value
+     * @param chosenValue the value chosen from the player to set as face up value
+     */
     public synchronized void fluxRemoverMove(Dice selectedDice, int chosenValue) {
         if (toolCardLock.get()) {
             FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
@@ -1225,6 +1235,7 @@ public class GameManager {
                 if (selectedDice.toString().equals(dice.toString())) {
                     dice.setFaceUpValue(chosenValue);
                     selectedDice.setFaceUpValue(chosenValue);
+                    break;
                 }
             }
             Map<String, Boolean[][]> availablePositions = getCurrentRound().getCurrentPlayer().getPatternCard().computeAvailablePositionsDraftedDice(fluxRemover.getDraftedDice());
