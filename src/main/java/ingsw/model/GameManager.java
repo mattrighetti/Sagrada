@@ -201,8 +201,13 @@ public class GameManager {
      * @return three randomly picked ToolCards
      */
     private List<ToolCard> chooseToolCards() {
-        Collections.shuffle(toolCards);
-        return new ArrayList<>(toolCards.subList(0, 3));
+        //Collections.shuffle(toolCards);
+        //return new ArrayList<>(toolCards.subList(0, 3));
+        List<ToolCard> toolCardList = new ArrayList<>();
+        toolCardList.add(new Lathekin());
+        toolCardList.add(new GrozingPliers());
+        toolCardList.add(new GlazingHammer());
+        return toolCardList;
     }
 
     /**
@@ -599,7 +604,7 @@ public class GameManager {
             }
 
             int i = 0;
-            while (i < 2) {
+            while (i < 10) {
                 if (disconnectedPlayers.size() != (playerList.size() - 1)) {
                     if (playerList.get(0).getUser().isActive()) {
 
@@ -1718,8 +1723,7 @@ public class GameManager {
     public void setDoubleMove(boolean doubleMove) {
         this.doubleMove.set(doubleMove);
     }
-
-
+    
     private void tapWheelResponse(Map<String, Boolean[][]> availablePositions, int phase) {
         if (toolCardLock.get()) {
             if (phase == 1) {

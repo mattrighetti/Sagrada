@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface UserObserver extends Remote {
 
-    void activatePinger();
+    void activatePinger() throws RemoteException;
 
     void checkIfActive() throws RemoteException;
 
