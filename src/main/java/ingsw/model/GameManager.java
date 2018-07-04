@@ -271,6 +271,7 @@ public class GameManager {
                         System.out.println("User: " + player.getPlayerUsername() + " is back online! ---> Sending data");
                         disconnectedPlayers.remove(player);
                         player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
+                        player.getUserObserver().sendResponse(new MoveStatusNotification(movesHistory));
 
                         sleep(500);
                         player.getUserObserver().sendResponse(new DraftedDiceResponse(board.getDraftedDice()));
