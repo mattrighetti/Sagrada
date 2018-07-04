@@ -26,6 +26,7 @@ import ingsw.utilities.Tuple;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
@@ -441,6 +442,14 @@ public class GameManager {
      */
     public void randomizePatternCards(Map<String, List<PatternCard>> patternCardToChoose) {
         synchronized (patternCardsChosen) {
+            for (Player player : playerList) {
+                if (player.getPatternCard() == null) {
+                    Collections.shuffle(patternCardToChoose.get(player.getPlayerUsername()));
+                    player.setPatternCard(patternCardToChoose.get(player.getPlayerUsername()).get(0));
+                }
+            }
+            setBoardAndStartMatch();
+            resetAck();
 
             if (!patternCardsChosen.get()) {
                 patternCardsChosen.set(true);

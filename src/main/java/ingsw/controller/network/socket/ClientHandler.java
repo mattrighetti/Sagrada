@@ -7,6 +7,9 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ClientHandler implements Runnable, UserObserver, Serializable {
     private static final String ERROR_IN = "Errors in closing - ";
@@ -16,6 +19,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     private final transient ObjectOutputStream objectOutputStream;
     private transient boolean stop = false;
     private transient ControllerTimer controllerTimer;
+    private transient ScheduledFuture<?> pinger;
 
     private ServerController serverController;
 
@@ -66,6 +70,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             System.err.println("Deactivating the user");
             serverController.deactivateUser();
             System.err.println("Closing down OutputStreams and InputStreams");
+            pinger.cancel(true);
             close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,21 +91,29 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             objectOutputStream.writeObject(response);
             objectOutputStream.reset();
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
+            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage() + ", caught and the user will not be notified");
         }
     }
 
     private synchronized void checkConnection() {
-        try {
-            System.out.println("Sending Ping to the user");
-            objectOutputStream.writeObject(new Ping());
-            objectOutputStream.reset();
-            controllerTimer.startPingReceiveTimer(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
+        if (!stop) {
+            try {
+                System.out.println("Sending Ping to the user");
+                objectOutputStream.writeObject(new Ping());
+                objectOutputStream.reset();
+                controllerTimer.startPingReceiveTimer(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
+            }
         }
+    }
+
+    private void pingTimer() {
+        pinger = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::checkConnection,
+                                                                                     0,
+                                                                                     3,
+                                                                                     TimeUnit.SECONDS);
     }
 
     private void stop() {
@@ -157,7 +170,12 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
     @Override
     public void checkIfActive() {
-        checkConnection();
+
+    }
+
+    @Override
+    public void activatePinger() {
+        pingTimer();
     }
 
     /**
@@ -186,7 +204,7 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      * @param booleanMapGrid list of every available position where the die can be placed
      */
     @Override
-    public void activateTurnNotification(Map<String,Boolean[][]> booleanMapGrid) {
+    public void activateTurnNotification(Map<String, Boolean[][]> booleanMapGrid) {
         respond(new StartTurnNotification(booleanMapGrid));
     }
 

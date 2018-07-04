@@ -27,6 +27,11 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     @Override
+    public void activatePinger() {
+        //Void call
+    }
+
+    @Override
     public synchronized void sendResponse(Response response) {
         new Thread(() -> response.handle(rmiController)).start();
     }

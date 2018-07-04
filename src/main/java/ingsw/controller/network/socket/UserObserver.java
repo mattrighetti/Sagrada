@@ -14,6 +14,8 @@ public interface UserObserver extends Remote {
 
     void activateTurnNotification(Map<String,Boolean[][]> booleanMapGrid) throws RemoteException;
 
+    void activatePinger();
+
     void sendResponse(Response response) throws RemoteException;
 
     void checkIfActive() throws RemoteException;

@@ -150,6 +150,7 @@ public class Controller implements RemoteController {
         for (Player player : playerList) {
             if (player.getPlayerUsername().equals(user.getUsername())) {
                 player.getUser().setActive(false);
+                player.getUser().setReady(false);
                 System.err.println("Controller: User " + user.getUsername() + " has been deactivated");
             }
         }
