@@ -11,6 +11,7 @@ import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.ControllerTimer;
 import ingsw.utilities.PlayerBroadcaster;
+import ingsw.utilities.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.reflection.Whitebox;
@@ -132,11 +133,11 @@ class GameManagerTest {
 
         List<PublicObjectiveCard> publicObjectiveCards = new ArrayList<>();
 
-        board = new Board(publicObjectiveCards,toolCards);
+        board = new Board(publicObjectiveCards, toolCards);
         board.setDraftedDice(diceList);
 
         round = new Round(gameManager);
-        Whitebox.setInternalState(round,"player",players.get(0));
+        Whitebox.setInternalState(round, "player", players.get(0));
     }
 
     @Test
@@ -166,7 +167,7 @@ class GameManagerTest {
         assertEquals(1, privateObjectiveCardsList.size());
         privateObjectiveCards.setAccessible(false);
 
-        for (Player player : gameManager.getPlayerList()){
+        for (Player player : gameManager.getPlayerList()) {
             assertEquals(true, !player.getPrivateObjectiveCard().equals(null));
         }
     }
@@ -178,7 +179,7 @@ class GameManagerTest {
         int c = 0;
         int d = 0;
 
-        for(Player player : gameManager.getPlayerList()) {
+        for (Player player : gameManager.getPlayerList()) {
             if (player.getUser().getUsername().equals("a"))
                 a++;
 
@@ -191,7 +192,7 @@ class GameManagerTest {
             if (player.getUser().getUsername().equals("d"))
                 d++;
         }
-        assertTrue((a == 1 && b == 1 && c == 1 && d ==1));
+        assertTrue((a == 1 && b == 1 && c == 1 && d == 1));
         assertEquals(4, gameManager.getPlayerList().size());
     }
 
@@ -218,7 +219,7 @@ class GameManagerTest {
         AtomicInteger old = (AtomicInteger) field.get(gameManager);
         gameManager.setPatternCardForPlayer("a", new Batllo());
         AtomicInteger current = (AtomicInteger) field.get(gameManager);
-        assertEquals( "PatternCard{'Batllo'}" , gameManager.getPlayerList().get(0).getPatternCard().toString());
+        assertEquals("PatternCard{'Batllo'}", gameManager.getPlayerList().get(0).getPatternCard().toString());
         assertEquals(current.get(), old.getAndIncrement());
     }
 
@@ -226,7 +227,7 @@ class GameManagerTest {
     void avoidToolCardUse() throws RemoteException {
 
         Round roundMock = mock(Round.class);
-        Whitebox.setInternalState(gameManager,"currentRound", roundMock);
+        Whitebox.setInternalState(gameManager, "currentRound", roundMock);
         Player playerMock = mock(Player.class);
         UserObserver userObserverMock = mock(UserObserver.class);
 
@@ -235,16 +236,16 @@ class GameManagerTest {
 
         gameManager.avoidToolCardUse();
 
-        assertEquals(false,gameManager.getToolCardLock().get());
+        assertEquals(false, gameManager.getToolCardLock().get());
 
     }
 
     @Test
     void glazingHammerResponse() {
         Dice dice = board.getDraftedDice().get(0);
-        Whitebox.setInternalState(gameManager,"board",board);
-        Whitebox.setInternalState(gameManager,"currentRound",round);
-        Whitebox.setInternalState(round,"player", gameManager.getPlayerList().get(0));
+        Whitebox.setInternalState(gameManager, "board", board);
+        Whitebox.setInternalState(gameManager, "currentRound", round);
+        Whitebox.setInternalState(round, "player", gameManager.getPlayerList().get(0));
         gameManager.glazingHammerResponse();
 
         //TODO
@@ -256,23 +257,22 @@ class GameManagerTest {
         gameManager.getToolCardLock().set(true);
 
         int oldValue = board.getDraftedDice().get(0).getFaceUpValue();
-        Whitebox.setInternalState(gameManager,"board",board);
-        Whitebox.setInternalState(gameManager,"currentRound",round);
+        Whitebox.setInternalState(gameManager, "board", board);
+        Whitebox.setInternalState(gameManager, "currentRound", round);
 
-        gameManager.grozingPliersMove(board.getDraftedDice().get(0),true);
+        gameManager.grozingPliersMove(board.getDraftedDice().get(0), true);
 
         if (oldValue != 6)
-            assertEquals(board.getDraftedDice().get(0).getFaceUpValue(),oldValue + 1);
-        else assertEquals(board.getDraftedDice().get(0).getFaceUpValue(),6);
+            assertEquals(board.getDraftedDice().get(0).getFaceUpValue(), oldValue + 1);
+        else assertEquals(board.getDraftedDice().get(0).getFaceUpValue(), 6);
 
         oldValue = board.getDraftedDice().get(0).getFaceUpValue();
 
-        gameManager.grozingPliersMove(board.getDraftedDice().get(0),false);
+        gameManager.grozingPliersMove(board.getDraftedDice().get(0), false);
 
-        if(oldValue != 1)
-            assertEquals(board.getDraftedDice().get(0).getFaceUpValue(),oldValue - 1);
-        else assertEquals(board.getDraftedDice().get(0).getFaceUpValue(),1);
-
+        if (oldValue != 1)
+            assertEquals(board.getDraftedDice().get(0).getFaceUpValue(), oldValue - 1);
+        else assertEquals(board.getDraftedDice().get(0).getFaceUpValue(), 1);
 
 
     }
@@ -280,12 +280,7 @@ class GameManagerTest {
     @Test
     void grozingPliersResponse() throws RemoteException {
         gameManager.getToolCardLock().set(true);
-        PlayerBroadcaster playerBroadcaster = mock(PlayerBroadcaster.class);
 
-        Whitebox.setInternalState(gameManager,"playerBroadcaster",playerBroadcaster);
-        Whitebox.setInternalState(gameManager,"board",board);
-        Whitebox.setInternalState(gameManager,"currentRound",round);
-        Whitebox.setInternalState(gameManager.getCurrentRound().getCurrentPlayer(), "patternCard", mock(PatternCard.class));
 
         gameManager.grozingPliersResponse();
         //todo
@@ -302,7 +297,7 @@ class GameManagerTest {
 
         patternCards = (LinkedList<PatternCard>) Whitebox.getInternalState(gameManager, "patternCards");
         assertEquals(oldSize - minus, patternCards.size());
-        assertEquals(map.size(),gameManager.getPlayerList().size());
+        assertEquals(map.size(), gameManager.getPlayerList().size());
 
     }
 
@@ -310,12 +305,12 @@ class GameManagerTest {
     void placeDiceForPlayer() {
 
         Round roundMock = mock(Round.class);
-        Whitebox.setInternalState(gameManager,"board",board);
-        Whitebox.setInternalState(gameManager,"currentRound",roundMock);
+        Whitebox.setInternalState(gameManager, "board", board);
+        Whitebox.setInternalState(gameManager, "currentRound", roundMock);
 
-        gameManager.placeDiceForPlayer(gameManager.getDraftedDice().get(0),1,1);
+        gameManager.placeDiceForPlayer(gameManager.getDraftedDice().get(0), 1, 1);
 
-        verify(gameManager.getCurrentRound(),times(1)).makeMove(gameManager.getDraftedDice().get(0),1,1);
+        verify(gameManager.getCurrentRound(), times(1)).makeMove(gameManager.getDraftedDice().get(0), 1, 1);
 
     }
 
@@ -323,7 +318,7 @@ class GameManagerTest {
     void endTurn() {
 
         Round roundMock = mock(Round.class);
-        Whitebox.setInternalState(gameManager,"currentRound",roundMock);
+        Whitebox.setInternalState(gameManager, "currentRound", roundMock);
         Player playerMock = mock(Player.class);
         when(roundMock.getCurrentPlayer()).thenReturn(playerMock);
         when(playerMock.getPlayerUsername()).thenReturn("a");
@@ -338,19 +333,19 @@ class GameManagerTest {
     @Test
     void stopTurn() {
         Round roundMock = mock(Round.class);
-        Whitebox.setInternalState(gameManager,"currentRound",roundMock);
+        Whitebox.setInternalState(gameManager, "currentRound", roundMock);
         Player playerMock = mock(Player.class);
         when(roundMock.getCurrentPlayer()).thenReturn(playerMock);
         when(playerMock.getPlayerUsername()).thenReturn("b");
 
-        AtomicBoolean atomicBoolean = (AtomicBoolean) Whitebox.getInternalState(gameManager,"toolCardLock");
+        AtomicBoolean atomicBoolean = (AtomicBoolean) Whitebox.getInternalState(gameManager, "toolCardLock");
         atomicBoolean.set(true);
 
         gameManager.stopTurn();
 
         verify(roundMock).setPlayerEndedTurn(true);
 
-        atomicBoolean = (AtomicBoolean) Whitebox.getInternalState(gameManager,"toolCardLock");
+        atomicBoolean = (AtomicBoolean) Whitebox.getInternalState(gameManager, "toolCardLock");
 
         assertTrue(atomicBoolean.get());
     }
@@ -358,8 +353,8 @@ class GameManagerTest {
     @Test
     void useToolCard() throws InterruptedException {
         Round roundMock = mock(Round.class);
-        Whitebox.setInternalState(gameManager,"currentRound",roundMock);
-        Whitebox.setInternalState(gameManager,"board",board);
+        Whitebox.setInternalState(gameManager, "currentRound", roundMock);
+        Whitebox.setInternalState(gameManager, "board", board);
 
         gameManager.useToolCard("FluxRemover");
 
@@ -386,20 +381,20 @@ class GameManagerTest {
         patternCards.add(new AuroraeMagnificus());
         patternCards.add(new Batllo());
         patternCards.add(new Firelight());
-        mapPatternCards.put("a",patternCards);
-        mapPatternCards.put("b",patternCards);
-        mapPatternCards.put("c",patternCards);
-        mapPatternCards.put("d",patternCards);
+        mapPatternCards.put("a", patternCards);
+        mapPatternCards.put("b", patternCards);
+        mapPatternCards.put("c", patternCards);
+        mapPatternCards.put("d", patternCards);
 
 
         gameManager.randomizePatternCards(mapPatternCards);
 
-        AtomicBoolean patternCardChosen = (AtomicBoolean) Whitebox.getInternalState(gameManager,"patternCardsChosen");
+        AtomicBoolean patternCardChosen = (AtomicBoolean) Whitebox.getInternalState(gameManager, "patternCardsChosen");
 
         assertTrue(patternCardChosen.get());
 
         boolean verified = false;
-        for (PatternCard patternCard : mapPatternCards.get("a")){
+        for (PatternCard patternCard : mapPatternCards.get("a")) {
             if (gameManager.getPlayerList().get(0).getPatternCard().toString().equals(patternCard.toString()))
                 verified = true;
         }
@@ -408,21 +403,21 @@ class GameManagerTest {
 
     @Test
     void receiveAck() {
-        AtomicInteger atomicInteger = (AtomicInteger) Whitebox.getInternalState(gameManager,"noOfAck");
+        AtomicInteger atomicInteger = (AtomicInteger) Whitebox.getInternalState(gameManager, "noOfAck");
         int oldValue = atomicInteger.get();
         gameManager.receiveAck();
 
-        atomicInteger =  (AtomicInteger) Whitebox.getInternalState(gameManager,"noOfAck");
+        atomicInteger = (AtomicInteger) Whitebox.getInternalState(gameManager, "noOfAck");
 
-        assertEquals(oldValue + 1,atomicInteger.get());
+        assertEquals(oldValue + 1, atomicInteger.get());
     }
 
     @Test
     void fluxBrushMove1() {
 
-        Whitebox.setInternalState(gameManager,"currentRound",this.round);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
 
-        Whitebox.setInternalState(gameManager,"board",this.board);
+        Whitebox.setInternalState(gameManager, "board", this.board);
         gameManager.getToolCardLock().set(true);
 
 
@@ -443,8 +438,8 @@ class GameManagerTest {
 
     @Test
     void fluxBrushMove2() {
-        Whitebox.setInternalState(gameManager,"board",this.board);
-        Whitebox.setInternalState(gameManager,"currentRound",this.round);
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
 
         gameManager.getToolCardLock().set(true);
 
@@ -453,25 +448,23 @@ class GameManagerTest {
         diceList.add(new Dice(Color.BLUE));
 
         FluxBrush fluxBrush = new FluxBrush();
-        boolean verified = false;
         for (ToolCard toolCard : board.getToolCards()) {
             if (toolCard.getName().equals("FluxBrush")) {
                 fluxBrush = (FluxBrush) toolCard;
-                verified = true;
             }
         }
         fluxBrush.setTemporaryDraftedDice(diceList);
 
-        gameManager.fluxBrushMove(gameManager.getDraftedDice().get(0),1,1);
+        gameManager.fluxBrushMove(gameManager.getDraftedDice().get(0), 1, 1);
 
         assertNotNull(round.getCurrentPlayer().getPatternCard().getGrid().get(1).get(1).getDice());
-        assertEquals(diceList.size(),board.getDraftedDice().size());
+        assertEquals(diceList.size(), board.getDraftedDice().size());
     }
 
     @Test
     void fluxBrushMove3() {
-        Whitebox.setInternalState(gameManager,"board",this.board);
-        Whitebox.setInternalState(gameManager,"currentRound",this.round);
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
         gameManager.getToolCardLock().set(true);
 
         List<Dice> diceList = new ArrayList<>();
@@ -490,17 +483,17 @@ class GameManagerTest {
 
         gameManager.fluxBrushMove();
 
-        assertEquals(diceList.size(),board.getDraftedDice().size());
+        assertEquals(diceList.size(), board.getDraftedDice().size());
         for (int i = 0; i < board.getDraftedDice().size(); i++) {
-            assertEquals(board.getDraftedDice().get(i).toString(),diceList.get(i).toString());
+            assertEquals(board.getDraftedDice().get(i).toString(), diceList.get(i).toString());
         }
 
     }
 
     @Test
     void fluxRemoverMove1() {
-        Whitebox.setInternalState(gameManager,"board",this.board);
-        Whitebox.setInternalState(gameManager,"currentRound",this.round);
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
         gameManager.getToolCardLock().set(true);
         int oldSize = board.getDraftedDice().size();
 
@@ -508,24 +501,22 @@ class GameManagerTest {
 
 
         FluxRemover fluxRemover = new FluxRemover();
-        boolean verified = false;
         for (ToolCard toolCard : board.getToolCards()) {
             if (toolCard.getName().equals("FluxRemover")) {
                 fluxRemover = (FluxRemover) toolCard;
-                verified = true;
             }
         }
         assertNotNull(fluxRemover.getDiceFromBag());
         assertNotNull(fluxRemover.getDraftedDice());
-        assertEquals(oldSize ,fluxRemover.getDraftedDice().size());
+        assertEquals(oldSize, fluxRemover.getDraftedDice().size());
         assertTrue(fluxRemover.getDraftedDice().contains(fluxRemover.getDiceFromBag()));
 
     }
 
     @Test
     void fluxRemoverMove2() {
-        Whitebox.setInternalState(gameManager,"board",this.board);
-        Whitebox.setInternalState(gameManager,"currentRound",this.round);
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
         gameManager.getToolCardLock().set(true);
         int oldSize = board.getDraftedDice().size();
         Dice dice = board.getDraftedDice().get(0);
@@ -552,12 +543,212 @@ class GameManagerTest {
                 numberOfDice++;
         }
 
-        assertEquals(oldNumberOfDice + 1,numberOfDice);
+        assertEquals(oldNumberOfDice + 1, numberOfDice);
 
 
     }
 
+    @Test
+    void fluxRemoverMove3() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
 
+        FluxRemover fluxRemover = new FluxRemover();
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("FluxRemover")) {
+                fluxRemover = (FluxRemover) toolCard;
+            }
+        }
+        List<Dice> diceList = new ArrayList<>();
+        Dice dice1 = new Dice(Color.YELLOW);
+        dice1.roll();
+        diceList.add(dice1);
+        Dice dice2 = new Dice(Color.PURPLE);
+        diceList.add(dice2);
+        fluxRemover.setDraftedDice(diceList);
+        int oldSize = fluxRemover.getDraftedDice().size();
+        fluxRemover.setDiceFromBag(new Dice(Color.BLUE));
+
+
+        gameManager.fluxRemoverMove(dice1, 3, 2);
+
+        assertEquals(oldSize - 1, board.getDraftedDice().size());
+        assertTrue(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(2).getDice().toString().equals(dice1.toString()));
+
+    }
+
+    @Test
+    void fluxRemoverMove() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
+
+        FluxRemover fluxRemover = new FluxRemover();
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("FluxRemover")) {
+                fluxRemover = (FluxRemover) toolCard;
+            }
+        }
+        List<Dice> diceList = new ArrayList<>();
+        Dice dice1 = new Dice(Color.YELLOW);
+        dice1.roll();
+        diceList.add(dice1);
+        Dice dice2 = new Dice(Color.PURPLE);
+        diceList.add(dice2);
+        fluxRemover.setDraftedDice(diceList);
+        int oldSize = fluxRemover.getDraftedDice().size();
+        fluxRemover.setDiceFromBag(new Dice(Color.BLUE));
+
+        gameManager.fluxRemoverMove();
+
+        assertEquals(oldSize, board.getDraftedDice().size());
+        boolean verify = true;
+        for (Dice die : board.getDraftedDice()) {
+            if (!fluxRemover.getDraftedDice().contains(die)) {
+                verify = false;
+                break;
+            }
+        }
+        assertTrue(verify);
+    }
+
+    @Test
+    void grindingStoneMove() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
+
+        for (int i = 1; i <= 6; i++) {
+            board.getDraftedDice().get(0).setFaceUpValue(i);
+            gameManager.grindingStoneMove(board.getDraftedDice().get(0));
+
+            switch (i) {
+                case 1:
+                    assertEquals(6, board.getDraftedDice().get(0).getFaceUpValue());
+                    break;
+                case 2:
+                    assertEquals(5, board.getDraftedDice().get(0).getFaceUpValue());
+                    break;
+                case 3:
+                    assertEquals(4, board.getDraftedDice().get(0).getFaceUpValue());
+                    break;
+                case 4:
+                    assertEquals(3, board.getDraftedDice().get(0).getFaceUpValue());
+                    break;
+                case 5:
+                    assertEquals(2, board.getDraftedDice().get(0).getFaceUpValue());
+                    break;
+                case 6:
+                    assertEquals(1, board.getDraftedDice().get(0).getFaceUpValue());
+            }
+        }
+
+    }
+
+    @Test
+    void copperFoilBurnisherMove() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
+        Dice diceToMove = new Dice(Color.PURPLE);
+        diceToMove.setFaceUpValue(2);
+
+        round.getCurrentPlayer().getPatternCard().getGrid().get(1).get(1).insertDice(diceToMove);
+
+        gameManager.copperFoilBurnisherMove(new Tuple(1,1),new Tuple(1,2));
+
+        assertEquals(round.getCurrentPlayer().getPatternCard().getGrid().get(1).get(2).getDice().toString(),diceToMove.toString());
+        assertTrue(round.getCurrentPlayer().getPatternCard().getGrid().get(1).get(1).getDice() == null);
+    }
+
+    @Test
+    void corkBackedStraightedgeMove() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
+
+        Dice diceToPlace = board.getDraftedDice().get(0);
+
+        gameManager.corkBackedStraightedgeMove(diceToPlace,3,1);
+
+        assertEquals(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(1).getDice().toString(),diceToPlace.toString());
+
+    }
+
+    @Test
+    void lensCutterMove() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        List<Dice> diceList = new ArrayList<>();
+        Dice dice1 = new Dice(Color.YELLOW);
+        dice1.roll();
+        diceList.add(dice1);
+        Dice dice2 = new Dice(Color.PURPLE);
+        dice2.roll();
+        diceList.add(dice2);
+
+        List<List<Dice>> roundTrack = new ArrayList<>();
+        roundTrack.add(diceList);
+        Whitebox.setInternalState(gameManager,"roundTrack",roundTrack);
+        gameManager.getToolCardLock().set(true);
+
+        Dice diceInPool = board.getDraftedDice().get(0);
+        int oldSizePool = board.getDraftedDice().size();
+        int oldSizeRound = roundTrack.get(0).size();
+
+        gameManager.lensCutterMove(0,dice1.toString(),diceInPool.toString());
+
+        boolean verify = false;
+        for (Dice die : board.getDraftedDice()) {
+            if (die.toString().equals(dice1.toString())) verify = true;
+        }
+
+        assertTrue(verify);
+
+        roundTrack = (List<List<Dice>>) Whitebox.getInternalState(gameManager,"roundTrack");
+        verify = false;
+        for (Dice die : roundTrack.get(0)) {
+            if (diceInPool.toString().equals(die.toString())) verify = true;
+        }
+
+        assertTrue(verify);
+        assertEquals(oldSizePool,board.getDraftedDice().size());
+        assertEquals(oldSizeRound,roundTrack.get(0).size());
+
+    }
+
+    @Test
+    void eglomiseBrushMove() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
+        Dice diceToMove = new Dice(Color.PURPLE);
+        diceToMove.setFaceUpValue(2);
+
+        round.getCurrentPlayer().getPatternCard().getGrid().get(1).get(1).insertDice(diceToMove);
+
+        gameManager.eglomiseBrushMove(new Tuple(1,1),new Tuple(1,2));
+
+        assertEquals(round.getCurrentPlayer().getPatternCard().getGrid().get(1).get(2).getDice().toString(),diceToMove.toString());
+        assertTrue(round.getCurrentPlayer().getPatternCard().getGrid().get(1).get(1).getDice() == null);
+    }
+
+    @Test
+    void runningPliersMove() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
+
+        Dice diceToPlace = board.getDraftedDice().get(0);
+
+        gameManager.runningPliersMove(diceToPlace, 3,1);
+
+        assertNotNull(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(1).getDice());
+        assertEquals(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(1).getDice().toString(),diceToPlace.toString());
+
+
+    }
 
     /*
     @Test

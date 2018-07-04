@@ -442,14 +442,6 @@ public class GameManager {
      */
     public void randomizePatternCards(Map<String, List<PatternCard>> patternCardToChoose) {
         synchronized (patternCardsChosen) {
-            for (Player player : playerList) {
-                if (player.getPatternCard() == null) {
-                    Collections.shuffle(patternCardToChoose.get(player.getPlayerUsername()));
-                    player.setPatternCard(patternCardToChoose.get(player.getPlayerUsername()).get(0));
-                }
-            }
-            setBoardAndStartMatch();
-            resetAck();
 
             if (!patternCardsChosen.get()) {
                 patternCardsChosen.set(true);
@@ -1111,9 +1103,8 @@ public class GameManager {
     }
 
     /**
-     * GROZING PLIERS: Response
-     * <p>
-     * Sends to the players the updated data:
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
      */
     public void grozingPliersResponse() {
         if (toolCardLock.get()) {
@@ -1126,7 +1117,11 @@ public class GameManager {
         }
     }
 
-
+    /**
+     * FLUX BRUSH 1ST PHASE
+     *
+     * @param selectedDice
+     */
     public synchronized void fluxBrushMove(Dice selectedDice) {
         if (toolCardLock.get()) {
 
@@ -1159,6 +1154,13 @@ public class GameManager {
         }
     }
 
+    /**
+     * FLUX BRUSH 2ND PHASE
+     *
+     * @param dice
+     * @param rowIndex
+     * @param columnIndex
+     */
     public synchronized void fluxBrushMove(Dice dice, int rowIndex, int columnIndex) {
         if (toolCardLock.get()) {
             FluxBrush fluxBrush = (FluxBrush) getSelectedToolCard("FluxBrush");
@@ -1169,6 +1171,11 @@ public class GameManager {
         }
     }
 
+    /**
+     * FLUX BRUSH 3RD PHASE
+     *
+     * The move is done so we can save the toolcard move changes in the board
+     */
     public void fluxBrushMove() {
         if (toolCardLock.get()) {
             FluxBrush fluxBrush = (FluxBrush) getSelectedToolCard("FluxBrush");
@@ -1179,6 +1186,10 @@ public class GameManager {
         }
     }
 
+    /**
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
+     */
     public void fluxBrushResponse() {
         if (toolCardLock.get()) {
             playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
@@ -1186,6 +1197,11 @@ public class GameManager {
         }
     }
 
+    /**
+     * FLUX REMOVER 1ST PHASE
+     *
+     * @param selectedDice
+     */
     public synchronized void fluxRemoverMove(Dice selectedDice) {
         if (toolCardLock.get()) {
             FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
@@ -1217,6 +1233,8 @@ public class GameManager {
     }
 
     /**
+     * FLUX REMOVER 2ND PHASE
+     *
      * Received the new face up value for the drafted die,
      * this method sets the chosen value and send to the client the drafted dice,
      * the selected die and the available positions to makes the player choose
@@ -1250,6 +1268,13 @@ public class GameManager {
         }
     }
 
+    /**
+     * FLUX REMOVER 3RD PHASE a
+     *
+     * @param selectedDice
+     * @param rowIndex
+     * @param columnIndex
+     */
     public synchronized void fluxRemoverMove(Dice selectedDice, int rowIndex, int columnIndex) {
         if (toolCardLock.get()) {
             FluxRemover fluxRemover = (FluxRemover) getSelectedToolCard("FluxRemover");
@@ -1270,7 +1295,11 @@ public class GameManager {
     }
 
     /**
-     * If the dice can't be placed in the pattern card
+     * FLUX REMOVER 3RD PHASE b
+     *
+     * This method handles the case the dice can't be placed in the pattern card
+     * it will be leave in the drafted dice
+     * The move is done so we can save the toolcard move changes in the board
      */
     public synchronized void fluxRemoverMove() {
         if (toolCardLock.get()) {
@@ -1283,6 +1312,10 @@ public class GameManager {
         }
     }
 
+    /**
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
+     */
     public void fluxRemoverResponse() {
         if (toolCardLock.get()) {
             playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
@@ -1290,7 +1323,13 @@ public class GameManager {
         }
     }
 
-
+    /**
+     * GRINDING STONE
+     *
+     * Received the selected dice, this method sets its value to the opposite side
+     * (if 1 becomes 6, if 2 becomes 5, if 3 becomes 4 and the other way around)
+     * @param selectedDice the selected dice whose the value has to be flipped
+     */
     public synchronized void grindingStoneMove(Dice selectedDice) {
         if (toolCardLock.get()) {
             for (Dice diceInPool : board.getDraftedDice()) {
@@ -1303,6 +1342,10 @@ public class GameManager {
         }
     }
 
+    /**
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
+     */
     public void grindingStoneResponse() {
         if (toolCardLock.get()) {
             playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
@@ -1324,28 +1367,59 @@ public class GameManager {
         }
     }
 
+    /**
+     * COPPER FOIL BURNISHER
+     *
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
+     */
     public void copperFoilBurnisherResponse() {
         if (toolCardLock.get()) {
             playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         }
     }
 
+    /**
+     * CORK BACKED STRAIGHTEDGE
+     *
+     * @param selectedDice
+     * @param row
+     * @param column
+     */
     public synchronized void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
         if (toolCardLock.get()) {
             Map<String, Boolean[][]> availablePositions = currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositionsNoDiceAround(board.getDraftedDice());
-            if (availablePositions.get(selectedDice.toString())[row][column])
+            if (availablePositions.get(selectedDice.toString())[row][column]) {
                 placeDiceForPlayer(selectedDice, row, column);
+            }
             addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "placed " + selectedDice.toString() + " in " + row + " - " + column));
             wakeUpToolCardThread();
         }
     }
 
+    /**
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
+     */
     public void corkBackedStraightedgeResponse() {
         if (toolCardLock.get()) {
             playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), currentRound.getCurrentPlayer().getPatternCard().computeAvailablePositions()));
         }
     }
 
+    /**
+     * LENS CUTTER
+     *
+     * Received the two selected dice from the player,
+     * one from the roundtrack and one frome the drafted pool,
+     * this method swipes them. it gets the die from the round track and puts it
+     * in the drafted pool, and then takes the other one from the
+     * drafted pool and puts it in the right round of the roundtrack
+     *
+     * @param roundIndex the round where the selected die in the roundtrack belongs
+     * @param roundTrackDice the selected die from the round track
+     * @param poolDice the selected die from the draft pool
+     */
     public synchronized void lensCutterMove(int roundIndex, String roundTrackDice, String poolDice) {
         if (toolCardLock.get()) {
             Dice fromTrackDice;
@@ -1364,13 +1438,16 @@ public class GameManager {
                         }
                     }
                 }
-                System.err.println("Error: selected dice does not exist");
             }
             addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "the dice is swapped to the opposite side"));
             wakeUpToolCardThread();
         }
     }
 
+    /**
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
+     */
     public void lensCutterResponse() {
         if (toolCardLock.get()) {
             playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(board.getDraftedDice(), false));
@@ -1383,6 +1460,12 @@ public class GameManager {
         }
     }
 
+    /**
+     * EGLOMISE BRUSH
+     *
+     * @param dicePosition
+     * @param position
+     */
     public synchronized void eglomiseBrushMove(Tuple dicePosition, Tuple position) {
         if (toolCardLock.get()) {
             List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
@@ -1397,12 +1480,23 @@ public class GameManager {
         }
     }
 
+    /**
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
+     */
     public void eglomiseBrushResponse() {
         if (toolCardLock.get()) {
             playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions((getCurrentRound().getCurrentPlayer()))));
         }
     }
 
+    /**
+     * LATHEKIN
+     *
+     * @param dicePosition
+     * @param position
+     * @param doubleMove
+     */
     public synchronized void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
         if (toolCardLock.get()) {
             Lathekin lathekin = (Lathekin) getSelectedToolCard("Lathekin");
@@ -1457,7 +1551,10 @@ public class GameManager {
         }
     }
 
-
+    /**
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
+     */
     public void lathekinResponse() {
         if (toolCardLock.get()) {
             System.out.println("sending Lathekin response");
@@ -1465,6 +1562,14 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method used to create a copy of a PatternCard grid
+     * it is used to save the progress of the tool card move
+     * until the end of the move, only if it ends with success,
+     * then it will be copied to the original pattern card
+     *
+     * @return the copy of the original pattern card grid
+     */
     private synchronized List<List<Box>> copyPatternCard() {
         List<List<Box>> gridPattern = new ArrayList<>();
         for (int i = 0; i < currentRound.getCurrentPlayer().getPatternCard().getGrid().size(); i++) {
@@ -1482,6 +1587,15 @@ public class GameManager {
         return gridPattern;
     }
 
+    /**
+     * RUNNING PLIERS
+     *
+     * @param selectedDice dice to place
+     * @param rowIndex row index of the position in the patterncard
+     *                 where the place has to be placed
+     * @param columnIndex column index of the position in the patterncard
+     *                    where the place has to be placed
+     */
     public synchronized void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
         if (toolCardLock.get()) {
             placeDiceToolCard(selectedDice, rowIndex, columnIndex);
@@ -1490,6 +1604,10 @@ public class GameManager {
         }
     }
 
+    /**
+     * After the toolCard move ends with success this method sends the
+     * updated data to the players
+     */
     public void runningPliersResponse() {
         playerBroadcaster.broadcastResponseToAll(new PatternCardToolCardResponse(currentRound.getCurrentPlayer(), sendAvailablePositions(getCurrentRound().getCurrentPlayer())));
         playerBroadcaster.broadcastResponseToAll(new DraftedDiceToolCardResponse(getDraftedDice(), true));
@@ -1499,6 +1617,15 @@ public class GameManager {
         return doubleMove.get();
     }
 
+    /**
+     * TAP WHEEL
+     *
+     * @param roundTrackDice
+     * @param phase
+     * @param dicePosition
+     * @param position
+     * @param doubleMove
+     */
     public synchronized void tapWheelMove(Dice roundTrackDice, int phase, Tuple dicePosition, Tuple position, boolean doubleMove) {
         if (toolCardLock.get()) {
             if (phase == -1) {
@@ -1567,6 +1694,7 @@ public class GameManager {
     public void setDoubleMove(boolean doubleMove) {
         this.doubleMove.set(doubleMove);
     }
+
 
     private void tapWheelResponse(Map<String, Boolean[][]> availablePositions, int phase) {
         if (toolCardLock.get()) {
