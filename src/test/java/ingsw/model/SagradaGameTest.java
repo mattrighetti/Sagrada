@@ -82,7 +82,7 @@ class SagradaGameTest {
         sagradaGame.logoutUser("First");
         assertFalse(sagradaGame.connectedUsers.containsKey("First"));
         assertEquals(1, sagradaGame.connectedUsers.size());
-        sagradaGame.logoutUser("First");
+        assertThrows(RemoteException.class, () -> sagradaGame.logoutUser("First"));
         assertEquals(1, sagradaGame.connectedUsers.size());
         sagradaGame.logoutUser("Second");
         assertTrue(sagradaGame.connectedUsers.isEmpty());

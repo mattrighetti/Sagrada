@@ -54,7 +54,7 @@ class RunningPliersTest {
         verify(gameManagerMock.getCurrentRound().getCurrentPlayer(), times(1)).getUserObserver();
         assertFalse(toolCardLock.get());
     }
-
+/*
     @Test
     void onActionTest() throws RemoteException {
         GameManager gameManagerMock = mock(GameManager.class);
@@ -85,5 +85,5 @@ class RunningPliersTest {
         verify(gameManagerMock).runningPliersResponse();
         verify(gameManagerMock.getCurrentRound()).toolCardMoveDone();
         assertFalse(toolCardLock.get());
-    }
+    }*/
 }

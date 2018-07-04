@@ -341,6 +341,7 @@ public class SagradaGame implements RemoteSagradaGame {
             if (user.getUsername().equals(disconnectedUsername)) {
                 user.setActive(false);
                 user.setReady(false);
+                return;
             }
         }
 
