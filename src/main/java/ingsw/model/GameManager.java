@@ -1063,7 +1063,7 @@ public class GameManager {
     }
 
     /**
-     * Glazing Hammer
+     * GLAZING HAMMER
      * Method that roll again the drafted dice and send the new drafted pool to all the players
      */
     public synchronized void glazingHammerResponse() {
@@ -1270,6 +1270,8 @@ public class GameManager {
 
     /**
      * FLUX REMOVER 3RD PHASE a
+     *
+     * This method handles the case
      *
      * @param selectedDice
      * @param rowIndex

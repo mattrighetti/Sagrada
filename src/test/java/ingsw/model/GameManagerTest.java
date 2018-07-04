@@ -2,6 +2,7 @@ package ingsw.model;
 
 import ingsw.controller.Controller;
 
+import ingsw.controller.network.commands.DraftedDiceToolCardResponse;
 import ingsw.controller.network.commands.Notification;
 import ingsw.controller.network.commands.Response;
 import ingsw.controller.network.socket.UserObserver;
@@ -120,11 +121,13 @@ class GameManagerTest {
         Dice dice3 = new Dice(Color.GREEN);
         Dice dice4 = new Dice(Color.RED);
         Dice dice5 = new Dice(Color.PURPLE);
-        dice1.roll();
-        dice2.roll();
-        dice3.roll();
-        dice4.roll();
-        dice5.roll();
+        Dice dice6 = new Dice(Color.YELLOW);
+        dice1.setFaceUpValue(1);
+        dice2.setFaceUpValue(6);
+        dice3.setFaceUpValue(4);
+        dice4.setFaceUpValue(2);
+        dice5.setFaceUpValue(5);
+        dice6.setFaceUpValue(6);
         diceList.add(dice1);
         diceList.add(dice2);
         diceList.add(dice3);
@@ -242,14 +245,14 @@ class GameManagerTest {
 
     @Test
     void glazingHammerResponse() {
-        Dice dice = board.getDraftedDice().get(0);
-        Whitebox.setInternalState(gameManager, "board", board);
-        Whitebox.setInternalState(gameManager, "currentRound", round);
-        Whitebox.setInternalState(round, "player", gameManager.getPlayerList().get(0));
+
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        int oldSize = board.getDraftedDice().size();
+
         gameManager.glazingHammerResponse();
 
-        //TODO
-
+        assertEquals(oldSize, board.getDraftedDice().size());
     }
 
     @Test
@@ -280,9 +283,6 @@ class GameManagerTest {
     @Test
     void grozingPliersResponse() throws RemoteException {
         gameManager.getToolCardLock().set(true);
-
-
-        gameManager.grozingPliersResponse();
         //todo
     }
 
@@ -514,11 +514,10 @@ class GameManagerTest {
     }
 
     @Test
-    void fluxRemoverMove2() {
+    void fluxRemoverMove2a() {
         Whitebox.setInternalState(gameManager, "board", this.board);
         Whitebox.setInternalState(gameManager, "currentRound", this.round);
         gameManager.getToolCardLock().set(true);
-        int oldSize = board.getDraftedDice().size();
         Dice dice = board.getDraftedDice().get(0);
 
         FluxRemover fluxRemover = new FluxRemover();
@@ -530,21 +529,63 @@ class GameManagerTest {
         fluxRemover.setDraftedDice(board.getDraftedDice());
 
         int oldNumberOfDice = 0;
+        int newValue = 2;
+
         for (Dice die : fluxRemover.getDraftedDice()) {
-            if (die.toString().equals(dice.getDiceColor().toString() + 1))
+            if (die.toString().equals(dice.getDiceColor().toString() + newValue))
                 oldNumberOfDice++;
         }
+        int oldSize = board.getDraftedDice().size();
 
-        gameManager.fluxRemoverMove(dice, 1);
+        gameManager.fluxRemoverMove(dice, newValue);
 
         int numberOfDice = 0;
         for (Dice die : fluxRemover.getDraftedDice()) {
-            if (die.toString().equals(dice.getDiceColor().toString() + 1))
+            if (die.toString().equals(dice.getDiceColor().toString() + newValue))
                 numberOfDice++;
         }
+        int newSize = board.getDraftedDice().size();
 
-        assertEquals(oldNumberOfDice + 1, numberOfDice);
+        assertEquals(oldSize,newSize);
+        assertEquals(oldNumberOfDice + 1 , numberOfDice);
 
+    }
+
+    @Test
+    void fluxRemoverMove2b() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
+        Dice dice = board.getDraftedDice().get(0);
+
+        FluxRemover fluxRemover = new FluxRemover();
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("FluxRemover")) {
+                fluxRemover = (FluxRemover) toolCard;
+            }
+        }
+        fluxRemover.setDraftedDice(board.getDraftedDice());
+
+        int oldNumberOfDice = 0;
+        int newValue = 1;
+
+        for (Dice die : fluxRemover.getDraftedDice()) {
+            if (die.toString().equals(dice.getDiceColor().toString() + newValue))
+                oldNumberOfDice++;
+        }
+        int oldSize = board.getDraftedDice().size();
+
+        gameManager.fluxRemoverMove(dice, newValue);
+
+        int numberOfDice = 0;
+        for (Dice die : fluxRemover.getDraftedDice()) {
+            if (die.toString().equals(dice.getDiceColor().toString() + newValue))
+                numberOfDice++;
+        }
+        int newSize = board.getDraftedDice().size();
+
+        assertEquals(oldSize,newSize);
+        assertEquals(oldNumberOfDice , numberOfDice);
 
     }
 
@@ -746,9 +787,51 @@ class GameManagerTest {
 
         assertNotNull(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(1).getDice());
         assertEquals(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(1).getDice().toString(),diceToPlace.toString());
+    }
 
+    @Test
+    void lathekinMove1() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
+
+        Dice dice = new Dice(Color.GREEN);
+        dice.setFaceUpValue(2);
+
+        round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(1).insertDice(dice);
+
+        Lathekin lathekin = new Lathekin();
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("Lathekin")) {
+                lathekin = (Lathekin) toolCard;
+            }
+        }
+
+
+        //First move
+        gameManager.lathekinMove(new Tuple(3,1),new Tuple(3,2),false);
+
+        assertNotNull(lathekin.getOldGrid());
+
+        assertNotNull(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(1).getDice());
+        assertEquals(dice.toString(),round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(1).getDice().toString());
+        assertNull(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(2).getDice());
+
+        assertNull(lathekin.getNewGrid().get(3).get(1).getDice());
+        assertNotNull(lathekin.getNewGrid().get(3).get(2).getDice());
+        assertEquals(dice.toString(),lathekin.getNewGrid().get(3).get(2).getDice().toString());
+
+
+        //Second move
+        gameManager.lathekinMove(new Tuple(3,2), new Tuple(0,4),false);
+
+        assertNotNull(round.getCurrentPlayer().getPatternCard().getGrid().get(0).get(4).getDice());
+        assertEquals(dice.toString(),round.getCurrentPlayer().getPatternCard().getGrid().get(0).get(4).getDice().toString());
+        assertNull(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(2).getDice());
 
     }
+
+
 
     /*
     @Test
