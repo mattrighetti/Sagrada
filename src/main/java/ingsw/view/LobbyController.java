@@ -101,6 +101,10 @@ public class LobbyController implements SceneUpdater, Initializable {
         timePlayedColumn.setCellValueFactory(new PropertyValueFactory<>(TripleString.THIRD_FIELD));
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     void setApplication(View application) {
         this.application = application;
     }
@@ -216,9 +220,14 @@ public class LobbyController implements SceneUpdater, Initializable {
         );
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    @Override
+    public void closeStage() {
+        application.closeApplication();
     }
 
+    @Override
+    public void disconnectUser() {
+        networkType.disconnectUser();
+    }
 }
 

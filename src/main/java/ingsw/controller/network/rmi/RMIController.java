@@ -53,6 +53,11 @@ public class RMIController implements ResponseHandler, NetworkType {
     }
 
     @Override
+    public void disconnectUser() {
+
+    }
+
+    @Override
     public void createMatch(String matchName) {
         new CreateMatchRequest(matchName).handle(rmiHandler);
     }

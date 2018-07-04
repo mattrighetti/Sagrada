@@ -13,7 +13,7 @@ class LogoutResponseTest {
 
     @BeforeEach
     void setUp() {
-        logoutResponse = new LogoutResponse();
+        logoutResponse = new LogoutResponse(true);
         rmiController = Mockito.mock(RMIController.class);
         clientController = Mockito.mock(ClientController.class);
     }

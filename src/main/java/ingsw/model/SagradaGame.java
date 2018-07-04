@@ -195,7 +195,6 @@ public class SagradaGame implements RemoteSagradaGame {
 
         // Check if the username is present and inactive
         if (connectedUsers.containsKey(username) && !connectedUsers.get(username).isActive()) {
-            System.out.println("A");
             connectedUsers.get(username).setActive(true);
             //Check in which match the user was playing before disconnecting
             Executors.newSingleThreadExecutor().execute(() -> sendRejoinResponse(userObserver, username));
@@ -203,7 +202,6 @@ public class SagradaGame implements RemoteSagradaGame {
             return connectedUsers.get(username);
         }
 
-        System.out.println("B");
         // In case there is no username | the username is active
         User currentUser = new User(username);
         if (!connectedUsers.containsKey(username)) {
@@ -230,7 +228,6 @@ public class SagradaGame implements RemoteSagradaGame {
         for (Controller controller : matchesByName.values()) {
             for (Player player : controller.getPlayerList()) {
                 if (player.getPlayerUsername().equals(username)) {
-                    System.out.println("G");
                     player.getUser().attachUserObserver(userObserver);
                     try {
                         player.getUserObserver().sendResponse(new ReJoinResponse(controller.getMatchName(), player.getPlayerUsername()));
@@ -253,8 +250,9 @@ public class SagradaGame implements RemoteSagradaGame {
     @Override
     public void logoutUser(String username) throws RemoteException {
         if (connectedUsers.remove(username, connectedUsers.get(username))) {
-                broadcastUsersConnected(username);
-        }
+            broadcastUsersConnected(username);
+        } else
+            throw new RemoteException("Couldn't disconnect the user");
     }
 
     /**
@@ -301,7 +299,6 @@ public class SagradaGame implements RemoteSagradaGame {
             for (Player player : matchesByName.get(matchName).getPlayerList()) {
                 if (player.getPlayerUsername().equals(username) && player.getUser().isActive()) {
                     System.out.println("SagradaGame: re-activating User " + username);
-                    connectedUsers.get(username).setActive(true);
                     connectedUsers.get(username).setReady(true);
                     System.out.println("Player has been updated, it's now back online");
                 }
@@ -339,13 +336,14 @@ public class SagradaGame implements RemoteSagradaGame {
      * when he reconnects
      */
     @Override
-    public void deactivateUser(String disconnectedUsername) {
+    public synchronized void deactivateUser(String disconnectedUsername) throws RemoteException {
         for (User user : connectedUsers.values()) {
             if (user.getUsername().equals(disconnectedUsername)) {
-                System.out.println("F " + disconnectedUsername);
                 user.setActive(false);
                 user.setReady(false);
             }
         }
+
+        throw new RemoteException("Couldn't deactivate the user properly");
     }
 }

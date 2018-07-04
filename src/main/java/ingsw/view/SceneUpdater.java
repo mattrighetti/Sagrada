@@ -250,4 +250,8 @@ public interface SceneUpdater {
     default void setAvailablePositions(Map<String, Boolean[][]> availablePositions) {
         System.out.println("Not overridden -> setAvailablePositions");
     }
+
+    default void disconnectUser() {
+        System.out.println("Not overridden -> disconnectUser()");
+    }
 }

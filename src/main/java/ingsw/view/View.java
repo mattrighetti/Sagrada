@@ -8,6 +8,7 @@ import ingsw.controller.network.socket.Client;
 import ingsw.controller.network.socket.ClientController;
 import ingsw.utilities.DoubleString;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -152,6 +153,11 @@ public class View extends Application implements GUIUpdater {
         mainStage.setTitle("Lobby");
         mainStage.show();
 
+        mainStage.setOnHiding(event -> {
+            lobbyController.disconnectUser();
+            Platform.exit();
+        });
+
         // Updates CurrentScene
         setCurrentScene(lobbyController);
 
@@ -208,6 +214,10 @@ public class View extends Application implements GUIUpdater {
         mainStage.setScene(new Scene(game));
         mainStage.setTitle("Sagrada");
         mainStage.show();
+        mainStage.setOnHiding(event -> {
+            gameController.disconnectUser();
+            Platform.exit();
+        });
         setCurrentScene(gameController);
         currentScene.loadData(boardDataResponse);
     }

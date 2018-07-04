@@ -25,8 +25,8 @@ public class RMIHandler implements RequestHandler {
     /**
      * RMIHandler constructor which retrieves SagradaGame and sets
      *
-     * @param rmiController
-     * @param rmiUserObserver
+     * @param rmiController   match's controller
+     * @param rmiUserObserver user's UserObserver
      */
     RMIHandler(RMIController rmiController, RMIUserObserver rmiUserObserver, String ipAddress) {
         this.ipAddress = ipAddress;
@@ -56,7 +56,7 @@ public class RMIHandler implements RequestHandler {
     }
 
     /**
-     * Method that sends a LoginRequest to Sagrada
+     * Method that request a User login to Sagrada
      *
      * @param loginUserRequest login request
      * @return null
@@ -76,23 +76,44 @@ public class RMIHandler implements RequestHandler {
      * Method that sends a LogoutRequest to Sagrada
      *
      * @param logoutRequest logout request
-     * @return
+     * @return null if the disconnection wasn't successful, a new LogoutResponse in case the user has been correctly
+     * deactivated.
      */
     @Override
     public Response handle(LogoutRequest logoutRequest) {
         try {
             sagradaGame.logoutUser(user.getUsername());
-            return new LogoutResponse();
         } catch (RemoteException e) {
-            return null;
+            System.err.println(e.getMessage());
+            return new LogoutResponse(false);
         }
+
+        return new LogoutResponse(true);
     }
 
     /**
-     * Method that sends a CreateMatchRequest to Sagrada
+     * Method that requests a User disconnection to Sagrada
+     *
+     * @param disconnectionRequest disconnection request
+     * @return null
+     */
+    @Override
+    public Response handle(DisconnectionRequest disconnectionRequest) {
+        try {
+            sagradaGame.deactivateUser(user.getUsername());
+        } catch (RemoteException e) {
+            System.err.println(e.getMessage());
+            return new LogoutResponse(false);
+        }
+
+        return new LogoutResponse(true);
+    }
+
+    /**
+     * Method that requests a match creation to Sagrada
      *
      * @param createMatchRequest create match request
-     * @return
+     * @return null
      */
     @Override
     public Response handle(CreateMatchRequest createMatchRequest) {
@@ -106,10 +127,10 @@ public class RMIHandler implements RequestHandler {
     }
 
     /**
-     * Method that sends a BundleDataRequest to Sagrada
+     * Method that requests a BundleData to Sagrada
      *
      * @param bundleDataRequest bundle data request
-     * @return
+     * @return null
      */
     @Override
     public Response handle(BundleDataRequest bundleDataRequest) {
@@ -122,6 +143,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that filtrates the kind of requests by the ToolCard used in the move
+     *
+     * @param moveToolCardRequest ToolCard move request
+     * @return null
+     */
     @Override
     public Response handle(MoveToolCardRequest moveToolCardRequest) {
         try {
@@ -169,10 +196,11 @@ public class RMIHandler implements RequestHandler {
     }
 
     /**
-     * Method that sends a JoinMatchRequest to Sagrada
+     * Method that requests a User join to match to Sagrada
      *
      * @param joinMatchRequest join match request
-     * @return
+     * @return a false JoinedMatchResponse that alerts an unsuccessful join to match or a successful JoinedMatchResponse
+     * in case the login to match was successful
      */
     @Override
     public Response handle(JoinMatchRequest joinMatchRequest) {
@@ -186,6 +214,13 @@ public class RMIHandler implements RequestHandler {
         }
     }
 
+    /**
+     * Method that requests a re-join request to match to Sagrada, used when a user has previously disconnected from the
+     * match
+     *
+     * @param reJoinMatchRequest rejoin match request with the match's name and the username
+     * @return null
+     */
     @Override
     public Response handle(ReJoinMatchRequest reJoinMatchRequest) {
         try {
@@ -201,6 +236,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that signals the controller which PatternCard has been chosen by the user
+     *
+     * @param chosenPatternCardRequest request that contains the user's chosen PatternCard
+     * @return null
+     */
     @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCardRequest) {
         try {
@@ -212,6 +253,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that signals a draft action to the match's controller
+     *
+     * @param draftDiceRequest request
+     * @return null
+     */
     @Override
     public Response handle(DraftDiceRequest draftDiceRequest) {
         try {
@@ -223,6 +270,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that sends a positive Ack to the controller
+     *
+     * @param ack positive Ack
+     * @return null
+     */
     @Override
     public Response handle(Ack ack) {
         try {
@@ -234,6 +287,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that signals the controller a dice placing action
+     *
+     * @param placeDiceRequest request containing the necessary data to make the move
+     * @return null
+     */
     @Override
     public Response handle(PlaceDiceRequest placeDiceRequest) {
         try {
@@ -245,6 +304,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that signals the controller the will to use a ToolCard
+     *
+     * @param useToolCardRequest request containing the necessary data to make the move
+     * @return null
+     */
     @Override
     public Response handle(UseToolCardRequest useToolCardRequest) {
         try {
@@ -256,6 +321,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that requests the list of the finished matches
+     *
+     * @param finishedMatchesRequest request
+     * @return null
+     */
     @Override
     public Response handle(FinishedMatchesRequest finishedMatchesRequest) {
 
@@ -268,6 +339,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that requests a history of a selected FinishedMatch
+     *
+     * @param readHistoryRequest request containing the necessary data to elaborate the request
+     * @return null
+     */
     @Override
     public Response handle(ReadHistoryRequest readHistoryRequest) {
 
@@ -280,6 +357,12 @@ public class RMIHandler implements RequestHandler {
         return null;
     }
 
+    /**
+     * Method that signals the controller that the user wants to finish his turn
+     *
+     * @param endTurnRequest request
+     * @return null
+     */
     @Override
     public Response handle(EndTurnRequest endTurnRequest) {
         try {

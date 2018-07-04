@@ -7,6 +7,8 @@ import ingsw.utilities.Tuple;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
+import java.util.concurrent.Executors;
+
 /**
  * Class that defines the socket connection of the game
  */
@@ -21,10 +23,6 @@ public class ClientController implements ResponseHandler, NetworkType {
 
     public void setSceneUpdater(SceneUpdater sceneUpdater) {
         this.sceneUpdater = sceneUpdater;
-    }
-
-    Client getClient() {
-        return client;
     }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -56,6 +54,13 @@ public class ClientController implements ResponseHandler, NetworkType {
         }
 
         client.request(new LoginUserRequest(username));
+    }
+
+    @Override
+    public void disconnectUser() {
+        stopBroadcastReceiver();
+        client.request(new DisconnectionRequest());
+        client.nextResponse().handle(this);
     }
 
     /**
@@ -241,33 +246,34 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new ReadHistoryRequest(matchName));
     }
 
+    private void activateListener() {
+        Executors.newSingleThreadScheduledExecutor().execute(() -> {
+            listenerActive = true;
+            System.out.println("Opening the Thread");
+            Response response;
+            do {
+                response = client.nextResponse();
+                if (response != null) {
+                    if (!(response instanceof Ping)) {
+                        response.handle(this);
+                        System.out.println("Received a response: " + response);
+                    } else {
+                        client.ackPing(new Ping());
+                    }
+                } else {
+                    System.err.println("Stopping broadcast");
+                    break;
+                }
+            } while (true);
+            listenerActive = false;
+        });
+    }
+
     /**
      * Method that opens a Thread and listens for every incoming Response sent by the Controller
      */
     private void listenForResponses() {
-        new Thread(
-                () -> {
-                    listenerActive = true;
-                    System.out.println("Opening the Thread");
-                    Response response;
-                    do {
-                        response = client.nextResponse();
-                        if (response != null) {
-                            if (!(response instanceof Ping)) {
-                                response.handle(this);
-                                System.out.println("Received a response: " + response);
-                            } else {
-                                System.out.println("Sending Ping");
-                                client.ackPing(new Ping());
-                            }
-                        } else {
-                            System.err.println("Null received, stopping broadcast");
-                            break;
-                        }
-                    } while (true);
-                    listenerActive = false;
-                }
-        ).start();
+        activateListener();
     }
 
 
@@ -298,8 +304,13 @@ public class ClientController implements ResponseHandler, NetworkType {
      */
     @Override
     public void handle(LogoutResponse logoutResponse) {
-        client.close();
-        sceneUpdater.closeStage();
+        if (logoutResponse.logoutSuccessful) {
+            client.close();
+            sceneUpdater.closeStage();
+        } else
+            sceneUpdater.launchAlert();
+
+        //TODO launchAlert message in this case must be changed
     }
 
     /**

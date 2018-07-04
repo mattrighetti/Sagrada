@@ -26,7 +26,6 @@ import ingsw.utilities.Tuple;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;

@@ -68,4 +68,6 @@ public interface NetworkType {
     void requestBundleData();
 
     void requestFinishedMatches();
+
+    void disconnectUser();
 }

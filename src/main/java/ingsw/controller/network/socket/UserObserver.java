@@ -8,19 +8,20 @@ import java.util.Map;
 
 public interface UserObserver extends Remote {
 
+    void activatePinger();
+
+    void checkIfActive() throws RemoteException;
+
+    void notifyLost(int score) throws RemoteException;
+
+    void notifyVictory(int score) throws RemoteException;
+
+    void sendResponse(Response response) throws RemoteException;
+
     void onJoin(int numberOfConnectedUsers) throws RemoteException;
 
     void receiveNotification(Notification notification) throws RemoteException;
 
-    void activateTurnNotification(Map<String,Boolean[][]> booleanMapGrid) throws RemoteException;
+    void activateTurnNotification(Map<String, Boolean[][]> booleanMapGrid) throws RemoteException;
 
-    void activatePinger();
-
-    void sendResponse(Response response) throws RemoteException;
-
-    void checkIfActive() throws RemoteException;
-
-    void notifyVictory(int score) throws RemoteException;
-
-    void notifyLost(int score) throws RemoteException;
 }
