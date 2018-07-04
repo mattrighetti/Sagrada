@@ -113,13 +113,12 @@ public class Controller implements RemoteController {
             }
             if (playerList.size() == 2) {
                 checkNumberOfUsers();
-                controllerTimer.startLoginTimer(maxJoinMatchSeconds, this, hasStarted);
+                controllerTimer.startLoginTimer(maxJoinMatchSeconds, this);
             }
 
             if (playerList.size() == 4) {
                 stop.set(true);
                 controllerTimer.cancelTimer();
-                hasStarted = true;
                 createMatch();
             }
         } else throw new RemoteException("Match has already started");
@@ -130,6 +129,7 @@ public class Controller implements RemoteController {
      * Start the first phase of the match, the PatternCards choice
      */
     public void createMatch() {
+        hasStarted = true;
         gameManager = new GameManager(playerList, maxTurnSeconds, this, controllerTimer);
         gameManager.waitForEveryPatternCard(gameManager.pickPatternCards());
     }

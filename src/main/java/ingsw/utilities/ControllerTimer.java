@@ -29,9 +29,9 @@ public class ControllerTimer {
         this.pingActive.set(pingActive);
     }
 
-    public void startLoginTimer(int loginSeconds, Controller controller, boolean hasStarted) {
+    public void startLoginTimer(int loginSeconds, Controller controller) {
         timer = new Timer(TIMER_THREAD_NAME);
-        timer.schedule(new LaunchMatch(controller, hasStarted), (long) loginSeconds * 1000);
+        timer.schedule(new LaunchMatch(controller), (long) loginSeconds * 1000);
     }
 
     public void startTurnTimer(int turnSeconds, GameManager gameManager) {
@@ -72,7 +72,7 @@ public class ControllerTimer {
         Controller controller;
         boolean hasStarted;
 
-        LaunchMatch(Controller controller, boolean hasStarted) {
+        LaunchMatch(Controller controller) {
             this.controller = controller;
             this.hasStarted = hasStarted;
         }
@@ -80,7 +80,6 @@ public class ControllerTimer {
         @Override
         public void run() {
             controller.setStop(true);
-            hasStarted = true;
             controller.createMatch();
         }
     }
