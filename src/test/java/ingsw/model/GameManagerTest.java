@@ -2,19 +2,19 @@ package ingsw.model;
 
 import ingsw.controller.Controller;
 
-import ingsw.controller.network.commands.DraftedDiceToolCardResponse;
-import ingsw.controller.network.commands.Notification;
-import ingsw.controller.network.commands.Response;
+import ingsw.controller.network.commands.*;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.cards.patterncard.*;
 import ingsw.model.cards.privateoc.PrivateObjectiveCard;
 import ingsw.model.cards.publicoc.*;
 import ingsw.model.cards.toolcards.*;
 import ingsw.utilities.ControllerTimer;
+import ingsw.utilities.MoveStatus;
 import ingsw.utilities.PlayerBroadcaster;
 import ingsw.utilities.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.lang.reflect.*;
@@ -870,8 +870,121 @@ class GameManagerTest {
 
         verify(player).getUserObserver();
         assertFalse(gameManager.getToolCardLock().get());
+    }
+
+    @Test
+    void tapWheelMoveTest1() throws RemoteException {
+        GameManager gameManagerSpy = spy(gameManager);
+        PatternCard patternCard= new Batllo();
+        Dice dice1 = new Dice(3,Color.RED);
+        Dice dice2 = new Dice(3,Color.RED);
+        Dice dice3 = new Dice(5,Color.GREEN);
+        patternCard.getGrid().get(0).get(0).insertDice(dice1);
+        patternCard.getGrid().get(0).get(1).insertDice(dice3);
+        patternCard.getGrid().get(0).get(2).insertDice(dice2);
+
+        Round roundMock = mock(Round.class);
+        Player playerMock = mock(Player.class);
+        PatternCard patternCardMock = mock(PatternCard.class);
+        UserObserver userObserver = mock(UserObserver.class);
+        Whitebox.setInternalState(gameManagerSpy, "currentRound", roundMock);
+        when(gameManagerSpy.getCurrentRound()).thenReturn(roundMock);
+        when(roundMock.getCurrentPlayer()).thenReturn(playerMock);
+        when(playerMock.getPatternCard()).thenReturn(patternCardMock);
+        when(patternCardMock.getGrid()).thenReturn(patternCard.getGrid());
+        when(playerMock.getUserObserver()).thenReturn(userObserver);
+
+        gameManagerSpy.getToolCardLock().set(true);
+
+        doNothing().when(gameManagerSpy).addMoveToHistoryAndNotify(mock(MoveStatus.class));
+        doNothing().when(userObserver).sendResponse(mock(TapWheelResponse.class));
+        Tuple dicePosition = new Tuple(0,0);
+        Tuple position = new Tuple(1,0);
+
+        gameManagerSpy.tapWheelMove(new Dice(Color.RED), 0, null,null, false);
+        gameManagerSpy.tapWheelMove(null, 1, dicePosition , position, false);
+
+        assertNull(patternCard.getGrid().get(0).get(0).getDice());
+        assertEquals(dice1, patternCard.getGrid().get(1).get(0).getDice());
 
     }
 
+    @Test
+    void tapWheelMoveTest2() throws RemoteException {
+        GameManager gameManagerSpy = spy(gameManager);
+        PatternCard patternCard= new Batllo();
+        Dice dice1 = new Dice(3,Color.RED);
+        Dice dice2 = new Dice(3,Color.RED);
+        Dice dice3 = new Dice(5,Color.GREEN);
+        patternCard.getGrid().get(0).get(0).insertDice(dice1);
+        patternCard.getGrid().get(0).get(1).insertDice(dice3);
+        patternCard.getGrid().get(0).get(2).insertDice(dice2);
+
+        Round roundMock = mock(Round.class);
+        Player playerMock = mock(Player.class);
+        PatternCard patternCardMock = mock(PatternCard.class);
+        UserObserver userObserver = mock(UserObserver.class);
+        PlayerBroadcaster playerBroadcasterMock = mock(PlayerBroadcaster.class);
+        Whitebox.setInternalState(gameManagerSpy, "currentRound", roundMock);
+        Whitebox.setInternalState(gameManagerSpy, "board", board);
+        Whitebox.setInternalState(gameManagerSpy, "playerBroadcaster", playerBroadcasterMock);
+        when(gameManagerSpy.getCurrentRound()).thenReturn(roundMock);
+        when(roundMock.getCurrentPlayer()).thenReturn(playerMock);
+        when(playerMock.getPatternCard()).thenReturn(patternCardMock);
+        when(patternCardMock.getGrid()).thenReturn(patternCard.getGrid());
+        when(playerMock.getUserObserver()).thenReturn(userObserver);
+        gameManagerSpy.getToolCardLock().set(true);
+
+        doNothing().when(gameManagerSpy).addMoveToHistoryAndNotify(mock(MoveStatus.class));
+        doNothing().when(playerBroadcasterMock).broadcastResponseToAll(mock(PatternCardToolCardResponse.class));
+
+        Tuple dicePosition = new Tuple(0,0);
+        Tuple position = new Tuple(1,0);
+
+        gameManagerSpy.tapWheelMove(null, 2, dicePosition , position, false);
+
+        assertNull(patternCard.getGrid().get(0).get(0).getDice());
+        assertEquals(dice1, patternCard.getGrid().get(1).get(0).getDice());
+
+    }
+
+    @Test
+    void tapWheelMoveTest3() throws RemoteException {
+        GameManager gameManagerSpy = spy(gameManager);
+        PatternCard patternCard= new Batllo();
+        Dice dice1 = new Dice(3,Color.RED);
+        Dice dice2 = new Dice(3,Color.RED);
+        Dice dice3 = new Dice(5,Color.GREEN);
+        patternCard.getGrid().get(0).get(0).insertDice(dice1);
+        patternCard.getGrid().get(0).get(1).insertDice(dice3);
+        patternCard.getGrid().get(0).get(2).insertDice(dice2);
+
+        Round roundMock = mock(Round.class);
+        Player playerMock = mock(Player.class);
+        PatternCard patternCardMock = mock(PatternCard.class);
+        UserObserver userObserver = mock(UserObserver.class);
+        Whitebox.setInternalState(gameManagerSpy, "board", board);
+        Whitebox.setInternalState(gameManagerSpy, "currentRound", roundMock);
+        when(gameManagerSpy.getCurrentRound()).thenReturn(roundMock);
+        when(roundMock.getCurrentPlayer()).thenReturn(playerMock);
+        when(playerMock.getPatternCard()).thenReturn(patternCardMock);
+        when(patternCardMock.getGrid()).thenReturn(patternCard.getGrid());
+        when(playerMock.getUserObserver()).thenReturn(userObserver);
+
+        gameManagerSpy.getToolCardLock().set(true);
+
+        doNothing().when(gameManagerSpy).addMoveToHistoryAndNotify(mock(MoveStatus.class));
+        doNothing().when(userObserver).sendResponse(mock(TapWheelResponse.class));
+        Tuple dicePosition = new Tuple(0,0);
+        Tuple position = new Tuple(0,2);
+
+        gameManagerSpy.tapWheelMove(null, 1, dicePosition , position, true);
+
+        assertNotNull(patternCard.getGrid().get(0).get(0).getDice());
+        assertNotNull(patternCard.getGrid().get(0).get(2).getDice());
+        assertEquals(dice1, patternCard.getGrid().get(0).get(2).getDice());
+        assertEquals(dice2, patternCard.getGrid().get(0).get(0).getDice());
+
+    }
 
 }

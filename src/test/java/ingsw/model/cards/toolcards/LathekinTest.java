@@ -155,7 +155,6 @@ class LathekinTest {
 
     @Test
     void onActionTest3() throws RemoteException {
-
         GameManager gameManagerMock = mock(GameManager.class);
         Lathekin lathekinSpy = spy(lathekin);
         Round roundMock = mock(Round.class);

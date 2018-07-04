@@ -1,20 +1,14 @@
 package ingsw.model.cards.toolcards;
 
-import ingsw.controller.Controller;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.model.GameManager;
 import ingsw.model.Player;
 import ingsw.model.Round;
-import ingsw.model.User;
 import ingsw.model.cards.patterncard.PatternCard;
-import ingsw.utilities.ControllerTimer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,23 +16,12 @@ import static org.mockito.Mockito.*;
 
 class CopperFoilBurnisherTest {
     private CopperFoilBurnisher copperFoilBurnisher;
-    private GameManager gameManager;
     private AtomicBoolean toolCardLock;
 
     @BeforeEach
     void setUp() {
         copperFoilBurnisher = new CopperFoilBurnisher();
-        User user = new User("username");
-        user.attachUserObserver(mock(UserObserver.class));
-        List<Player> list = new ArrayList<>();
-        Player player = new Player(user);
-        player.setPatternCard(mock(PatternCard.class));
-        gameManager = new GameManager(list, 30, mock(Controller.class), mock(ControllerTimer.class));
-        Round round = new Round(gameManager);
         toolCardLock = new AtomicBoolean(false);
-
-        Whitebox.setInternalState(round,"player", player);
-        Whitebox.setInternalState(gameManager,"currentRound",round);
     }
 
     @Test
@@ -93,10 +76,7 @@ class CopperFoilBurnisherTest {
 
         toolCardLock.set(true);
 
-       copperFoilBurnisherSpy.action(gameManagerMock);
-
-
-
+        copperFoilBurnisherSpy.action(gameManagerMock);
 
 
         verify(gameManagerMock.getCurrentRound(),times(1)).toolCardMoveDone();

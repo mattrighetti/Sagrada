@@ -7,8 +7,11 @@ import ingsw.model.Round;
 import ingsw.model.cards.patterncard.PatternCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,7 +57,7 @@ class RunningPliersTest {
         verify(gameManagerMock.getCurrentRound().getCurrentPlayer(), times(1)).getUserObserver();
         assertFalse(toolCardLock.get());
     }
-/*
+
     @Test
     void onActionTest() throws RemoteException {
         GameManager gameManagerMock = mock(GameManager.class);
@@ -74,16 +77,19 @@ class RunningPliersTest {
         when(playerMock.getPlayerUsername()).thenReturn("username");
         doNothing().when(runningPliersSpy).waitForToolCardAction(gameManagerMock);
 
-        when(gameManagerMock.getTurnInRound()).thenReturn(2);
+        when(gameManagerMock.getTurnInRound()).thenReturn(1);
         toolCardLock.set(true);
+        List<String> blockedTurnPlayers = new ArrayList<>();
+        Whitebox.setInternalState(roundMock, "blockedTurnPlayers", blockedTurnPlayers);
 
         runningPliersSpy.action(gameManagerMock);
 
         verify(gameManagerMock.getCurrentRound().getCurrentPlayer(), times(1)).getUserObserver();
-        verify(gameManagerMock.getCurrentRound().blockedTurnPlayers, times(1)).add(gameManagerMock.getCurrentRound().getCurrentPlayer().getPlayerUsername());
         verify(gameManagerMock.getCurrentRound().getCurrentPlayer()).decreaseFavorTokens(runningPliersSpy.getPrice());
         verify(gameManagerMock).runningPliersResponse();
         verify(gameManagerMock.getCurrentRound()).toolCardMoveDone();
         assertFalse(toolCardLock.get());
-    }*/
+
+        assertTrue(blockedTurnPlayers.contains("username"));
+    }
 }
