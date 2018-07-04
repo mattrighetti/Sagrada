@@ -8,6 +8,9 @@ import java.rmi.RemoteException;
 
 public class GrozingPliers extends ToolCard {
 
+    private boolean allOne;
+    private boolean allSix;
+
     public GrozingPliers() {
         super("GrozingPliers");
     }
@@ -17,13 +20,14 @@ public class GrozingPliers extends ToolCard {
      */
     @Override
     public void action(GameManager gameManager) {
-        boolean allOne = false;
-        boolean allSix = false;
+        allOne = false;
+        allSix = false;
 
+        //Check if the drafted dice are all 6 or all 1
         for (Dice dice: gameManager.getDraftedDice()){
-            if (dice.getFaceUpValue() == 6)
+            if (dice.getFaceUpValue() == 6 && !allOne)
                 allSix = true;
-            else if (dice.getFaceUpValue() == 1)
+            else if (dice.getFaceUpValue() == 1 && !allSix)
                 allOne = true;
             else {
                 allOne = false;

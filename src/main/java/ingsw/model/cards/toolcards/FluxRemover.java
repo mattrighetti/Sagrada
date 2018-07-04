@@ -12,15 +12,6 @@ public class FluxRemover extends ToolCard {
     private List<Dice> draftedDice;
     private Dice diceFromBag;
 
-    public void setDiceFromBag(Dice diceFromBag) {
-        this.diceFromBag = diceFromBag;
-    }
-
-    public Dice getDiceFromBag() {
-
-        return diceFromBag;
-    }
-
     public FluxRemover() {
         super("FluxRemover");
     }
@@ -58,4 +49,11 @@ public class FluxRemover extends ToolCard {
         return draftedDice;
     }
 
+    public void setDiceFromBag(Dice diceFromBag) {
+        this.diceFromBag = diceFromBag;
+    }
+
+    public Dice getDiceFromBag() {
+        return diceFromBag;
+    }
 }

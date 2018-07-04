@@ -23,6 +23,7 @@ import static org.mockito.Mockito.*;
 class CopperFoilBurnisherTest {
     private CopperFoilBurnisher copperFoilBurnisher;
     private GameManager gameManager;
+    private AtomicBoolean toolCardLock;
 
     @BeforeEach
     void setUp() {
@@ -34,6 +35,7 @@ class CopperFoilBurnisherTest {
         player.setPatternCard(mock(PatternCard.class));
         gameManager = new GameManager(list, 30, mock(Controller.class), mock(ControllerTimer.class));
         Round round = new Round(gameManager);
+        toolCardLock = new AtomicBoolean(false);
 
         Whitebox.setInternalState(round,"player", player);
         Whitebox.setInternalState(gameManager,"currentRound",round);
@@ -50,9 +52,7 @@ class CopperFoilBurnisherTest {
         Test the else case in the if
      */
     @Test
-    void onActionTest() throws InterruptedException, RemoteException {
-
-
+    void onActionTest() throws RemoteException {
         GameManager gameManagerMock = mock(GameManager.class);
         Round roundMock = mock(Round.class);
         Player playerMock = mock(Player.class);
@@ -76,34 +76,31 @@ class CopperFoilBurnisherTest {
 
     @Test
     void onActionTest2() throws RemoteException, InterruptedException {
-
         GameManager gameManagerMock = mock(GameManager.class);
+        CopperFoilBurnisher copperFoilBurnisherSpy = spy(copperFoilBurnisher);
         Round roundMock = mock(Round.class);
         Player playerMock = mock(Player.class);
         UserObserver userObserverMock = mock(UserObserver.class);
         PatternCard patternCardMock = mock(PatternCard.class);
-        AtomicBoolean toolCardLockMock = mock(AtomicBoolean.class);
 
         when(gameManagerMock.getCurrentRound()).thenReturn(roundMock);
         when(roundMock.getCurrentPlayer()).thenReturn(playerMock);
         when(playerMock.getUserObserver()).thenReturn(userObserverMock);
         when(playerMock.getPatternCard()).thenReturn(patternCardMock);
-        when(gameManagerMock.getToolCardLock()).thenReturn(toolCardLockMock);
+        when(gameManagerMock.getToolCardLock()).thenReturn(toolCardLock);
         when(patternCardMock.getNoOfDice()).thenReturn(3);
+        doNothing().when(copperFoilBurnisherSpy).waitForToolCardAction(gameManagerMock);
 
-        gameManagerMock.getToolCardLock().set(true);
+        toolCardLock.set(true);
 
-       new Thread(()-> copperFoilBurnisher.action(gameManagerMock)).start();
+       copperFoilBurnisherSpy.action(gameManagerMock);
 
-       Thread.sleep(3000);
 
-       synchronized (gameManagerMock.getToolCardLock()) {
-           gameManagerMock.getToolCardLock().notify();
-       }
+
 
 
         verify(gameManagerMock.getCurrentRound(),times(1)).toolCardMoveDone();
-        assertEquals(false,gameManagerMock.getToolCardLock().get());
+        assertFalse(gameManagerMock.getToolCardLock().get());
         verify(gameManagerMock,times(0)).avoidToolCardUse();
         verify(gameManagerMock,times(1)).copperFoilBurnisherResponse();
     }
