@@ -2,6 +2,8 @@ package ingsw.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.util.reflection.Whitebox;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -73,5 +75,52 @@ class BoardTest {
             assertNotEquals(null, dice.getFaceUpValue());
         }
 
+    }
+
+    @Test
+    void draftOneDice() {
+        List<Dice> diceBag = (List<Dice>) Whitebox.getInternalState(board,"diceBag");
+        int oldSize = diceBag.size();
+
+        Dice dice = board.draftOneDice();
+
+        diceBag = (List<Dice>) Whitebox.getInternalState(board,"diceBag");
+
+        assertNotEquals(0,dice.getFaceUpValue());
+        assertEquals(oldSize - 1, diceBag.size());
+    }
+
+    @Test
+    void addDiceToBag() {
+        List<Dice> diceBag = (List<Dice>) Whitebox.getInternalState(board,"diceBag");
+        int oldSize = diceBag.size();
+
+        Dice dice = new Dice(Color.BLUE);
+        dice.roll();
+        board.addDiceToBag(dice);
+
+        diceBag = (List<Dice>) Whitebox.getInternalState(board,"diceBag");
+
+        assertEquals(oldSize + 1, diceBag.size());
+        assertTrue(diceBag.contains(dice));
+    }
+
+    @Test
+    void setgetDraftedDice() {
+        List<Dice> diceList = new ArrayList<>();
+        diceList.add(new Dice(Color.YELLOW));
+        diceList.add(new Dice(Color.RED));
+        diceList.add(new Dice(Color.GREEN));
+        diceList.add(new Dice(Color.PURPLE));
+
+        board.setDraftedDice(diceList);
+        boolean verify = true;
+        for (Dice dice : board.getDraftedDice()) {
+            if (!diceList.contains(dice)){
+                verify = false;
+                break;
+            }
+        }
+        assertTrue(verify);
     }
 }

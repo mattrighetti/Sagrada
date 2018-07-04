@@ -1119,6 +1119,7 @@ public class GameManager {
 
     /**
      * FLUX BRUSH 1ST PHASE
+     * Received the selected die from the player thi method re-roll
      *
      * @param selectedDice
      */
@@ -1371,7 +1372,6 @@ public class GameManager {
 
     /**
      * COPPER FOIL BURNISHER
-     *
      * After the toolCard move ends with success this method sends the
      * updated data to the players
      */
@@ -1383,6 +1383,7 @@ public class GameManager {
 
     /**
      * CORK BACKED STRAIGHTEDGE
+     * This method
      *
      * @param selectedDice
      * @param row
@@ -1494,31 +1495,46 @@ public class GameManager {
 
     /**
      * LATHEKIN
+     * Receives two positions: the first is the die's positions to move,
+     * the second is the one where the player wants to put the die.
+     * The player has to move two dice to complete the move.
      *
-     * @param dicePosition
-     * @param position
-     * @param doubleMove
+     * In the first call the method moves the dice and saves the changes and the previous state
+     * in the ToolCard attributes, because in the case the move ends with no success the previous
+     * state would be restored.
+     * In the second call the player has made both the moves, it copie the modified in the original
+     * pattern card and moves the second die
+     * In case of doubleMove, the player makes the two moves in one swiping two dice positions.
+     *
+     * @param dicePosition position of the die to move
+     * @param position the position where put the die
+     * @param doubleMove if the player want to swipe to dice
      */
     public synchronized void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
         if (toolCardLock.get()) {
             Lathekin lathekin = (Lathekin) getSelectedToolCard("Lathekin");
 
             assert lathekin != null;
+
+            //if newGrid is null means that is the first move, so it has to save the temporary changes in the tool card
             if (lathekin.getNewGrid() == null) {
+                //create a backup of the pattern card in Lathekin
                 lathekin.setOldGrid(copyPatternCard());
             } else {
+                //if newGrid is not null means that is the second move and the move is completed, it can copy the changes
                 getCurrentRound().getCurrentPlayer().getPatternCard().setGrid(lathekin.getNewGrid());
             }
 
             List<List<Box>> grid = currentRound.getCurrentPlayer().getPatternCard().getGrid();
 
             if (grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice() != null) {
+
                 if (!doubleMove) {
-                    System.out.println("Lathekin single move");
+                    //single move case
                     grid.get(position.getFirst()).get(position.getSecond()).insertDice(grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
                     grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).removeDice();
                 } else {
-                    System.out.println("Lathekin second move");
+                    //Double move case
                     Dice dice = grid.get(position.getFirst()).get(position.getSecond()).getDice();
                     grid.get(position.getFirst()).get(position.getSecond()).removeDice();
                     grid.get(position.getFirst()).get(position.getSecond()).insertDice(grid.get(dicePosition.getFirst()).get(dicePosition.getSecond()).getDice());
@@ -1533,6 +1549,7 @@ public class GameManager {
 
             if (lathekin.getNewGrid() == null) {
                 try {
+                    //Modified data is saved on newGrid in Lathekin and in the player is restored the old one
                     PatternCard patternCard = getCurrentRound().getCurrentPlayer().getPatternCard();
                     getCurrentRound().getCurrentPlayer().getUserObserver().sendResponse(new LathekinResponse(getCurrentRound().getCurrentPlayer().getPlayerUsername(), patternCard, patternCard.computeAvailablePositionsLathekin(), true));
 
@@ -1591,6 +1608,7 @@ public class GameManager {
 
     /**
      * RUNNING PLIERS
+     * Method that makes the player draft and place another die before his end turn
      *
      * @param selectedDice dice to place
      * @param rowIndex row index of the position in the patterncard

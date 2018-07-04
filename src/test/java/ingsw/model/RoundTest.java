@@ -106,7 +106,9 @@ class RoundTest {
         AtomicBoolean hasMadeAMove = (AtomicBoolean) Whitebox.getInternalState(round, "hasMadeAMove");
         assertFalse(hasMadeAMove.get());
         System.setOut(new PrintStream(byteArrayOutputStream));
+
         round.makeMove(dice,0,0);
+
         assertTrue(byteArrayOutputStream.toString().contains("Move made"));
         System.setOut(new PrintStream(new ByteArrayOutputStream()));
 
@@ -147,4 +149,17 @@ class RoundTest {
         verify(player, atLeastOnce()).getUserObserver();
 
     }
+
+    @Test
+    void toolCardMoveDone() {
+
+        round.toolCardMoveDone();
+
+        AtomicBoolean hasMadeMoveDone;
+        hasMadeMoveDone = (AtomicBoolean) Whitebox.getInternalState(round,"hasMadeAMove");
+
+        assertTrue(hasMadeMoveDone.get());
+    }
+
+
 }

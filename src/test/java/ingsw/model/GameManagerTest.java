@@ -14,7 +14,7 @@ import ingsw.utilities.PlayerBroadcaster;
 import ingsw.utilities.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.lang.reflect.*;
@@ -100,6 +100,9 @@ class GameManagerTest {
 
 
         gameManager = new GameManager(players, 10, mock(Controller.class), mock(ControllerTimer.class));
+
+        PlayerBroadcaster playerBroadcaster = mock(PlayerBroadcaster.class);
+        Whitebox.setInternalState(gameManager,"playerBroadcaster",playerBroadcaster);
 
         List<ToolCard> toolCards = new ArrayList<>();
         toolCards.add(new CopperFoilBurnisher());
@@ -283,7 +286,12 @@ class GameManagerTest {
     @Test
     void grozingPliersResponse() throws RemoteException {
         gameManager.getToolCardLock().set(true);
-        //todo
+
+        PlayerBroadcaster playerBroadcaster = (PlayerBroadcaster) Whitebox.getInternalState(gameManager,"playerBroadcaster");
+
+        Mockito.doNothing().when(playerBroadcaster).broadcastResponseToAll(mock(Response.class));
+        gameManager.grozingPliersResponse();
+
     }
 
     @Test
@@ -830,6 +838,38 @@ class GameManagerTest {
         assertNull(round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(2).getDice());
 
     }
+
+    @Test
+    void lathekinMove3() {
+        Whitebox.setInternalState(gameManager, "board", this.board);
+        Whitebox.setInternalState(gameManager, "currentRound", this.round);
+        gameManager.getToolCardLock().set(true);
+
+        Dice dice1 = new Dice(Color.GREEN);
+        dice1.setFaceUpValue(2);
+        Dice dice2 = new Dice(Color.YELLOW);
+        dice2.setFaceUpValue(5);
+
+        round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(1).insertDice(dice1);
+        round.getCurrentPlayer().getPatternCard().getGrid().get(3).get(2).insertDice(dice2);
+
+
+        Lathekin lathekin = new Lathekin();
+        for (ToolCard toolCard : board.getToolCards()) {
+            if (toolCard.getName().equals("Lathekin")) {
+                lathekin = (Lathekin) toolCard;
+            }
+        }
+
+        gameManager.lathekinMove(new Tuple(3,1),new Tuple(3,2),true);
+
+        assertEquals(dice1.toString(),lathekin.getNewGrid().get(3).get(2).getDice().toString());
+        assertEquals(dice2.toString(),lathekin.getNewGrid().get(3).get(1).getDice().toString());
+
+
+
+    }
+
 
 
 
