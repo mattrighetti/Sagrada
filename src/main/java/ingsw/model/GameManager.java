@@ -264,6 +264,7 @@ public class GameManager {
      */
     private void deleteMatch() {
         controller.removeMatch();
+        SagradaGame.get().writeUsersStatsToFile();
     }
 
     /**

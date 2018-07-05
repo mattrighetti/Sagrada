@@ -51,6 +51,7 @@ public class SagradaGame implements RemoteSagradaGame {
         maxJoinMatchSeconds = 40;
         maxTurnSeconds = 120;
         stop = false;
+        readUserStatsFromFile();
         rmiUsersListener();
     }
 
@@ -136,8 +137,7 @@ public class SagradaGame implements RemoteSagradaGame {
     }
 
     /**
-     * Creates a List of all active matche with the number of player connected to a match
-     * @return List with all active matches
+     * Creates a List of all active matches with the number of player connected to a match
      */
     private void readUserStatsFromFile() {
         Gson gson = new Gson();
@@ -158,8 +158,15 @@ public class SagradaGame implements RemoteSagradaGame {
 
     @Override
     public void writeUsersStatsToFile() {
+        Map<String, User> clonedConnectedUsers = new HashMap<>();
+        User clonedUser;
+        for (User user : connectedUsers.values()) {
+            clonedUser = new User(user);
+            clonedConnectedUsers.put(clonedUser.getUsername(), clonedUser);
+        }
+
         Gson gson = new Gson();
-        String moveHistoryJSON = gson.toJson(connectedUsers);
+        String usersStatsJSON = gson.toJson(clonedConnectedUsers);
 
         File jarPath = new File(SagradaGame.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
@@ -169,7 +176,7 @@ public class SagradaGame implements RemoteSagradaGame {
         }
 
         try (FileWriter file = new FileWriter(jarParentFolder + "/userstats.txt")) {
-            file.write(moveHistoryJSON);
+            file.write(usersStatsJSON);
         } catch (IOException e) {
             System.err.println("There was an error writing the file! Could not complete.");
         }

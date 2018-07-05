@@ -43,6 +43,24 @@ public class User implements Serializable {
         this.hasStopWatchStarted = false;
     }
 
+    public User(User user) {
+        active = false;
+        ready = false;
+        matchesPlayed = user.getMatchesPlayed();
+        this.stopWatch = user.getStopWatch();
+        this.username = user.getUsername();
+        this.isStopWatchRunning = false;
+        this.hasStopWatchStarted = false;
+        this.positionInRanking = user.getPositionInRanking();
+        this.noOfWins = user.getNoOfWins();
+        this.noOfLose = user.getNoOfLose();
+        this.userObserver = null;
+    }
+
+    private StopWatch getStopWatch() {
+        return stopWatch;
+    }
+
     /**
      * Get the actual ranking position
      * @return Returns the position in the ranking
