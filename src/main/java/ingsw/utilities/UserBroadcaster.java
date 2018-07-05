@@ -89,6 +89,7 @@ public class UserBroadcaster {
         if (isBroadcasterActive) {
             for (UserObserver user : usersToBroadcast()) {
                 try {
+                    System.out.println("Adding " + user);
                     user.sendResponse(createMatchResponse);
                 } catch (RemoteException e) {
                     e.printStackTrace();

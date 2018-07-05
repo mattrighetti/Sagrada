@@ -37,7 +37,7 @@ public class LaunchServer {
         } while (turnTimeOutSeconds < 30);
 
         scanner.close();
-
+        sagradaGame.readUserStatsFromFile();
         deployRMIServer(turnTimeOutSeconds, joinMatchSeconds, ip, port);
 
         /* ServerSocket Connection */

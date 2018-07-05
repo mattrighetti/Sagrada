@@ -47,11 +47,9 @@ public class SagradaGame implements RemoteSagradaGame {
     private SagradaGame() {
         connectedUsers = new HashMap<>();
         matchesByName = new HashMap<>();
-        userBroadcaster = new UserBroadcaster(connectedUsers);
         maxJoinMatchSeconds = 40;
         maxTurnSeconds = 120;
         stop = false;
-        readUserStatsFromFile();
         rmiUsersListener();
     }
 
@@ -110,7 +108,7 @@ public class SagradaGame implements RemoteSagradaGame {
         System.out.println(activeUsers);
     }
 
-    private void rmiUsersListener() {
+    public void rmiUsersListener() {
         new Thread(() -> {
             do {
 
@@ -118,7 +116,6 @@ public class SagradaGame implements RemoteSagradaGame {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    e.printStackTrace();
                 }
 
                 checkUserDisconnection();
@@ -141,22 +138,26 @@ public class SagradaGame implements RemoteSagradaGame {
     /**
      * Creates a List of all active matches with the number of player connected to a match
      */
-    private void readUserStatsFromFile() {
-        Gson gson = new Gson();
+    public void readUserStatsFromFile() {
+        new Thread(() -> {
+            Gson gson = new Gson();
 
-        File jarPath = new File(SagradaGame.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
-        File jarParentFolder = new File(jarParentFolderPath + "/stats");
+            File jarPath = new File(SagradaGame.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
+            File jarParentFolder = new File(jarParentFolderPath + "/stats");
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(jarParentFolder + "/userstats.txt"))) {
-            String movesJSON = bufferedReader.readLine();
-            connectedUsers = gson.fromJson(movesJSON,
-                                           new TypeToken<HashMap<String, User>>() {
-                                           }.getType());
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("File non trovato, carico Sagrada");
-        }
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(jarParentFolder + "/userstats.txt"))) {
+                String movesJSON = bufferedReader.readLine();
+                connectedUsers = gson.fromJson(movesJSON,
+                                               new TypeToken<HashMap<String, User>>() {
+                                               }.getType());
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("File non trovato, carico Sagrada");
+            }
+        }).start();
+        System.out.println("EXITED");
+        userBroadcaster = new UserBroadcaster(connectedUsers);
     }
 
     @Override
@@ -379,7 +380,6 @@ public class SagradaGame implements RemoteSagradaGame {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
             e.printStackTrace();
         }
 
@@ -431,7 +431,6 @@ public class SagradaGame implements RemoteSagradaGame {
             }
 
             userBroadcaster.broadcastResponseToAll(new CreateMatchResponse(createAvailableMatchesList()));
-            writeUsersStatsToFile();
         } else {
             throw new RemoteException("Match already exists");
         }
