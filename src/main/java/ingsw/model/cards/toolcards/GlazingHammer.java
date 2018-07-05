@@ -4,6 +4,9 @@ import ingsw.model.GameManager;
 
 public class GlazingHammer extends ToolCard {
 
+    /**
+     * Creates a new GlazingHammer tool card
+     */
     public GlazingHammer() {
         super("GlazingHammer");
     }

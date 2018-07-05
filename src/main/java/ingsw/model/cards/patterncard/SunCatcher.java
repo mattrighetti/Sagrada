@@ -35,6 +35,9 @@ public class SunCatcher extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new SunCatcher pattern card
+     */
     public SunCatcher() {
         super("SunCatcher", 4);
         setGrid(GridCreator.fromString(json));

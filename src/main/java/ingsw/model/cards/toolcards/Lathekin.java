@@ -14,12 +14,17 @@ public class Lathekin extends ToolCard {
     private List<List<Box>> oldGrid;
     private List<List<Box>> newGrid;
 
+    /**
+     * Creates a new Lathekin tool card
+     */
     public Lathekin() {
         super("Lathekin");
     }
 
     /**
      * Move exactly two dice, obeying all the placement restrictions.
+     * There is also a possibility to do a double move(swapping two dice).
+     * In that case the tool card ends immediately.
      */
     @Override
     public void action(GameManager gameManager) {

@@ -8,6 +8,9 @@ import java.util.Map;
 
 public class CorkBackedStraightEdge extends ToolCard {
 
+    /**
+     * Creates a new CorkBackedStraightEdge tool card
+     */
     public CorkBackedStraightEdge() {
         super("CorkBackedStraightEdge");
     }

@@ -7,6 +7,9 @@ import java.rmi.RemoteException;
 
 public class GrindingStone extends ToolCard {
 
+    /**
+     * Creates a new GrindingStone tool card
+     */
     public GrindingStone() {
         super("GrindingStone");
     }

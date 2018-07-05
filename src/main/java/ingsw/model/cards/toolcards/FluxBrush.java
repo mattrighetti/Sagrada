@@ -11,6 +11,9 @@ public class FluxBrush extends ToolCard {
 
     private List<Dice> temporaryDraftedDice;
 
+    /**
+     * Creates a new FluxBrush tool card
+     */
     public FluxBrush() {
         super("FluxBrush");
     }

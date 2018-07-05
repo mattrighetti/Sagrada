@@ -35,6 +35,9 @@ public class LuzCelestial extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new LuzCelestial pattern card
+     */
     public LuzCelestial() {
         super("LuzCelestial", 3);
         setGrid(GridCreator.fromString(json));

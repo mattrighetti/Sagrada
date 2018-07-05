@@ -35,6 +35,9 @@ public class LuxAstram extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new LuxAstram pattern card
+     */
     public LuxAstram() {
         super("LuxAstram", 5);
         setGrid(GridCreator.fromString(json));

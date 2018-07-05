@@ -2,15 +2,16 @@ package ingsw.model.cards.toolcards;
 
 import ingsw.controller.network.commands.AvoidToolCardResponse;
 import ingsw.controller.network.commands.TapWheelResponse;
-import ingsw.model.Dice;
 import ingsw.model.GameManager;
 
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Optional;
 
 public class TapWheel extends ToolCard {
 
+    /**
+     * Creates a new TapWheel tool card
+     */
     public TapWheel() {
         super("TapWheel");
     }
@@ -18,6 +19,8 @@ public class TapWheel extends ToolCard {
     /**
      * Move up to two dice of the same color that match the color of a dice on the Round Track.
      * You must obey all the placement restrictions.
+     * There is also a possibility to do a double move(swapping two dice) during the first dice placement.
+     * In that case the tool card ends immediately.
      */
     @Override
     public void action(GameManager gameManager) {

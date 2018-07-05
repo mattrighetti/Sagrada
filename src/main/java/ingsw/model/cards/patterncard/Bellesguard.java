@@ -35,6 +35,9 @@ public class Bellesguard extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new Bellesguard pattern card
+     */
     public Bellesguard() {
         super("Bellesguard", 3);
         setGrid(GridCreator.fromString(json));

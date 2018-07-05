@@ -11,12 +11,17 @@ public class GrozingPliers extends ToolCard {
     private boolean allOne;
     private boolean allSix;
 
+    /**
+     * Creates a new GrozingPliers tool card
+     */
     public GrozingPliers() {
         super("GrozingPliers");
     }
 
     /**
-     * After drafting, increase or decrease the value of the drafted dice by one
+     * After drafting, increase or decrease the value of the drafted dice by one.
+     * If in the drafted dice there are all "1" or all "6" the option not possible
+     * is automatically excluded
      */
     @Override
     public void action(GameManager gameManager) {

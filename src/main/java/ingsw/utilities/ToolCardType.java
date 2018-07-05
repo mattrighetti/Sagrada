@@ -1,5 +1,8 @@
 package ingsw.utilities;
 
+/**
+ * Enumeration to distinguish the various toolcard response
+ */
 public enum ToolCardType {
     COPPER_FOIL_BURNISHER,
     CORK_BACKED_STRAIGHT_EDGE,

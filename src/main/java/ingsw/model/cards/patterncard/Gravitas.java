@@ -35,6 +35,9 @@ public class Gravitas extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new Gravitas pattern card
+     */
     public Gravitas() {
         super("Gravitas", 5);
         setGrid(GridCreator.fromString(json));

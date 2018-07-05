@@ -5,40 +5,81 @@ import ingsw.model.Dice;
 
 import java.io.Serializable;
 
+/**
+ * Box is the atomic element of the grid. In a grid there are 20 Boxes.
+ * They can have a value or a color and a dice set.
+ */
 public class Box implements Serializable {
     private Color color;
     private Integer value;
     private Dice dice;
     private Object obj;
 
+    /**
+     * Creates a new Box setting the color
+     */
     public Box(Color color) {
         this.color = color;
     }
 
+    /**
+     * Creates a new Box setting the value
+     */
     public Box(Integer value) {
         this.value = value;
     }
 
+    /**
+     * Returns Box color
+     * @return Box color
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * Returns Box value
+     * @return Box value
+     */
     public Integer getValue() {
         return value;
     }
 
+    /**
+     * Check if the value is set
+     * @return true if value is set, otherwise false
+     */
     public boolean isValueSet() {
         return value != null;
     }
 
+    /**
+     * Check if the dice is set
+     * @return true if dice is set, otherwise false
+     */
+    Boolean isDiceSet() {
+        return dice != null;
+    }
+
+    /**
+     * Insert a dice inside a box
+     * @param dice Dice to insert
+     */
     public void insertDice(Dice dice) {
         this.dice = dice;
     }
 
+    /**
+     * Remove the dice in the box
+     */
     public void removeDice() {
         if (dice != null) dice = null;
     }
 
+    /**
+     * Returns the dice in the box
+     * @return Dice set in the box
+     */
     public Dice getDice() {
         return dice;
     }
@@ -56,6 +97,11 @@ public class Box implements Serializable {
         }
     }
 
+    /**
+     * Check if two Box have the same color or value.
+     * @param obj Dice to check
+     * @return true if the dice are the same, otherwise false
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Box)) return false;
@@ -70,9 +116,5 @@ public class Box implements Serializable {
         result = 31 * result + value.hashCode();
         result = 31 * result + color.hashCode();
         return result;
-    }
-
-    Boolean isDiceSet() {
-        return dice != null;
     }
 }

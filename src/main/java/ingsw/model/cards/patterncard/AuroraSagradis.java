@@ -35,6 +35,9 @@ public class AuroraSagradis extends  PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new AuroraSagradis pattern card
+     */
     public AuroraSagradis() {
         super("AuroraSagradis", 4);
         setGrid(GridCreator.fromString(json));

@@ -19,6 +19,11 @@ public final class GridCreator {
     private GridCreator() {
     }
 
+    /**
+     * Fills the pattern cards grid redaing from JSON
+     * @param jsonString
+     * @return
+     */
     public static List<List<Box>> fromString(String jsonString) {
         return gson.fromJson(jsonString, GRID_TYPE);
     }

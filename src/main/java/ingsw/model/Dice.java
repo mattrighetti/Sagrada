@@ -3,14 +3,28 @@ package ingsw.model;
 import java.io.Serializable;
 import java.util.Random;
 
+/**
+ * Dice class. The dice has a Color(setted when it's created) and a face up value
+ * that can be setted when calling the constructor or
+ * when calling <code>Dice.roll()</code>
+ */
 public class Dice implements Serializable {
     private int faceUpValue;
     private final Color diceColor;
 
+    /**
+     * Create a dice without setting the face up value but only the color
+     * @param diceColor Dice color
+     */
     public Dice(Color diceColor) {
         this.diceColor = diceColor;
     }
 
+    /**
+     * Create a dice setting the face up and the color
+     * @param faceUpValue Face up value of the dice
+     * @param diceColor Dice color
+     */
     public Dice(int faceUpValue, Color diceColor) {
         this.faceUpValue = faceUpValue;
         this.diceColor = diceColor;
@@ -25,10 +39,18 @@ public class Dice implements Serializable {
         setFaceUpValue(value);
     }
 
+    /**
+     * Returns the face up value
+     * @return Face up value of the dice
+     */
     public int getFaceUpValue() {
         return faceUpValue;
     }
 
+    /**
+     * Sets the face up value of the dice
+     * @param faceUpValue value to set
+     */
     public void setFaceUpValue(int faceUpValue) {
         this.faceUpValue = faceUpValue;
     }
@@ -80,6 +102,10 @@ public class Dice implements Serializable {
         }
     }
 
+    /**
+     * Returns the dice color
+     * @return Dice color
+     */
     public Color getDiceColor() {
         return diceColor;
     }

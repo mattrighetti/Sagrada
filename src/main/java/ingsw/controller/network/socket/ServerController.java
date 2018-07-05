@@ -9,12 +9,19 @@ import ingsw.model.User;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
+/**
+ * Class that handles the request received from the ClientController and read by the ClientHandler
+ */
 public class ServerController implements RequestHandler, Serializable {
     private transient ClientHandler clientHandler;
     private final transient SagradaGame sagradaGame;
     private transient Controller controller;
     private User user;
 
+    /**
+     * Creates a new ServerController and set the ClientHandler
+     * @param clientHandler
+     */
     ServerController(ClientHandler clientHandler) {
         this.clientHandler = clientHandler;
         sagradaGame = SagradaGame.get();
@@ -38,6 +45,13 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handles LogoutRequest
+     *
+     * @param logoutRequest request
+     * @return Returns a response and a boolean inside of it is set to true if the user logged out
+     *          succesfully, otherwise it's false
+     */
     @Override
     public Response handle(LogoutRequest logoutRequest) {
         try {
@@ -49,6 +63,12 @@ public class ServerController implements RequestHandler, Serializable {
         return new LogoutResponse(true);
     }
 
+    /**
+     * Method that handles CreateMatchRequest
+     *
+     * @param createMatchRequest request
+     * @return Nothing, the response will be send from another method()
+     */
     @Override
     public Response handle(CreateMatchRequest createMatchRequest) {
         try {
@@ -60,6 +80,13 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handles JoinMatchRequest
+     *
+     * @param joinMatchRequest Request
+     * @return Returns a response and a boolean inside of it is set to true if the user logged out
+     *          succesfully, otherwise it's false
+     */
     @Override
     public Response handle(JoinMatchRequest joinMatchRequest) {
         try {
@@ -72,6 +99,13 @@ public class ServerController implements RequestHandler, Serializable {
         return new JoinedMatchResponse(true);
     }
 
+    /**
+     * Method that handle ReJoinMatchRequest
+     * It also re-attach the controller field to the actual one.
+     *
+     * @param reJoinMatchRequest Request
+     * @return Response is sent when RemoteExecption is catched
+     */
     @Override
     public Response handle(ReJoinMatchRequest reJoinMatchRequest) {
         try {
@@ -84,6 +118,12 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handle ChosenPatternCardRequest
+     *
+     * @param chosenPatternCard Request
+     * @return Nothing
+     */
     @Override
     public Response handle(ChosenPatternCardRequest chosenPatternCard) {
         try {
@@ -95,6 +135,12 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handle DraftDiceRequest
+     *
+     * @param draftDiceRequest Request
+     * @return Nothing
+     */
     @Override
     public Response handle(DraftDiceRequest draftDiceRequest) {
         try {
@@ -106,6 +152,12 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handle bundleDataRequest
+     *
+     * @param bundleDataRequest Request
+     * @return Nothing
+     */
     @Override
     public Response handle(BundleDataRequest bundleDataRequest) {
         try {
@@ -117,6 +169,12 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handle every moveToolCardRequest
+     *
+     * @param moveToolCardRequest Request
+     * @return Nothing
+     */
     @Override
     public Response handle(MoveToolCardRequest moveToolCardRequest) {
         try {
@@ -163,6 +221,12 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handle Ack
+     *
+     * @param ack Request
+     * @return Nothing
+     */
     @Override
     public Response handle(Ack ack) {
         try {
@@ -174,6 +238,13 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+
+    /**
+     * Method that handle placeDiceRequest
+     *
+     * @param placeDiceRequest Request
+     * @return Nothing
+     */
     @Override
     public Response handle(PlaceDiceRequest placeDiceRequest) {
         try {
@@ -185,6 +256,12 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handle useToolCardRequest
+     *
+     * @param useToolCardRequest Request
+     * @return Nothing
+     */
     @Override
     public Response handle(UseToolCardRequest useToolCardRequest) {
         try {
@@ -196,6 +273,12 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handle endTurnRequest
+     *
+     * @param endTurnRequest Request
+     * @return Nothing
+     */
     @Override
     public Response handle(EndTurnRequest endTurnRequest) {
         try {
@@ -207,6 +290,12 @@ public class ServerController implements RequestHandler, Serializable {
         return null;
     }
 
+    /**
+     * Method that handle finishedMatchesRequest
+     *
+     * @param finishedMatchesRequest Request
+     * @return Nothing
+     */
     @Override
     public Response handle(FinishedMatchesRequest finishedMatchesRequest) {
 
@@ -218,7 +307,12 @@ public class ServerController implements RequestHandler, Serializable {
 
         return null;
     }
-
+    /**
+     * Method that handle readHistoryRequest
+     *
+     * @param readHistoryRequest Request
+     * @return Nothing
+     */
     @Override
     public Response handle(ReadHistoryRequest readHistoryRequest) {
 

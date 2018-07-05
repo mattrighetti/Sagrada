@@ -27,6 +27,11 @@ public class User implements Serializable {
     private transient StopWatch stopWatch;
     private transient boolean isStopWatchRunning;
 
+    /**
+     * Set the username, creates the stopWatch, set ready and active to true anche create a list
+     * for storing the matches played
+     * @param username Username to set
+     */
     public User(String username) {
         active = true;
         ready = true;
@@ -36,10 +41,18 @@ public class User implements Serializable {
         this.isStopWatchRunning = false;
     }
 
+    /**
+     * Get the actual ranking position
+     * @return Returns the position in the ranking
+     */
     int getPositionInRanking() {
         return positionInRanking;
     }
 
+    /**
+     * Set the new position
+     * @param positionInRanking The new ranking position
+     */
     void setPositionInRanking(int positionInRanking) {
         this.positionInRanking = positionInRanking;
     }
@@ -48,47 +61,89 @@ public class User implements Serializable {
         return username;
     }
 
+    /**
+     * Returns the number of wins
+     * @return Number of wins
+     */
     int getNoOfWins() {
         return noOfWins;
     }
 
+    /**
+     * Increments the number of wins
+     */
     void incrementNoOfWins() {
         noOfWins++;
     }
 
+    /**
+     * Returns the number of lose
+     * @return Number of lose
+     */
     int getNoOfLose() {
         return noOfLose;
     }
 
+    /**
+     * Increments the number of lose
+     */
     void incrementNoOfLose() {
         noOfLose++;
     }
 
+    /**
+     * Returns the number of matches played
+     * @return Number of matches played
+     */
     List<String> getMatchesPlayed() {
         return matchesPlayed;
     }
 
+    /**
+     * Sets the current UserObserver.
+     * @param userObserver UserObserver to attach
+     */
     public void attachUserObserver(UserObserver userObserver) {
         this.userObserver = userObserver;
     }
 
+    /**
+     * @return Returns the UserObserver
+     * @throws RemoteException Thrown in case of disconnection
+     */
     public UserObserver getUserObserver() throws RemoteException {
         userObserver.checkIfActive();
         return userObserver;
     }
 
+    /**
+     * Sets the user active(equivalent of in-game)
+     * @param active
+     */
     public void setActive(boolean active) {
         this.active = active;
     }
 
+    /**
+     * Returns true if the user is in-game
+     * @return User active
+     */
     public boolean isActive() {
         return active;
     }
 
+    /**
+     * Returns if the user active(equivalent of online)
+     * @return User ready
+     */
     boolean isReady() {
         return ready;
     }
 
+    /**
+     * Set if the user is ready(equivalent of online)
+     * @param ready
+     */
     public void setReady(boolean ready) {
         this.ready = ready;
         if (ready) {
@@ -103,10 +158,18 @@ public class User implements Serializable {
         }
     }
 
+    /**
+     * Returns the currently time played
+     * @return Currently time played
+     */
     private long getActiveTime() {
         return stopWatch.getTime();
     }
 
+    /**
+     * Returns time played formatted
+     * @return Time played formatted
+     */
     String getFormattedTime() {
         Date formattedTimeActive = new Date(getActiveTime());
         DateFormat formatter = new SimpleDateFormat("mm:ss");

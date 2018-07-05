@@ -35,6 +35,9 @@ public class ChromaticSplendor extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new ChromaticSplendor pattern card
+     */
     public ChromaticSplendor() {
         super("ChromaticSplendor", 4);
         setGrid(GridCreator.fromString(json));

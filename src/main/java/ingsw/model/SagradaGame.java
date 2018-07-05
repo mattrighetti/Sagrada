@@ -23,6 +23,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+/**
+ * Class the manages the game lobby. It has all the connected users reference, the ranking,
+ * the statistics for every player and the Matches histories
+ */
 public class SagradaGame implements RemoteSagradaGame {
     private static SagradaGame sagradaGameSingleton;
     Map<String, Controller> matchesByName; // List of all open matches
@@ -33,6 +37,10 @@ public class SagradaGame implements RemoteSagradaGame {
 
     private UserBroadcaster userBroadcaster;
 
+    /**
+     * Create a SagradaGame instance with instantiating the userBroadcaster, connectedUsers, list of match
+     * and the time bound for joining a match and for doing an entire turn
+     */
     private SagradaGame() {
         connectedUsers = new HashMap<>();
         matchesByName = new HashMap<>();
@@ -69,6 +77,12 @@ public class SagradaGame implements RemoteSagradaGame {
                                                                          TimeUnit.SECONDS);
     }*/
 
+    /**
+     * Returns the current instance of SagradaGame.
+     * It is a Singleton.
+     *
+     * @return SagradaGame
+     */
     public static SagradaGame get() {
         if (sagradaGameSingleton == null) {
             sagradaGameSingleton = new SagradaGame();
@@ -77,6 +91,11 @@ public class SagradaGame implements RemoteSagradaGame {
         return sagradaGameSingleton;
     }
 
+    /**
+     * Remove a match from the map in which there are stored all the active matches and removes it
+     * from the RMIRegistry.
+     * @param controller Controller to remove, it is the match itself because it manages it.
+     */
     public void removeMatch(Controller controller) {
         matchesByName.remove(controller.getMatchName(), controller);
 
@@ -101,6 +120,10 @@ public class SagradaGame implements RemoteSagradaGame {
         return connectedUsers.size();
     }
 
+    /**
+     * Creates a List of all active matche with the number of player connected to a match
+     * @return List with all active matches
+     */
     @Override
     public List<DoubleString> createAvailableMatchesList() {
         DoubleString doubleString;
@@ -113,6 +136,12 @@ public class SagradaGame implements RemoteSagradaGame {
         return availableMatchesDoubleString;
     }
 
+    /**
+     * Search and send a history of selected match readed from file.
+     * @param username User that requested the history
+     * @param selectedMatchName Match name
+     * @throws RemoteException
+     */
     @Override
     public void sendSelectedMatchHistory(String username, String selectedMatchName) throws RemoteException {
         String matchFileName = selectedMatchName + ".txt";
@@ -129,16 +158,29 @@ public class SagradaGame implements RemoteSagradaGame {
         }
     }
 
+    /**
+     * Set the maximum turn duration
+     * @param maxTurnSeconds
+     */
     @Override
     public void setMaxTurnSeconds(int maxTurnSeconds) {
         this.maxTurnSeconds = maxTurnSeconds;
     }
 
+    /**
+     * Set the maximum login duration
+     * @param maxJoinMatchSeconds
+     */
     @Override
     public void setMaxJoinMatchSeconds(int maxJoinMatchSeconds) {
         this.maxJoinMatchSeconds = maxJoinMatchSeconds;
     }
 
+    /**
+     * Creates an ordered List with the Ranking of all connected users
+     * counting the number of victories.
+     * @return List containing the ranking
+     */
     @Override
     public List<TripleString> createRankingsList() {
         TripleString tripleString;
@@ -175,6 +217,14 @@ public class SagradaGame implements RemoteSagradaGame {
         return ranking;
     }
 
+    /**
+     * Create custom statistics for the user:
+     * 1 - number of wins
+     * 2 - number of lose
+     * 3 - time played
+     * @param username user that requested the ranking
+     * @return A Map containing the three statistics fields
+     */
     @Override
     public Map<String, TripleString> createUserStats(String username) {
         TripleString tripleString;
@@ -245,6 +295,12 @@ public class SagradaGame implements RemoteSagradaGame {
         throw new InvalidUsernameException("Username has been taken already");
     }
 
+    /**
+     * Send a ReJoinResponse to a player that wants to join again a match due to disconnection.
+     * It sends the controller and the player username.
+     * @param userObserver The current instance of the player User Observer
+     * @param username Player Username
+     */
     private void sendRejoinResponse(UserObserver userObserver, String username) {
 
         try {
@@ -309,6 +365,13 @@ public class SagradaGame implements RemoteSagradaGame {
             throw new RemoteException("Match already exists");
     }
 
+    /**
+     * Login a User to a match(and so to its controller). It also broadcasts a CreateMatchResponse
+     *
+     * @param matchName Controller name
+     * @param username Player username
+     * @throws RemoteException
+     */
     @Override
     public synchronized void loginUserToController(String matchName, String username) throws RemoteException {
         for (User user : connectedUsers.values()) {
@@ -319,6 +382,13 @@ public class SagradaGame implements RemoteSagradaGame {
         }
     }
 
+    /**
+     * Login a User to a match that he was playing before the disconnection.
+     *
+     * @param matchName Controller name
+     * @param username Player username
+     * @throws RemoteException
+     */
     @Override
     public synchronized void loginPrexistentPlayer(String matchName, String username) throws RemoteException {
         System.out.println("C");
@@ -336,6 +406,11 @@ public class SagradaGame implements RemoteSagradaGame {
         }
     }
 
+    /**
+     * Returns the controller of a certain match
+     * @param matchName Controller name
+     * @return Controller of a specified match
+     */
     public synchronized Controller getMatchController(String matchName) {
         return matchesByName.get(matchName);
     }
@@ -352,6 +427,16 @@ public class SagradaGame implements RemoteSagradaGame {
         userBroadcaster.broadcastResponseToAll(createRankingsList());
     }
 
+    /**
+     * Sends to the player lobby all the data like:
+     * - Number of connected users
+     * - The ranking
+     * - The available matches list
+     * - The player statistics
+     *
+     * @param username Player username
+     * @throws RemoteException
+     */
     @Override
     public void sendBundleData(String username) throws RemoteException {
         connectedUsers.get(username).getUserObserver().sendResponse(

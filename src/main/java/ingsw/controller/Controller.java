@@ -12,6 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Thread.sleep;
 
+/**
+ * Class that receives Clients request, elaborate them and modify the model
+ */
 public class Controller implements RemoteController {
     private String matchName;
     private boolean hasStarted;
@@ -24,6 +27,13 @@ public class Controller implements RemoteController {
     private int maxJoinMatchSeconds;
     private ControllerTimer controllerTimer;
 
+    /**
+     * Creates a new Controller
+     * @param matchName Name of the match
+     * @param maxTurnSeconds Maximum turn duration
+     * @param maxJoinMatchSeconds Maximum time to join a match
+     * @param sagradaGame SagradaGame instance to save the match data
+     */
     public Controller(String matchName, int maxTurnSeconds,
                       int maxJoinMatchSeconds, SagradaGame sagradaGame) {
         hasStarted = false;
@@ -38,27 +48,50 @@ public class Controller implements RemoteController {
         checkPlayerListSize();
     }
 
+    /**
+     * Get the Match name
+     * @return Match name
+     */
     public String getMatchName() {
         return matchName;
     }
 
+    /**
+     * Get number of connected Users
+     * @return Number of connected users
+     */
     public int getConnectedUsers() {
         return playerList.size();
     }
 
+    /**
+     * Get the playerList
+     * @return PlayerList
+     */
     public List<Player> getPlayerList() {
         return playerList;
     }
 
+    /**
+     * Set the stop boolean for listen the users connection
+     * @param stop
+     */
     public void setStop(boolean stop) {
         this.stop.set(stop);
     }
 
+    /**
+     * Check every second the player list size:
+     * - >=2    Don't cancel the timer
+     * - <2     Cancel the timer
+     *
+     * If a User disconnect removes it from the playerList
+     */
     private void checkPlayerListSize() {
         new Thread(() -> {
             try {
                 do {
-                    // PING every 2 seconds
+                    // PING every second
                     sleep(1000);
 
                     disconnectedUsers.clear();
@@ -83,6 +116,10 @@ public class Controller implements RemoteController {
         }).start();
     }
 
+    /**
+     * Check the number of active players. If <code>Remote Exception</code> is thrown the
+     * player is removed from the playerList.
+     */
     private void checkNumberOfUsers() {
         for (Player player : playerList) {
             try {
@@ -134,6 +171,11 @@ public class Controller implements RemoteController {
         gameManager.waitForEveryPatternCard(gameManager.pickPatternCards());
     }
 
+    /**
+     * Ends the current Turn
+     * @param currentPlayer current player
+     * @throws RemoteException
+     */
     @Override
     public void endTurn(String currentPlayer) throws RemoteException {
         gameManager.endTurn(currentPlayer);
@@ -193,6 +235,8 @@ public class Controller implements RemoteController {
     }
 
     /**
+     * Place a dice in the player's pattern card
+     *
      * @param dice        selected to place from the player
      * @param rowIndex    the row index where to place the die in the pattern card
      * @param columnIndex the column index where to place the die in the pattern card
@@ -365,7 +409,7 @@ public class Controller implements RemoteController {
     }
 
     /**
-     *
+     * Remove the match from SagradaGame
      */
     public void removeMatch() {
         sagradaGame.removeMatch(this);

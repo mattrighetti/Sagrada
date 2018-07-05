@@ -35,6 +35,9 @@ public class Firelight extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new Firelight pattern card
+     */
     public Firelight() {
         super("Firelight", 5);
         setGrid(GridCreator.fromString(json));

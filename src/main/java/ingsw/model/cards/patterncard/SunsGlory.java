@@ -35,6 +35,9 @@ public class SunsGlory extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new SunsGlory pattern card
+     */
     public SunsGlory() {
         super("SunsGlory", 6);
         setGrid(GridCreator.fromString(json));

@@ -35,6 +35,9 @@ public class Industria extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new Industria pattern card
+     */
     public Industria() {
         super("Industria", 5);
         setGrid(GridCreator.fromString(json));

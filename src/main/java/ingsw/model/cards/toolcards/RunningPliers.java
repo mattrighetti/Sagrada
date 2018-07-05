@@ -8,6 +8,10 @@ import java.rmi.RemoteException;
 
 public class RunningPliers extends ToolCard {
 
+
+    /**
+     * Creates a new RunningPliers tool card
+     */
     public RunningPliers() {
         super("RunningPliers");
     }

@@ -35,6 +35,9 @@ public class Virtus extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new Virtus pattern card
+     */
     public Virtus() {
         super("Virtus", 5);
         setGrid(GridCreator.fromString(json));

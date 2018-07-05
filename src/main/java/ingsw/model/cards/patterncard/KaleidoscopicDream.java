@@ -35,6 +35,9 @@ public class KaleidoscopicDream extends PatternCard {
             "    ]\n" +
             "  ]";
 
+    /**
+     * Creates a new KaleidoscopicDream pattern card
+     */
     public KaleidoscopicDream() {
         super("KaleidoscopicDream", 4);
         setGrid(GridCreator.fromString(json));

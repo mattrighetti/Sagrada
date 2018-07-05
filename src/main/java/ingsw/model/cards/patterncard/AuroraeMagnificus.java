@@ -35,6 +35,9 @@ public class AuroraeMagnificus extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new AuroraeMagnificus pattern card
+     */
     public AuroraeMagnificus() {
         super("AuroraeMagnificus", 5);
         setGrid(GridCreator.fromString(json));

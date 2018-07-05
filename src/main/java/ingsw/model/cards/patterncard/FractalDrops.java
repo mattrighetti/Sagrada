@@ -35,6 +35,9 @@ public class FractalDrops extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new FractalDrops pattern card
+     */
     public FractalDrops() {
         super("FractalDrops", 3);
         setGrid(GridCreator.fromString(json));

@@ -35,6 +35,9 @@ public class ViaLux extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new ViaLux pattern card
+     */
     public ViaLux() {
         super("ViaLux", 4);
         setGrid(GridCreator.fromString(json));

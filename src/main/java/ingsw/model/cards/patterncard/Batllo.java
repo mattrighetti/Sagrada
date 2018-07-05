@@ -35,6 +35,9 @@ public class Batllo extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new Batllo pattern card
+     */
     public Batllo() {
         super("Batllo", 5);
         setGrid(GridCreator.fromString(json));

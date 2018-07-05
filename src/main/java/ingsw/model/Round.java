@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
+/**
+ * Class that manages the execution of a single turn. Is created by ExecuteTurn() in GameManager
+ */
 public class Round implements Runnable {
     private Player player;
     private final AtomicBoolean hasMadeAMove;
@@ -19,6 +21,10 @@ public class Round implements Runnable {
     private int noOfMoves;
     private AtomicBoolean avoidEndTurnNotification;
 
+    /**
+     * Set the Game Manager and instantiates the field required for thread synchronization
+     * @param gameManager Game Manager instance
+     */
     public Round(GameManager gameManager) {
         this.gameManager = gameManager;
         hasMadeAMove = new AtomicBoolean();
@@ -27,6 +33,10 @@ public class Round implements Runnable {
         avoidEndTurnNotification = new AtomicBoolean(false);
     }
 
+    /**
+     * Starts the turn for a specific player
+     * @param player Current player
+     */
     void startForPlayer(Player player) {
         this.player = player;
         hasMadeAMove.set(false);
@@ -34,6 +44,11 @@ public class Round implements Runnable {
         run();
     }
 
+    /**
+     * Method that notify the user with an ActivateTurnNotification()
+     * and goes in wait() two times (once per move). At the end sends an EndTurnResponse
+     * and. if it's active it cancels the timer and notify ExecuteTurn(it was in WAIT status).
+     */
     @Override
     public void run() {
         new Thread(() -> {
@@ -74,6 +89,9 @@ public class Round implements Runnable {
         }).start();
     }
 
+    /**
+     * Sends the EndTurnResponse to the currentPlayer
+     */
     private void endTurnNotification() {
         if (!avoidEndTurnNotification.get()) {
             try {
@@ -96,6 +114,10 @@ public class Round implements Runnable {
         }
     }
 
+    /**
+     * Set the current Thread in WAIT and it will exit from the loop only if the player
+     * makes a move or clicks on EndTurn.
+     */
     private void waitForMove() {
         System.out.println("Wait for the move");
         synchronized (hasMadeAMove) {
@@ -113,6 +135,10 @@ public class Round implements Runnable {
         }
     }
 
+    /**
+     * Terminates the current Turn Thread
+     * @param hasPlayerEndedTurn
+     */
     void setPlayerEndedTurn(boolean hasPlayerEndedTurn) {
         if (hasPlayerEndedTurn)
             System.out.println("End the turn");
@@ -128,6 +154,10 @@ public class Round implements Runnable {
         }
     }
 
+    /**
+     * Returns if a player has ended the turn.
+     * @return
+     */
     AtomicBoolean hasPlayerEndedTurn() {
         return playerEndedTurn;
     }
@@ -147,6 +177,11 @@ public class Round implements Runnable {
         }
     }
 
+    /**
+     * ToolCard move. Method for starting the ToolCard(it is executed in a thread).
+     * It starts only if the current player has enough favour tokens
+     * @param toolCard toolcard to use
+     */
     void makeMove(ToolCard toolCard) {
         if (toolCard.getPrice() <= getCurrentPlayer().getFavourTokens()) {
 
@@ -162,10 +197,17 @@ public class Round implements Runnable {
         }
     }
 
+    /**
+     * Notify that a toolcar is used
+     */
     public void toolCardMoveDone() {
         hasMadeAMove();
     }
 
+    /**
+     * Returns the current player
+     * @return
+     */
     public Player getCurrentPlayer() {
         return player;
     }
@@ -175,6 +217,10 @@ public class Round implements Runnable {
         return noOfMoves;
     }
 
+    /**
+     * Sets if the EndTurnNotification has to be executed or not
+     * @param avoid
+     */
     public void avoidEndTurnNotification(boolean avoid) {
         this.avoidEndTurnNotification.set(avoid);
     }

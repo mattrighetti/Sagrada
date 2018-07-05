@@ -35,6 +35,9 @@ public class SymphonyOfLight extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new SymphonyOfLight pattern card
+     */
     public SymphonyOfLight() {
         super("SymphonyOfLight", 6);
         setGrid(GridCreator.fromString(json));

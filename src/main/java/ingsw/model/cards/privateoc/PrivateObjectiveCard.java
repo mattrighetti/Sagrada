@@ -6,15 +6,25 @@ import ingsw.model.cards.patterncard.Box;
 
 import java.util.List;
 
+/**
+ * A Private objective card has a color in order to assign extra point to the player
+ */
 public class PrivateObjectiveCard extends Card {
 
     private Color color;
 
+    /**
+     * Creates a new PrivateObjectiveCard tool card
+     */
     public PrivateObjectiveCard(Color color) {
         super(color.toString());
         this.color = color;
     }
 
+    /**
+     * Get the color of the private objective card
+     * @return Private objective card color
+     */
     public Color getColor() {
         return color;
     }

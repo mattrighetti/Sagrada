@@ -12,6 +12,9 @@ public class FluxRemover extends ToolCard {
     private List<Dice> draftedDice;
     private Dice diceFromBag;
 
+    /**
+     * Creates a new FluxRemover tool card
+     */
     public FluxRemover() {
         super("FluxRemover");
     }

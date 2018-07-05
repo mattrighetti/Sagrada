@@ -4,11 +4,18 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.concurrent.*;
 
+/**
+ * Scanner which can be interrupted by a time-out signal.
+ */
 public class StoppableScanner {
     private ExecutorService executorService;
     private Future<String> lineRead;
     private Future<Integer> intRead;
 
+    /**
+     * Reads a Line
+     * @return Line read
+     */
     public String readLine() {
         executorService = Executors.newSingleThreadExecutor();
         String inputLine = null;
@@ -37,6 +44,10 @@ public class StoppableScanner {
         return inputLine;
     }
 
+    /**
+     * Read int
+     * @return read int
+     */
     public Integer readInt() {
         executorService = Executors.newSingleThreadExecutor();
         Integer inputInt = 0;
@@ -68,6 +79,9 @@ public class StoppableScanner {
         return inputInt;
     }
 
+    /**
+     * Cancels the scanner
+     */
     public void cancel() {
         if (lineRead != null)
             lineRead.cancel(true);
@@ -75,10 +89,17 @@ public class StoppableScanner {
             intRead.cancel(true);
     }
 
+    /**
+     * Check if the scanner is cancelled
+     * @return Return true if it is cancelled
+     */
     public boolean isReaderCancelled() {
         return intRead == null;
     }
 
+    /**
+     * Task that reads a Line and can be interrupted by a time-out signal
+     */
     class ConsoleReadLineTask implements Callable<String> {
         @Override
         public String call() throws Exception {
@@ -104,6 +125,9 @@ public class StoppableScanner {
         }
     }
 
+    /**
+     * Task that reads a int and can be interrupted by a time-out signal
+     */
     class ConsoleReadIntTask implements Callable<Integer> {
         @Override
         public Integer call() throws Exception {

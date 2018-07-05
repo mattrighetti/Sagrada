@@ -9,27 +9,45 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Used to send Response to more than one Player.
+ */
 public class PlayerBroadcaster {
     private static final String ERROR_MESSAGE = "Broadcaster is not active";
     private boolean isBroadcasterActive;
     private List<Player> players;
 
+    /**
+     * Set the Users' List and activate the broadcaster
+     * @param players List of Players
+     */
     public PlayerBroadcaster(List<Player> players) {
         this.players = players;
         isBroadcasterActive = true;
     }
 
+    /**
+     * Enable the broadcaster
+     */
     public void enableBroadcaster() {
         System.out.println("Activating playerBroadcaster");
         isBroadcasterActive = true;
     }
 
+    /**
+     * Disable the broadcaster
+     */
     public void disableBroadcaster() {
         System.out.println("Shutting down playerBroadcaster");
         isBroadcasterActive = false;
     }
 
 
+    /**
+     * Creates a List of the active player by calling <code>player.getCurrentUser.getUserObserver().checkIfActive()</code> excluding the one passed as parameter
+     * @param usernameToExclude User that won't receive the message
+     * @return Active UserObserver
+     */
     private List<UserObserver> playersToBroadcast(String usernameToExclude) {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (Player player : players) {
@@ -46,6 +64,10 @@ public class PlayerBroadcaster {
         return playerListToBroadcast;
     }
 
+    /**
+     * Creates a List of the active player by calling <code>player.getCurrentUser.getUserObserver().checkIfActive()</code> excluding the one passed as parameter
+     * @return Active UserObserver
+     */
     private List<UserObserver> playersToBroadcast() {
         List<UserObserver> playerListToBroadcast = new ArrayList<>();
         for (Player player : players) {
@@ -61,6 +83,11 @@ public class PlayerBroadcaster {
         return playerListToBroadcast;
     }
 
+    /**
+     * Used when Dice are drafted
+     * @param usernameToExclude Player to exclude
+     * @param dice List of drafted dice
+     */
     public void broadcastResponse(String usernameToExclude, List<Dice> dice) {
         if (isBroadcasterActive) {
             for (UserObserver userObserver : playersToBroadcast(usernameToExclude)) {
@@ -73,6 +100,11 @@ public class PlayerBroadcaster {
         } else System.out.println(ERROR_MESSAGE);
     }
 
+
+    /**
+     * Used when Dice are drafted
+     * @param dice List of drafted dice
+     */
     public void broadcastResponseToAll(List<Dice> dice) {
         if (isBroadcasterActive) {
             for (UserObserver player : playersToBroadcast()) {
@@ -85,6 +117,10 @@ public class PlayerBroadcaster {
         } else System.out.println(ERROR_MESSAGE);
     }
 
+    /**
+     * Broadcast a generic response to all the active players
+     * @param response Response to send
+     */
     public void broadcastResponseToAll(Response response) {
         if (isBroadcasterActive) {
             for (UserObserver userObserver : playersToBroadcast()) {
@@ -97,7 +133,10 @@ public class PlayerBroadcaster {
         } else System.out.println(ERROR_MESSAGE);
     }
 
-
+    /**
+     * Used when the histury are updated
+     * @param movesHistory movehistory to send
+     */
     public void updateMovesHistory(List<MoveStatus> movesHistory) {
         if (isBroadcasterActive) {
             for (UserObserver userObserver : playersToBroadcast()) {

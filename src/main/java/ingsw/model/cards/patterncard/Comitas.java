@@ -35,6 +35,9 @@ public class Comitas extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new Comitas pattern card
+     */
     public Comitas() {
         super("Comitas", 5);
         setGrid(GridCreator.fromString(json));

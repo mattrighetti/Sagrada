@@ -35,6 +35,9 @@ public class ShadowThief extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new ShadowThief pattern card
+     */
     public ShadowThief() {
         super("ShadowThief", 4);
         setGrid(GridCreator.fromString(json));

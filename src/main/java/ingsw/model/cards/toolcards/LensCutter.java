@@ -8,6 +8,9 @@ import java.rmi.RemoteException;
 
 public class LensCutter extends ToolCard {
 
+    /**
+     * Creates a new LensCutter tool card
+     */
     public LensCutter() {
         super("LensCutter");
     }

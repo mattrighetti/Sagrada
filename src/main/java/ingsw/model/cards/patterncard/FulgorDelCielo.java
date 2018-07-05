@@ -35,6 +35,9 @@ public class FulgorDelCielo extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new FulgorDelCielo pattern card
+     */
     public FulgorDelCielo() {
         super("FulgorDelCielo", 5);
         setGrid(GridCreator.fromString(json));

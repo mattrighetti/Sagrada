@@ -8,6 +8,9 @@ import java.rmi.RemoteException;
 
 public class CopperFoilBurnisher extends ToolCard {
 
+    /**
+     * Creates a new CopperFoilBurnisher tool card
+     */
     public CopperFoilBurnisher() {
         super("CopperFoilBurnisher");
     }

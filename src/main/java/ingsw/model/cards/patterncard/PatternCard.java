@@ -13,6 +13,9 @@ public abstract class PatternCard extends Card {
     private int difficulty;
     protected List<List<Box>> grid;
 
+    /**
+     * Set the pattern card name, instantiate the grid and set the difficulty
+     */
     public PatternCard(String name, int difficulty) {
         super(name);
         fillGrid();
@@ -26,22 +29,45 @@ public abstract class PatternCard extends Card {
                 '}';
     }
 
+    /**
+     * Method that returns the Patterncard difficulty.
+     *
+     * @return Difficulty of the patterncard
+     */
     public int getDifficulty() {
         return difficulty;
     }
 
+    /**
+     * Method that sets the grid of the patterncard.
+     *
+     * @param grid The grid to set.
+     */
     public void setGrid(List<List<Box>> grid) {
         this.grid = grid;
     }
 
+    /**
+     * Method that returns the grid of the patterncard.
+     */
     public List<List<Box>> getGrid() {
         return grid;
     }
 
+    /**
+     * Method that insert a Dice in the Box with position [rowIndex, columnIndex]
+     *
+     * @param rowIndex Index of the row in the grid.
+     * @param columnIndex Index of the column in the grid.
+     * @return
+     */
     public Box insertDiceInBox(int rowIndex, int columnIndex) {
         return grid.get(rowIndex).get(columnIndex);
     }
 
+    /**
+     * Method that instantiates the grid.
+     */
     private void fillGrid() {
         this.grid = new ArrayList<>(4);
         this.grid.add(new ArrayList<>(5));
@@ -50,6 +76,11 @@ public abstract class PatternCard extends Card {
         this.grid.add(new ArrayList<>(5));
     }
 
+    /**
+     * Method that returns the number of Boxes in which there is no dice setted.
+     *
+     * @return Number of Empty Boxes
+     */
     public int getNoOfEmptyBoxes() {
         return grid.stream().
                 mapToInt(row -> (int) row.stream()
@@ -57,6 +88,14 @@ public abstract class PatternCard extends Card {
                 .reduce(0, (sum, x) -> sum + x);
     }
 
+    /**
+     * Method that computes the position of the grid in which you can place a dice picked from the
+     * drafted dice.
+     *
+     * @param draftedDice List of dice on which calculate the available positions
+     * @return <code>HashMap<String, Boolean[][]></code>. The key used is the Dice.toString() and the
+     *          value is a 2-D Array containing the available positions
+     */
     public Map<String,Boolean[][]> computeAvailablePositionsDraftedDice(List<Dice> draftedDice) {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
@@ -67,7 +106,13 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
-
+    /**
+     * Method that computes the position of the grid in which you can place a dice picked from the
+     * patterncard.
+     *
+     * @return <code>HashMap<String, Boolean[][]></code>. The key used is the Dice.toString() and the
+     *          value is a 2-D Array containing the available positions.
+     */
     public Map<String,Boolean[][]> computeAvailablePositions() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
@@ -84,6 +129,13 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
+    /**
+     * Method that computes the position of the grid in which you can place a dice picked from the
+     * patterncard avoiding the value restrictions (referring to the value setted in the Box if it is present).
+     *
+     * @return <code>HashMap<String, Boolean[][]></code>. The key used is the Dice.toString() and the
+     *          value is a 2-D Array containing the available positions.
+     */
     public Map<String,Boolean[][]> computeAvailablePositionsNoValue() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
@@ -103,7 +155,10 @@ public abstract class PatternCard extends Card {
     /**
      * Compute all available positions for Lathekin toolcard. It uses the standard algorithm and it also computes the available position for the Boxes
      * in which there is a Dice in order to do the double move.
-     * @return Map with that contains the position in which you can place the dice used as key of the HashMap.
+     *
+     * @return <code>HashMap<String, Boolean[][]></code>. The key used is the Dice.toString()+line+column
+     *         (line and column are the index of the analyzed dice in the grid and the value is a 2-D Array
+     *          containing the available positions.
      */
     public Map<String, Boolean[][]> computeAvailablePositionsLathekin() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
@@ -123,10 +178,13 @@ public abstract class PatternCard extends Card {
 
     /**
      * Compute all available positions for Tap Wheel toolcard. If it is called on the first phase of the toolcard it uses the same algorithm of Lathekin
-     * otherwise the standard algorithm for a dice in the pattern card is called.
+     * otherwise the standard algorithm for a dice in the pattern card is called (<code>computeAvailablePositions()</code>
+     *
      * @param colorDice The algorithm is executed only for the dice with the same colorDice value
      * @param firstMoveDone Switch beetwen the two algorithm strategies
-     * @return Map with that contains the position in which you can place the dice used as key of the HashMap.
+     * @return <code>HashMap<String, Boolean[][]></code>. The key used is the Dice.toString()+line+column
+     *         (line and column are the index of the analyzed dice in the grid and the value is a 2-D Array
+     *         containing the available positions.
      */
     public Map<String, Boolean[][]> computeAvailablePositionsTapWheel(Dice colorDice, boolean firstMoveDone) {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
@@ -160,6 +218,14 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
+    /**
+     * Method that computes the position of the grid in which you can place a dice picked from the
+     * patterncard avoiding the color restrictions (referring to the color setted in the Box if it is present).
+     *
+     * @return <code>HashMap<String, Boolean[][]></code>. The key used is the Dice.toString()+line+column
+     *          (line and column are the index of the analyzed dice in the grid and the value is a 2-D Array
+     *           containing the available positions.
+     */
     public Map<String,Boolean[][]> computeAvailablePositionsNoColor() {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         Dice dice;
@@ -176,6 +242,13 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
+    /**
+     * Method that computes the position of the grid in which you can place a dice picked from the
+     * patterncard avoiding the dice around restrictions (used in CorkBackedStraightEdge).
+     *
+     * @return <code>HashMap<String, Boolean[][]></code>. The key used is the Dice.toString() and the
+     *          value is a 2-D Array containing the available positions.
+     */
     public Map<String,Boolean[][]> computeAvailablePositionsNoDiceAround(List<Dice> draftedDice) {
         HashMap<String,Boolean[][]> hashMapGrid = new HashMap<>();
         for (Dice dice : draftedDice) {
@@ -186,7 +259,24 @@ public abstract class PatternCard extends Card {
         return hashMapGrid;
     }
 
-
+    /**
+     * Main algorithm for computing available positions. First of all checks if the grid is empty
+     * and if it's true only the border positions are setted to true. Otherwise it iterates over the Boxes and:
+     * 1 - Check if there are dices around
+     * 2 - Check if the dice color and value are the same of the one setted in the Box
+     * 3 - Check the constraint created by the dice placed around the Box analyzed.
+     * 4 - Checks also the Boxes in which a dice is setted(only if lathekin field is setted to true).
+     * 5 - Checks, in case of double move(Lathekin & TapWheel), if both dices can be inserted in the inverted positions.
+     *
+     * @param dice Dice to compute available positions for
+     * @param colorRestrictions Enables color restrictions.
+     * @param valueRestrictions Enables value restrictions.
+     * @param diceAroundRestriction Enables that a dice, in order to be placed, must be adiacent to another one.
+     * @param lathekin Enables the control for also the boxes with a dice already setted.
+     * @param diceLine Line index from <code>dice</code> is extracted (used only for Lathekin & Tapwheel).
+     * @param diceColumn Column index from <code>dice</code> is extracted (used only for Lathekin & Tapwheel).
+     * @return 2-D array of boolean. With a true value the dice can be placed otherwise no.
+     */
     private Boolean[][] computePosition(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction, boolean lathekin, int diceLine, int diceColumn) {
         Boolean[][] booleanGrid = new Boolean[4][5];
 
@@ -263,6 +353,19 @@ public abstract class PatternCard extends Card {
         return booleanGrid;
     }
 
+    /**
+     * Check if the dice can be "swapped" with a double move. It always check dicearound, color and value restrictions
+     * and also the other dice constraints.
+     *
+     * @param dice Dice to compute available positions for
+     * @param colorRestrictions Enables color restrictions.
+     * @param valueRestrictions Enables value restrictions.
+     * @param diceAroundRestriction Enables that a dice, in order to be placed, must be adiacent to another one.
+     * @param booleanGrid The result grid that has to be updated meanwhile the Boxes have been analyzed.
+     * @param diceLine Line index from <code>dice</code> is extracted (used only for Lathekin & Tapwheel).
+     * @param diceColumn Column index from <code>dice</code> is extracted (used only for Lathekin & Tapwheel).
+     * @return Returns true if the dice can be swapped.
+     */
     private boolean boxToSwitchCheck(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction, Boolean[][] booleanGrid, int line, int column, int diceLine, int diceColumn) {
         //Check if there are dices around the box
 
@@ -309,6 +412,17 @@ public abstract class PatternCard extends Card {
         return colorRestrictions;
     }
 
+    /**
+     * Check if there are dices around the given box(picked by using <code>line</code> and <code>column</code>.
+     *
+     * @param diceAroundRestriction Enables diceAround restriction.
+     * @param booleanGrid The result grid that has to be updated meanwhile the Boxes have been analyzed.
+     * @param line Line index of the current Box.
+     * @param column Column index of the current Box.
+     * @param diceLine Line index from <code>dice</code> is extracted (used only for Lathekin & Tapwheel).
+     * @param diceColumn Column index from <code>dice</code> is extracted (used only for Lathekin & Tapwheel).
+     * @return Returns true if there are dices around, otherwise false.
+     */
     private boolean checkIfDiceAround(boolean diceAroundRestriction, Boolean[][] booleanGrid, int line, int column, int diceLine, int diceColumn) {
         if (!hasDicesAround(diceLine, diceColumn)) {
             if (!diceAroundRestriction) {
@@ -324,6 +438,17 @@ public abstract class PatternCard extends Card {
         return false;
     }
 
+    /**
+     * Check if a dice can be placed in the given position.
+     *
+     * @param dice Dice to compute available positions for.
+     * @param colorRestrictions Enables color restrictions.
+     * @param valueRestrictions Enables value restrictions.
+     * @param diceAroundRestriction Enables that a dice, in order to be placed, must be adiacent to another one.
+     * @param booleanGrid The result grid that has to be updated meanwhile the Boxes have been analyzed.
+     * @return 2-D array of boolean. With a true value the dice can be placed otherwise no.
+
+     */
     private boolean singleBoxCheck(Dice dice, boolean colorRestrictions, boolean valueRestrictions, boolean diceAroundRestriction, Boolean[][] booleanGrid, int line, int column) {
         //Check if there are dices around the box
 
@@ -371,9 +496,21 @@ public abstract class PatternCard extends Card {
         return true;
     }
 
+    /**
+     * Check the constraint of a specific neighbour dice(only if it's present) by given the
+     * line and column index of the neighbour(only orthogonal positions will be checked):
+     * the dice can't be placed if it has the same color or value of the neighbour.
+     *
+     * @param dice Dice to compute available positions for.
+     * @param line Line index of the neighbour.
+     * @param column Column index of the dice
+     * @param neighbour Column index of the neighbour.
+     * @param booleans 1-D array, it is a section of the resultGrid(the one corresponding at the dice line index).
+     * @return Returns if the constraints of the neighbour are not respected
+     */
     private boolean checkAround(Dice dice, int line, int column, int neighbour, Boolean[] booleans) {
         if (!noDice(line, neighbour)) {
-            if (!sameDiceValue(line, neighbour, dice) && !sameDiceColor(line, neighbour, dice)) {
+            if (notSameDiceValue(line, neighbour, dice) && notSameDiceColor(line, neighbour, dice)) {
                 booleans[column] = true;
             }
             else {
@@ -386,9 +523,22 @@ public abstract class PatternCard extends Card {
     }
 
 
+    /**
+     * Check the constraint of a specific neighbour dice(only if it's present) by given the
+     * line and column index of the neighbour(only orthogonal positions will be checked):
+     * the dice can't be placed if it has the same color or value of the neighbour.
+     * During the calculation it uses also the initial diceLine and diceColumn indexes to calculate
+     * if the dice can be swapped.
+     *
+     * @param dice Dice to compute available positions for.
+     * @param line Line index of the neighbour.
+     * @param column Column index of the dice
+     * @param booleans 2-D array, it is the resultGrid.
+     * @return Returns if the constraints of the neighbour are not respected
+     */
     private boolean checkAroundSwitchBox(Dice dice, int diceLine, int diceColumn, int line, int column, Boolean[][] booleans) {
         if (!noDice(diceLine, diceColumn)) {
-            if (!sameDiceValue(diceLine, diceColumn, dice) && !sameDiceColor(diceLine, diceColumn, dice)) {
+            if (notSameDiceValue(diceLine, diceColumn, dice) && notSameDiceColor(diceLine, diceColumn, dice)) {
                 booleans[line][column] = true;
             }
             else {
@@ -400,77 +550,140 @@ public abstract class PatternCard extends Card {
         return false;
     }
 
-    private boolean hasDicesAround(int i, int j) {
-            if (j > 0) {
-                if (!noDice(i, j - 1))
-                    return !noDice(i,j - 1);
+    /**
+     * Check if there are dices around the given Box.
+     *
+     * @param line Line index.
+     * @param column Column index.
+     * @return Returns true if there is a dice in diagonal or orthogonal position.
+     */
+    private boolean hasDicesAround(int line, int column) {
+            if (column > 0) {
+                if (!noDice(line, column - 1))
+                    return !noDice(line,column - 1);
             }
-            if (j < 4) {
-                if (!noDice(i,j + 1))
-                    return !noDice(i,j + 1);
+            if (column < 4) {
+                if (!noDice(line,column + 1))
+                    return !noDice(line,column + 1);
             }
-            if (i < 3) {
-                if (!noDice(i + 1,j))
-                    return !noDice(i + 1,j);
+            if (line < 3) {
+                if (!noDice(line + 1,column))
+                    return !noDice(line + 1,column);
             }
-            if (i > 0) {
-                if (!noDice(i - 1,j))
-                    return !noDice(i - 1,j);
+            if (line > 0) {
+                if (!noDice(line - 1,column))
+                    return !noDice(line - 1,column);
             }
-            if (j > 0 && i < 3) {
-                if (!noDice(i + 1,j - 1))
-                    return !noDice(i + 1,j - 1);
+            if (column > 0 && line < 3) {
+                if (!noDice(line + 1,column - 1))
+                    return !noDice(line + 1,column - 1);
             }
-            if (j > 0 && i > 0) {
-                if (!noDice(i - 1,j - 1))
-                    return !noDice(i - 1,j - 1);
+            if (column > 0 && line > 0) {
+                if (!noDice(line - 1,column - 1))
+                    return !noDice(line - 1,column - 1);
             }
-            if (j < 4 && i < 3) {
-                if (!noDice(i + 1,j + 1))
-                    return !noDice(i + 1,j + 1);
+            if (column < 4 && line < 3) {
+                if (!noDice(line + 1,column + 1))
+                    return !noDice(line + 1,column + 1);
             }
-            if (j < 4 && i > 0) {
-                if (!noDice(i - 1,j + 1))
-                    return !noDice(i - 1,j + 1);
+            if (column < 4 && line > 0) {
+                if (!noDice(line - 1,column + 1))
+                    return !noDice(line - 1,column + 1);
             }
             return false;
 
     }
 
-
-    private boolean sameDiceColor(int i, int j, Dice dice) {
-        return grid.get(i).get(j).getDice().getDiceColor().equals(dice.getDiceColor());
+    /**
+     * Check if the dice has the same color of the selected dice.
+     *
+     * @param line Line index.
+     * @param column Column index.
+     * @param dice Dice to be compared.
+     * @return Returns true if they have not the same color.
+     */
+    private boolean notSameDiceColor(int line, int column, Dice dice) {
+        return !grid.get(line).get(column).getDice().getDiceColor().equals(dice.getDiceColor());
     }
 
-    private boolean sameDiceValue(int i, int j, Dice dice) {
-        return grid.get(i).get(j).getDice().getFaceUpValue() == dice.getFaceUpValue();
+
+    /**
+     * Check if the dice has the same value of the selected dice.
+     *
+     * @param line Line index.
+     * @param column Column index.
+     * @param dice Dice to be compared.
+     * @return Returns true if they have not the same value.
+     */
+    private boolean notSameDiceValue(int line, int column, Dice dice) {
+        return grid.get(line).get(column).getDice().getFaceUpValue() != dice.getFaceUpValue();
     }
 
-    private boolean sameGridColor(boolean colorRestrictions, int i, int j, Dice dice) {
+    /**
+     * Check if the dice has the same color of the selected Box.
+     *
+     * @param line Line index.
+     * @param column Column index.
+     * @param dice Dice to be compared.
+     * @param colorRestrictions Computes only if the color restrictions is enabled.
+     * @return Returns true if they have the same color.
+     */
+    private boolean sameGridColor(boolean colorRestrictions, int line, int column, Dice dice) {
         if (colorRestrictions)
-            return grid.get(i).get(j).getColor().equals(dice.getDiceColor());
+            return grid.get(line).get(column).getColor().equals(dice.getDiceColor());
         return true;
     }
 
-
-    private boolean sameGridValue(boolean valueRestrictions, int i, int j, Dice dice) {
+    /**
+     * Check if the dice has the same value of the selected Box.
+     *
+     * @param line Line index.
+     * @param column Column index.
+     * @param dice Dice to be compared.
+     * @param valueRestrictions Computes only if the value restrictions is enabled.
+     * @return Returns true if they have the same value.
+     */
+    private boolean sameGridValue(boolean valueRestrictions, int line, int column, Dice dice) {
         if (valueRestrictions)
-            return grid.get(i).get(j).getValue().equals(dice.getFaceUpValue());
+            return grid.get(line).get(column).getValue().equals(dice.getFaceUpValue());
         return true;
     }
 
-    private boolean noDice(int i, int j) {
-        return !(grid.get(i).get(j).isDiceSet());
+    /**
+     * Check if there are no dices around.
+     *
+     * @param line Line index of the Box to check.
+     * @param column Column index of the Box to check.
+     * @return
+     */
+    private boolean noDice(int line, int column) {
+        return !(grid.get(line).get(column).isDiceSet());
     }
 
-    private boolean hasValue(int i, int j) {
-        return grid.get(i).get(j).isValueSet();
+    /**
+     * Check if the Box has a value set.
+     * @param line Line index
+     * @param column Column index
+     * @return True if value is set.
+     */
+    private boolean hasValue(int line, int column) {
+        return grid.get(line).get(column).isValueSet();
     }
 
-    private boolean isBlank(int i, int j) {
-        return (!grid.get(i).get(j).isValueSet() && grid.get(i).get(j).getColor().equals(Color.BLANK));
+    /**
+     * Check if the Box is Blank
+     * @param line Line index
+     * @param column Column index
+     * @return True if color is blank
+     */
+    private boolean isBlank(int line, int column) {
+        return (!grid.get(line).get(column).isValueSet() && grid.get(line).get(column).getColor().equals(Color.BLANK));
     }
 
+    /**
+     * Check if the grid is empty.
+     * @return true if is empty.
+     */
     public boolean isGridEmpty() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -481,7 +694,9 @@ public abstract class PatternCard extends Card {
         return true;
     }
 
-
+    /**
+     * @return Returns the number of dice in the grid.
+     */
     public int getNoOfDice() {
         return grid.stream().mapToInt(boxes -> (int) boxes.stream()
                 .filter(box -> box.getDice() != null)

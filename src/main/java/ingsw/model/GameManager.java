@@ -243,15 +243,25 @@ public class GameManager {
         return patternCardToChoose;
     }
 
+    /**
+     * Returns the number of the current Round
+     * @return Current round
+     */
     public int getNoOfCurrentRound() {
         return roundTrack.size() + 1;
     }
 
-
+    /**
+     * Returns the round track
+     * @return Current round track
+     */
     public List<List<Dice>> getRoundTrack() {
         return roundTrack;
     }
 
+    /**
+     * Deletes the match. Users can't join it anymore
+     */
     private void deleteMatch() {
         controller.removeMatch();
     }
@@ -521,6 +531,12 @@ public class GameManager {
         }).start();
     }
 
+    /**
+     * Method that places a dice in the player's pattern card.
+     * @param dice Dice to place
+     * @param rowIndex Line index
+     * @param columnIndex Column index
+     */
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
         for (Dice diceInDraftedDice : board.getDraftedDice()) {
             if (diceInDraftedDice.getDiceColor().equals(dice.getDiceColor())
@@ -662,6 +678,10 @@ public class GameManager {
         }).start();
     }
 
+    /**
+     * Method that writes the match history in a File inside /histories
+     * @param movesHistory List of all match moves
+     */
     private void writeHistoryToFile(List<MoveStatus> movesHistory) {
         Gson gson = new Gson();
         String moveHistoryJSON = gson.toJson(movesHistory);
@@ -680,6 +700,9 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method that notifies the winner and the losers of the match.
+     */
     private void notifyWinner() {
         Player winner = evaluateWinner();
 
@@ -704,6 +727,9 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method that assign the points the players using the Public objective cards and subtracting the number of empty boxes
+     */
     void assignPointsToPlayers() {
         for (Player player : playerList) {
             int score = 0;
@@ -715,6 +741,10 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method that checks player's point and decide a Winner and, in case. the tie.
+     * @return Set of possible winnners
+     */
     private Set<Player> evaluateBasicPoints() {
         Set<Player> tiePlayers = new HashSet<>();
         int maxScore = -30;
@@ -741,6 +771,11 @@ public class GameManager {
         return tiePlayers;
     }
 
+    /**
+     * Method that updates the player's score using the private objective cards.
+     * @param tiePlayers Set of Players with the same score
+     * @return The Set updated
+     */
     private Set<Player> evaluatePrivateObjectiveCardPoints(Set<Player> tiePlayers) {
         int privateOc = 0;
         Set<Player> tieAgainPlayers = new HashSet<>();
@@ -767,6 +802,11 @@ public class GameManager {
         return tieAgainPlayers;
     }
 
+    /**
+     * Method that updates the player's score using the favor tokens
+     * @param tieAgainPlayers Set of Players with the same score
+     * @return The Set updated
+     */
     private Set<Player> evaluateFavourTokenPoints(Set<Player> tieAgainPlayers) {
         int favorTokens = 0;
         Player winner = null;
@@ -879,6 +919,11 @@ public class GameManager {
         }
     }
 
+    /**
+     * Method that starts the turn and wait for the end of it only if the user is active
+     * @param playerIndex The index of the new current player
+     * @param turnState Specify the state turn(forward or backward)
+     */
     private void executeTurn(int playerIndex, String turnState) {
 
         addMoveToHistoryAndNotify(new MoveStatus(playerList.get(playerIndex).getPlayerUsername(), "starts turn"));
@@ -897,14 +942,27 @@ public class GameManager {
         }
     }
 
+    /**
+     * Returns the toolCardLock userd to set the toolCardThread in WAIT and to avoid the method execution if the timer
+     * expires
+     *
+     * @return The AtomicBoolean used as lock
+     */
     public AtomicBoolean getToolCardLock() {
         return toolCardLock;
     }
 
+    /**
+     * Returns the timer used for the single turn duration
+     * @return ControllerTimer used for turn
+     */
     ControllerTimer getControllerTimer() {
         return controllerTimer;
     }
 
+    /**
+     * Reorder the playerList after the end of the round. The first player is inserted in tail
+     */
     private void shiftPlayerList() {
         Player tmp = playerList.get(0);
         playerList.remove(0);
@@ -912,12 +970,19 @@ public class GameManager {
         endRound.set(true);
     }
 
+    /**
+     * Send the updated round track at the end of the round
+     */
     private void notifyUpdatedRoundTrack() {
         int round = 0;
         if (!roundTrack.isEmpty()) round = roundTrack.size() - 1;
         playerBroadcaster.broadcastResponseToAll(new RoundTrackNotification(roundTrack.get(round)));
     }
 
+    /**
+     * Method that set the round Thread in GameManager in WAIT. Wakes up when notify is called on
+     * <code>currentRound.hasPlayerEndedTurn()</code>
+     */
     private void waitEndTurn() {
         synchronized (currentRound.hasPlayerEndedTurn()) {
             while (!currentRound.hasPlayerEndedTurn().get()) {
@@ -949,6 +1014,14 @@ public class GameManager {
      *
      */
 
+    /**
+     * Method for the place-dice move. Inserts <code>dice</code> into the grid
+     * @param player Current player
+     * @param dice Dice to place
+     * @param rowIndex Row index
+     * @param columnIndex Line index
+     * @return
+     */
     boolean makeMove(Player player, Dice dice, int rowIndex, int columnIndex) {
         if (player.getPatternCard().getGrid().get(rowIndex).get(columnIndex).getDice() == null) {
 
@@ -1125,7 +1198,7 @@ public class GameManager {
      * FLUX BRUSH 1ST PHASE
      * Received the selected die from the player thi method re-roll
      *
-     * @param selectedDice
+     * @param selectedDice Dice to be rolled again
      */
     public synchronized void fluxBrushMove(Dice selectedDice) {
         if (toolCardLock.get()) {
@@ -1294,6 +1367,11 @@ public class GameManager {
         }
     }
 
+    /**
+     * Returns the selected tool card
+     * @param toolCardName tool card to return
+     * @return Selected Toolcard
+     */
     private ToolCard getSelectedToolCard(String toolCardName) {
         for (ToolCard toolCard : board.getToolCards()) {
             if (toolCard.getName().equals(toolCardName)) return toolCard;
@@ -1365,6 +1443,11 @@ public class GameManager {
         }
     }
 
+    /**
+     * Place a Dice in the selected position during the use of CopperFoilBurnisher
+     * @param dicePosition coordinates of dice to be moved
+     * @param position coordinates of where to place the dice
+     */
     public synchronized void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
         if (toolCardLock.get()) {
             List<List<Box>> patternCard = currentRound.getCurrentPlayer().getPatternCard().getGrid();
@@ -1647,12 +1730,16 @@ public class GameManager {
     }
 
     /**
-     * TAP WHEEL
-     *
-     * @param roundTrackDice
-     * @param phase
-     * @param dicePosition
-     * @param position
+     * Select a dice from the round track and move at most two dices of the same color.
+     * Phases:
+     *      -1 - Close the tool card
+     *      0  - Send the available positions of all dice of the selected color
+     *      1  - Place one (or two in case of double move) dice in the pattern card
+     *      2  - Place the second dice(double move not allowed)
+     * @param roundTrackDice Dice from which extract the selected color
+     * @param phase phase of the toolcard
+     * @param dicePosition initial position of the dice
+     * @param position final position of the dice
      * @param doubleMove
      */
     public synchronized void tapWheelMove(Dice roundTrackDice, int phase, Tuple dicePosition, Tuple position, boolean doubleMove) {
@@ -1720,10 +1807,23 @@ public class GameManager {
         }
     }
 
+    /**
+     * Set if there was a double move during the tool card use
+     * @param doubleMove
+     */
     public void setDoubleMove(boolean doubleMove) {
         this.doubleMove.set(doubleMove);
     }
-    
+
+    /**
+     * Method that notify the player in TapWheel.
+     * Phase:
+     *      1 - sends available positions(counting the double move);
+     *      2 - sends available positions(without the double move);
+     *      3 - sends the updated pattern card
+     * @param availablePositions
+     * @param phase
+     */
     private void tapWheelResponse(Map<String, Boolean[][]> availablePositions, int phase) {
         if (toolCardLock.get()) {
             if (phase == 1) {

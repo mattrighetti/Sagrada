@@ -8,6 +8,9 @@ import java.rmi.RemoteException;
 
 public class EglomiseBrush extends ToolCard {
 
+    /**
+     * Creates a new EglomiseBrush tool card
+     */
     public EglomiseBrush() {
         super("EglomiseBrush");
     }

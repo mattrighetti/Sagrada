@@ -35,6 +35,9 @@ public class Firmitas extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new Firmitas pattern card
+     */
     public Firmitas() {
         super("Firmitas", 5);
         setGrid(GridCreator.fromString(json));

@@ -35,6 +35,9 @@ public class WaterOfLife extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new WaterOfLife pattern card
+     */
     public WaterOfLife() {
         super("WaterOfLife", 6);
         setGrid(GridCreator.fromString(json));

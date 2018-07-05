@@ -35,6 +35,9 @@ public class RipplesOfLight extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new RipplesOfLight pattern card
+     */
     public RipplesOfLight() {
         super("RipplesOfLight", 5);
         setGrid(GridCreator.fromString(json));

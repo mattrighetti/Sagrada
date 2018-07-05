@@ -35,6 +35,9 @@ public class LuxMundi extends PatternCard {
             "    ]\n" +
             "]";
 
+    /**
+     * Creates a new LuxMundi pattern card
+     */
     public LuxMundi() {
         super("LuxMundi", 6);
         setGrid(GridCreator.fromString(json));
