@@ -13,6 +13,12 @@ import java.util.Scanner;
 public class LaunchServer {
     private static SagradaGame sagradaGame = SagradaGame.get();
 
+    /**
+     * Deploy RMI and Socket serve
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         String ip = args[0];
         Scanner scanner = new Scanner(System.in);
@@ -44,6 +50,16 @@ public class LaunchServer {
         }
     }
 
+    /**
+     * Deploy RMIServer using Naming.rebind
+     *
+     * @param turnTimeOutSeconds maximum duration of the turn
+     * @param joinMatchSeconds maximum duration to join a match
+     * @param ip IpAddress
+     * @param port Port
+     * @throws RemoteException
+     * @throws MalformedURLException
+     */
     private static void deployRMIServer(int turnTimeOutSeconds, int joinMatchSeconds, String ip, int port) throws RemoteException, MalformedURLException {
         RemoteSagradaGame remoteSagradaGame = (RemoteSagradaGame) UnicastRemoteObject.exportObject(sagradaGame, 1100);
         Naming.rebind("rmi://" + ip + ":" + port + "/sagrada", remoteSagradaGame);

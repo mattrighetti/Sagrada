@@ -7,6 +7,10 @@ import ingsw.controller.network.commands.Response;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * Class the takes the request generated in the ClientController, writes them to the socket stream
+ * and then reads the response incoming from the server e passes them to the ClientController
+ */
 public class Client {
     private final String host;
     private final int port;
@@ -14,17 +18,32 @@ public class Client {
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
 
+    /**
+     * Set the socket port and host
+     *
+     * @param host Host
+     * @param port Port
+     */
     public Client(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
+    /**
+     * Connects to the socket with data given in the constructor and
+     * creates the Stream()
+     *
+     * @throws IOException
+     */
     public void connect() throws IOException {
         connection = new Socket(host, port);
         objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
         objectInputStream = new ObjectInputStream(connection.getInputStream());
     }
 
+    /**
+     * Close the streams and the connection
+     */
     void close() {
         try {
             objectInputStream.close();
@@ -35,6 +54,11 @@ public class Client {
         }
     }
 
+    /**
+     * Writes the request to a stream
+     *
+     * @param request Request written on the stream
+     */
     void request(Request request) {
         try {
             objectOutputStream.writeObject(request);
@@ -44,6 +68,11 @@ public class Client {
         }
     }
 
+    /**
+     * Read the response from the inputStream
+     *
+     * @return Response
+     */
     Response nextResponse() {
         try {
             return ((Response) objectInputStream.readObject());
@@ -61,6 +90,10 @@ public class Client {
         return null;
     }
 
+    /**
+     * Sending a ping to the server
+     * @param ping ping
+     */
     void ackPing(Ping ping) {
         try {
             objectOutputStream.writeObject(ping);

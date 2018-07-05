@@ -404,6 +404,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
+    /**
+     * Displays drafted dice
+     *
+     * @param diceList
+     */
     private void displayDraftedDice(List<Dice> diceList) {
 
         if (diceHorizontalBox.getChildren().size() > 0) {

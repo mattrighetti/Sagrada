@@ -15,10 +15,18 @@ public class ClientController implements ResponseHandler, NetworkType {
     private boolean listenerActive = false;
     private SceneUpdater sceneUpdater;
 
+    /**
+     * Assign a client
+     * @param client
+     */
     public ClientController(Client client) {
         this.client = client;
     }
 
+    /**
+     * Set the Scene Updater
+     * @param sceneUpdater FXML Controller
+     */
     public void setSceneUpdater(SceneUpdater sceneUpdater) {
         this.sceneUpdater = sceneUpdater;
     }
@@ -41,6 +49,9 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new LoginUserRequest(username));
     }
 
+    /**
+     * Request the bundle data
+     */
     @Override
     public void requestBundleData() {
         client.request(new BundleDataRequest());
@@ -105,6 +116,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new PlaceDiceRequest(dice, columnIndex, rowIndex));
     }
 
+    /**
+     * Method that tells to the Server that the player wants to use a toolcard
+     *
+     * @param toolCardName
+     */
     @Override
     public void useToolCard(String toolCardName) {
         client.request(new UseToolCardRequest(toolCardName));
@@ -119,96 +135,204 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new EndTurnRequest(player));
     }
 
+    /**
+     * Method that creates the request for Grinding Stone
+     *
+     * @param dice Selected dice
+     */
     @Override
     public void grindingStoneMove(Dice dice) {
         client.request(new GrindingStoneRequest(dice));
     }
 
+    /**
+     * Method that creates the request for Lens Cutter
+     *
+     * @param roundIndex Round Index
+     * @param roundTrackDice Dice to extract from the roundTrack
+     * @param poolDice Dice To insert again in the pool dice
+     */
     @Override
     public void lensCutter(int roundIndex, String roundTrackDice, String poolDice) {
         client.request(new LensCutterRequest(roundIndex, roundTrackDice, poolDice));
     }
 
+    /**
+     * Method that creates the request for Running Pliers
+     *
+     * @param selectedDice Selected Dice to place
+     * @param rowIndex Row index
+     * @param columnIndex Column index
+     */
     @Override
     public void runningPliersMove(Dice selectedDice, int rowIndex, int columnIndex) {
         client.request(new RunningPliersRequest(selectedDice, rowIndex, columnIndex));
     }
 
+    /**
+     * Method that creates the request for TapWheel
+     *
+     * @param dice Dice from the round track
+     * @param phase Phase of Tap Wheel
+     */
     @Override
     public void tapWheelMove(Dice dice, int phase) {
         client.request(new TapWheelRequest(dice, phase));
     }
 
+    /**
+     * Method that creates the request for TapWheel
+     *
+     * @param dicePosition Dice initial position
+     * @param position Dice final position or second dice position(in case of double move)
+     * @param phase Phase of Tap Wheel
+     * @param doubleMove DoubleMove
+     */
     @Override
     public void tapWheelMove(Tuple dicePosition, Tuple position, int phase, boolean doubleMove) {
         client.request(new TapWheelRequest(dicePosition, position, phase, doubleMove));
     }
 
+    /**
+     * Method that creates the request for TapWheel
+     *
+     * @param endTapWheel End phase Tap Wheel
+     */
     @Override
     public void tapWheelMove(int endTapWheel) {
         client.request(new TapWheelRequest(endTapWheel));
     }
 
+    /**
+     * Method that creates the request for Gronzing Pliers
+     *
+     * @param dice Selected dice
+     * @param increase Increase/decrease value
+     */
     @Override
     public void grozingPliersMove(Dice dice, boolean increase) {
         client.request(new GrozingPliersRequest(dice, increase));
     }
 
+    /**
+     * Method that creates the request for Flux Brush
+     *
+     * @param dice Selected dice
+     */
     @Override
     public void fluxBrushMove(Dice dice) {
         client.request(new FluxBrushRequest(dice));
     }
 
+    /**
+     * Method that creates the request for Flux Brush
+     *
+     * @param selectedDice Selected dice
+     * @param rowIndex Row index
+     * @param columnIndex Column index
+     */
     @Override
     public void fluxBrushMove(Dice selectedDice, int rowIndex, int columnIndex) {
         client.request(new FluxBrushRequest(selectedDice, rowIndex, columnIndex));
     }
 
+    /**
+     * Method that creates the request for Flux Brush
+     */
     @Override
     public void fluxBrushMove() {
         client.request((new FluxBrushRequest()));
     }
 
+    /**
+     * Method that creates the request for Flux Remover
+     *
+     * @param dice Selected dice
+     */
     @Override
     public void fluxRemoverMove(Dice dice) {
         client.request(new FluxRemoverRequest(dice));
     }
 
+    /**
+     * Method that creates the request for Flux Remover
+     *
+     * @param dice Selected dice
+     * @param chosenValue new face up value
+     */
     @Override
     public void fluxRemoverMove(Dice dice, int chosenValue) {
         client.request(new FluxRemoverRequest(dice, chosenValue));
     }
 
+    /**
+     * Method that creates the request for Flux Remover
+     */
     @Override
     public void fluxRemoverMove() {
         client.request(new FluxRemoverRequest());
     }
 
+    /**
+     * Method that creates the request for Flux Remover
+     *
+     * @param selectedDice Selected dice
+     * @param columnIndex Column index
+     * @param rowIndex Row index
+     */
     @Override
     public void fluxRemoverMove(Dice selectedDice, int columnIndex, int rowIndex) {
         client.request(new FluxRemoverRequest(selectedDice, rowIndex, columnIndex));
     }
 
+    /**
+     * Method that creates the request for Copper Foil Burnisher
+     *
+     * @param dicePosition Initial dice position
+     * @param position Final dice position
+     */
     @Override
     public void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
         client.request(new CopperFoilBurnisherRequest(dicePosition, position));
     }
 
+    /**
+     * Method that creates the request for corkBackedStraightEdge
+     *
+     * @param selectedDice Selected dice
+     * @param row Row index
+     * @param column Column index
+     */
     @Override
     public void corkBackedStraightedgeMove(Dice selectedDice, int row, int column) {
         client.request((new CorkBackedStraightedgeRequest(selectedDice, row, column)));
     }
 
+    /**
+     * Method that creates the request for Lathekin
+     *
+     * @param dicePosition Initial dice position
+     * @param position Final dice position or second dice position in case of double move
+     * @param doubleMove DoubleMove
+     */
     @Override
     public void lathekinMove(Tuple dicePosition, Tuple position, boolean doubleMove) {
         client.request(new LathekinRequest(dicePosition, position, doubleMove));
     }
 
+    /**
+     * Method that creates the request for the finished matches
+     */
     @Override
     public void requestFinishedMatches() {
         client.request(new FinishedMatchesRequest());
     }
 
+    /**
+     * Method that creates the request for the history
+     *
+     * @param matchName Name of the match
+     */
     @Override
     public void requestHistory(String matchName) {
         client.request(new ReadHistoryRequest(matchName));
@@ -368,6 +492,11 @@ public class ClientController implements ResponseHandler, NetworkType {
         sceneUpdater.setDraftedDice(draftedDiceResponse.dice);
     }
 
+    /**
+     * Handle of RoundTrackNotification
+     *
+     * @param roundTrackNotification Roundtrack updated
+     */
     @Override
     public void handle(RoundTrackNotification roundTrackNotification) {
         sceneUpdater.updateRoundTrack(roundTrackNotification);
@@ -431,6 +560,12 @@ public class ClientController implements ResponseHandler, NetworkType {
         }
     }
 
+    /**
+     * Method that handle the ReJoinResponse
+     *
+     * @param reJoinResponse Response returned by the server with the username of the player
+     *                       and the Controller name to join
+     */
     @Override
     public void handle(ReJoinResponse reJoinResponse) {
         System.out.println("Response Received, requesting rejoin in match");
@@ -438,46 +573,94 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new ReJoinMatchRequest(reJoinResponse.matchName));
     }
 
+    /**
+     * Method that handle the bundleDataResponse
+     *
+     * @param bundleDataResponse Response returned by the server with the lobby data
+     */
     @Override
     public void handle(BundleDataResponse bundleDataResponse) {
         sceneUpdater.loadLobbyData(bundleDataResponse);
     }
 
+    /**
+     * Method that handle the loseNotification
+     *
+     * @param loseNotification It contains the player's score
+     */
     @Override
     public void handle(LoseNotification loseNotification) {
         sceneUpdater.showLostNotification(loseNotification.totalScore);
     }
 
+    /**
+     * Method that handle the winNotification
+     *
+     * @param victoryNotification It contains the player's score
+     */
     @Override
     public void handle(VictoryNotification victoryNotification) {
         sceneUpdater.showWinnerNotification(victoryNotification.totalScore);
     }
 
+    /**
+     * Method that handle the TimeOutResponse
+     *
+     * @param timeOutResponse It creates a pop-up in which is written that
+     *                        the timer is ended and the player automatically
+     *                        the turn.
+     */
     @Override
     public void handle(TimeOutResponse timeOutResponse) {
         sceneUpdater.timeOut(timeOutResponse);
     }
 
+    /**
+     * Method that handle the finishedMatchesResponse
+     *
+     * @param finishedMatchesResponse It contains all the finished matches
+     */
     @Override
     public void handle(FinishedMatchesResponse finishedMatchesResponse) {
         sceneUpdater.showFinishedMatches(finishedMatchesResponse.finishedMatchesList);
     }
 
+    /**
+     * Method that handle the endTurnResponse
+     *
+     * @param endTurnResponse Response that disables all the view commands
+     */
     @Override
     public void handle(EndTurnResponse endTurnResponse) {
         sceneUpdater.endedTurn();
     }
 
+    /**
+     * Method that handle the availablePositionsResponse
+     *
+     * @param availablePositionsResponse Response containing the available position
+     *                                   for that game Phase(place dice, use toolcard ecc.)
+     */
     @Override
     public void handle(AvailablePositionsResponse availablePositionsResponse) {
         sceneUpdater.setAvailablePositions(availablePositionsResponse.availablePositions);
     }
 
+    /**
+     * Method that handle the historyResponse
+     *
+     * @param historyResponse contains the required match review
+     */
     @Override
     public void handle(HistoryResponse historyResponse) {
         sceneUpdater.showSelectedMatchHistory(historyResponse.historyJSON);
     }
 
+    /**
+     * Method that handle the rankingDataResponse
+     *
+     * @param rankingDataResponse Response that contains the ranking
+     */
     @Override
     public void handle(RankingDataResponse rankingDataResponse) {
         sceneUpdater.updateRankingStatsTableView(rankingDataResponse.tripleString);

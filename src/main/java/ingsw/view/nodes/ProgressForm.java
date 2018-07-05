@@ -16,6 +16,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+/**
+ * Progress form used during the loading phase of the game(join and rejoin a match)
+ */
 public class ProgressForm {
     private final Stage dialogStage;
     private final VBox vBox;

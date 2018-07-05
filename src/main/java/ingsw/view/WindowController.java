@@ -266,6 +266,12 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * Lathekin Mouse Event: moves exactly two dices using a double move
+     * or two single moves
+     *
+     * @param thisDicePane
+     */
     private void lathekinMouseEvent(DicePane thisDicePane) {
         if (selectedPositions.isEmpty()) {
             if (!thisDicePane.getStyleClass().isEmpty() && !thisDicePane.getStyleClass().contains("grey")) {
@@ -359,6 +365,12 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * Activates Dice during Tap Wheel toolcard, using the Color of the dice chosen
+     * from the RoundTrack
+     *
+     * @param diceColor Round track dice color
+     */
     void activateTapWheelDice(Color diceColor) {
         System.out.println("Activating dice " + diceColor);
         for (int i = 0; i < 4; i++) {
@@ -374,6 +386,12 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * Set onMouseClicked on every DicePane during TapWheel toolcard
+     *
+     * @param phase Tap Wheel phase
+     * @param diceColor Color of the dice chosen from the RoundTrack
+     */
     void moveDiceinPatternCardTapWheel(int phase, String diceColor) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -384,6 +402,16 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * Tap Wheel Mouse Event: implements the single and the doule move mechanism.
+     * Every time a dice is clicked it checks if there is already a selected dice,
+     * creates the Tuple with its position in the grid and send the response to
+     * the server using a tapWheelMove()
+     *
+     * @param thisDicePane
+     * @param phase
+     * @param diceColor
+     */
     private void tapWheelMouseEvent(DicePane thisDicePane, int phase, String diceColor) {
         System.out.println("TAPWHEEL");
         if (selectedPositions.isEmpty()) {
@@ -417,6 +445,12 @@ public class WindowController implements Initializable {
             selectedPositions.clear();
     }
 
+    /**
+     * Activates Dice during Tap Wheel toolcard, using position of a dice selected from the patterncard
+     *
+     * @param first
+     * @param second
+     */
     private void activateTapWheelDice(int first, int second) {
         String diceColor = dicePanes[first][second].getStyle();
 
@@ -432,6 +466,10 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * Updates the PatternCard during TapWheel toolcard
+     * @param patternCard
+     */
     void updatePatternCardTapWheel(PatternCard patternCard) {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {

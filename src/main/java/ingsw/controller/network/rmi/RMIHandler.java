@@ -43,14 +43,35 @@ public class RMIHandler implements RequestHandler {
         this.rmiUserObserver = rmiUserObserver;
     }
 
+    /**
+     * Creates the address for doing the rebind of SagradaGame
+     *
+     * @param ipAddress ipAddress
+     * @return the URL
+     */
     private String rebindSagradaUrl(String ipAddress) {
         return RMI_SLASH + ipAddress + RMI_PORT + "sagrada";
     }
 
+    /**
+     * Creates the address for doing the rebind of Controller
+     *
+     * @param ipAddress
+     * @param joinMatchRequest contains match name
+     * @return
+     */
     private String rebindControllerUrl(String ipAddress, JoinMatchRequest joinMatchRequest) {
         return RMI_SLASH + ipAddress + RMI_PORT + joinMatchRequest.matchName;
     }
 
+    /**
+     * Creates the address for doing the rebind of Controller
+     * during the rejoining
+     *
+     * @param ipAddress
+     * @param reJoinMatchRequest contains the match name
+     * @return
+     */
     private String rebindControllerUrl(String ipAddress, ReJoinMatchRequest reJoinMatchRequest) {
         return RMI_SLASH + ipAddress + RMI_PORT + reJoinMatchRequest.matchName;
     }

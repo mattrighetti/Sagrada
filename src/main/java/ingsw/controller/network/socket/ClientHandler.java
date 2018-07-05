@@ -11,6 +11,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class that reads request sent from the client and writes the server responses via Socket
+ */
 public class ClientHandler implements Runnable, UserObserver, Serializable {
     private static final String ERROR_IN = "Errors in closing - ";
 
@@ -23,6 +26,11 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
 
     private ServerController serverController;
 
+    /**
+     * Creates a new ClientHandler with a given socket, creates the streams and a ServerController
+     * @param clientSocket ClientSocket
+     * @throws IOException
+     */
     ClientHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
         this.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -71,6 +79,9 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         }
     }
 
+    /**
+     * Close the ClienHandler
+     */
     private void shutdownClientHandler() {
         serverController.deactivateUser();
         pinger.cancel(true);
@@ -92,6 +103,9 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         }
     }
 
+    /**
+     * Write the Ping to the <code>ObjectOutputStream</code>
+     */
     private synchronized void checkConnection() {
         if (!stop) {
             try {
@@ -105,6 +119,9 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         }
     }
 
+    /**
+     * Activate Pinger TCP that schedules every 3 secondos to check for disconnection
+     */
     private void pingTimer() {
         pinger = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::checkConnection,
                                                                                      0,
@@ -112,6 +129,9 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
                                                                                      TimeUnit.SECONDS);
     }
 
+    /**
+     * Stop readResponse()
+     */
     private void stop() {
         stop = true;
     }
@@ -145,6 +165,10 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         }
     }
 
+    /**
+     * Get the ServeController
+     * @return ServerController
+     */
     public ServerController getServerController() {
         return serverController;
     }
@@ -165,11 +189,17 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         respond(new IntegerResponse(numberOfConnectedUsers));
     }
 
+    /**
+     * Check if the user is active
+     */
     @Override
     public void checkIfActive() {
 
     }
 
+    /**
+     * Activate Pinger
+     */
     @Override
     public void activatePinger() {
         pingTimer();
@@ -205,11 +235,21 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
         respond(new StartTurnNotification(booleanMapGrid));
     }
 
+    /**
+     * Send a victory notification with the points of the match
+     * @param score Score
+     *
+     */
     @Override
     public void notifyVictory(int score) {
         respond(new VictoryNotification(score));
     }
 
+    /**
+     * Send a lost notification with the points of the match
+     * @param score Score
+     *
+     */
     @Override
     public void notifyLost(int score) {
         respond(new LoseNotification(score));

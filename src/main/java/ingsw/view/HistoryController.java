@@ -85,6 +85,11 @@ public class HistoryController implements SceneUpdater, Initializable {
         moveStatusList.addAll(history);
     }
 
+    /**
+     * Set the networkType
+     *
+     * @param networkType object that does implements the Network type interface
+     */
     @Override
     public void setNetworkType(NetworkType networkType) {
         this.networkType = networkType;

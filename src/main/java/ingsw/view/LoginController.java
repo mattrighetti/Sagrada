@@ -91,11 +91,21 @@ public class LoginController implements SceneUpdater {
         RMIToggleButton.setDisable(true);
     }
 
+    /**
+     * Updates ConnectedUsers
+     *
+     * @param connectedUsers
+     */
     @Override
     public void updateConnectedUsers(int connectedUsers) {
         application.updateConnectedUsers(connectedUsers);
     }
 
+    /**
+     * UpdateExistingMatches
+     *
+     * @param matches matches currently available in the game
+     */
     @Override
     public void updateExistingMatches(List<DoubleString> matches) {
         application.updateExistingMatches(matches);

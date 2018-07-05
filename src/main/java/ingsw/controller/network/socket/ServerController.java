@@ -20,7 +20,7 @@ public class ServerController implements RequestHandler, Serializable {
 
     /**
      * Creates a new ServerController and set the ClientHandler
-     * @param clientHandler
+     * @param clientHandler ClientHandler
      */
     ServerController(ClientHandler clientHandler) {
         this.clientHandler = clientHandler;
