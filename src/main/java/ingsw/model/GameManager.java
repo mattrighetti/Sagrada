@@ -738,7 +738,7 @@ public class GameManager {
             } else {
                 try {
                     player.getUser().incrementNoOfLose();
-                    addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "loses the match"));
+                    addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "lose the match"));
                     if (player.getUser().isActive()) {
                         player.getUserObserver().notifyLost(player.getScore());
                     }
@@ -1077,7 +1077,7 @@ public class GameManager {
                     toolCardLock.set(true);
                     for (ToolCard toolCard : board.getToolCards()) {
                         if (toolCard.getName().equals(toolCardName)) {
-                            addMoveToHistoryAndNotify(new MoveStatus("Get the name", "Used toolcard " + toolCardName));
+                            addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "Used toolcard " + toolCardName));
                             currentRound.makeMove(toolCard);
 
                         }

@@ -345,14 +345,12 @@ public class ClientController implements ResponseHandler, NetworkType {
         new Thread(
                 () -> {
                     listenerActive = true;
-                    System.out.println("Opening the Thread");
                     Response response;
                     do {
                         response = client.nextResponse();
                         if (response != null) {
                             if (!(response instanceof Ping)) {
                                 response.handle(this);
-                                System.out.println("Received a response: " + response);
                             } else client.ackPing(new Ping());
                         } else {
                             System.err.println("Null received, stopping broadcast");
