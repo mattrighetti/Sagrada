@@ -263,6 +263,7 @@ public class CLI implements SceneUpdater {
         for (ToolCard toolCard : boardDataResponse.toolCards) {
             toolCards.add((toolCard.getName()));
         }
+        roundTrack = boardDataResponse.roundTrack;
     }
 
     /**
@@ -499,7 +500,9 @@ public class CLI implements SceneUpdater {
 
         System.out.println("Your Statistic:\n");
         for (TripleString statistic : statistics) {
-            System.out.println(statistic.toString());
+            System.out.println("Wins:\t" +statistic.getFirstField() );
+            System.out.println("Loses:\t" +statistic.getSecondField());
+            System.out.println("Time played:\t" +statistic.getThirdField() );
         }
 
     }
@@ -950,7 +953,7 @@ public class CLI implements SceneUpdater {
         ranking.clear();
         ranking.addAll(bundleDataResponse.rankings);
         statistics.clear();
-        statistics.addAll(bundleDataResponse.userStatistics.values());
+        statistics.add(bundleDataResponse.getUserStatsData(username));
     }
 
     @Override

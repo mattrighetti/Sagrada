@@ -26,12 +26,10 @@ public class StoppableScanner {
             try {
                 inputLine = lineRead.get();
             } catch (IllegalStateException e) {
-                System.err.println("Time OUT triggers (Illegal State Exception)");
+                System.err.println("Wrong Input");
                 inputLine = "interrupted";
             } catch (ExecutionException e) {
-                System.err.println("Interrupted READ LINE");
             } catch (InterruptedException e) {
-                System.err.println("Interrupted READ LINE");
                 Thread.currentThread().interrupt();
                 executorService.shutdown();
                 inputLine = "interrupted";
@@ -61,13 +59,11 @@ public class StoppableScanner {
                 System.err.println("Type again");
                 inputInt = -1;
             } catch (IllegalStateException e) {
-                System.err.println("Time OUT triggers (Illegal State Exception)");
+                System.err.println("Wrong Input");
                 inputInt = -1;
             } catch (ExecutionException e) {
-                System.err.println("Interrupted READ INT");
                 inputInt = -1;
             } catch (InterruptedException e) {
-                System.err.println("Interrupted READ INT");
                 Thread.currentThread().interrupt();
                 inputInt = -1;
             }

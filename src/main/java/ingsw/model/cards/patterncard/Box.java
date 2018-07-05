@@ -88,12 +88,18 @@ public class Box implements Serializable {
     public String toString() {
         if (dice == null) {
             if (isValueSet()) return "[" + value + " ->  ]";
-            else return "[" + color.name().charAt(0) + " ->  ]";
+            else {
+                if (color.equals(Color.BLANK)) return "[_->  ]";
+                else return "[" + color.name().charAt(0) + " ->  ]";
+            }
         } else {
             if (isValueSet())
                 return "[" + value + " -> " + dice.getDiceColor().name().charAt(0) + dice.getFaceUpValue() + "]";
-            else
-                return "[" + color.name().charAt(0) + " -> " + dice.getDiceColor().name().charAt(0) + dice.getFaceUpValue() + "]";
+            else{
+                if (color.equals(Color.BLANK)) return "[_->" + dice.getDiceColor().name().charAt(0) + dice.getFaceUpValue() + "]";
+                else return "[" + color.name().charAt(0) + " -> " + dice.getDiceColor().name().charAt(0) + dice.getFaceUpValue() + "]";
+
+            }
         }
     }
 
