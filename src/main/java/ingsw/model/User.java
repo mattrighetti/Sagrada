@@ -230,6 +230,7 @@ public class User implements Serializable {
             return stopWatch.getTime();
         } else {
             stopWatch = new StopWatch();
+            stopWatch.start();
             return stopWatch.getTime();
         }
     }

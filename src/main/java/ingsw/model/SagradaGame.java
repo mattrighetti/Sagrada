@@ -50,6 +50,7 @@ public class SagradaGame implements RemoteSagradaGame {
         maxJoinMatchSeconds = 40;
         maxTurnSeconds = 120;
         stop = false;
+        readUserStatsFromFile();
         rmiUsersListener();
     }
 
@@ -153,8 +154,9 @@ public class SagradaGame implements RemoteSagradaGame {
                                                }.getType());
                 userBroadcaster = new UserBroadcaster(connectedUsers);
             } catch (IOException e) {
-                e.printStackTrace();
                 System.err.println("File non trovato, carico Sagrada");
+                jarParentFolder.mkdir();
+                userBroadcaster = new UserBroadcaster(connectedUsers);
             }
         }).start();
         System.out.println("EXITED");
