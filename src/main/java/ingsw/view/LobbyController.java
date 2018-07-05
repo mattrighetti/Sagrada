@@ -225,7 +225,7 @@ public class LobbyController implements SceneUpdater, Initializable {
         ranking.clear();
         ranking.addAll(bundleDataResponse.rankings);
         statistics.clear();
-        statistics.addAll(bundleDataResponse.getUserStatsData(application.getUsername()));
+        statistics.add(bundleDataResponse.getUserStatsData(application.getUsername()));
         updateConnectedUsers(bundleDataResponse.connectedUsers);
     }
 
