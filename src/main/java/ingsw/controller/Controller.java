@@ -327,6 +327,7 @@ public class Controller implements RemoteController {
      *
      * @param grindingStoneRequest contains the selected die
      */
+    @Override
     public void toolCardMove(GrindingStoneRequest grindingStoneRequest) throws RemoteException {
         gameManager.grindingStoneMove(grindingStoneRequest.selectedDice);
     }

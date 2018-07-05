@@ -66,6 +66,9 @@ public interface SceneUpdater {
         System.out.println("Not overridden -> launchSecondGui");
     }
 
+    /**
+     * Response that notifies the user that the chosen username has already been taken
+     */
     default void launchAlert() {
         System.out.println("Not overridden -> launchAlert");
     }
@@ -143,7 +146,7 @@ public interface SceneUpdater {
     }
 
     /**
-     * Method that update the round track with the turn remaining dice at the end of the round
+     * Method that update the round track with the remaining dice at the end of the round
      *
      * @param roundTrackNotification class that contains the updated Round Track List
      */
@@ -151,102 +154,203 @@ public interface SceneUpdater {
         System.out.println("Not overridden -> updateRoundTrack");
     }
 
+    /**
+     * Method that update the move history
+     *
+     * @param notification the notification containing the new move
+     */
     default void updateMovesHistory(MoveStatusNotification notification) {
         System.out.println("Not overridden -> updateMovesHistory");
     }
 
+    /**
+     * Method that update the drafted dice after a ToolCard move
+     *
+     * @param draftedDiceToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     * Response for Tool Card move: Grozing Pliers
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(GrozingPliersResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     *  Response for Tool Card move: FluxBrush
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(FluxBrushResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     *  Response for Tool Card move: FluxRemover
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(FluxRemoverResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     *  Response for Tool Card move: GrindingStone
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(GrindingStoneResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     *  Response for Tool Card move: CopperFoilBurnisher
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(CopperFoilBurnisherResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     *  Response for Tool Card move: Lathekin
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(LathekinResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     *  Response for Tool Card move: CorkBackedStraightedge
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(CorkBackedStraightedgeResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     *  Response for Tool Card move: LensCutter
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(LensCutterResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     *  Response for Tool Card move: EglomiseBrush
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(EglomiseBrushResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     * Method that update the round track after a tool card move that modifies it
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     default void toolCardAction(RoundTrackToolCardResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     * Method that update the PatternCard after a toolCard move
+     * @param useToolCardResponse contains datas for the toolCard move
+     */
     default void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     * Response that advices the player that he cannot use the tool card because of restriction or because
+     * the player has not enough favour tokens
+     * @param useToolCardResponse contains the favour token of the player
+     */
     default void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     * Response for Tool Card move: RunningPliers
+     * @param useToolCardResponse contains data for the toolCard mov
+     */
     default void toolCardAction(RunningPliersResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     * Response for Tool Card move: TapWheel
+     * @param useToolCardResponse contains data for the toolCard mov
+     */
     default void toolCardAction(TapWheelResponse useToolCardResponse) {
         System.out.println("Not overridden -> toolCardAction");
     }
 
+    /**
+     * Response to launch the waiting progress in the GUI after the login
+     */
     default void launchProgressForm() {
         System.out.println("Not overridden -> launchProgressForm");
     }
 
+    /**
+     * After the login request the server sends a response to confirm the login with the username chosen
+     * @param username username chosen from the user
+     */
     default void setUsernameInApplication(String username) {
         System.out.println("Not overridden -> setUsernameInApplication");
     }
 
+    /**
+     * Notification for the players who lose tha match
+     * @param totalScore the player's score
+     */
     default void showLostNotification(int totalScore) {
         System.out.println("Not overridden -> showLostNotification");
     }
 
+    /**
+     * Notification for the player who wins the match
+     * @param totalScore the player's score
+     */
     default void showWinnerNotification(int totalScore) {
         System.out.println("Not overridden -> showWinnerNotification");
     }
 
+    /**
+     * Notification that advices the player that the turn time is finished and the turn is ended
+     * @param timeOutResponse it may contain match data to set in the client
+     */
     default void timeOut(TimeOutResponse timeOutResponse) {
         System.out.println("Not overridden");
     }
 
+    /**
+     * Method that loads the ranking, the statistics, and the matches in the lobby view
+     * @param bundleDataResponse
+     */
     default void loadLobbyData(BundleDataResponse bundleDataResponse) {
         System.out.println("Not overridden -> loadLobbyData");
     }
 
+    /**
+     * Method that sends to the client the list of finished matches in Sagrada
+     * @param finishedMatches list of finished matches to replay
+     */
     default void showFinishedMatches(List<String> finishedMatches) {
         System.out.println("Not overridden -> showFinishedMatches");
     }
 
+    /**
+     * Method that notifies the player that his turn is ended and disables the commands in the view
+     */
     default void endedTurn() {
         System.out.println("Not overridden -> endedTurn");
     }
 
+    /**
+     * It sends the new available positions to the clients
+     * @param availablePositions the uploaded available positions uploaded
+     */
     default void setAvailablePositions(Map<String, Boolean[][]> availablePositions) {
         System.out.println("Not overridden -> setAvailablePositions");
     }

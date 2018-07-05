@@ -65,12 +65,20 @@ public class HistoryController implements SceneUpdater, Initializable {
         networkType.requestFinishedMatches();
     }
 
+    /**
+     * Saves the list of the finished matches from the server
+     * @param finishedMatches list of finished matches to replay
+     */
     @Override
     public void showFinishedMatches(List<String> finishedMatches) {
         matchesPlayed.clear();
         matchesPlayed.addAll(finishedMatches);
     }
 
+    /**
+     * Saves the selected Match History
+     * @param history
+     */
     @Override
     public void showSelectedMatchHistory(List<MoveStatus> history) {
         moveStatusList.clear();
@@ -87,6 +95,10 @@ public class HistoryController implements SceneUpdater, Initializable {
     }
 
 
+    /**
+     * Go back to the lobby GUI
+     * @param actionEvent button listner
+     */
     public void onBackButtonPressed(ActionEvent actionEvent) {
         Platform.runLater(() -> application.launchSecondGUI(application.getUsername()));
     }

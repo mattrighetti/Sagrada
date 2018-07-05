@@ -56,6 +56,9 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * Method that reset the onAction of the dicePane in the Pattern Card
+     */
     void resetDiceCursorMouseEvent() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -64,6 +67,10 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * Reset the default onAction listener in the dicePane
+     * @param dicePane the dicePane
+     */
     private void diceCursorMouseEvent(DicePane dicePane) {
         dicePane.setOnMouseClicked(event -> {
             System.out.println(CLICKED);
@@ -114,6 +121,10 @@ public class WindowController implements Initializable {
         return username;
     }
 
+    /**
+     * Uploads the view with the pattern card and his die
+     * @param patternCard grid to upload on the view
+     */
     void updatePatternCard(PatternCard patternCard) {
 
         for (int j = 0; j < 4; j++) {
@@ -130,6 +141,10 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * Method that uploads the mask of the positions in the grid where the player can put the selected die
+     * @param diceString the dice selected
+     */
     synchronized void updateAvailablePositions(String diceString) {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
@@ -151,6 +166,10 @@ public class WindowController implements Initializable {
         System.out.println("ciao");
     }
 
+    /**
+     * Method that sets the cursor with die image when a die is selcted from drafted pool
+     * @param dice
+     */
     void setCursorDice(String dice) {
         Image cursor = new Image("/img/dice/" + dice + ".png", 90, 90, true, true);
         ImageCursor imageCursor = new ImageCursor(cursor);
@@ -195,6 +214,10 @@ public class WindowController implements Initializable {
 
     }
 
+    /**
+     * Method that sets the listener of the DicePane in the patternCard to send to the server
+     * the dice and the position where the dice has to be placed
+     */
     void corkBackedStraightedge() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -214,6 +237,9 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * Method that set the listener of the dicePane in the patternCard for Lathekin move
+     */
     void moveDiceinPatternCardLathekin() {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 5; k++) {
@@ -224,6 +250,10 @@ public class WindowController implements Initializable {
 
     }
 
+    /**
+     * Method that enables the dicePane in the patternCard where there is a die
+     * and disables the empty one
+     */
     void enableDiceInPatternCard() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -258,6 +288,11 @@ public class WindowController implements Initializable {
             selectedPositions.clear();
     }
 
+    /**
+     * Flux Remover tool card
+     * Method that sets the listener of the DicePane in the patternCard to send to the server
+     * the dice and the position where the dice has to be placed
+     */
     void fluxBrushMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -277,7 +312,11 @@ public class WindowController implements Initializable {
         }
     }
 
-
+    /**
+     * FluxRemover ToolCard
+     * Method that sets the listener of the DicePane in the patternCard to send to the server
+     * the dice and the position where the dice has to be placed
+     */
     void fluxRemoverMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -297,6 +336,11 @@ public class WindowController implements Initializable {
         }
     }
 
+    /**
+     * RunnningPliers ToolCard
+     * Method that sets the listener of the DicePane in the patternCard to send to the server
+     * the dice and the position where the dice has to be placed
+     */
     void runningPliersMove() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {

@@ -308,7 +308,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
     /**
-     * Method that disables every Dice in the view
+     * Method that disables every Dice from the drafted pool in the view
      */
     public void disableDice() {
         Platform.runLater(
@@ -483,6 +483,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         setWindowsTab();
     }
 
+    /**
+     * Method that upload the image of the public objective cards on the GUI
+     * @param publicObjectiveCards list of public objective cards
+     */
     private void displayPublicObjectiveCards(List<PublicObjectiveCard> publicObjectiveCards) {
         int counter = 0;
         for (ImageView imageView : publicCardsImageViewsList) {
@@ -491,6 +495,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
+    /**
+     * Method that notifies the player that the turn time is finished and his turn is ended
+     * It disable all the buttons and the listeners
+     * @param timeOutResponse it may contain match data to set in the client
+     */
     @Override
     public void timeOut(TimeOutResponse timeOutResponse) {
         Platform.runLater(() -> {
@@ -508,21 +517,34 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
+    /**
+     * Notification of ended turn, it disables all the commands
+     */
     @Override
     public void endedTurn() {
         disableCommandsAndReset();
     }
 
+    /**
+     * It saves the new available positions
+     * @param availablePositions the uploaded available positions uploaded
+     */
     @Override
     public void setAvailablePositions(Map<String, Boolean[][]> availablePositions) {
         windowControllerList.get(0).setAvailablePosition(availablePositions);
     }
 
+    /**
+     * Method called from the player when press endTurn, it notify the server and disables all the commands in the GUI
+     */
     private void endTurnButtonReset() {
         disableCommandsAndReset();
         networkType.endTurn(application.getUsername());
     }
 
+    /**
+     * Method that disables the commands on the GUI and reset the flags
+     */
     private void disableCommandsAndReset() {
         windowControllerList.get(0).getPatternCardGridPane().setCursor(Cursor.DEFAULT);
         windowControllerList.get(0).setSelectedDice(null);
@@ -532,24 +554,40 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         endTurnButton.setDisable(true);
     }
 
+    /**
+     * Method that upload the the Pattern card and the available positions after the end of the turn
+     * @param updateViewResponse class that contains updated object of the game
+     */
     @Override
     public void updateView(UpdateViewResponse updateViewResponse) {
         updateTab(updateViewResponse.player, updateViewResponse.availablePositions);
         disableDice();
     }
 
+    /**
+     * Method that adds to the roundTrack the new set of dice  the last round
+     * @param roundTrackNotification class that contains the updated Round Track List
+     */
     @Override
     public void updateRoundTrack(RoundTrackNotification roundTrackNotification) {
         addRoundInRoundTrack(roundTrackNotification.roundTrack);
 
     }
 
+    /**
+     * Method that update the list of move history of the current match
+     * @param notification the notification containing the new move
+     */
     @Override
     public void updateMovesHistory(MoveStatusNotification notification) {
         playersMoves.clear();
         playersMoves.addAll(notification.moveStatuses);
     }
 
+    /**
+     * Method that saves and shows the new drated pool
+     * @param dice drafted dice
+     */
     @Override
     public void setDraftedDice(List<Dice> dice) {
         Platform.runLater(() -> displayDraftedDice(dice));
@@ -557,6 +595,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         networkType.sendAck();
     }
 
+    /**
+     * Method that notifies the player that it's his turn
+     * @param startTurnNotification start turn notification
+     */
     @Override
     public void startTurn(StartTurnNotification startTurnNotification) {
         Platform.runLater(() -> {
@@ -567,6 +609,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         windowControllerList.get(0).setAvailablePosition(startTurnNotification.booleanMapGrid);
     }
 
+    /**
+     * Method that activates the buttons and the listen to let the player make a move
+     */
     private void activateCommands() {
         activateDice();
         activateToolCard();
@@ -592,6 +637,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
+    /**
+     * Method that adds the new dice of the last round to the round track and activate the button of the relative round
+     * @param diceToAdd set of dice of the last round that have to be added in the roundtrack
+     */
     private void addRoundInRoundTrack(List<Dice> diceToAdd) {
         currentRound++;
         roundTrackDice.add(diceToAdd);
@@ -599,6 +648,12 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         roundTrackButtonList.get(currentRound - 1).setDisable(false);
     }
 
+    /**
+     * Method called after the player has pressed a roundTrack button,
+     * it shows the dice relative to that round in the roundtrack
+     * @param diceToAdd list of dice to show in the gui
+     * @param toolCard in case it ha to set the listener for a tool card to the dice
+     */
     private void showDiceInRoundTrack(List<Dice> diceToAdd, String toolCard) {
         for (int i = 0; i < diceToAdd.size(); i++) {
 
@@ -631,19 +686,31 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
+    /**
+     * Disables the roundTrack buttons
+     */
     public void disableRoundTrack() {
         roundTrackDiceHBox.setDisable(true);
     }
 
+    /**
+     * Activate the buttons in the roundTrack
+     */
     private void activateRoundTrack() {
         roundTrackDiceHBox.setDisable(false);
     }
 
+    /**
+     * After the player has placed a dice the round state is flagged
+     */
     @Override
     public void setPlaceDiceMove() {
         roundState = RoundState.DICE_PLACED;
     }
 
+    /**
+     * NOtification for starting round and draft dice
+     */
     @Override
     public void popUpDraftNotification() {
         Platform.runLater(() -> {
@@ -655,6 +722,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
+    /**
+     * Notification in case the player loses the match
+     * @param totalScore the player's score
+     */
     @Override
     public void showLostNotification(int totalScore) {
         Platform.runLater(() -> {
@@ -663,6 +734,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
+    /**
+     * Notification in case the player wins the match
+     * @param totalScore the player's score
+     */
     @Override
     public void showWinnerNotification(int totalScore) {
         Platform.runLater(() -> {
@@ -672,6 +747,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     }
 
+    /**
+     * Check if can be placed any dice in the pattern card
+     * @param availablePositions available positions in the pattern card
+     * @return true if there is at least one available position
+     */
     private boolean checkAvailablePositions(Boolean[][] availablePositions) {
         boolean existsAvailablePosition = false;
         for (int i = 0; i < availablePositions.length; i++) {
@@ -688,7 +768,8 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
 
     /**
-     * @param draftedDiceToolCardResponse
+     * Method that saves and shows the new drated dice after a tool card move
+     * @param draftedDiceToolCardResponse list of dice in drafted pool
      */
     @Override
     public void toolCardAction(DraftedDiceToolCardResponse draftedDiceToolCardResponse) {
@@ -705,6 +786,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
+    /**
+     * Method that saves the new RoundTrack after a tool card move
+     * @param useToolCardResponse contains data for the toolCard move
+     */
     @Override
     public void toolCardAction(RoundTrackToolCardResponse useToolCardResponse) {
         ObservableList<Node> nodesDice = roundTrackDiceHBox.getChildren();
@@ -729,6 +814,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     }
 
 
+    /**
+     * Method that saves and shows the new PatternCard after a tool card move
+     * @param useToolCardResponse contains datas for the toolCard move
+     */
     @Override
     public void toolCardAction(PatternCardToolCardResponse useToolCardResponse) {
         updateTab(useToolCardResponse.player, useToolCardResponse.availablePositions);
@@ -738,6 +827,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         } else activateDice();
     }
 
+    /**
+     * Notify the player if he cannot use the tool card that has chosen
+     * because of tool card restrictions or not enough favour tokens
+     * @param useToolCardResponse contains the favour token of the player
+     */
     @Override
     public void toolCardAction(AvoidToolCardResponse useToolCardResponse) {
         Platform.runLater(() -> {
@@ -819,8 +913,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
      * <p>
      * Tool Card that makes choose a die to be rolled again, than makes place it
      * if it is possible, otherwise let place it in the drafted pool
-     *
-     * @param useToolCardResponse
+     * @param useToolCardResponse contains the drafted dice, the rolled die and the available positions
      */
     @Override
     public void toolCardAction(FluxBrushResponse useToolCardResponse) {
@@ -978,13 +1071,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         }
     }
 
-    /*
-      GRINDING STONE
-
-      Tool Card that makes choose a die to flipped to the opposite side.
-     */
 
     /**
+     *  GRINDING STONE
+     * Tool Card that makes choose a die to flipped to the opposite side.
      * @param useToolCardResponse empty response
      */
     @Override
@@ -1017,10 +1107,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
-    /*
-       GROZING PLIERS
-
-       Toolcard that makes you choose if you want to increase or decrease the value of one die
+    /**
+     * GROZING PLIERS
+     * Toolcard that makes you choose if you want to increase or decrease the value of one die in the drafted pool
+     * @param useToolCardResponse contains data for the toolCard move
      */
     @Override
     public void toolCardAction(GrozingPliersResponse useToolCardResponse) {
@@ -1078,12 +1168,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                             Optional<ButtonType> result = alert.showAndWait();
 
                             if (!result.isPresent()) {
-                                System.out.println("no button pressed");
                             } else {
                                 activateDice();
 
                                 if ((increase == result.get())) {
-                                    System.out.println("increase pressed");
                                     diceButtons = new ArrayList<>();
                                     for (Node button : diceHorizontalBox.getChildren()) {
                                         diceButtons.add((DiceButton) button);
@@ -1092,7 +1180,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                     for (DiceButton button : diceButtons) {
                                         button.setOnMouseClicked(event -> {
                                             if (button.getDice().toString().indexOf('6') < 0) {
-                                                System.out.println(button.getDice().toString());
                                                 networkType.grozingPliersMove(button.getDice(), true);
                                             } else {
                                                 Alert errAlert = new Alert(Alert.AlertType.ERROR, "The value SIX can't be increased");
@@ -1101,7 +1188,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                         });
                                     }
                                 } else if ((decrease == result.get())) {
-                                    System.out.println("decrease pressed");
                                     diceButtons = new ArrayList<>();
                                     for (Node button : diceHorizontalBox.getChildren()) {
                                         diceButtons.add((DiceButton) button);
@@ -1110,7 +1196,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                     for (DiceButton button : diceButtons) {
                                         button.setOnMouseClicked(event -> {
                                             if (button.getDice().toString().indexOf('1') < 0) {
-                                                System.out.println(button.getDice());
                                                 networkType.grozingPliersMove(button.getDice(), false);
                                             } else {
                                                 Alert errAlert = new Alert(Alert.AlertType.ERROR, "The value ONE can't be decreased");
@@ -1127,13 +1212,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 });
     }
 
-    /*
-    * LATHEKIN
-    *
-    * Place exactly two dice. Must pay attention to all restrictions.
-    * */
-
     /**
+     * LATHEKIN
+     * Place exactly two dice. Must pay attention to all restrictions.
      * @param useToolCardResponse
      */
     @Override
@@ -1152,11 +1233,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
-    /*
-        LENS CUTTER
-        Toolcard that makes you choose a die from the drafted pool to swipe up with and another one in roundtrack.
+    /**
+     * LENS CUTTER
+     * Toolcard that makes you choose a die from the drafted pool to swipe up with and another one in roundtrack.
+     * @param useToolCardResponse contains data for the toolCard move
      */
-
     @Override
     public void toolCardAction(LensCutterResponse useToolCardResponse) {
         Platform.runLater(() -> {
@@ -1184,13 +1265,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
-    /*
-        RUNNING PLIERS
-        Toolcard that makes to choose a die and place it before the end of the first turn
-     */
-
     /**
-     * @param useToolCardResponse
+     * RUNNING PLIERS
+     * Toolcard that makes to choose a die and place it before the end of the first turn
+     * @param useToolCardResponse does not contains data
      */
     @Override
     public void toolCardAction(RunningPliersResponse useToolCardResponse) {
@@ -1201,13 +1279,11 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
         });
     }
 
-    /*
-        TAP WHEEL
-
-     */
-
     /**
-     * @param useToolCardResponse
+     * TAP WHEEL
+     * Move up to two dice of the same color that match the color of a dice on the Round Track.
+     * You must obey all the placement restrictions.
+     * @param useToolCardResponse contains the available position and the player with the pattern card
      */
     @Override
     public void toolCardAction(TapWheelResponse useToolCardResponse) {

@@ -45,6 +45,10 @@ public class PatternCardController implements SceneUpdater {
         this.networkType = clientController;
     }
 
+    /**
+     * Set the patternCard button listener, it sends to the server the patterncard chosen from the player
+     * @param event onClick
+     */
     @FXML
     void onClickPatternCardFour(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(3));
@@ -53,6 +57,10 @@ public class PatternCardController implements SceneUpdater {
         progressForm.activateProgressBar();
     }
 
+    /**
+     * Set the patternCard button listener, it sends to the server the patterncard chosen from the player
+     * @param event onClick
+     */
     @FXML
     void onClickPatternCardOne(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(0));
@@ -62,6 +70,10 @@ public class PatternCardController implements SceneUpdater {
         progressForm.activateProgressBar();
     }
 
+    /**
+     * Set the patternCard button listener, it sends to the server the patterncard chosen from the player
+     * @param event onClick
+     */
     @FXML
     void onClickPatternCardThree(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(2));
@@ -70,6 +82,10 @@ public class PatternCardController implements SceneUpdater {
         progressForm.activateProgressBar();
     }
 
+    /**
+     * Set the patternCard button listener, it sends to the server the patterncard chosen from the player
+     * @param event onClick
+     */
     @FXML
     void onClickPatternCardTwo(ActionEvent event) {
         networkType.choosePatternCard(patternCards.get(1));
@@ -88,6 +104,10 @@ public class PatternCardController implements SceneUpdater {
         patternCardFour.setDisable(true);
     }
 
+    /**
+     * Method that uploads the pattern card to choose in the view
+     * @param patternCards selected PatternCard
+     */
     @Override
     public void setPatternCards(List<PatternCard> patternCards) {
         this.patternCards = patternCards;

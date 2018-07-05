@@ -51,7 +51,7 @@ public class CLI implements SceneUpdater {
     private AtomicBoolean toolCardUsed;
     private Thread moveThread;
     private Color selectedDiceColorTapWheel;
-    private static final String wrongInputMessage = "Wrong Input";
+    private static final String WRONG_INPUT_MESSAGE = "Wrong Input";
 
 
     CLI(String ipAddress) {
@@ -245,7 +245,7 @@ public class CLI implements SceneUpdater {
                 System.out.print("Ok! Your username is: " + chosenUsername + "\n");
                 rightUsername = true;
                 networkType.loginUser(chosenUsername);
-            } else System.out.println(wrongInputMessage);
+            } else System.out.println(WRONG_INPUT_MESSAGE);
         } while (!rightUsername);
     }
 
@@ -356,7 +356,7 @@ public class CLI implements SceneUpdater {
                         showRanking();
                         break;
                     default:
-                        System.err.println(wrongInputMessage);
+                        System.err.println(WRONG_INPUT_MESSAGE);
                         break;
                 }
 
@@ -391,7 +391,7 @@ public class CLI implements SceneUpdater {
                 } else {
                     System.err.println("Match name has already been taken, choose another one");
                 }
-            } else System.out.println(wrongInputMessage);
+            } else System.out.println(WRONG_INPUT_MESSAGE);
 
         } while (!rightMatchName);
     }
@@ -700,7 +700,7 @@ public class CLI implements SceneUpdater {
                             moveNext();
                             break;
                         default:
-                            System.err.println(wrongInputMessage);
+                            System.err.println(WRONG_INPUT_MESSAGE);
                     }
                 } else moveNext();
 
@@ -1403,7 +1403,7 @@ public class CLI implements SceneUpdater {
         do {
             System.out.println("Choose the row index:\n");
             rowIndex = userIntegerInput();
-            if (!(0 <= rowIndex && rowIndex < 4)) System.out.println(wrongInputMessage);
+            if (!(0 <= rowIndex && rowIndex < 4)) System.out.println(WRONG_INPUT_MESSAGE);
             if (rowIndex == -1 && stoppedTurn.get()) return 0;
 
         } while (!(0 <= rowIndex && rowIndex < 4));
@@ -1415,7 +1415,7 @@ public class CLI implements SceneUpdater {
         do {
             System.out.println("Choose the column index:\n");
             columnIndex = userIntegerInput();
-            if (!(0 <= columnIndex && columnIndex < 5)) System.out.println(wrongInputMessage);
+            if (!(0 <= columnIndex && columnIndex < 5)) System.out.println(WRONG_INPUT_MESSAGE);
             if (columnIndex == -1 && stoppedTurn.get()) return 0;
 
         } while (!(0 <= columnIndex && columnIndex < 5));

@@ -119,6 +119,10 @@ public class LobbyController implements SceneUpdater, Initializable {
         this.networkType = clientController;
     }
 
+    /**
+     * Method that creates and sends the request for a new match to the server
+     * @param event
+     */
     @FXML
     void onCreatePressed(ActionEvent event) {
         TextInputDialog dialog = new TextInputDialog();
@@ -143,7 +147,10 @@ public class LobbyController implements SceneUpdater, Initializable {
         }
     }
 
-    private void popUpInvalidMatchName() {
+    /**
+     * Notifies the user in case the the name for the match has already been taken
+     */
+    public void popUpInvalidMatchName() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Warning");
         alert.setHeaderText("Match has already been taken");
@@ -151,12 +158,20 @@ public class LobbyController implements SceneUpdater, Initializable {
         alert.showAndWait();
     }
 
+    /**
+     * Closes the application
+     * @param event onAction button event
+     */
     @FXML
     void onExitPressed(ActionEvent event) {
         Platform.exit();
         System.exit(0);
     }
 
+    /**
+     * Method that join the user in an available match
+     * @param event onAction button listener
+     */
     @FXML
     void onJoinPressed(ActionEvent event) {
         if (matchTableView.getSelectionModel().getSelectedItem() != null  &&
@@ -178,22 +193,38 @@ public class LobbyController implements SceneUpdater, Initializable {
         }
     }
 
+    /**
+     * Launch the View to replay the matches
+     */
     @FXML
     void onHistoryButtonPressed() {
         application.launchHistoryView();
     }
 
+    /**
+     *
+     * @param usersConnected number of connected users
+     */
     @Override
     public void updateConnectedUsers(int usersConnected) {
         connectedUsersText.setText("Connected users: " + usersConnected);
     }
 
+    /**
+     * Updates the list of existing matches
+     * @param matches matches currently available in the game
+     */
     @Override
     public void updateExistingMatches(List<DoubleString> matches) {
         availableMatches.clear();
         availableMatches.addAll(matches);
     }
 
+    /**
+     * Method that uploads the lobby data: the available matches, the ranking and the statistics
+     *
+     * @param bundleDataResponse lobby data
+     */
     @Override
     public void loadLobbyData(BundleDataResponse bundleDataResponse) {
         availableMatches.clear();
@@ -209,12 +240,20 @@ public class LobbyController implements SceneUpdater, Initializable {
         networkType.requestBundleData();
     }
 
+    /**
+     * Method that uploads the ranking data
+     * @param tripleStringList
+     */
     @Override
     public void updateRankingStatsTableView(List<TripleString> tripleStringList) {
         ranking.clear();
         ranking.addAll(tripleStringList);
     }
 
+    /**
+     * Launches the view to choose the pattern card to starts the match
+     * @param patternCardNotification PatternCards to be displayed in the ThirdGUI
+     */
     @Override
     public void launchThirdGui(PatternCardNotification patternCardNotification) {
         Platform.runLater(

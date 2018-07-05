@@ -65,6 +65,10 @@ public class LoginController implements SceneUpdater {
         }
     }
 
+    /**
+     * Listener for the toggle that sets the type of connection to RMI
+     * @param event event listener
+     */
     @FXML
     void selectedRMI(ActionEvent event) {
         application.deployRMIClient();
@@ -74,6 +78,10 @@ public class LoginController implements SceneUpdater {
         RMIToggleButton.setDisable(true);
     }
 
+    /**
+     * Listener for the toggle that sets the type of connection to Socket
+     * @param event event listener
+     */
     @FXML
     void selectedSocket(ActionEvent event) {
         application.deploySocketClient();
@@ -98,6 +106,9 @@ public class LoginController implements SceneUpdater {
         Platform.runLater(() -> application.launchSecondGUI(username));
     }
 
+    /**
+     * Method that launch an Alert in case the chosen username for the login has already been taken
+     */
     @Override
     public void launchAlert() {
         Platform.runLater(() -> {
@@ -115,6 +126,10 @@ public class LoginController implements SceneUpdater {
         System.out.println("Waiting for next UpdateViewResponse");
     }
 
+    /**
+     * Launch the last GUI, the GUI to play the match
+     * @param boardDataResponse class that contains every object needed to play the game
+     */
     @Override
     public void launchFourthGui(BoardDataResponse boardDataResponse) {
         Platform.runLater( () -> application.launchFourthGUI(boardDataResponse));
