@@ -102,11 +102,9 @@ public class Controller implements RemoteController {
                     }
 
                     if (playerList.size() < 2) {
-                        System.out.println("There are less than 2 players, cancelling timer");
                         controllerTimer.cancelTimer();
                     }
 
-                    System.out.println("Players waiting " + playerList.size() + " disconnected users " + disconnectedUsers.size());
 
                 } while (!stop.get());
             } catch (InterruptedException e) {
