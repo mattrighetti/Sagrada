@@ -151,13 +151,13 @@ public class SagradaGame implements RemoteSagradaGame {
                 connectedUsers = gson.fromJson(movesJSON,
                                                new TypeToken<HashMap<String, User>>() {
                                                }.getType());
+                userBroadcaster = new UserBroadcaster(connectedUsers);
             } catch (IOException e) {
                 e.printStackTrace();
                 System.err.println("File non trovato, carico Sagrada");
             }
         }).start();
         System.out.println("EXITED");
-        userBroadcaster = new UserBroadcaster(connectedUsers);
     }
 
     @Override
