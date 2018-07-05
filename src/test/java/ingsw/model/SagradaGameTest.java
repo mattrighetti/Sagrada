@@ -75,17 +75,21 @@ class SagradaGameTest {
         //TODO testa chiamata a metodo privato
     }
 
+    //Useless test, logout is no more implemented
     @Test
     void logoutUserTest() throws RemoteException {
         sagradaGame.connectedUsers.put("First", mock(User.class));
         sagradaGame.connectedUsers.put("Second", mock(User.class));
         sagradaGame.logoutUser("First");
-        assertFalse(sagradaGame.connectedUsers.containsKey("First"));
-        assertEquals(1, sagradaGame.connectedUsers.size());
-        assertThrows(RemoteException.class, () -> sagradaGame.logoutUser("First"));
-        assertEquals(1, sagradaGame.connectedUsers.size());
+
+        //logout is no more implemented
+
+        assertTrue(sagradaGame.connectedUsers.containsKey("First"));
+        assertEquals(2, sagradaGame.connectedUsers.size());
+       // assertThrows(RemoteException.class, () -> sagradaGame.logoutUser("First"));
+        assertEquals(2, sagradaGame.connectedUsers.size());
         sagradaGame.logoutUser("Second");
-        assertTrue(sagradaGame.connectedUsers.isEmpty());
+        assertFalse(sagradaGame.connectedUsers.isEmpty());
     }
 
     /*
