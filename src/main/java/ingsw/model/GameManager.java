@@ -245,6 +245,7 @@ public class GameManager {
 
     /**
      * Returns the number of the current Round
+     *
      * @return Current round
      */
     public int getNoOfCurrentRound() {
@@ -253,6 +254,7 @@ public class GameManager {
 
     /**
      * Returns the round track
+     *
      * @return Current round track
      */
     public List<List<Dice>> getRoundTrack() {
@@ -547,8 +549,9 @@ public class GameManager {
 
     /**
      * Method that places a dice in the player's pattern card.
-     * @param dice Dice to place
-     * @param rowIndex Line index
+     *
+     * @param dice        Dice to place
+     * @param rowIndex    Line index
      * @param columnIndex Column index
      */
     public void placeDiceForPlayer(Dice dice, int rowIndex, int columnIndex) {
@@ -695,6 +698,7 @@ public class GameManager {
 
     /**
      * Method that writes the match history in a File inside /histories
+     *
      * @param movesHistory List of all match moves
      */
     private void writeHistoryToFile(List<MoveStatus> movesHistory) {
@@ -762,6 +766,7 @@ public class GameManager {
 
     /**
      * Method that checks player's point and decide a Winner and, in case. the tie.
+     *
      * @return Set of possible winnners
      */
     private Set<Player> evaluateBasicPoints() {
@@ -792,6 +797,7 @@ public class GameManager {
 
     /**
      * Method that updates the player's score using the private objective cards.
+     *
      * @param tiePlayers Set of Players with the same score
      * @return The Set updated
      */
@@ -823,6 +829,7 @@ public class GameManager {
 
     /**
      * Method that updates the player's score using the favor tokens
+     *
      * @param tieAgainPlayers Set of Players with the same score
      * @return The Set updated
      */
@@ -935,8 +942,9 @@ public class GameManager {
 
     /**
      * Method that starts the turn and wait for the end of it only if the user is active
+     *
      * @param playerIndex The index of the new current player
-     * @param turnState Specify the state turn(forward or backward)
+     * @param turnState   Specify the state turn(forward or backward)
      */
     private void executeTurn(int playerIndex, String turnState) {
 
@@ -968,6 +976,7 @@ public class GameManager {
 
     /**
      * Returns the timer used for the single turn duration
+     *
      * @return ControllerTimer used for turn
      */
     ControllerTimer getControllerTimer() {
@@ -1030,9 +1039,10 @@ public class GameManager {
 
     /**
      * Method for the place-dice move. Inserts <code>dice</code> into the grid
-     * @param player Current player
-     * @param dice Dice to place
-     * @param rowIndex Row index
+     *
+     * @param player      Current player
+     * @param dice        Dice to place
+     * @param rowIndex    Row index
      * @param columnIndex Line index
      * @return
      */
@@ -1383,6 +1393,7 @@ public class GameManager {
 
     /**
      * Returns the selected tool card
+     *
      * @param toolCardName tool card to return
      * @return Selected Toolcard
      */
@@ -1459,8 +1470,9 @@ public class GameManager {
 
     /**
      * Place a Dice in the selected position during the use of CopperFoilBurnisher
+     *
      * @param dicePosition coordinates of dice to be moved
-     * @param position coordinates of where to place the dice
+     * @param position     coordinates of where to place the dice
      */
     public synchronized void copperFoilBurnisherMove(Tuple dicePosition, Tuple position) {
         if (toolCardLock.get()) {
@@ -1474,10 +1486,10 @@ public class GameManager {
 
     /**
      * COPPER FOIL BURNISHER
-     *
+     * <p>
      * =======
      * <p>
-     *
+     * <p>
      * After the toolCard move ends with success this method sends the
      * updated data to the players
      */
@@ -1746,14 +1758,15 @@ public class GameManager {
     /**
      * Select a dice from the round track and move at most two dices of the same color.
      * Phases:
-     *      -1 - Close the tool card
-     *      0  - Send the available positions of all dice of the selected color
-     *      1  - Place one (or two in case of double move) dice in the pattern card
-     *      2  - Place the second dice(double move not allowed)
+     * -1 - Close the tool card
+     * 0  - Send the available positions of all dice of the selected color
+     * 1  - Place one (or two in case of double move) dice in the pattern card
+     * 2  - Place the second dice(double move not allowed)
+     *
      * @param roundTrackDice Dice from which extract the selected color
-     * @param phase phase of the toolcard
-     * @param dicePosition initial position of the dice
-     * @param position final position of the dice
+     * @param phase          phase of the toolcard
+     * @param dicePosition   initial position of the dice
+     * @param position       final position of the dice
      * @param doubleMove
      */
     public synchronized void tapWheelMove(Dice roundTrackDice, int phase, Tuple dicePosition, Tuple position, boolean doubleMove) {
@@ -1823,6 +1836,7 @@ public class GameManager {
 
     /**
      * Set if there was a double move during the tool card use
+     *
      * @param doubleMove
      */
     public void setDoubleMove(boolean doubleMove) {
@@ -1832,9 +1846,10 @@ public class GameManager {
     /**
      * Method that notify the player in TapWheel.
      * Phase:
-     *      1 - sends available positions(counting the double move);
-     *      2 - sends available positions(without the double move);
-     *      3 - sends the updated pattern card
+     * 1 - sends available positions(counting the double move);
+     * 2 - sends available positions(without the double move);
+     * 3 - sends the updated pattern card
+     *
      * @param availablePositions
      * @param phase
      */

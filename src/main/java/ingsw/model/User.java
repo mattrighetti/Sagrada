@@ -23,6 +23,7 @@ public class User implements Serializable {
     private UserObserver userObserver;
     private int noOfWins;
     private int noOfLose;
+    private long activeTime;
     private List<String> matchesPlayed;
     private transient StopWatch stopWatch;
     private transient boolean isStopWatchRunning;
@@ -31,6 +32,7 @@ public class User implements Serializable {
     /**
      * Set the username, creates the stopWatch, set ready and active to true anche create a list
      * for storing the matches played
+     *
      * @param username Username to set
      */
     public User(String username) {
@@ -41,13 +43,14 @@ public class User implements Serializable {
         this.username = username;
         this.isStopWatchRunning = false;
         this.hasStopWatchStarted = false;
+        this.activeTime = 0;
     }
 
     public User(User user) {
         active = false;
         ready = false;
         matchesPlayed = user.getMatchesPlayed();
-        this.stopWatch = user.getStopWatch();
+        this.stopWatch = new StopWatch();
         this.username = user.getUsername();
         this.isStopWatchRunning = false;
         this.hasStopWatchStarted = false;
@@ -55,14 +58,12 @@ public class User implements Serializable {
         this.noOfWins = user.getNoOfWins();
         this.noOfLose = user.getNoOfLose();
         this.userObserver = null;
-    }
-
-    private StopWatch getStopWatch() {
-        return stopWatch;
+        this.activeTime = user.getActiveTime();
     }
 
     /**
      * Get the actual ranking position
+     *
      * @return Returns the position in the ranking
      */
     int getPositionInRanking() {
@@ -71,6 +72,7 @@ public class User implements Serializable {
 
     /**
      * Set the new position
+     *
      * @param positionInRanking The new ranking position
      */
     void setPositionInRanking(int positionInRanking) {
@@ -83,6 +85,7 @@ public class User implements Serializable {
 
     /**
      * Returns the number of wins
+     *
      * @return Number of wins
      */
     int getNoOfWins() {
@@ -98,6 +101,7 @@ public class User implements Serializable {
 
     /**
      * Returns the number of lose
+     *
      * @return Number of lose
      */
     int getNoOfLose() {
@@ -113,6 +117,7 @@ public class User implements Serializable {
 
     /**
      * Returns the number of matches played
+     *
      * @return Number of matches played
      */
     List<String> getMatchesPlayed() {
@@ -121,6 +126,7 @@ public class User implements Serializable {
 
     /**
      * Sets the current UserObserver.
+     *
      * @param userObserver UserObserver to attach
      */
     public void attachUserObserver(UserObserver userObserver) {
@@ -145,14 +151,25 @@ public class User implements Serializable {
 
     /**
      * Sets the user active(equivalent of in-game)
+     *
      * @param active
      */
     public void setActive(boolean active) {
         this.active = active;
+        if (active) {
+            if (!hasStopWatchStarted) {
+                startStopWatch();
+            } else resumeStopWatch();
+        } else {
+            if (hasStopWatchStarted) {
+                suspendStopWatch();
+            }
+        }
     }
 
     /**
      * Returns true if the user is in-game
+     *
      * @return User active
      */
     public boolean isActive() {
@@ -161,6 +178,7 @@ public class User implements Serializable {
 
     /**
      * Returns if the user active(equivalent of online)
+     *
      * @return User ready
      */
     boolean isReady() {
@@ -175,45 +193,59 @@ public class User implements Serializable {
         return hasStopWatchStarted;
     }
 
-    public void setReady(boolean ready) {
-        if (this.ready != ready && hasStopWatchStarted) {
-            System.out.println("READY E DIVERSO DAL VALORE PRECEDENTE, NON ENTRO");
-            this.ready = ready;
-            if (!hasStopWatchStarted && this.ready) {
-                stopWatch.start();
-                hasStopWatchStarted = true;
-                isStopWatchRunning = true;
-                System.out.println("PARTITO DIOCANE");
-            } else {
-                if (!isStopWatchRunning && this.ready) {
-                    System.out.println("RESUME");
-                    isStopWatchRunning = true;
-                    stopWatch.resume();
-                } else {
-                    System.out.println("SUSPEND");
-                    isStopWatchRunning = false;
-                    stopWatch.suspend();
-                }
-            }
+    private void suspendStopWatch() {
+        if (hasStopWatchStarted && isStopWatchRunning) {
+            isStopWatchRunning = false;
+            stopWatch.suspend();
         }
+    }
+
+    private void startStopWatch() {
+        if (stopWatch == null)
+            stopWatch = new StopWatch();
+        if (!hasStopWatchStarted) {
+            stopWatch.start();
+            hasStopWatchStarted = true;
+        }
+    }
+
+    private void resumeStopWatch() {
+        if (hasStopWatchStarted && !isStopWatchRunning) {
+            stopWatch.resume();
+            isStopWatchRunning = true;
+        }
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 
     /**
      * Returns the currently time played
+     *
      * @return Currently time played
      */
     private long getActiveTime() {
-        return stopWatch.getTime();
+        if (stopWatch != null) {
+            return stopWatch.getTime();
+        } else {
+            stopWatch = new StopWatch();
+            return stopWatch.getTime();
+        }
     }
 
     /**
      * Returns time played formatted
+     *
      * @return Time played formatted
      */
     String getFormattedTime() {
-        Date formattedTimeActive = new Date(getActiveTime());
+        Date formattedTimeActive = new Date(activeTime);
+        Date newFormattedTimeActive = new Date(getActiveTime());
+        long currentTime = formattedTimeActive.getTime() + newFormattedTimeActive.getTime();
+        Date currentDateTime = new Date(currentTime);
         DateFormat formatter = new SimpleDateFormat("mm:ss");
-        return formatter.format(formattedTimeActive);
+        return formatter.format(currentDateTime);
     }
 
     @Override

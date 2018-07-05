@@ -72,6 +72,7 @@ public class SagradaGame implements RemoteSagradaGame {
     /**
      * Remove a match from the map in which there are stored all the active matches and removes it
      * from the RMIRegistry.
+     *
      * @param controller Controller to remove, it is the match itself because it manages it.
      */
     public void removeMatch(Controller controller) {
@@ -116,6 +117,7 @@ public class SagradaGame implements RemoteSagradaGame {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
 
@@ -146,13 +148,14 @@ public class SagradaGame implements RemoteSagradaGame {
         String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
         File jarParentFolder = new File(jarParentFolderPath + "/stats");
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(jarParentFolder + "/userStats.txt"))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(jarParentFolder + "/userstats.txt"))) {
             String movesJSON = bufferedReader.readLine();
             connectedUsers = gson.fromJson(movesJSON,
                                            new TypeToken<HashMap<String, User>>() {
                                            }.getType());
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("File non trovato, carico Sagrada");
         }
     }
 
@@ -171,13 +174,15 @@ public class SagradaGame implements RemoteSagradaGame {
         File jarPath = new File(SagradaGame.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
         File jarParentFolder = new File(jarParentFolderPath + "/stats");
+
         if (!jarParentFolder.exists()) {
-            jarParentFolder.mkdir();
+            if (jarParentFolder.mkdir()) System.out.println("User stats created successfully");
         }
 
         try (FileWriter file = new FileWriter(jarParentFolder + "/userstats.txt")) {
             file.write(usersStatsJSON);
         } catch (IOException e) {
+            e.printStackTrace();
             System.err.println("There was an error writing the file! Could not complete.");
         }
     }
@@ -196,7 +201,8 @@ public class SagradaGame implements RemoteSagradaGame {
 
     /**
      * Search and send a history of selected match readed from file.
-     * @param username User that requested the history
+     *
+     * @param username          User that requested the history
      * @param selectedMatchName Match name
      * @throws RemoteException
      */
@@ -218,6 +224,7 @@ public class SagradaGame implements RemoteSagradaGame {
 
     /**
      * Set the maximum turn duration
+     *
      * @param maxTurnSeconds
      */
     @Override
@@ -227,6 +234,7 @@ public class SagradaGame implements RemoteSagradaGame {
 
     /**
      * Set the maximum login duration
+     *
      * @param maxJoinMatchSeconds
      */
     @Override
@@ -237,6 +245,7 @@ public class SagradaGame implements RemoteSagradaGame {
     /**
      * Creates an ordered List with the Ranking of all connected users
      * counting the number of victories.
+     *
      * @return List containing the ranking
      */
     @Override
@@ -280,6 +289,7 @@ public class SagradaGame implements RemoteSagradaGame {
      * 1 - number of wins
      * 2 - number of lose
      * 3 - time played
+     *
      * @param username user that requested the ranking
      * @return A Map containing the three statistics fields
      */
@@ -360,8 +370,9 @@ public class SagradaGame implements RemoteSagradaGame {
     /**
      * Send a ReJoinResponse to a player that wants to join again a match due to disconnection.
      * It sends the controller and the player username.
+     *
      * @param userObserver The current instance of the player User Observer
-     * @param username Player Username
+     * @param username     Player Username
      */
     private void sendRejoinResponse(UserObserver userObserver, String username) {
 
@@ -409,7 +420,6 @@ public class SagradaGame implements RemoteSagradaGame {
     public synchronized void createMatch(String matchName) throws RemoteException {
         Controller controller;
         if (!matchesByName.containsKey(matchName)) {
-            System.out.println("Entro");
             controller = new Controller(matchName, maxTurnSeconds, maxJoinMatchSeconds, this);
             RemoteController remoteController = (RemoteController) UnicastRemoteObject.exportObject(controller, 1100);
             matchesByName.put(matchName, controller);
@@ -421,8 +431,8 @@ public class SagradaGame implements RemoteSagradaGame {
             }
 
             userBroadcaster.broadcastResponseToAll(new CreateMatchResponse(createAvailableMatchesList()));
+            writeUsersStatsToFile();
         } else {
-            System.out.println("Eccezione");
             throw new RemoteException("Match already exists");
         }
     }
@@ -431,7 +441,7 @@ public class SagradaGame implements RemoteSagradaGame {
      * Login a User to a match(and so to its controller). It also broadcasts a CreateMatchResponse
      *
      * @param matchName Controller name
-     * @param username Player username
+     * @param username  Player username
      * @throws RemoteException
      */
     @Override
@@ -448,7 +458,7 @@ public class SagradaGame implements RemoteSagradaGame {
      * Login a User to a match that he was playing before the disconnection.
      *
      * @param matchName Controller name
-     * @param username Player username
+     * @param username  Player username
      * @throws RemoteException
      */
     @Override
@@ -469,6 +479,7 @@ public class SagradaGame implements RemoteSagradaGame {
 
     /**
      * Returns the controller of a certain match
+     *
      * @param matchName Controller name
      * @return Controller of a specified match
      */
@@ -515,7 +526,7 @@ public class SagradaGame implements RemoteSagradaGame {
     public synchronized void deactivateUser(String disconnectedUsername) throws RemoteException {
         for (User user : connectedUsers.values()) {
             if (user.getUsername().equals(disconnectedUsername)) {
-                if (user.isActive() && user.isReady()) {
+                if (user.isActive()) {
                     user.setActive(false);
                     user.setReady(false);
                     return;
