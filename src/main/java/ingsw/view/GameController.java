@@ -125,6 +125,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     private List<Player> players;
     private List<DiceButton> draftPool;
     private List<List<Dice>> roundTrackDice;
+    private String myPrivateObjectiveCard;
 
     /* View Elements */
     private List<ImageView> publicCardsImageViewsList;
@@ -276,7 +277,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     void onShowPrivateCardPressed(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Private Objective Card");
-        ImageView imageView = new ImageView("/img/privateoc/" + players.get(0).getPrivateObjectiveCard().getName() + ".png");
+        ImageView imageView = new ImageView("/img/privateoc/" + myPrivateObjectiveCard + ".png");
         imageView.setFitHeight(193);
         imageView.setFitWidth(137.5);
         alert.setGraphic(imageView);
@@ -483,6 +484,13 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     public void loadData(BoardDataResponse boardDataResponse) {
         this.players = boardDataResponse.players;
 
+        for (Player player : players) {
+            if (application.getUsername().equals(player.getPlayerUsername())) {
+                myPrivateObjectiveCard = player.getPrivateObjectiveCard().getName();
+                break;
+            }
+        }
+
         displayPublicObjectiveCards(boardDataResponse.publicObjectiveCards);
         displayToolCards(boardDataResponse.toolCards);
         setWindowsTab();
@@ -508,7 +516,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
     @Override
     public void timeOut(TimeOutResponse timeOutResponse) {
         Platform.runLater(() -> {
-
             if (timeOutResponse.toolCardMoveActive) {
                 this.roundTrackDice = timeOutResponse.roundTrack;
                 roundTrackDiceHBox.getChildren().removeAll(roundTrackDiceHBox.getChildren());

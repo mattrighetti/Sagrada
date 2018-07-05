@@ -74,7 +74,8 @@ public class ServerController implements RequestHandler, Serializable {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            System.err.println("Partita non disponibile");
+            return new CreateMatchResponse(null);
         }
 
         return null;
@@ -331,17 +332,9 @@ public class ServerController implements RequestHandler, Serializable {
      */
     public void deactivateUser() {
         try {
-            // Deactivate user in the match's controller
-            if (controller != null) {
-                controller.deactivateUser(user);
-                sagradaGame.deactivateUser(user.getUsername());
-            } else {
-                System.err.println("The user did not join a match yet, removing the user from the Server");
-                // Deactivate user in SagradaGame
-                sagradaGame.logoutUser(user.getUsername());
-            }
+            sagradaGame.deactivateUser(user.getUsername());
         } catch (RemoteException e) {
-            System.err.println("Already logged out or disconnected");
+            System.err.println("User already disconnected");
         }
     }
 }

@@ -38,17 +38,17 @@ class RoundTest {
             }
 
             @Override
+            public void activatePinger() {
+
+            }
+
+            @Override
             public void receiveNotification(Notification notification) throws RemoteException {
 
             }
 
             @Override
             public void activateTurnNotification(Map<String, Boolean[][]> booleanMapGrid) throws RemoteException {
-
-            }
-
-            @Override
-            public void activatePinger() {
 
             }
 

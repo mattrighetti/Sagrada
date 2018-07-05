@@ -152,11 +152,8 @@ public class View extends Application implements GUIUpdater {
         mainStage.setScene(new Scene(lobby));
         mainStage.setTitle("Lobby");
         mainStage.show();
-
-        mainStage.setOnHiding(event -> {
-            lobbyController.disconnectUser();
-            Platform.exit();
-        });
+        mainStage.setOnHiding((event) -> System.exit(0));
+        mainStage.setOnCloseRequest((event -> System.exit(0)));
 
         // Updates CurrentScene
         setCurrentScene(lobbyController);
@@ -186,6 +183,8 @@ public class View extends Application implements GUIUpdater {
         mainStage.setScene(new Scene(patternCardChoice));
         mainStage.setTitle("Choose Pattern Card");
         mainStage.show();
+        mainStage.setOnHiding((event) -> System.exit(0));
+        mainStage.setOnCloseRequest((event -> System.exit(0)));
         patternCardController.setPatternCards(patternCardNotification.patternCards);
         setCurrentScene(patternCardController);
     }
@@ -214,10 +213,8 @@ public class View extends Application implements GUIUpdater {
         mainStage.setScene(new Scene(game));
         mainStage.setTitle("Sagrada");
         mainStage.show();
-        mainStage.setOnHiding(event -> {
-            gameController.disconnectUser();
-            Platform.exit();
-        });
+        mainStage.setOnHiding((event) -> System.exit(0));
+        mainStage.setOnCloseRequest((event -> System.exit(0)));
         setCurrentScene(gameController);
         currentScene.loadData(boardDataResponse);
     }
@@ -241,6 +238,8 @@ public class View extends Application implements GUIUpdater {
         mainStage.setTitle("Histories");
         mainStage.show();
         setCurrentScene(historyController);
+        mainStage.setOnHiding((event) -> System.exit(0));
+        mainStage.setOnCloseRequest((event -> System.exit(0)));
 
         historyController.requestFinishedMatchesList();
     }

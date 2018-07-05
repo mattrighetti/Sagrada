@@ -7,9 +7,6 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Class that reads request sent from the client and writes the server responses via Socket
@@ -22,7 +19,6 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
     private final transient ObjectOutputStream objectOutputStream;
     private transient boolean stop = false;
     private transient ControllerTimer controllerTimer;
-    private transient ScheduledFuture<?> pinger;
 
     private ServerController serverController;
 
@@ -63,75 +59,66 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
             Response response = ((Request) objectInputStream.readObject()).handle(serverController);
             if (response != null) {
                 if (response instanceof Ping) {
-                    controllerTimer.setPingActive(false);
                     controllerTimer.cancelTimer();
+                    controllerTimer.setPingActive(false);
                 } else
                     respond(response);
             }
 
         } catch (EOFException | SocketException e) {
-            shutdownClientHandler();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("The class is not Serializable");
+            if (!stop) {
+                System.out.print("EOF: ");
+                shutdownClientHandler();
+            }
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Close the ClienHandler
-     */
-    private void shutdownClientHandler() {
+    public void shutdownClientHandler() {
+        controllerTimer.cancelTimer();
         serverController.deactivateUser();
-        pinger.cancel(true);
         close();
     }
-
 
     /**
      * Method that serializes objects and sends them to the other end of the connection
      *
      * @param response response to send
      */
-    private synchronized void respond(Response response) {
+    private void respond(Response response) {
         try {
             objectOutputStream.writeObject(response);
             objectOutputStream.reset();
         } catch (IOException e) {
-            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage() + ", caught and the user will not be notified");
+            System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
         }
     }
 
-    /**
-     * Write the Ping to the <code>ObjectOutputStream</code>
-     */
-    private synchronized void checkConnection() {
+    private void checkConnection() {
         if (!stop) {
-            try {
-                objectOutputStream.writeObject(new Ping());
-                objectOutputStream.reset();
-                controllerTimer.startPingReceiveTimer(this);
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.err.println(e.getClass().getSimpleName() + " - " + e.getMessage());
-            }
+            respond(new Ping());
+            controllerTimer.startPingReceiveTimer(this);
         }
     }
 
-    /**
-     * Activate Pinger TCP that schedules every 3 secondos to check for disconnection
-     */
     private void pingTimer() {
-        pinger = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::checkConnection,
-                                                                                     0,
-                                                                                     3,
-                                                                                     TimeUnit.SECONDS);
+        new Thread(() -> {
+            do {
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    e.printStackTrace();
+                }
+
+                checkConnection();
+
+            } while (!stop);
+        }).start();
     }
 
-    /**
-     * Stop readResponse()
-     */
     private void stop() {
         stop = true;
     }
@@ -140,8 +127,8 @@ public class ClientHandler implements Runnable, UserObserver, Serializable {
      * Method that closes ClientHandler connection
      */
     public void close() {
+        System.out.println("Closing down connection");
         stop();
-        pinger.cancel(true);
         if (objectInputStream != null) {
             try {
                 objectInputStream.close();

@@ -274,7 +274,6 @@ public class GameManager {
     private void checkUserConnection(Set<Player> disconnectedPlayers) {
         for (Player player : playerList) {
             try {
-
                 // If there are at least two active players then...
                 if (disconnectedPlayers.size() < playerList.size() - 1) {
 
@@ -711,7 +710,9 @@ public class GameManager {
                 try {
                     player.getUser().incrementNoOfWins();
                     addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "wins the match"));
-                    player.getUserObserver().notifyVictory(player.getScore());
+                    if (player.getUser().isActive()) {
+                        player.getUserObserver().notifyVictory(player.getScore());
+                    }
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -719,7 +720,9 @@ public class GameManager {
                 try {
                     player.getUser().incrementNoOfLose();
                     addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "loses the match"));
-                    player.getUserObserver().notifyLost(player.getScore());
+                    if (player.getUser().isActive()) {
+                        player.getUserObserver().notifyLost(player.getScore());
+                    }
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -850,20 +853,16 @@ public class GameManager {
         }
 
         if (activeUsers > 1) {
-            System.out.println("Entro");
             winner = null;
             if (possibleWinners.size() > 1) {
-                System.out.println("PR" + possibleWinners);
                 possibleWinners = evaluatePrivateObjectiveCardPoints(possibleWinners);
             } else found = true;
 
             if (possibleWinners.size() > 1) {
-                System.out.println("FT" + possibleWinners);
                 possibleWinners = evaluateFavourTokenPoints(possibleWinners);
             } else found = true;
 
             if (possibleWinners.size() > 1) {
-                System.out.println("UL" + possibleWinners);
                 for (Player player : playerList) {
                     if (possibleWinners.contains(player)) {
                         winner = player;
@@ -874,7 +873,6 @@ public class GameManager {
             }
 
             for (Player player : possibleWinners) {
-                System.out.println("Trovato");
                 winner = player;
             }
         } else {

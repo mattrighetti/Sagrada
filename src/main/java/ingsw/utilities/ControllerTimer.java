@@ -87,19 +87,6 @@ public class ControllerTimer {
     }
 
     /**
-     * Start the Ping receiver timer
-     * @param clientHandler ClientHandler in order to call <code>close()</code> when
-     *                      the method catch the user Socket disconnection
-     */
-    public void startPingReceiveTimer(ClientHandler clientHandler) {
-        if (!pingActive.get()) {
-            pingActive.set(true);
-            timer = new Timer(TIMER_THREAD_NAME);
-            timer.schedule(new DisconnectUserTask(clientHandler), (long) 1000);
-        }
-    }
-
-    /**
      * Method to stop the timer that is running
      */
     public void cancelTimer() {
@@ -107,21 +94,26 @@ public class ControllerTimer {
         timer.purge();
     }
 
+    public void startPingReceiveTimer(ClientHandler clientHandler) {
+        if (!pingActive.get()) {
+            pingActive.set(true);
+            timer = new Timer(TIMER_THREAD_NAME);
+            timer.schedule(new DisconnectUserTask(clientHandler), (long) 3000);
+        }
+    }
+
     /**
      * Task class for Launch Match Timer
      */
     public class LaunchMatch extends TimerTask {
         Controller controller;
-        boolean hasStarted;
 
         LaunchMatch(Controller controller) {
             this.controller = controller;
-            this.hasStarted = hasStarted;
         }
 
         @Override
         public void run() {
-            controller.setStop(true);
             controller.createMatch();
         }
     }
@@ -184,14 +176,20 @@ public class ControllerTimer {
 
             try {
 
-                if (gameManager.getToolCardLock().get())
-                    currentPlayer.getUserObserver().sendResponse(new TimeOutResponse(gameManager.getDraftedDice(), gameManager.getRoundTrack(), currentPlayer));
-                else
-                    currentPlayer.getUserObserver().sendResponse(new TimeOutResponse());
+                if (gameManager.getToolCardLock().get()) {
+                    if (currentPlayer.getUser().isActive()) {
+                        currentPlayer.getUserObserver().sendResponse(new TimeOutResponse(gameManager.getDraftedDice(), gameManager.getRoundTrack(), currentPlayer));
+                    }
+                } else {
+                    if (currentPlayer.getUser().isActive()) {
+                        currentPlayer.getUserObserver().sendResponse(new TimeOutResponse());
+                    }
+                }
 
                 synchronized (this) {
                     wait(500);
                 }
+
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 e.printStackTrace();
@@ -222,8 +220,8 @@ public class ControllerTimer {
 
         @Override
         public void run() {
-            clientHandler.close();
-            clientHandler.getServerController().deactivateUser();
+            System.out.print("ControllerTimer:");
+            clientHandler.shutdownClientHandler();
         }
     }
 }

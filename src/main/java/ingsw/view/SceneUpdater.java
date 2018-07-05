@@ -80,6 +80,10 @@ public interface SceneUpdater {
         System.out.println("Not overridden -> closeStage");
     }
 
+    default void popUpInvalidMatchName() {
+        System.out.println("Not overridden -> popUpInvalidMatchName");
+    }
+
     default void updateRankingStatsTableView(List<TripleString> tripleStringList) {
         System.out.println("Not overridden -> updateRankingStatsTableView");
     }

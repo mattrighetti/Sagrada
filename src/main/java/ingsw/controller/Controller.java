@@ -149,7 +149,6 @@ public class Controller implements RemoteController {
                 playerList.add(new Player(user));
             }
             if (playerList.size() == 2) {
-                checkNumberOfUsers();
                 controllerTimer.startLoginTimer(maxJoinMatchSeconds, this);
             }
 

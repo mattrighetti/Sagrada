@@ -43,14 +43,6 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
     }
 
     /**
-     * Activate the Pinger
-     */
-    @Override
-    public void activatePinger() {
-        //Void call
-    }
-
-    /**
      * Handle call to rmiController to handle a Response
      *
      * @param response Response to send
@@ -65,6 +57,11 @@ public class RMIUserObserver extends UnicastRemoteObject implements UserObserver
      *
      * @param booleanMapGrid Available positions
      */
+    @Override
+    public void activatePinger() {
+
+    }
+
     @Override
     public void activateTurnNotification(Map<String, Boolean[][]> booleanMapGrid) {
         new StartTurnNotification(booleanMapGrid).handle(rmiController);

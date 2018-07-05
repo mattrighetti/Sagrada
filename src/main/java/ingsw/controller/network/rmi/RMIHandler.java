@@ -104,7 +104,7 @@ public class RMIHandler implements RequestHandler {
     public Response handle(LogoutRequest logoutRequest) {
         try {
             sagradaGame.logoutUser(user.getUsername());
-            new LogoutResponse(true);
+            return new LogoutResponse(true);
         } catch (RemoteException e) {
             System.err.println(e.getMessage());
             new LogoutResponse(false).handle(rmiController);
@@ -124,7 +124,8 @@ public class RMIHandler implements RequestHandler {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            System.err.println("Partita non disponibile");
+            new CreateMatchResponse(null).handle(rmiController);
         }
 
         return null;

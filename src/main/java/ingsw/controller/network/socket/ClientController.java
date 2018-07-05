@@ -419,7 +419,8 @@ public class ClientController implements ResponseHandler, NetworkType {
             System.out.println("Match created");
 
             sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
-        }
+        } else
+            sceneUpdater.popUpInvalidMatchName();
     }
 
     /**

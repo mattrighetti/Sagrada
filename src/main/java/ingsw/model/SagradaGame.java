@@ -1,8 +1,11 @@
 package ingsw.model;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import ingsw.controller.Controller;
 import ingsw.controller.RemoteController;
 import ingsw.controller.network.commands.*;
+import ingsw.controller.network.socket.ClientHandler;
 import ingsw.controller.network.socket.UserObserver;
 import ingsw.exceptions.InvalidUsernameException;
 import ingsw.utilities.DoubleString;
@@ -20,7 +23,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 /**
@@ -31,6 +33,7 @@ public class SagradaGame implements RemoteSagradaGame {
     private static SagradaGame sagradaGameSingleton;
     Map<String, Controller> matchesByName; // List of all open matches
     Map<String, User> connectedUsers; // List of connected users
+    private boolean stop;
 
     private int maxTurnSeconds;
     private int maxJoinMatchSeconds;
@@ -47,35 +50,9 @@ public class SagradaGame implements RemoteSagradaGame {
         userBroadcaster = new UserBroadcaster(connectedUsers);
         maxJoinMatchSeconds = 40;
         maxTurnSeconds = 120;
+        stop = false;
+        rmiUsersListener();
     }
-
-    /*private void checkInactiveUsers() {
-        Set<User> disconnectedUsers = new HashSet<>();
-        for (User user : connectedUsers.values()) {
-            try {
-                user.getUserObserver();
-            } catch (RemoteException e) {
-                disconnectedUsers.add(user);
-            }
-        }
-
-        for (User user : disconnectedUsers) {
-            try {
-                logoutUser(user.getUsername());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-
-        System.out.println(connectedUsers.values());
-    }
-
-    private void listenForInactiveUsers() {
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::checkInactiveUsers,
-                                                                         0,
-                                                                         5,
-                                                                         TimeUnit.SECONDS);
-    }*/
 
     /**
      * Returns the current instance of SagradaGame.
@@ -108,6 +85,44 @@ public class SagradaGame implements RemoteSagradaGame {
         userBroadcaster.broadcastResponseToAll(new CreateMatchResponse(createAvailableMatchesList()));
     }
 
+    private void checkUserDisconnection() {
+        Set<User> activeUsers = new HashSet<>();
+        for (User user : connectedUsers.values()) {
+            try {
+                user.getUserObserver();
+            } catch (RemoteException e) {
+                try {
+                    deactivateUser(user.getUsername());
+                } catch (RemoteException e1) {
+                    System.err.println("Couldn't deactivate " + user.getUsername());
+                }
+            }
+        }
+
+        for (User user : connectedUsers.values()) {
+            if (user.isActive()) {
+                activeUsers.add(user);
+            }
+        }
+
+        System.out.println(activeUsers);
+    }
+
+    private void rmiUsersListener() {
+        new Thread(() -> {
+            do {
+
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                checkUserDisconnection();
+            } while (!stop);
+        }).start();
+    }
+
     /* REMOTE SAGRADAGAME PART*/
 
     /**
@@ -124,6 +139,42 @@ public class SagradaGame implements RemoteSagradaGame {
      * Creates a List of all active matche with the number of player connected to a match
      * @return List with all active matches
      */
+    private void readUserStatsFromFile() {
+        Gson gson = new Gson();
+
+        File jarPath = new File(SagradaGame.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
+        File jarParentFolder = new File(jarParentFolderPath + "/stats");
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(jarParentFolder + "/userStats.txt"))) {
+            String movesJSON = bufferedReader.readLine();
+            connectedUsers = gson.fromJson(movesJSON,
+                                           new TypeToken<HashMap<String, User>>() {
+                                           }.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void writeUsersStatsToFile() {
+        Gson gson = new Gson();
+        String moveHistoryJSON = gson.toJson(connectedUsers);
+
+        File jarPath = new File(SagradaGame.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        String jarParentFolderPath = jarPath.getParentFile().getAbsolutePath();
+        File jarParentFolder = new File(jarParentFolderPath + "/stats");
+        if (!jarParentFolder.exists()) {
+            jarParentFolder.mkdir();
+        }
+
+        try (FileWriter file = new FileWriter(jarParentFolder + "/userstats.txt")) {
+            file.write(moveHistoryJSON);
+        } catch (IOException e) {
+            System.err.println("There was an error writing the file! Could not complete.");
+        }
+    }
+
     @Override
     public List<DoubleString> createAvailableMatchesList() {
         DoubleString doubleString;
@@ -274,10 +325,12 @@ public class SagradaGame implements RemoteSagradaGame {
 
         // Check if the username is present and inactive
         if (connectedUsers.containsKey(username) && !connectedUsers.get(username).isActive()) {
+            connectedUsers.get(username).attachUserObserver(userObserver);
             connectedUsers.get(username).setActive(true);
             //Check in which match the user was playing before disconnecting
             Executors.newSingleThreadExecutor().execute(() -> sendRejoinResponse(userObserver, username));
             // Return the same user with the updated UserObserver
+            connectedUsers.get(username).getUserObserver().activatePinger();
             return connectedUsers.get(username);
         }
 
@@ -287,7 +340,9 @@ public class SagradaGame implements RemoteSagradaGame {
             currentUser.attachUserObserver(userObserver);
             connectedUsers.put(username, currentUser);
             connectedUsers.get(username).getUserObserver().sendResponse(new LoginUserResponse(currentUser));
-            connectedUsers.get(username).getUserObserver().activatePinger();
+            if (connectedUsers.get(username).getUserObserver() instanceof ClientHandler) {
+                connectedUsers.get(username).getUserObserver().activatePinger();
+            }
             broadcastUsersConnected(username);
             return connectedUsers.get(username);
         }
@@ -334,10 +389,7 @@ public class SagradaGame implements RemoteSagradaGame {
 
     @Override
     public synchronized void logoutUser(String username) throws RemoteException {
-        if (connectedUsers.remove(username, connectedUsers.get(username))) {
-            broadcastUsersConnected(username);
-        } else
-            throw new RemoteException("Couldn't disconnect the user");
+
     }
 
     /**
@@ -350,6 +402,7 @@ public class SagradaGame implements RemoteSagradaGame {
     public synchronized void createMatch(String matchName) throws RemoteException {
         Controller controller;
         if (!matchesByName.containsKey(matchName)) {
+            System.out.println("Entro");
             controller = new Controller(matchName, maxTurnSeconds, maxJoinMatchSeconds, this);
             RemoteController remoteController = (RemoteController) UnicastRemoteObject.exportObject(controller, 1100);
             matchesByName.put(matchName, controller);
@@ -361,8 +414,10 @@ public class SagradaGame implements RemoteSagradaGame {
             }
 
             userBroadcaster.broadcastResponseToAll(new CreateMatchResponse(createAvailableMatchesList()));
-        } else
+        } else {
+            System.out.println("Eccezione");
             throw new RemoteException("Match already exists");
+        }
     }
 
     /**
@@ -391,7 +446,6 @@ public class SagradaGame implements RemoteSagradaGame {
      */
     @Override
     public synchronized void loginPrexistentPlayer(String matchName, String username) throws RemoteException {
-        System.out.println("C");
         boolean isMatchPresent = matchesByName.containsKey(matchName);
         System.out.println(isMatchPresent);
         if (isMatchPresent) {
@@ -454,12 +508,14 @@ public class SagradaGame implements RemoteSagradaGame {
     public synchronized void deactivateUser(String disconnectedUsername) throws RemoteException {
         for (User user : connectedUsers.values()) {
             if (user.getUsername().equals(disconnectedUsername)) {
-                user.setActive(false);
-                user.setReady(false);
-                return;
+                if (user.isActive() && user.isReady()) {
+                    user.setActive(false);
+                    user.setReady(false);
+                    return;
+                }
             }
         }
 
-        throw new RemoteException("Couldn't deactivate the user properly");
+        throw new RemoteException("User not in list :\\");
     }
 }

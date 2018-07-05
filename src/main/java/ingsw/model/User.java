@@ -26,6 +26,7 @@ public class User implements Serializable {
     private List<String> matchesPlayed;
     private transient StopWatch stopWatch;
     private transient boolean isStopWatchRunning;
+    private transient boolean hasStopWatchStarted;
 
     /**
      * Set the username, creates the stopWatch, set ready and active to true anche create a list
@@ -39,6 +40,7 @@ public class User implements Serializable {
         this.stopWatch = new StopWatch();
         this.username = username;
         this.isStopWatchRunning = false;
+        this.hasStopWatchStarted = false;
     }
 
     /**
@@ -112,7 +114,14 @@ public class User implements Serializable {
      * @throws RemoteException Thrown in case of disconnection
      */
     public UserObserver getUserObserver() throws RemoteException {
-        userObserver.checkIfActive();
+        try {
+            userObserver.checkIfActive();
+        } catch (RemoteException | NullPointerException e) {
+            if (isActive()) {
+                setActive(false);
+                setReady(false);
+            }
+        }
         return userObserver;
     }
 
@@ -140,20 +149,33 @@ public class User implements Serializable {
         return ready;
     }
 
-    /**
-     * Set if the user is ready(equivalent of online)
-     * @param ready
-     */
+    boolean isStopWatchRunning() {
+        return isStopWatchRunning;
+    }
+
+    boolean isHasStopWatchStarted() {
+        return hasStopWatchStarted;
+    }
+
     public void setReady(boolean ready) {
-        this.ready = ready;
-        if (ready) {
-            isStopWatchRunning = true;
-            stopWatch.start();
-        }
-        else {
-            if (isStopWatchRunning) {
-                isStopWatchRunning = false;
-                stopWatch.suspend();
+        if (this.ready != ready && hasStopWatchStarted) {
+            System.out.println("READY E DIVERSO DAL VALORE PRECEDENTE, NON ENTRO");
+            this.ready = ready;
+            if (!hasStopWatchStarted && this.ready) {
+                stopWatch.start();
+                hasStopWatchStarted = true;
+                isStopWatchRunning = true;
+                System.out.println("PARTITO DIOCANE");
+            } else {
+                if (!isStopWatchRunning && this.ready) {
+                    System.out.println("RESUME");
+                    isStopWatchRunning = true;
+                    stopWatch.resume();
+                } else {
+                    System.out.println("SUSPEND");
+                    isStopWatchRunning = false;
+                    stopWatch.suspend();
+                }
             }
         }
     }

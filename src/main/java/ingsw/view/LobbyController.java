@@ -133,14 +133,7 @@ public class LobbyController implements SceneUpdater, Initializable {
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
             if (!StringUtils.isBlank(result.get())) {
-                boolean tmpBoolean = false;
-                for (DoubleString doubleString : availableMatches) {
-                    if (doubleString.getFirstField().equals(result.get())) {
-                        tmpBoolean = true;
-                    }
-                }
-
-                if (!tmpBoolean) networkType.createMatch(result.get());
+                networkType.createMatch(result.get());
             } else {
                 popUpInvalidMatchName();
             }
@@ -150,6 +143,7 @@ public class LobbyController implements SceneUpdater, Initializable {
     /**
      * Notifies the user in case the the name for the match has already been taken
      */
+    @Override
     public void popUpInvalidMatchName() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Warning");
@@ -164,7 +158,6 @@ public class LobbyController implements SceneUpdater, Initializable {
      */
     @FXML
     void onExitPressed(ActionEvent event) {
-        Platform.exit();
         System.exit(0);
     }
 

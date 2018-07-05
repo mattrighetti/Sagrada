@@ -106,6 +106,8 @@ public interface RemoteSagradaGame extends Remote {
      * @return List of matches
      * @throws RemoteException
      */
+    void writeUsersStatsToFile() throws RemoteException;
+
     List<DoubleString> createAvailableMatchesList() throws RemoteException;
 
     /**

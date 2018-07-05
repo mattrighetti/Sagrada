@@ -13,7 +13,7 @@ import java.util.Map;
  * Used to send Response to more than one User.
  */
 public class UserBroadcaster {
-    private static final String ERROR_MESSAGE ="Broadcaster is not active";
+    private static final String ERROR_MESSAGE = "Broadcaster is not active";
     private boolean isBroadcasterActive;
     private Map<String, User> users;
 
@@ -39,7 +39,7 @@ public class UserBroadcaster {
                     user.getUserObserver().checkIfActive();
                     playerListToBroadcast.add(user.getUserObserver());
                 } catch (RemoteException e) {
-                    System.err.println("RMI Player " + user.getUsername() + " is not active, deactivating user");
+
                 }
             }
         }
@@ -58,7 +58,7 @@ public class UserBroadcaster {
                     user.getUserObserver().checkIfActive();
                     playerListToBroadcast.add(user.getUserObserver());
                 } catch (RemoteException e) {
-                    System.err.println("RMI Player " + user.getUsername() + " is not active, deactivating user");
+
                 }
             }
         }
@@ -87,13 +87,11 @@ public class UserBroadcaster {
      */
     public void broadcastResponseToAll(CreateMatchResponse createMatchResponse) {
         if (isBroadcasterActive) {
-            for (User user : users.values()) {
-                if (user.isActive()) {
-                    try {
-                        user.getUserObserver().sendResponse(createMatchResponse);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+            for (UserObserver user : usersToBroadcast()) {
+                try {
+                    user.sendResponse(createMatchResponse);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         } else System.out.println(ERROR_MESSAGE);

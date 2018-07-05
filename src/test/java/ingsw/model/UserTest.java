@@ -46,8 +46,13 @@ class UserTest {
     void readyTest() {
         user.setReady(true);
         assertTrue(user.isReady());
+        assertTrue(user.isHasStopWatchStarted());
+        assertTrue(user.isStopWatchRunning());
         user.setReady(false);
         assertFalse(user.isReady());
+        assertTrue(user.isHasStopWatchStarted());
+        assertFalse(user.isStopWatchRunning());
+        user.setReady(false);
     }
 
     @Test

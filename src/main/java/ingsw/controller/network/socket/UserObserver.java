@@ -9,13 +9,6 @@ import java.util.Map;
 public interface UserObserver extends Remote {
 
     /**
-     * Activates the SagradaGame Pinger
-     *
-     * @throws RemoteException
-     */
-    void activatePinger() throws RemoteException;
-
-    /**
      * Check if a User is active
      *
      * @throws RemoteException Thrown if the client has disconnected
@@ -44,6 +37,8 @@ public interface UserObserver extends Remote {
      *
      * @throws RemoteException
      */
+    void activatePinger() throws RemoteException;
+
     void sendResponse(Response response) throws RemoteException;
 
     /**

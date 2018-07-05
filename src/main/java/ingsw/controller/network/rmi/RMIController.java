@@ -408,9 +408,9 @@ public class RMIController implements ResponseHandler, NetworkType {
     public void handle(CreateMatchResponse createMatchResponse) {
         if (createMatchResponse.doubleString != null) {
             System.out.println("Match created");
-
             sceneUpdater.updateExistingMatches(createMatchResponse.doubleString);
-        }
+        } else
+            sceneUpdater.popUpInvalidMatchName();
     }
 
     /**
