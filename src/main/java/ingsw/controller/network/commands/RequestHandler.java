@@ -28,8 +28,6 @@ public interface RequestHandler {
 
     Response handle(MoveToolCardRequest moveToolCardRequest);
 
-    Response handle(DisconnectionRequest disconnectionRequest);
-
     Response handle(FinishedMatchesRequest finishedMatchesRequest);
 
     Response handle(ChosenPatternCardRequest chosenPatternCardRequest);

@@ -3,7 +3,6 @@ package ingsw.controller.network.socket;
 import ingsw.controller.network.commands.Ping;
 import ingsw.controller.network.commands.Request;
 import ingsw.controller.network.commands.Response;
-import ingsw.controller.network.commands.StopListener;
 
 import java.io.*;
 import java.net.Socket;

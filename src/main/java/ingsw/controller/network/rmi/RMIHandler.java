@@ -93,25 +93,6 @@ public class RMIHandler implements RequestHandler {
     }
 
     /**
-     * Method that requests a User disconnection to Sagrada
-     *
-     * @param disconnectionRequest disconnection request
-     * @return null
-     */
-    @Override
-    public Response handle(DisconnectionRequest disconnectionRequest) {
-        try {
-            sagradaGame.deactivateUser(user.getUsername());
-            new LogoutResponse(true).handle(rmiController);
-        } catch (RemoteException e) {
-            System.err.println(e.getMessage());
-            new LogoutResponse(false).handle(rmiController);
-        }
-
-        return null;
-    }
-
-    /**
      * Method that requests a match creation to Sagrada
      *
      * @param createMatchRequest create match request

@@ -50,17 +50,6 @@ public class ServerController implements RequestHandler, Serializable {
     }
 
     @Override
-    public Response handle(DisconnectionRequest disconnectionRequest) {
-        try {
-            sagradaGame.deactivateUser(user.getUsername());
-        } catch (RemoteException e) {
-            return new LogoutResponse(false);
-        }
-
-        return new LogoutResponse(true);
-    }
-
-    @Override
     public Response handle(CreateMatchRequest createMatchRequest) {
         try {
             sagradaGame.createMatch(createMatchRequest.matchName);

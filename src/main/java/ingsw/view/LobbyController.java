@@ -111,7 +111,7 @@ public class LobbyController implements SceneUpdater, Initializable {
 
     @Override
     public void disconnectUser() {
-        networkType.logoutUser();
+
     }
 
     @Override

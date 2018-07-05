@@ -1302,6 +1302,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
     @Override
     public void disconnectUser() {
-        networkType.disconnectUser();
+
     }
 }
