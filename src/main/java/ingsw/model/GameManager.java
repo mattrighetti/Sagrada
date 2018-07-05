@@ -447,8 +447,8 @@ public class GameManager {
     }
 
     /**
-     * Method that choose the patter card of the player who didn't choose in time randomly
-     * Then it starts the match
+     * Method that choose the pattern card of the player who didn't choose in time randomly
+     * Then it starts the match only if the player size is greater than 2
      *
      * @param patternCardToChoose map of username and a list of their four pattern cards from wich
      *                            he has to choose one
@@ -465,7 +465,21 @@ public class GameManager {
                         player.setPatternCard(patternCardToChoose.get(player.getPlayerUsername()).get(0));
                     }
                 }
-                setBoardAndStartMatch();
+
+                //Before starting the match
+                if (playerList.size() > 1)
+                    setBoardAndStartMatch();
+                else {
+                    try {
+                        closeThreads();
+                        deleteMatch();
+                        return;
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+
+
                 resetAck();
 
                 synchronized (noOfAck) {
@@ -661,6 +675,7 @@ public class GameManager {
                     }
                 }
             }
+
 
             addMoveToHistoryAndNotify(new MoveStatus(currentRound.getCurrentPlayer().getPlayerUsername(), "ended the match"));
 

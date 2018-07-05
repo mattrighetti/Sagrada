@@ -149,6 +149,8 @@ public class Controller implements RemoteController {
                 playerList.add(new Player(user));
             }
             if (playerList.size() == 2) {
+                checkPlayerList();
+                hasStarted = false;
                 controllerTimer.startLoginTimer(maxJoinMatchSeconds, this);
             }
 
@@ -158,6 +160,37 @@ public class Controller implements RemoteController {
                 createMatch();
             }
         } else throw new RemoteException("Match has already started");
+    }
+
+    private void checkPlayerList() {
+        new Thread(() -> {
+            do {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                listenForUsersConnected();
+
+                if (playerList.size() < 2) {
+                    controllerTimer.cancelTimer();
+                }
+
+            } while (!hasStarted);
+        }).start();
+    }
+
+    private void listenForUsersConnected() {
+        List<Player> disconnectedUsers = new ArrayList<>();
+
+        for (Player player : playerList) {
+            if (!player.getUser().isActive()) {
+                disconnectedUsers.add(player);
+            }
+        }
+        playerList.removeAll(disconnectedUsers);
+
     }
 
     /**
@@ -234,8 +267,11 @@ public class Controller implements RemoteController {
     }
 
     /**
+<<<<<<< Updated upstream
      * Place a dice in the player's pattern card
      *
+=======
+>>>>>>> Stashed changes
      * @param dice        selected to place from the player
      * @param rowIndex    the row index where to place the die in the pattern card
      * @param columnIndex the column index where to place the die in the pattern card
