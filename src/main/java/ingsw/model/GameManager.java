@@ -201,13 +201,8 @@ public class GameManager {
      * @return three randomly picked ToolCards
      */
     private List<ToolCard> chooseToolCards() {
-        //Collections.shuffle(toolCards);
-        //return new ArrayList<>(toolCards.subList(0, 3));
-        List<ToolCard> toolCardList = new ArrayList<>();
-        toolCardList.add(new Lathekin());
-        toolCardList.add(new GrozingPliers());
-        toolCardList.add(new GlazingHammer());
-        return toolCardList;
+        Collections.shuffle(toolCards);
+        return new ArrayList<>(toolCards.subList(0, 3));
     }
 
     /**
@@ -285,13 +280,14 @@ public class GameManager {
                     if (disconnectedPlayers.contains(player) && player.getUser().isActive() && player.getUser().isReady()) {
                         System.out.println("User: " + player.getPlayerUsername() + " is back online! ---> Sending data");
                         disconnectedPlayers.remove(player);
-                        player.getUserObserver().sendResponse(new BoardDataResponse(playerList, publicObjectiveCards, toolCards));
+                        player.getUserObserver().sendResponse(new BoardDataResponse(playerList, board.getPublicObjectiveCards(), board.getToolCards(), roundTrack));
                         player.getUserObserver().sendResponse(new MoveStatusNotification(movesHistory));
 
                         sleep(500);
                         player.getUserObserver().sendResponse(new DraftedDiceResponse(board.getDraftedDice()));
                     } else if (!disconnectedPlayers.contains(player) && !player.getUser().isActive()) {
                         System.out.println("User " + player.getPlayerUsername() + " has disconnected, adding it to disconnected Users iterating Player " + player.getPlayerUsername() + " " + disconnectedPlayers.size() + " " + (playerList.size() - 1));
+                        addMoveToHistoryAndNotify(new MoveStatus(player.getPlayerUsername(), "Has disconnected"));
                         disconnectedPlayers.add(player);
 
                     } else if (!disconnectedPlayers.contains(player) && player.getUser().isActive()) {
@@ -496,7 +492,10 @@ public class GameManager {
      * starts the thread which listens for the players disconnection and starts the match.
      */
     private void setBoardAndStartMatch() {
-        BoardDataResponse boardDataResponse = new BoardDataResponse(playerList, choosePublicObjectiveCards(), chooseToolCards());
+        BoardDataResponse boardDataResponse = new BoardDataResponse(playerList,
+                                                                    choosePublicObjectiveCards(),
+                                                                    chooseToolCards(),
+                                                                    roundTrack);
         playerBroadcaster.broadcastResponseToAll(boardDataResponse);
         this.board = new Board(boardDataResponse.publicObjectiveCards, boardDataResponse.toolCards);
         listenForPlayerDisconnection();

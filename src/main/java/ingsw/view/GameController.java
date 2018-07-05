@@ -491,6 +491,10 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
             }
         }
 
+        for (List<Dice> diceList : boardDataResponse.roundTrack) {
+            addRoundInRoundTrack(diceList);
+        }
+
         displayPublicObjectiveCards(boardDataResponse.publicObjectiveCards);
         displayToolCards(boardDataResponse.toolCards);
         setWindowsTab();

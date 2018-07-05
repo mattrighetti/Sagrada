@@ -325,7 +325,8 @@ public class SagradaGame implements RemoteSagradaGame {
         try (Stream<Path> pathStream = Files.walk(Paths.get(jarParentFolder.getPath()))) {
             pathStream.filter(Files::isRegularFile).forEach(path -> stringList.add(path.getFileName().toString().replace(".txt", "")));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Nessuna storia trovata, creo cartella");
+            jarParentFolder.mkdir();
         }
 
         connectedUsers.get(username).getUserObserver().sendResponse(new FinishedMatchesResponse(stringList));

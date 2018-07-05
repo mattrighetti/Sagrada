@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 class BoardDataResponseTest {
     private BoardDataResponse boardDataResponse;
@@ -15,7 +16,7 @@ class BoardDataResponseTest {
 
     @BeforeEach
     void setUp() {
-        boardDataResponse = new BoardDataResponse(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        boardDataResponse = new BoardDataResponse(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new LinkedList<>());
         rmiController = Mockito.mock(RMIController.class);
         clientController = Mockito.mock(ClientController.class);
     }
