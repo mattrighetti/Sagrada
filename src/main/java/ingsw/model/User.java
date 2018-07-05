@@ -112,4 +112,9 @@ public class User implements Serializable {
         DateFormat formatter = new SimpleDateFormat("mm:ss");
         return formatter.format(formattedTimeActive);
     }
+
+    @Override
+    public String toString() {
+        return getUsername();
+    }
 }

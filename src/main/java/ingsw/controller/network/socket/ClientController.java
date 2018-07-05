@@ -7,6 +7,8 @@ import ingsw.utilities.Tuple;
 import ingsw.view.SceneUpdater;
 import ingsw.controller.network.NetworkType;
 
+import java.util.concurrent.Executors;
+
 /**
  * Class that defines the socket connection of the game
  */
@@ -46,14 +48,13 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new StopListener());
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
             e.printStackTrace();
         }
 
+        Executors.newSingleThreadScheduledExecutor().execute(() -> client.nextResponse().handle(this));
         client.request(new DisconnectionRequest());
-        client.nextResponse().handle(this);
     }
 
     /**
@@ -64,14 +65,13 @@ public class ClientController implements ResponseHandler, NetworkType {
         client.request(new StopListener());
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
             e.printStackTrace();
         }
 
+        Executors.newSingleThreadScheduledExecutor().execute(() -> client.nextResponse().handle(this));
         client.request(new LogoutRequest());
-        client.nextResponse().handle(this);
     }
 
     @Override

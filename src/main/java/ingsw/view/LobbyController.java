@@ -153,7 +153,8 @@ public class LobbyController implements SceneUpdater, Initializable {
 
     @FXML
     void onExitPressed(ActionEvent event) {
-        networkType.logoutUser();
+        Platform.exit();
+        System.exit(0);
     }
 
     @FXML

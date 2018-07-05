@@ -42,7 +42,6 @@ public class LaunchServer {
         } finally {
             sagradaSocketServer.close();
         }
-
     }
 
     private static void deployRMIServer(int turnTimeOutSeconds, int joinMatchSeconds, String ip, int port) throws RemoteException, MalformedURLException {

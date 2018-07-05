@@ -19,7 +19,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 public class SagradaGame implements RemoteSagradaGame {
@@ -38,6 +40,35 @@ public class SagradaGame implements RemoteSagradaGame {
         userBroadcaster = new UserBroadcaster(connectedUsers);
         maxJoinMatchSeconds = 40;
         maxTurnSeconds = 120;
+        listenForInactiveUsers();
+    }
+
+    private void checkInactiveUsers() {
+        Set<User> disconnectedUsers = new HashSet<>();
+        for (User user : connectedUsers.values()) {
+            try {
+                user.getUserObserver();
+            } catch (RemoteException e) {
+                disconnectedUsers.add(user);
+            }
+        }
+
+        for (User user : disconnectedUsers) {
+            try {
+                logoutUser(user.getUsername());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println(connectedUsers.values());
+    }
+
+    private void listenForInactiveUsers() {
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::checkInactiveUsers,
+                                                                         0,
+                                                                         5,
+                                                                         TimeUnit.SECONDS);
     }
 
     public static SagradaGame get() {
@@ -248,7 +279,7 @@ public class SagradaGame implements RemoteSagradaGame {
     }
 
     @Override
-    public void logoutUser(String username) throws RemoteException {
+    public synchronized void logoutUser(String username) throws RemoteException {
         if (connectedUsers.remove(username, connectedUsers.get(username))) {
             broadcastUsersConnected(username);
         } else

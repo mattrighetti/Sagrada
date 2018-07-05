@@ -299,7 +299,10 @@ public class View extends Application implements GUIUpdater {
      */
     @Override
     public void closeApplication() {
-        mainStage.close();
+        Platform.runLater(() -> {
+            mainStage.close();
+        });
         Platform.exit();
+        System.exit(0);
     }
 }
