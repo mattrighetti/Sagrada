@@ -46,13 +46,31 @@ class UserTest {
     void readyTest() {
         user.setReady(true);
         assertTrue(user.isReady());
-        assertTrue(user.isHasStopWatchStarted());
-        assertTrue(user.isStopWatchRunning());
-        user.setReady(false);
-        assertFalse(user.isReady());
-        assertTrue(user.isHasStopWatchStarted());
+        assertFalse(user.isHasStopWatchStarted());
         assertFalse(user.isStopWatchRunning());
         user.setReady(false);
+        assertFalse(user.isReady());
+        assertFalse(user.isHasStopWatchStarted());
+        assertFalse(user.isStopWatchRunning());
+        user.setReady(false);
+        user.setActive(true);
+        assertTrue(user.isActive());
+        assertTrue(user.isHasStopWatchStarted());
+        assertTrue(user.isStopWatchRunning());
+        user.setActive(true);
+        assertTrue(user.isActive());
+        assertTrue(user.isHasStopWatchStarted());
+        assertTrue(user.isStopWatchRunning());
+        user.setActive(false);
+        assertTrue(user.isHasStopWatchStarted());
+        assertFalse(user.isStopWatchRunning());
+        user.setActive(false);
+        assertTrue(user.isHasStopWatchStarted());
+        assertFalse(user.isStopWatchRunning());
+        user.setActive(true);
+        assertTrue(user.isHasStopWatchStarted());
+        assertTrue(user.isStopWatchRunning());
+
     }
 
     @Test

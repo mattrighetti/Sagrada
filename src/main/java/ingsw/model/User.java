@@ -206,6 +206,7 @@ public class User implements Serializable {
         if (!hasStopWatchStarted) {
             stopWatch.start();
             hasStopWatchStarted = true;
+            isStopWatchRunning = true;
         }
     }
 
