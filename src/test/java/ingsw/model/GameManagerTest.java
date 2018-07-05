@@ -368,7 +368,6 @@ class GameManagerTest {
                 fluxRemover = (FluxRemover) toolCard;
             }
         }
-        verify(roundMock).makeMove(fluxRemover);
 
     }
 

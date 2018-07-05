@@ -52,4 +52,12 @@ public class DoubleString implements Serializable {
             return obj1.getFirstField().equals(firstField) && obj1.getSecondField().equals(secondField);
         } else return false;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 1;
+        hash = hash * 31 + firstField.hashCode();
+        hash = hash * 31 + secondField.hashCode();
+        return hash;
+    }
 }
