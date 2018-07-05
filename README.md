@@ -4,7 +4,12 @@
 - Manuel Trivilino 843470 Codice Persona: 10503183
 - Luca Terracciano 845937 Codice Persona: 10493487
 
-<h3 align="center">Sagrada</h3>
+<p align="center">
+  <a href="http://floodgategames.com/Sagrada/">
+    <img src="https://cf.geekdo-images.com/medium/img/frguV5YOfP1hsAmZpKnYxAmIpYA=/fit-in/500x500/filters:no_upscale()/pic3525224.jpg" alt="" width=381 height=500>
+  </a>
+  
+  <h3 align="center">Sagrada</h3>
 
   <p align="center">
     Java implementation of the Sagrada Board Game.
@@ -17,12 +22,6 @@
 </p>
 
 <br>
-
-
-<p align="center">
-  <a href="http://floodgategames.com/Sagrada/">
-    <img src="https://cf.geekdo-images.com/medium/img/frguV5YOfP1hsAmZpKnYxAmIpYA=/fit-in/500x500/filters:no_upscale()/pic3525224.jpg" alt="" width=381 height=500>
-  </a>
   
   
 ## Total coverage
@@ -40,4 +39,4 @@ RMI disconnection by unplugging cable isn't discovedered
 
 ## Documentation
 
-For the documentation of the game please refer to the Wiki section of this repository
+Important: Some tests only run if the rmi registry is loaded
