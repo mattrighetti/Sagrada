@@ -39,4 +39,16 @@ RMI disconnection by unplugging cable isn't discovedered
 
 ## Documentation
 
-Important: Some tests only run if the rmi registry is loaded
+Important: Some SagradaGame.class tests only run if the RMIRegistry is up and running, so before compiling the application with tests
+be sure to run the launch_registry.sh file
+
+# How to run JARs
+
+1. Launch the serverStart.sh script
+2. Run the Server JAR with the following command
+
+  `java -jar -Djava.rmi.server.hostname=<ServerIP> SERVER.jar <ServerIP>`
+
+3. Run the Client JAR with the following command (same goes for the CLI.jar)
+
+  `java -jar -Djava.rmi.server.hostname=<ServerIP> GUI.jar <ServerIP>`
