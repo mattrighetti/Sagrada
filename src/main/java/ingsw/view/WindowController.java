@@ -73,13 +73,10 @@ public class WindowController implements Initializable {
      */
     private void diceCursorMouseEvent(DicePane dicePane) {
         dicePane.setOnMouseClicked(event -> {
-            System.out.println(CLICKED);
             if (selectedDice != null) {
                 patternCardGridPane.setCursor(Cursor.DEFAULT);
                 gameUpdater.setPlaceDiceMove();
                 networkType.placeDice(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
-            } else {
-                System.out.println(NO_DICE_SELECTED);
             }
             selectedDice = null;
         });
@@ -150,7 +147,6 @@ public class WindowController implements Initializable {
             for (int k = 0; k < 5; k++) {
                 dicePanes[j][k].getStyleClass().remove("grey");
                 if (availablePosition.get(diceString) != null) {
-                    System.out.print(availablePosition.get(diceString)[j][k] + "\t");
                     if (!availablePosition.get(diceString)[j][k]) {
                         (dicePanes[j][k]).getStyleClass().add("grey");
                         (dicePanes[j][k]).setDisable(true);
@@ -160,10 +156,8 @@ public class WindowController implements Initializable {
                     }
                 } else dicePanes[j][k].getStyleClass().add("grey");
             }
-            System.out.println();
         }
 
-        System.out.println("ciao");
     }
 
     /**
@@ -193,7 +187,6 @@ public class WindowController implements Initializable {
                     if (selectedPositions.isEmpty()) {
                         if (!thisDicePane.getStyleClass().isEmpty()) {
                             selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
-                            System.out.println(thisDicePane.getStyleClass().toString());
                             updateAvailablePositions(thisDicePane.getStyleClass().get(0) + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
                             setCursorDice(thisDicePane.getStyleClass().get(0));
                         }
@@ -223,13 +216,10 @@ public class WindowController implements Initializable {
             for (int j = 0; j < 5; j++) {
                 DicePane dicePane = dicePanes[i][j];
                 dicePanes[i][j].setOnMouseClicked(event -> {
-                    System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
                         gameUpdater.disableDice();
                         networkType.corkBackedStraightedgeMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
-                    } else {
-                        System.out.println(NO_DICE_SELECTED);
                     }
                     selectedDice = null;
                 });
@@ -276,7 +266,6 @@ public class WindowController implements Initializable {
         if (selectedPositions.isEmpty()) {
             if (!thisDicePane.getStyleClass().isEmpty() && !thisDicePane.getStyleClass().contains("grey")) {
                 selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
-                System.out.println(thisDicePane.getStyleClass().toString());
                 updateAvailablePositions(thisDicePane.getStyleClass().get(0) + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
             }
         } else if (selectedPositions.size() == 1) {
@@ -287,8 +276,6 @@ public class WindowController implements Initializable {
                 else
                     networkType.lathekinMove(selectedPositions.get(0), selectedPositions.get(1), true);
                 selectedPositions.clear();
-            } else {
-                System.out.println("cannot place dice here " + thisDicePane.getStyleClass());
             }
         } else
             selectedPositions.clear();
@@ -305,12 +292,9 @@ public class WindowController implements Initializable {
 
                 DicePane dicePane = dicePanes[i][j];
                 dicePane.setOnMouseClicked(event -> {
-                    System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
                         networkType.fluxBrushMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
-                    } else {
-                        System.out.println(NO_DICE_SELECTED);
                     }
                     selectedDice = null;
                 });
@@ -329,12 +313,9 @@ public class WindowController implements Initializable {
 
                 DicePane dicePane = dicePanes[i][j];
                 dicePane.setOnMouseClicked(event -> {
-                    System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
                         networkType.fluxRemoverMove(selectedDice, dicePane.getColumnIndex(), dicePane.getRowIndex());
-                    } else {
-                        System.out.println(NO_DICE_SELECTED);
                     }
                     selectedDice = null;
                 });
@@ -352,12 +333,9 @@ public class WindowController implements Initializable {
             for (int j = 0; j < 5; j++) {
                 DicePane dicePane = dicePanes[i][j];
                 dicePane.setOnMouseClicked(event -> {
-                    System.out.println(CLICKED);
                     if (selectedDice != null) {
                         patternCardGridPane.setCursor(Cursor.DEFAULT);
                         networkType.runningPliersMove(selectedDice, dicePane.getRowIndex(), dicePane.getColumnIndex());
-                    } else {
-                        System.out.println(NO_DICE_SELECTED);
                     }
                     selectedDice = null;
                 });
@@ -372,7 +350,6 @@ public class WindowController implements Initializable {
      * @param diceColor Round track dice color
      */
     void activateTapWheelDice(Color diceColor) {
-        System.out.println("Activating dice " + diceColor);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 for (String style : dicePanes[i][j].getStyleClass()) {
@@ -413,22 +390,15 @@ public class WindowController implements Initializable {
      * @param diceColor
      */
     private void tapWheelMouseEvent(DicePane thisDicePane, int phase, String diceColor) {
-        System.out.println("TAPWHEEL");
         if (selectedPositions.isEmpty()) {
-            System.out.println("A");
             if (!thisDicePane.getStyleClass().isEmpty() && !thisDicePane.getStyleClass().contains("grey")) {
-                System.out.println("B");
                 selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
-                System.out.println("Dice to move " + thisDicePane.getStyleClass().toString());
                 updateAvailablePositions(thisDicePane.getStyleClass().get(0) + thisDicePane.getRowIndex() + thisDicePane.getColumnIndex());
             }
         } else if (selectedPositions.size() == 1) {
-            System.out.println("C");
             if ((selectedPositions.get(0).getFirst() != thisDicePane.getRowIndex() || selectedPositions.get(0).getSecond() != thisDicePane.getColumnIndex())) {
                 selectedPositions.add(new Tuple(thisDicePane.getRowIndex(), thisDicePane.getColumnIndex()));
                 if (thisDicePane.getStyleClass().isEmpty()) {
-                    System.out.println("D");
-                    System.out.println("placing the dice in the phase " + phase);
                     networkType.tapWheelMove(selectedPositions.get(0), selectedPositions.get(1), phase, false);
                     if (phase == 1)
                         activateTapWheelDice(selectedPositions.get(0).getFirst(), selectedPositions.get(0).getSecond());
@@ -436,7 +406,6 @@ public class WindowController implements Initializable {
                         resetDiceCursorMouseEvent();
                     selectedPositions.clear();
                 } else {
-                    System.out.println("e");
                     networkType.tapWheelMove(selectedPositions.get(0), selectedPositions.get(1), phase, true);
                     selectedPositions.clear();
                 }

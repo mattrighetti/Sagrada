@@ -242,11 +242,16 @@ public class CLI implements SceneUpdater {
             System.out.print("Username:\n");
             chosenUsername = scanner.nextLine();
             if (!chosenUsername.isEmpty()) {
-                System.out.print("Ok! Your username is: " + chosenUsername + "\n");
                 rightUsername = true;
                 networkType.loginUser(chosenUsername);
             } else System.out.println(WRONG_INPUT_MESSAGE);
         } while (!rightUsername);
+    }
+
+    @Override
+    public void launchAlert() {
+        System.out.println("Username already been taken, choose another one");
+        chooseUsernameAndLogin();
     }
 
     /**
@@ -277,7 +282,7 @@ public class CLI implements SceneUpdater {
     @Override
     public void launchSecondGui(String username) {
         this.username = username;
-
+        System.out.print("Ok! Your username is: " + username + "\n");
         showLobbyCommandsAndWait();
     }
 

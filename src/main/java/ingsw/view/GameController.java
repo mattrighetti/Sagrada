@@ -374,11 +374,9 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you want to use " + imageView.getId().toString() + "?", no, yes);
                 alert.setTitle("Use Tool card");
                 Optional<ButtonType> result = alert.showAndWait();
-                System.out.println("no button pressed");
                 if (result.get() == yes) {
                     networkType.useToolCard(imageView.getId());
                     clearSelectedDice();
-                    System.out.println(imageView.getId());
                     disableToolCards();
                 }
             });
@@ -685,7 +683,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                 case "TapWheel":
                     diceButtonToAdd.setOnMouseClicked(event -> {
                         toolCardSelectedDice = diceButtonToAdd;
-                        System.out.println("the selected dice is " + toolCardSelectedDice);
                         networkType.tapWheelMove(toolCardSelectedDice.getDice(), 0);
                         disableRoundTrack();
                     });
@@ -951,7 +948,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                             @Override
                             public void handle(MouseEvent event) {
 
-                                System.out.println(button.getDice().toString());
                                 networkType.fluxBrushMove(button.getDice());
                                 clearSelectedDice();
 
@@ -1032,7 +1028,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
                     for (DiceButton button : diceButtons) {
                         button.setOnMouseClicked(event -> {
-                            System.out.println(button.getDice().toString());
                             networkType.fluxRemoverMove(button.getDice());
                         });
                     }
@@ -1074,7 +1069,7 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                                 } else button.setDisable(true);
                             }
                         } else disableDice();
-                    } else System.out.println("Error in available position Flux Remover");
+                    }
                     windowControllerList.get(0).setAvailablePosition(useToolCardResponse.availablePositions);
                     windowControllerList.get(0).updateAvailablePositions(useToolCardResponse.draftedDie.toString());
                     windowControllerList.get(0).setSelectedDice(useToolCardResponse.draftedDie);
@@ -1111,8 +1106,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                     @Override
                     public void handle(MouseEvent event) {
 
-                        System.out.println(button.getDice().toString());
-
                         networkType.grindingStoneMove(button.getDice());
 
                     }
@@ -1141,7 +1134,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
                             activateDice();
 
-                            System.out.println("increase pressed");
                             ArrayList<DiceButton> diceButtons = new ArrayList<>();
                             for (Node button : diceHorizontalBox.getChildren()) {
                                 diceButtons.add((DiceButton) button);
@@ -1149,7 +1141,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
                             for (DiceButton button : diceButtons) {
                                 button.setOnMouseClicked(event -> {
-                                    System.out.println(button.getDice());
                                     networkType.grozingPliersMove(button.getDice(), true);
                                 });
                             }
@@ -1162,7 +1153,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
                             activateDice();
 
-                            System.out.println("decrease pressed");
                             diceButtons = new ArrayList<>();
                             for (Node button : diceHorizontalBox.getChildren()) {
                                 diceButtons.add((DiceButton) button);
@@ -1170,7 +1160,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
 
                             for (DiceButton button : diceButtons) {
                                 button.setOnMouseClicked(event -> {
-                                    System.out.println(button.getDice());
                                     networkType.grozingPliersMove(button.getDice(), false);
                                 });
                             }
@@ -1338,7 +1327,6 @@ public class GameController implements SceneUpdater, Initializable, GameUpdater 
                         });
                 break;
             case 1:
-                System.out.println("phase 1");
                 Platform.runLater(
                         () -> {
                             for (Button button : roundTrackButtonList) {
