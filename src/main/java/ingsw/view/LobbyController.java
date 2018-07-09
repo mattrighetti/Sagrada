@@ -145,11 +145,13 @@ public class LobbyController implements SceneUpdater, Initializable {
      */
     @Override
     public void popUpInvalidMatchName() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Warning");
-        alert.setHeaderText("Match has already been taken");
-        alert.setContentText("Choose another match name");
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Match has already been taken");
+            alert.setContentText("Choose another match name");
+            alert.showAndWait();
+        });
     }
 
     /**
