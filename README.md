@@ -1,8 +1,8 @@
 # IDS Project 2018
 ## Team
-- Mattia Righetti 846580 Codice Persona: 10489408
-- Manuel Trivilino 843470 Codice Persona: 10503183
-- Luca Terracciano 845937 Codice Persona: 10493487
+- Mattia Righetti
+- Manuel Trivilino
+- Luca Terracciano
 
 <p align="center">
   <a href="http://floodgategames.com/Sagrada/">
